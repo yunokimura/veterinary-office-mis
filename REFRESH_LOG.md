@@ -50,6 +50,10 @@
 - **Changes**:
   - Line 42: Raw query references updated: `admin_users.role` → `users.role`
 
+### Additional Redundant Migration Deleted
+- **Deleted**: `database/migrations/2026_04_14_000001_drop_users_table.php`
+- **Reason**: Redundant - the old users table was already renamed by migration 2026_04_08
+
 ---
 
 ## Additional Changes Made (2026-04-15)
