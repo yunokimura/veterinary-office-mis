@@ -23,7 +23,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      *
      * @var string
      */
-    protected $table = 'admin_users';
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
