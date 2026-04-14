@@ -11,7 +11,7 @@ return new class extends Migration
         if (!Schema::hasTable('missing_pets')) {
             Schema::create('missing_pets', function (Blueprint $table) {
             $table->id('missing_id');
-            $table->string('name');
+            $table->string('pet_name');
             $table->string('species');
             $table->string('breed')->nullable();
             $table->integer('age')->nullable();

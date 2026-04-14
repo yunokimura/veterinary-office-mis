@@ -16,32 +16,24 @@ return new class extends Migration
             });
         }
 
-        // 2. Migrate full_name data to first_name/last_name if full_name existed and has data
-        // Check if first_name is null but full_name had data (rare edge case since full_name was just added)
-        $usersWithFullName = DB::table('admin_users')
-            ->whereNotNull('full_name')
-            ->where('full_name', '!=', '')
-            ->whereNull('first_name')
-            ->get();
-
-        foreach ($usersWithFullName as $user) {
-            $nameParts = explode(' ', trim($user->full_name), 2);
-            $firstName = $nameParts[0] ?? '';
-            $lastName = $nameParts[1] ?? '';
-
-            DB::table('admin_users')
-                ->where('id', $user->id)
-                ->update([
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                ]);
+        // 2. Handle the case where both 'users' and 'admin_users' tables exist
+        // This happens if migration 2026_04_08 didn't properly rename
+        if (Schema::hasTable('users') && Schema::hasTable('admin_users')) {
+            // Drop the old default users table (it's redundant)
+            Schema::dropIfExists('users');
         }
 
-        // 3. Rename admin_users to users
-        Schema::rename('admin_users', 'users');
+        // 3. Rename admin_users to users if admin_users exists and users doesn't
+        if (Schema::hasTable('admin_users') && !Schema::hasTable('users')) {
+            Schema::rename('admin_users', 'users');
+        } elseif (!Schema::hasTable('admin_users') && Schema::hasTable('users')) {
+            // Already renamed or users is the main table - nothing to do
+        }
 
         // 4. Update all FK constraints that reference admin_users(id) to now reference users(id)
-        $this->updateForeignKeys();
+        if (Schema::hasTable('users')) {
+            $this->updateForeignKeys();
+        }
     }
 
     private function updateForeignKeys(): void

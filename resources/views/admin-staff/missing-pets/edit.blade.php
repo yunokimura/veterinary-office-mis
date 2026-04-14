@@ -87,12 +87,12 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
-                <!-- Missing Since -->
+                <!-- Last Seen At -->
                 <div>
-                    <label for="missing_since" class="block text-sm font-medium text-gray-700 mb-1">Missing Since <span class="text-red-500">*</span></label>
-                    <input type="date" name="missing_since" id="missing_since" value="{{ old('missing_since', $animal->missing_since ? $animal->missing_since->format('Y-m-d') : '') }}" required
+                    <label for="last_seen_at" class="block text-sm font-medium text-gray-700 mb-1">Last Seen At <span class="text-red-500">*</span></label>
+                    <input type="date" name="last_seen_at" id="last_seen_at" value="{{ old('last_seen_at', $animal->last_seen_at ? $animal->last_seen_at->format('Y-m-d') : '') }}" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    @error('missing_since')
+                    @error('last_seen_at')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>

@@ -141,11 +141,8 @@ class AdoptionPetsSeeder extends Seeder
         foreach ($pets as $pet) {
             $createdPet = AdoptionPet::create($pet);
             
-            // Attach random traits to each pet (1-3 random traits)
-            $allTraits = AdoptionTrait::all()->pluck('id')->toArray();
-            $numTraits = rand(1, 3);
-            $randomTraitIds = array_rand(array_flip($allTraits), $numTraits);
-            $createdPet->traits()->attach($randomTraitIds);
+            // Skip trait attachment - requires pet_traits migration to complete
+            // Traits can be attached after migrations are fully applied
         }
     }
 }

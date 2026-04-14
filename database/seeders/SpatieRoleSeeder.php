@@ -101,7 +101,7 @@ class SpatieRoleSeeder extends Seeder
                 'citizen' => 'citizen',
             ];
 
-            $existingRole = $firstAdmin->role;
+            $existingRole = $firstAdmin->getRoleNames()->first();
             $spatieRole = $roleMapping[$existingRole] ?? 'admin_staff';
             
             $firstAdmin->assignRole($spatieRole);

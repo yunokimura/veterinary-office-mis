@@ -15,12 +15,12 @@ class CreateRecordsStaffUser extends Seeder
         User::firstOrCreate(
             ['email' => 'records@vetmis.gov.ph'],
             [
-                'name' => 'Records Staff',
+                'first_name' => 'Records',
+                'last_name' => 'Staff',
                 'password' => bcrypt('staff123'),
-                'role' => 'records_staff',
-                'division' => 'Records Division',
                 'contact_number' => '09123456810',
                 'address' => 'City Veterinary Office',
+                'status' => 'active',
             ]
         );
         

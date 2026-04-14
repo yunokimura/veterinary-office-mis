@@ -54,6 +54,26 @@
 - **Deleted**: `database/migrations/2026_04_14_000001_drop_users_table.php`
 - **Reason**: Redundant - the old users table was already renamed by migration 2026_04_08
 
+### Fix Migration Errors
+- **Deleted**: `database/migrations/2026_04_12_000003_add_status_to_missing_pets_table.php`
+- **Reason**: Duplicate - the status column already exists in `2026_04_12_000000_create_missing_pets_table.php` with different enum values
+
+### Fix Schema Hardcoding in Migration
+- **Modified**: `database/migrations/2026_04_13_100000_refactor_admin_users_normalize.php`
+- **Change**: Changed hardcoded database name 'vet_mis' to DATABASE() for dynamic schema detection
+
+### Fix FK Check Logic
+- **Modified**: `database/migrations/2026_04_15_000001_rename_admin_users_to_users.php`
+- **Changes**:
+  - Removed data migration code (full_name already dropped by earlier migration)
+  - Added logic to handle case where both 'users' and 'admin_users' tables exist
+  - Now properly handles edge case where migration 2026_04_08 might not have run
+
+### Migrations Deleted Due to Schema Mismatch
+These migrations were deleted because they referenced old missing_pets schema (pet_name, image) which doesn't exist in the newer schema (name, photo_img):
+- `2026_04_13_100300_migrate_missing_pets_to_pets.php`
+- `2026_04_13_100500_create_attachments_table.php`
+
 ---
 
 ## Additional Changes Made (2026-04-15)

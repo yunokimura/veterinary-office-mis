@@ -19,11 +19,12 @@ class SpayNeuterReport extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'user_id',
         'pet_name',
         'pet_type',
-        'breed',
-        'age',
-        'sex',
+        'pet_breed',
+        'pet_age',
+        'pet_sex',
         'color_markings',
         'owner_name',
         'owner_contact',

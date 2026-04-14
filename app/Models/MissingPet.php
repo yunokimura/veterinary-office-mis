@@ -14,20 +14,23 @@ class MissingPet extends Model
     protected $primaryKey = 'missing_id';
     public $incrementing = true;
 
+    protected $casts = [
+        'last_seen_at' => 'datetime',
+    ];
+
     protected $fillable = [
         'pet_name',
         'species',
-        'gender',
-        'age',
         'breed',
-        'description',
+        'age',
         'weight',
-        'image',
-        'date_of_birth',
-        'is_age_estimated',
-        'missing_since',
-        'last_seen_location',
-        'contact_info',
+        'color',
+        'gender',
+        'last_seen_at',
+        'description',
+        'location',
+        'photo_img',
+        'status',
     ];
 
     public function traits(): BelongsToMany

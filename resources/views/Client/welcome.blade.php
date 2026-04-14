@@ -302,11 +302,11 @@
                 @forelse($missingPets as $pet)
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->missing_id }})">
                     <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                        <img src="{{ $pet->photo_img ? asset($pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=' . urlencode($pet->name) }}" alt="{{ $pet->name }}" class="w-full h-full object-cover pet-image">
+                        <img src="{{ $pet->photo_img ? asset($pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
                         <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->status) }}</span>
                     </div>
                     <div class="p-4">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->name }}</h3>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
                                 <span class="text-gray-500">Age:</span>
@@ -314,7 +314,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-500">Weight:</span>
-                                <span class="text-gray-700 font-medium">{{ $pet->weight }} kg</span>
+                                <span class="text-gray-700 font-medium">{{ $pet->weight }}</span>
                             </div>
                             <div class="border-t pt-2 mt-2">
                                 <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
@@ -927,15 +927,15 @@
             if (!pet) return;
             
             const imageUrl = pet.photo_img 
-                ? "{{ asset('') }}" + pet.photo_img 
-                : "https://placehold.co/400x400/e2e8f0/94a3b8?text=" + pet.name;
+                ? "{{ asset('') }}/" + pet.photo_img 
+                : "https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image";
             
             document.getElementById('modalPetImage').src = imageUrl;
-            document.getElementById('modalPetName').textContent = pet.name;
+            document.getElementById('modalPetName').textContent = pet.pet_name;
             document.getElementById('modalPetSpecies').textContent = pet.species;
             document.getElementById('modalPetBreed').textContent = pet.breed || 'Unknown';
             document.getElementById('modalPetAge').textContent = pet.age + ' years';
-            document.getElementById('modalPetWeight').textContent = pet.weight + ' kg';
+            document.getElementById('modalPetWeight').textContent = pet.weight;
             document.getElementById('modalPetColor').textContent = pet.color || 'Unknown';
             document.getElementById('modalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
             document.getElementById('modalLastSeen').textContent = new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });

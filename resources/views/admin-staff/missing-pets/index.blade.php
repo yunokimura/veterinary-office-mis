@@ -100,7 +100,7 @@
                         <h3 class="text-lg font-bold text-gray-800">{{ $pet->pet_name }}</h3>
                         <p class="text-sm text-gray-500">{{ ucfirst($pet->species) }} - {{ $pet->breed ?? 'Unknown Breed' }}</p>
                         <div class="mt-3 space-y-1 text-sm text-gray-600">
-                            <p><i class="bi bi-calendar mr-1"></i> Missing since: {{ $pet->missing_since ? $pet->missing_since->format('M d, Y') : 'N/A' }}</p>
+                            <p><i class="bi bi-calendar mr-1"></i> Last seen: {{ $pet->last_seen_at ? $pet->last_seen_at->format('M d, Y') : 'N/A' }}</p>
                             <p><i class="bi bi-geo-alt mr-1"></i> {{ $pet->last_seen_location }}</p>
                         </div>
                         <div class="mt-4 flex gap-2">

@@ -97,7 +97,7 @@ Route::get('/', function () {
         }
     }
     // Get missing pets for the landing page
-    $missingPets = \App\Models\MissingPet::orderBy('missing_since', 'desc')
+    $missingPets = \App\Models\MissingPet::orderBy('last_seen_at', 'desc')
         ->limit(5)
         ->get();
     
@@ -673,7 +673,7 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
 // Landing page for client portal
 Route::get('/client', function () {
     $missingPets = \App\Models\AdoptionPet::where('is_missing', true)
-        ->orderBy('missing_since', 'desc')
+        ->orderBy('last_seen_at', 'desc')
         ->limit(5)
         ->get();
     
@@ -936,7 +936,7 @@ Route::post('/adoption', [\App\Http\Controllers\AdoptionPetController::class, 's
 Route::get('/missing-pets', function () {
     $missingPets = Pet::where('is_missing', true)
         ->with('owner')
-        ->orderBy('missing_since', 'desc')
+        ->orderBy('last_seen_at', 'desc')
         ->paginate(12);
     
     // Get active announcements for public (all published, no audience filter)

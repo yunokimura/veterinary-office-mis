@@ -78,8 +78,8 @@
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Missing Information</h3>
             <div class="space-y-4">
                 <div>
-                    <p class="text-sm text-gray-500">Missing Since</p>
-                    <p class="font-medium text-gray-800">{{ $animal->missing_since ? $animal->missing_since->format('M d, Y') : 'N/A' }}</p>
+                    <p class="text-sm text-gray-500">Last Seen At</p>
+                    <p class="font-medium text-gray-800">{{ $animal->last_seen_at ? $animal->last_seen_at->format('M d, Y') : 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Last Seen Location</p>

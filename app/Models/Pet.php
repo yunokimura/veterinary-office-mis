@@ -86,7 +86,7 @@ class Pet extends Model
 
     public function missingReport(): HasMany
     {
-        return $this->hasMany(MissingReport::class, 'pet_id');
+        return $this->hasMany(MissingPetsReport::class, 'pet_id', 'pet_id');
     }
 
     public function traits(): BelongsToMany

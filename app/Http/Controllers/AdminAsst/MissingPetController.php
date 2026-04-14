@@ -23,7 +23,7 @@ class MissingPetController extends Controller
             $query->where('status', $request->status);
         }
 
-        $missingPets = $query->orderBy('missing_since', 'desc')->paginate(12);
+        $missingPets = $query->orderBy('last_seen_at', 'desc')->paginate(12);
         
         $pendingCount = MissingPet::where('status', 'pending')->count();
         $approvedCount = MissingPet::where('status', 'approved')->count();
@@ -53,7 +53,7 @@ class MissingPetController extends Controller
             'color' => 'nullable|string|max:255',
             'gender' => 'nullable|string|in:male,female,unknown',
             'image' => 'nullable|image|max:2048',
-            'missing_since' => 'required|date',
+            'last_seen_at' => 'required|date',
             'last_seen_location' => 'required|string',
             'contact_info' => 'required|string',
         ]);
@@ -126,7 +126,7 @@ public function show(MissingPet $missingPet)
             'description' => 'nullable|string',
             'weight' => 'nullable|numeric|min:0',
             'date_of_birth' => 'nullable|date',
-            'missing_since' => 'required|date',
+            'last_seen_at' => 'required|date',
             'last_seen_location' => 'required|string',
             'contact_info' => 'required|string',
         ]);

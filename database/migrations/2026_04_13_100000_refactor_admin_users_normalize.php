@@ -56,8 +56,8 @@ return new class extends Migration
             // 5. Add foreign key if column exists and FK doesn't
             if (Schema::hasColumn('admin_users', 'barangay_id')) {
                 try {
-                    // Check if foreign key already exists
-                    $foreignKeys = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = 'vet_mis' AND TABLE_NAME = 'admin_users' AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME = 'admin_users_barangay_id_foreign'");
+                    // Check if foreign key already exists - use DATABASE() for dynamic schema
+                    $foreignKeys = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'admin_users' AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME = 'admin_users_barangay_id_foreign'");
                     if (empty($foreignKeys)) {
                         $table->foreign('barangay_id')
                             ->references('barangay_id')

@@ -16,110 +16,108 @@ class UserRoleSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Super Admin',
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
                 'email' => 'superadmin@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'super_admin',
                 'status' => 'active',
                 'contact_number' => '091234567890',
             ],
             [
-                'name' => 'Dr. Maria Santos',
+                'first_name' => 'Maria',
+                'last_name' => 'Santos',
                 'email' => 'cityvet@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'city_vet',
                 'status' => 'active',
                 'contact_number' => '091234567891',
             ],
             [
-                'name' => 'John Doe',
+                'first_name' => 'John',
+                'last_name' => 'Doe',
                 'email' => 'adminasst@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'admin_asst',
                 'status' => 'active',
                 'contact_number' => '091234567892',
             ],
             [
-                'name' => 'Dr. Pedro Garcia',
+                'first_name' => 'Pedro',
+                'last_name' => 'Garcia',
                 'email' => 'veterinarian@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'veterinarian',
                 'status' => 'active',
                 'contact_number' => '091234567893',
             ],
             [
-                'name' => 'Paws Animal Clinic',
+                'first_name' => 'Paws Animal',
+                'last_name' => 'Clinic',
                 'email' => 'clinic@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'clinic',
                 'status' => 'active',
                 'contact_number' => '091234567890',
             ],
             [
-                'name' => 'Roberto Cruz',
+                'first_name' => 'Roberto',
+                'last_name' => 'Cruz',
                 'email' => 'livestock@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'livestock_inspector',
                 'status' => 'active',
                 'contact_number' => '091234567894',
             ],
             [
-                'name' => 'Maria Lopez',
+                'first_name' => 'Maria',
+                'last_name' => 'Lopez',
                 'email' => 'meatinspector@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'meat_inspector',
                 'status' => 'active',
                 'contact_number' => '091234567895',
             ],
             [
-                'name' => 'Sarah Miller',
+                'first_name' => 'Sarah',
+                'last_name' => 'Miller',
                 'email' => 'records@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'records_staff',
                 'status' => 'active',
                 'contact_number' => '091234567896',
             ],
             [
-                'name' => 'Carlos Reyes',
+                'first_name' => 'Carlos',
+                'last_name' => 'Reyes',
                 'email' => 'diseasecontrol@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'disease_control',
                 'status' => 'active',
                 'contact_number' => '091234567897',
             ],
             [
-                'name' => 'Barangay Encoder',
+                'first_name' => 'Barangay',
+                'last_name' => 'Encoder',
                 'email' => 'barangay@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'barangay_encoder',
-                'barangay' => 'Poblacion',
                 'status' => 'active',
                 'contact_number' => '091234567898',
             ],
             [
-                'name' => 'Supervisor',
+                'first_name' => 'Supervisor',
+                'last_name' => 'User',
                 'email' => 'viewer@vetmis.gov',
                 'password' => Hash::make('password123'),
-                'role' => 'viewer',
                 'status' => 'active',
                 'contact_number' => '091234567899',
             ],
         ];
 
         foreach ($users as $userData) {
-            // Check if user already exists
             $existingUser = User::where('email', $userData['email'])->first();
             
             if (!$existingUser) {
                 User::create($userData);
-                echo "Created user: {$userData['email']} with role: {$userData['role']}\n";
+                echo "Created user: {$userData['email']}\n";
             } else {
-                // Update existing user's role
                 $existingUser->update([
-                    'role' => $userData['role'],
+                    'first_name' => $userData['first_name'],
+                    'last_name' => $userData['last_name'],
                     'status' => 'active',
                 ]);
-                echo "Updated user: {$userData['email']} with role: {$userData['role']}\n";
+                echo "Updated user: {$userData['email']}\n";
             }
         }
     }

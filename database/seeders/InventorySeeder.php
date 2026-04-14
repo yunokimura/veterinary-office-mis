@@ -140,21 +140,24 @@ class InventorySeeder extends Seeder
         ];
 
         foreach ($items as $item) {
-            $newItem = InventoryItem::create($item);
+            $existingItem = InventoryItem::where('item_code', $item['item_code'])->first();
+            
+            if (!$existingItem) {
+                $newItem = InventoryItem::create($item);
 
-            // Create initial stock movement
-            if ($item['quantity'] > 0 && $item['expiry_date'] !== null && strtotime($item['expiry_date']) > time()) {
-                StockMovement::create([
-                    'inventory_item_id' => $newItem->id,
-                    'user_id' => 1,
-                    'movement_type' => 'stock_in',
-                    'quantity' => $item['quantity'],
-                    'previous_quantity' => 0,
-                    'new_quantity' => $item['quantity'],
-                    'reference_number' => 'INITIAL-' . $newItem->item_code,
-                    'remarks' => 'Initial stock entry',
-                    'movement_date' => now()->subDays(30),
-                ]);
+                if ($item['quantity'] > 0 && $item['expiry_date'] !== null && strtotime($item['expiry_date']) > time()) {
+                    StockMovement::create([
+                        'inventory_item_id' => $newItem->id,
+                        'user_id' => 1,
+                        'movement_type' => 'stock_in',
+                        'quantity' => $item['quantity'],
+                        'previous_quantity' => 0,
+                        'new_quantity' => $item['quantity'],
+                        'reference_number' => 'INITIAL-' . $newItem->item_code,
+                        'remarks' => 'Initial stock entry',
+                        'movement_date' => now()->subDays(30),
+                    ]);
+                }
             }
         }
     }

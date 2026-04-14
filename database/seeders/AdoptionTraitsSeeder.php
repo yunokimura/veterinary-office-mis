@@ -31,7 +31,7 @@ class AdoptionTraitsSeeder extends Seeder
         ];
 
         foreach ($traits as $traitName) {
-            AdoptionTrait::create(['name' => $traitName]);
+            AdoptionTrait::firstOrCreate(['name' => $traitName]);
         }
     }
 }
