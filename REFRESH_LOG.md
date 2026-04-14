@@ -1,8 +1,8 @@
 # REFRESH_LOG.md - Identity System Refactoring
 
-## Date: 2026-04-14
+## Date: 2026-04-14 (Updated: 2026-04-15)
 
-## Task: Rename admin_users table to users
+## Task: Rename admin_users table to users + Migration Fixes
 
 ---
 
@@ -49,6 +49,30 @@
 - **File**: `app/Services/NotificationService.php`
 - **Changes**:
   - Line 42: Raw query references updated: `admin_users.role` → `users.role`
+
+---
+
+## Additional Changes Made (2026-04-15)
+
+### Issue #2: Duplicate missing_pets Tables
+- **Deleted**: `database/migrations/2026_04_11_000001_create_missing_pets_table.php`
+- **Kept**: `database/migrations/2026_04_12_000000_create_missing_pets_table.php`
+- **Reason**: April 12 version has more complete schema with enum gender, status field, color, photo_img fields
+
+### Issue #3: Duplicate Timestamps
+- **Renamed**: `2026_04_13_100000_add_source_tracking_to_pets_table.php` → `2026_04_13_100001_add_source_tracking_to_pets_table.php`
+- **Reason**: Ensures predictable migration execution order
+
+### Issue #4: Inconsistent Gender Enum
+- **Modified**: `database/migrations/2026_03_31_150200_create_adoption_pets_table.php`
+- **Change**: Added enum constraint to gender column
+  - From: `$table->string('gender')`
+  - To: `$table->enum('gender', ['male', 'female', 'unknown'])->default('unknown')`
+
+### Issue #6: Down Migration Conflicts
+- **Modified**: `database/migrations/2026_04_13_100001_add_source_tracking_to_pets_table.php`
+- **Change**: Modified down() to only drop indexes, not columns
+  - Removed: `$table->dropColumn([...])` to prevent breaking migrations 100200/100300
 
 ---
 

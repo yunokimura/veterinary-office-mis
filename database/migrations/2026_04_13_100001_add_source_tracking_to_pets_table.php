@@ -24,7 +24,8 @@ return new class extends Migration
     {
         Schema::table('pets', function (Blueprint $table) {
             $table->dropIndex(['source_module', 'source_module_id']);
-            $table->dropColumn(['source_module', 'source_module_id', 'is_approved', 'consolidated_at', 'pet_status']);
+            // Note: Not dropping columns because migrations 100200 and 100300 depend on them
+            // Columns will need to be removed manually if needed
         });
     }
 };

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('species'); // dog, cat, etc.
             $table->string('breed')->nullable();
             $table->integer('age'); // in years
-            $table->string('gender'); // male, female
+            $table->enum('gender', ['male', 'female', 'unknown'])->default('unknown'); // male, female, unknown
             $table->text('description')->nullable();
             $table->text('traits')->nullable();
             $table->string('image')->nullable();
