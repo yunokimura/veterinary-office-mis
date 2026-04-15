@@ -200,8 +200,9 @@
                 </div>
             </div>
 
-            <form method="POST" action="#" enctype="multipart/form-data">
+            <form method="POST" action="{{ url('/kapon/form') }}" enctype="multipart/form-data" id="kaponForm">
                 @csrf
+                <input type="hidden" name="pets_data" id="petsDataJson" value="">
 
                 <!-- PART 1: OWNER'S INFO -->
                 <div id="part1" class="form-part">
@@ -562,6 +563,15 @@
                         document.getElementById('selectedCount').textContent = selectedPets.length;
                     }
 
+                    function updatePetsData() {
+                        // Get full pet details for all selected pets
+                        const selectedPetsData = selectedPets.map(petId => {
+                            return petsData.find(p => String(p.id) === String(petId));
+                        }).filter(p => p !== undefined);
+                        
+                        document.getElementById('petsDataJson').value = JSON.stringify(selectedPetsData);
+                    }
+
                     function confirmPetSelection() {
                         const container = document.getElementById('selectedPetsList');
                         const noPetsMessage = document.getElementById('noPetsSelected');
@@ -650,7 +660,7 @@
                                         <span class="font-medium text-sm text-gray-700">${pet.name}</span>
                                     </div>
                                     <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                                        <input type="file" name="pet_photos[${pet.id}][]" id="pet_photos_${pet.id}" multiple accept="image/*" class="hidden">
+                                        <input type="file" name="pet_photos[${pet.id}][]" id="pet_photos_${pet.id}" multiple accept="image/*" class="hidden" onchange="handleFileSelect(this, ${pet.id})">
                                         <label for="pet_photos_${pet.id}" class="cursor-pointer">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -658,11 +668,14 @@
                                             <p class="text-gray-600 text-sm">Click to upload photos for ${pet.name}</p>
                                         </label>
                                     </div>
+                                    <div id="photo_preview_${pet.id}" class="mt-3 grid grid-cols-2 gap-2"></div>
                                 `;
                                 photoContainer.appendChild(photoField);
                             }
                         });
 
+                        // Update hidden pets_data field with current pet selection
+                        updatePetsData();
                         closePetModal();
                     }
 
@@ -679,6 +692,7 @@
                         // Rebuild the display
                         confirmPetSelection();
                         updateSelectedCount();
+                        updatePetsData();
                     }
 
                     // Close modal on escape key
@@ -687,6 +701,51 @@
                             closePetModal();
                         }
                     });
+
+                    // Handle file selection and display preview
+                    function handleFileSelect(input, petId) {
+                        const previewContainer = document.getElementById(`photo_preview_${petId}`);
+                        if (!previewContainer) return;
+
+                        // Clear previous previews
+                        previewContainer.innerHTML = '';
+
+                        const files = input.files;
+                        if (files.length === 0) return;
+
+                        Array.from(files).forEach((file, index) => {
+                            if (!file.type.startsWith('image/')) return;
+
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const div = document.createElement('div');
+                                div.className = 'relative';
+                                div.innerHTML = `
+                                    <img src="${e.target.result}" alt="${file.name}" class="w-full h-20 object-cover rounded-lg border border-gray-200">
+                                    <button type="button" onclick="removePhoto(${petId}, ${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600">
+                                        ×
+                                    </button>
+                                    <p class="text-xs text-gray-500 mt-1 truncate">${file.name}</p>
+                                `;
+                                previewContainer.appendChild(div);
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    }
+
+                    function removePhoto(petId, index) {
+                        const input = document.getElementById(`pet_photos_${petId}`);
+                        if (input) {
+                            // Create a new DataTransfer to remove the file
+                            const dt = new DataTransfer();
+                            Array.from(input.files).forEach((file, i) => {
+                                if (i !== index) dt.items.add(file);
+                            });
+                            input.files = dt.files;
+                            // Trigger change event to update preview
+                            handleFileSelect(input, petId);
+                        }
+                    }
                 </script>
 
                 <!-- PART 3: PER-PET AGREEMENT -->

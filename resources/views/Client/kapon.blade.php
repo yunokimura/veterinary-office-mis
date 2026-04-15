@@ -118,6 +118,37 @@
         </div>
     </header>
 
+    <!-- Session Status Alert (Floating) -->
+    @if (session('status'))
+        <div id="successAlert" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg max-w-md">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-sm">{{ session('status') }}</span>
+                </div>
+                <button type="button" onclick="closeAlert()" class="ml-3 text-green-700 hover:text-green-900 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <script>
+            function closeAlert() {
+                document.getElementById('successAlert').style.display = 'none';
+            }
+            // Auto-close after 15 seconds
+            setTimeout(function() {
+                const alert = document.getElementById('successAlert');
+                if (alert) {
+                    alert.style.display = 'none';
+                }
+            }, 15000);
+        </script>
+    @endif
+
     <!-- Hero Section -->
     <section class="bg-[#066D33] min-h-[500px] flex items-center justify-center py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -65,6 +65,7 @@ require __DIR__.'/auth.php';
 
 use App\Models\Pet;
 use App\Models\Announcement;
+use App\Models\SpayNeuterReport;
 
 // ... existing imports
 
@@ -729,6 +730,7 @@ Route::get('/kapon/form', function () {
             'breed' => $pet->breed,
             'age' => $pet->estimated_age,
             'weight' => $pet->pet_weight,
+            'sex' => $pet->sex ?? $pet->gender, // Use sex or gender (either may be populated)
             'image' => $pet->pet_image,
         ];
     })->toArray();
@@ -739,19 +741,88 @@ Route::get('/kapon/form', function () {
 // Kapon Form POST Route
 Route::post('/kapon/form', function (\Illuminate\Http\Request $request) {
     $validated = $request->validate([
-        'first_name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
-        'email' => 'required|email',
-        'mobile_number' => 'required|string|max:20',
-        'blk_lot_ph' => 'required|string|max:255',
-        'street' => 'required|string|max:255',
-        'barangay' => 'required|string|max:255',
-        'selected_pets' => 'required|array|min:1',
-        'appointment_date_date' => 'required|date|after_or_equal:today',
-        'appointment_date_time' => 'required',
+        'selected_pets' => 'required|array|min:1|max:3',
+        'appointment_date' => 'required|date|after_or_equal:today',
+        'appointment_time' => 'required',
     ]);
 
-    return redirect('/kapon')->with('status', 'Kapon application submitted successfully!');
+    // Get authenticated user's PetOwner
+    $petOwner = auth()->user()->petOwner;
+    
+    if (!$petOwner) {
+        return redirect()->back()->with('error', 'Please complete your profile first.');
+    }
+
+    // Build owner info from PetOwner
+    $ownerName = $petOwner->first_name . ' ' . $petOwner->last_name;
+    $ownerAddress = $petOwner->blk_lot_ph . ', ' . $petOwner->street . ', ' . $petOwner->barangay;
+    $ownerContact = $petOwner->phone_number;
+
+    // Handle photo uploads
+    $photoPaths = [];
+    if ($request->hasFile('pet_photos')) {
+        foreach ($request->file('pet_photos') as $petId => $files) {
+            foreach ($files as $file) {
+                if ($file->isValid()) {
+                    $path = $file->store('kapon_photos', 'public');
+                    $photoPaths[$petId][] = $path;
+                }
+            }
+        }
+    }
+
+    // Get pet details from form's pets_data JSON
+    $petsData = json_decode($request->input('pets_data'), true);
+
+    // Create one SpayNeuterReport per selected pet
+    foreach ($validated['selected_pets'] as $petId) {
+        $pet = collect($petsData)->firstWhere('id', (string)$petId);
+        
+        // Get pet sex (use whatever is available)
+        $petSex = $pet['sex'] ?? null;
+        
+        // If sex is still null, default to 'male' to prevent DB error
+        if (empty($petSex)) {
+            $petSex = 'male';
+        }
+        
+        // Determine procedure type based on pet sex
+        // Male → neuter, Female → spay (no "both" option)
+        $procedureType = ($petSex === 'male') ? 'neuter' : 'spay';
+
+        // Format pet_age to readable string (e.g., "5 years" or "1 year 6 months")
+        $petAgeDisplay = null;
+        if (isset($pet['age'])) {
+            $ageStr = $pet['age'];
+            // Replace underscores with spaces for readable format
+            $petAgeDisplay = ucfirst(str_replace('_', ' ', $ageStr));
+        }
+
+        SpayNeuterReport::create([
+            'user_id' => auth()->id(),
+            'pet_name' => $pet['name'] ?? 'Unknown',
+            'pet_type' => $pet['species'] ?? 'dog',
+            'pet_breed' => $pet['breed'] ?? 'Unknown',
+            'pet_age' => $petAgeDisplay,
+            'pet_sex' => $petSex,
+            'owner_name' => $ownerName,
+            'owner_contact' => $ownerContact,
+            'owner_address' => $ownerAddress,
+            'procedure_type' => $procedureType,
+            'procedure_date' => $validated['appointment_date'],
+            'barangay' => $petOwner->barangay,
+            'weight' => $pet['weight'] ?? null,
+            'status' => 'pending',
+            'remarks' => json_encode([
+                'appointment_time' => $validated['appointment_time'],
+                'email' => $petOwner->email,
+                'photo_paths' => $photoPaths[$petId] ?? [],
+                'general_agreement' => $request->input('general_agreement', []),
+            ]),
+        ]);
+    }
+
+    return redirect('/kapon')->with('status', 'Kapon application submitted successfully! You will be notified once reviewed.');
 })->middleware('auth');
 
 // Adoption Page Route - Public
