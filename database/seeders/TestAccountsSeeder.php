@@ -116,7 +116,7 @@ class TestAccountsSeeder extends Seeder
                 'contact_number' => '091988877707',
             ]
         );
-        $user7->assignRole('citizen');
+        $user7->assignRole('pet_owner');
 
         // ==============================
         // ADDITIONAL ACCOUNTS
@@ -187,7 +187,7 @@ class TestAccountsSeeder extends Seeder
         $this->command->info('4. assistantvet@vetmis.gov - Assistant Vet (password123)');
         $this->command->info('5. livestock@vetmis.gov - Livestock Inspector (password123)');
         $this->command->info('6. meatinspector@vetmis.gov - Meat Inspector (password123)');
-        $this->command->info('7. citizen@test.com - Citizen/Pet Owner (password123)');
+        $this->command->info('7. citizen@test.com - Pet Owner (password123)');
         $this->command->info('8. diseasecontrol@vetmis.gov - Disease Control (password123)');
         $this->command->info('9. adminasst@vetmis.gov - Admin Assistant (password123)');
         $this->command->info('10. clinic@vetmis.gov - Vet Clinic (password123)');

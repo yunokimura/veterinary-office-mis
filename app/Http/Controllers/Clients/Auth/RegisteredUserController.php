@@ -31,7 +31,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Create user with 'citizen' role for client portal
+        // Create user with 'pet_owner' role for client portal
         // Only citizen role is allowed to register through client portal
         $nameParts = explode(' ', $request->name, 2);
         $firstName = $nameParts[0] ?? '';

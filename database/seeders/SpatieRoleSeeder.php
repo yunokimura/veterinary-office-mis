@@ -48,10 +48,6 @@ class SpatieRoleSeeder extends Seeder
                 'guard_name' => 'web',
             ],
             [
-                'name' => 'records_staff',
-                'guard_name' => 'web',
-            ],
-            [
                 'name' => 'barangay_encoder',
                 'guard_name' => 'web',
             ],
@@ -64,7 +60,7 @@ class SpatieRoleSeeder extends Seeder
                 'guard_name' => 'web',
             ],
             [
-                'name' => 'citizen',
+                'name' => 'pet_owner',
                 'guard_name' => 'web',
             ],
             [
@@ -98,7 +94,7 @@ class SpatieRoleSeeder extends Seeder
                 'meat_inspector' => 'city_vet',
                 'clinic' => 'city_vet',
                 'hospital' => 'city_vet',
-                'citizen' => 'citizen',
+                'pet_owner' => 'pet_owner',
             ];
 
             $existingRole = $firstAdmin->getRoleNames()->first();

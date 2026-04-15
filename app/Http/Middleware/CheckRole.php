@@ -49,7 +49,7 @@ class CheckRole
             'disease_control' => 'disease-control.dashboard',
             'clinic' => 'clinic.dashboard',
             'hospital' => 'hospital.dashboard',
-            'citizen' => 'owner.dashboard',
+            'pet_owner' => 'owner.dashboard',
         ];
 
         if (isset($roleDashboards[$userRole])) {

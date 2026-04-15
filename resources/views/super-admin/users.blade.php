@@ -13,9 +13,8 @@
         'assistant_vet' => 'Assistant Veterinarian',
         'livestock_inspector' => 'Livestock Inspector',
         'meat_inspector' => 'Meat Inspector',
-        'records_staff' => 'Records Staff',
         'city_pound' => 'City Pound Personnel',
-        'citizen' => 'Citizen',
+        'pet_owner' => 'Pet Owner',
     ];
 
     $statusColors = [

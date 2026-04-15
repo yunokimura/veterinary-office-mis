@@ -240,7 +240,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public const ROLE_MEAT_INSPECTOR = 'meat_inspector';     // Meat & Post-Abattoir Inspector
     public const ROLE_RECORDS_STAFF = 'records_staff';       // Records Management
     public const ROLE_CITY_POUND = 'city_pound';             // City Pound Personnel
-    public const ROLE_CITIZEN = 'citizen';                  // Pet owner/citizen portal
+    public const ROLE_PET_OWNER = 'pet_owner';                  // Pet owner/citizen portal
 
     /**
      * Check if user is a super admin (System Administrator).
@@ -320,7 +320,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      */
     public function isCitizen(): bool
     {
-        return $this->hasRole('citizen');
+        return $this->hasRole('pet_owner');
     }
 
     /**
@@ -375,7 +375,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
             self::ROLE_RECORDS_STAFF => 'Records Staff',
             self::ROLE_CITY_POUND => 'City Pound Personnel',
-            self::ROLE_CITIZEN => 'Citizen (Pet Owner)',
+            self::ROLE_PET_OWNER => 'Pet Owner',
             default => 'Unknown',
         };
     }
@@ -395,9 +395,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_HOSPITAL => 'External Vet Hospital',
             self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector (Book Binder 1)',
             self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
-            self::ROLE_RECORDS_STAFF => 'Records Staff',
-            self::ROLE_CITY_POUND => 'City Pound Personnel',
-            self::ROLE_CITIZEN => 'Citizen (Pet Owner)',
+            self::ROLE_PET_OWNER => 'Pet Owner',
         ];
     }
 
@@ -418,7 +416,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_MEAT_INSPECTOR => 4,     // Meat & Post-Abattoir Inspector
             self::ROLE_RECORDS_STAFF => 3,      // Records Management
             self::ROLE_CITY_POUND => 3,         // City Pound Personnel
-            self::ROLE_CITIZEN => 1,            // Pet owner / citizen portal
+            self::ROLE_PET_OWNER => 1,            // Pet owner / citizen portal
         ];
     }
 
@@ -481,11 +479,11 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
 
     /**
      * Check if user can access admin dashboard.
-     * Citizens cannot access admin areas.
+     * Pet Owners cannot access admin areas.
      */
     public function canAccessAdminPanel(): bool
     {
-        return !$this->hasRole(self::ROLE_CITIZEN);
+        return !$this->hasRole(self::ROLE_PET_OWNER);
     }
 
     /**

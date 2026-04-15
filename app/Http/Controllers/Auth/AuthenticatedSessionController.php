@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         // Check if user has verified their email
-        if (!$user->is_verified && $user->hasRole('citizen')) {
+        if (!$user->is_verified && $user->hasRole('pet_owner')) {
             // Store email in session and redirect to OTP verification
             session(['email' => $user->email]);
             Auth::logout();
@@ -82,9 +82,9 @@ class AuthenticatedSessionController extends Controller
             case 'inventory_staff':
                 return redirect()->intended('/assistant-vet/dashboard')
                     ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
-            case 'citizen':
+            case 'pet_owner':
                 return redirect()->intended(route('owner.dashboard'))
-                    ->with('success', 'Welcome back, Citizen ' . $user->name . '!');
+                    ->with('success', 'Welcome back, Pet Owner ' . $user->name . '!');
             case 'viewer':
                 return redirect()->intended('/viewer/dashboard')
                     ->with('success', 'Welcome back, Viewer ' . $user->name . '!');

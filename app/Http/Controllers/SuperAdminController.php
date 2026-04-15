@@ -45,7 +45,7 @@ class SuperAdminController extends Controller
             'viewers' => User::where('role', 'viewer')->count(),
 
             // Client & Animal statistics
-            'total_clients' => User::where('role', 'citizen')->count(),
+            'total_clients' => User::where('role', 'pet_owner')->count(),
             'total_animals' => Pet::count(),
 
             // Case statistics
@@ -103,7 +103,7 @@ class SuperAdminController extends Controller
 
         $stats = [
             'total_users' => User::count(),
-            'total_clients' => User::where('role', 'citizen')->count(),
+            'total_clients' => User::where('role', 'pet_owner')->count(),
             'total_animals' => Pet::count(),
             'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
             'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
@@ -235,7 +235,7 @@ class SuperAdminController extends Controller
                     'generated_at' => now()->toIso8601String(),
                     'period' => $year,
                     'total_users' => User::count(),
-                    'total_clients' => User::where('role', 'citizen')->count(),
+                    'total_clients' => User::where('role', 'pet_owner')->count(),
                     'total_animals' => Pet::count(),
             'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
                     'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),

@@ -12,8 +12,8 @@ class AssignSpatieRolesSeeder extends Seeder
     {
         // Ensure roles exist
         $roles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 
-                  'meat_inspector', 'livestock_inspector', 'records_staff', 'disease_control', 
-                  'barangay_encoder', 'viewer', 'citizen', 'clinic', 'hospital', 'city_pound'];
+                  'meat_inspector', 'livestock_inspector', 'disease_control', 
+                  'barangay_encoder', 'viewer', 'pet_owner', 'clinic', 'hospital', 'city_pound'];
         
         foreach ($roles as $roleName) {
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
@@ -35,7 +35,7 @@ class AssignSpatieRolesSeeder extends Seeder
             'disease_control' => 'disease_control',
             'barangay_encoder' => 'barangay_encoder',
             'viewer' => 'viewer',
-            'citizen' => 'citizen',
+            'pet_owner' => 'pet_owner',
             'clinic' => 'clinic',
             'hospital' => 'hospital',
             'city_pound' => 'city_pound',

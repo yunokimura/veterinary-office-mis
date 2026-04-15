@@ -27,7 +27,7 @@
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
 
         .sidebar {
-            width: 256px;
+            width: 220px;
             position: fixed;
             height: 100vh;
             top: 0;
@@ -37,7 +37,7 @@
         }
 
         main {
-            margin-left: 256px;
+            margin-left: 220px;
             min-height: 100vh;
         }
 
@@ -78,7 +78,7 @@
         }
 
         @media (max-width: 767px) {
-            .sidebar { transform: translateX(-256px); }
+            .sidebar { transform: translateX(-220px); }
             .sidebar.open { transform: translateX(0); }
             main { margin-left: 0; }
             .sidebar-overlay.active { display: block !important; }
@@ -143,7 +143,7 @@
                 'assistant_vet'    => 'assistant-vet',
                 'livestock_inspector' => 'livestock',
                 'meat_inspector'   => 'meat-inspection',
-                'citizen'          => 'owner',
+                'pet_owner'          => 'owner',
             ];
             $prefix = $routeMap[$role] ?? 'admin';
             $dashboardRoute = $prefix . '.dashboard';

@@ -74,7 +74,7 @@ class RegisteredUserController extends Controller
         // Combine date of birth
         $dateOfBirth = $request->dob_year . '-' . str_pad($request->dob_month, 2, '0', STR_PAD_LEFT) . '-' . str_pad($request->dob_day, 2, '0', STR_PAD_LEFT);
 
-        // Create user with 'citizen' role (using Spatie)
+        // Create user with 'pet_owner' role (using Spatie)
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -85,8 +85,8 @@ class RegisteredUserController extends Controller
             'date_of_birth' => $dateOfBirth,
         ]);
 
-        // Assign citizen role
-        $user->assignRole('citizen');
+        // Assign pet_owner role
+        $user->assignRole('pet_owner');
 
         // Create pet owner profile
         PetOwner::create([

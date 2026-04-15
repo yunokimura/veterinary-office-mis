@@ -47,8 +47,8 @@
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-500">Citizens</p>
-                <p class="text-3xl font-bold text-purple-600 mt-1">{{ \App\Models\User::where('role', 'citizen')->count() }}</p>
+                <p class="text-sm font-medium text-gray-500">Pet Owners</p>
+                <p class="text-3xl font-bold text-purple-600 mt-1">{{ \App\Models\User::where('role', 'pet_owner')->count() }}</p>
             </div>
             <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-person text-purple-600 text-2xl"></i>
@@ -106,7 +106,7 @@
                 <option value="meat_inspector" {{ request('role') == 'meat_inspector' ? 'selected' : '' }}>Meat Inspector</option>
                 <option value="records_staff" {{ request('role') == 'records_staff' ? 'selected' : '' }}>Records Staff</option>
                 <option value="city_pound" {{ request('role') == 'city_pound' ? 'selected' : '' }}>City Pound</option>
-                <option value="citizen" {{ request('role') == 'citizen' ? 'selected' : '' }}>Citizen</option>
+                <option value="pet_owner" {{ request('role') == 'pet_owner' ? 'selected' : '' }}>Pet Owner</option>
             </select>
             @if(request('search') || request('role'))
                 <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
@@ -148,7 +148,7 @@
                                     @case('assistant_vet') bg-purple-100 text-purple-800 @break
                                     @case('livestock_inspector') bg-yellow-100 text-yellow-800 @break
                                     @case('meat_inspector') bg-orange-100 text-orange-800 @break
-                                    @case('citizen') bg-pink-100 text-pink-800 @break
+                                    @case('pet_owner') bg-pink-100 text-pink-800 @break
                                     @default bg-gray-100 text-gray-800
                                 @endswitch">
                                 {{ str_replace('_', ' ', $user->getRoleAttribute()) }}

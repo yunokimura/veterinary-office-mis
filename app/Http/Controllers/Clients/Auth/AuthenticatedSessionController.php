@@ -70,7 +70,7 @@ class AuthenticatedSessionController extends Controller
             } elseif ($user->hasAnyRole(['clinic', 'hospital'])) {
                 return redirect()->route('clinic.dashboard')
                     ->with('success', 'Welcome back, Clinic User ' . $user->name . '!');
-            } elseif ($user->hasRole('citizen')) {
+            } elseif ($user->hasRole('pet_owner')) {
                 return redirect()->to('/client')
                     ->with('success', 'Welcome back, ' . $user->name . '!');
             } else {

@@ -38,7 +38,7 @@
             'assistant_vet'    => 'assistant-vet',
             'livestock_inspector' => 'livestock',
             'meat_inspector'   => 'meat-inspection',
-            'citizen'          => 'owner',
+            'pet_owner'          => 'owner',
             'clinic'           => 'clinic',
             'hospital'         => 'hospital',
         ];

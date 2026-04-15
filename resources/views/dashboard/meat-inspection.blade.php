@@ -15,7 +15,7 @@ $dashboardRoutes = [
     'assistant_vet' => 'assistant-vet.dashboard',
     'meat_inspector' => 'meat-inspection.dashboard',
     'livestock_inspector' => 'livestock.dashboard',
-    'citizen' => 'owner.dashboard',
+    'pet_owner' => 'owner.dashboard',
 ];
 $rolePrefix = str_replace('_', '-', $role);
 $dashboardRoute = $dashboardRoutes[$role] ?? $rolePrefix . '.dashboard';

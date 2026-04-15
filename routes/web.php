@@ -85,7 +85,7 @@ Route::get('/', function () {
             return redirect()->route('livestock.dashboard');
         } elseif ($user->hasRole('meat_inspector')) {
             return redirect()->route('meat-inspection.dashboard');
-        } elseif ($user->hasRole('citizen')) {
+        } elseif ($user->hasRole('pet_owner')) {
             return redirect()->route('owner.dashboard');
         } elseif ($user->hasRole('clinic')) {
             return redirect()->route('clinic.dashboard');

@@ -174,7 +174,7 @@ class RecordsController extends Controller
      */
     public function editAnimal(Pet $pet)
     {
-        $owners = User::where('role', 'citizen')->orderBy('name')->get();
+        $owners = User::where('role', 'pet_owner')->orderBy('name')->get();
         return view('records-staff.pets.edit', compact('pet', 'owners'));
     }
 
@@ -213,7 +213,7 @@ class RecordsController extends Controller
     {
         $search = $request->get('search', '');
 
-        $owners = User::role('citizen')
+        $owners = User::role('pet_owner')
             ->whereHas('petOwner', function ($query) use ($search) {
                 $query->when($search, function ($q) use ($search) {
                     $q->where('first_name', 'like', "%{$search}%")
@@ -358,7 +358,7 @@ class RecordsController extends Controller
             ->get();
 
         // Search owners
-        $owners = User::where('role', 'citizen')
+        $owners = User::where('role', 'pet_owner')
             ->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
                       ->orWhere('email', 'like', "%{$search}%")
