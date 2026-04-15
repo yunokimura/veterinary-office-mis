@@ -154,7 +154,13 @@
                             <!-- Large Pet Image -->
                             <div class="h-64 w-full bg-gray-200 relative">
                                 @if($pet->pet_image)
-                                    <img src="{{ asset('storage/' . $pet->pet_image) }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover">
+                                    @php
+                                        $imagePath = $pet->pet_image;
+                                        if (!str_contains($imagePath, 'images/pets') && !str_contains($imagePath, 'http')) {
+                                            $imagePath = 'images/pets/' . basename($imagePath);
+                                        }
+                                    @endphp
+                                    <img src="{{ asset($imagePath) }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
                                         <span class="text-white text-6xl font-bold">{{ substr($pet->pet_name, 0, 1) }}</span>
@@ -398,7 +404,11 @@
             // Set image
             const modalImg = document.getElementById('modalPetImage');
             if (pet.pet_image) {
-                modalImg.src = '{{ asset('storage/') }}/' + pet.pet_image;
+                let imgPath = pet.pet_image;
+                if (!imgPath.startsWith('http') && !imgPath.includes('images/pets')) {
+                    imgPath = 'images/pets/' + imgPath.split('/').pop();
+                }
+                modalImg.src = '{{ asset('') }}' + imgPath;
             } else {
                 modalImg.src = '{{ asset('images/pet.png') }}';
             }
@@ -407,7 +417,7 @@
             document.getElementById('modalPetName').textContent = pet.pet_name;
             document.getElementById('modalPetBreed').textContent = pet.breed;
             document.getElementById('modalPetSpecies').textContent = pet.species;
-            document.getElementById('modalPetGender').textContent = pet.sex;
+            document.getElementById('modalPetGender').textContent = pet.gender || pet.sex || 'Unknown';
             
             // Calculate age
             let ageDisplay = 'Unknown';

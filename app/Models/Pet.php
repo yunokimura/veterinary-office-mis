@@ -51,6 +51,8 @@ class Pet extends Model
         'is_approved',
         'consolidated_at',
         'pet_status',
+        'estimated_age',
+        'pet_weight',
     ];
 
     protected $casts = [

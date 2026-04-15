@@ -267,7 +267,13 @@
                         <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
                             <div class="flex items-center space-x-4 mb-4">
                                 @if($pet->pet_image)
-                                    <img src="{{ asset('storage/' . $pet->pet_image) }}" alt="{{ $pet->pet_name }}" class="w-16 h-16 rounded-full object-cover">
+                                    @php
+                                        $imagePath = $pet->pet_image;
+                                        if (!str_contains($imagePath, 'images/pets') && !str_contains($imagePath, 'http')) {
+                                            $imagePath = 'images/pets/' . basename($imagePath);
+                                        }
+                                    @endphp
+                                    <img src="{{ asset($imagePath) }}" alt="{{ $pet->pet_name }}" class="w-16 h-16 rounded-full object-cover">
                                 @else
                                     <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
                                         <span class="text-white text-xl font-bold">{{ substr($pet->pet_name, 0, 1) }}</span>
@@ -279,7 +285,7 @@
                                 </div>
                             </div>
                             <div class="text-sm text-gray-600 space-y-1">
-                                <p><strong>Gender:</strong> {{ ucfirst($pet->sex) }}</p>
+                                <p><strong>Gender:</strong> {{ ucfirst($pet->gender) }}</p>
                                 @php
                                     $ageDisplay = 'Unknown';
                                     if ($pet->estimated_age) {

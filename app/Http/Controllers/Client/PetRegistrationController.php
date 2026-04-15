@@ -54,8 +54,8 @@ class PetRegistrationController extends Controller
                 $lastName = array_pop($nameParts); // Last part is last name (e.g., "Cruz")
                 $middleName = count($nameParts) > 1 ? implode(' ', array_slice($nameParts, 1)) : null; // Middle parts (e.g., "Kun Dela")
                 
-                // Get phone from user contact_number
-                $phoneNumber = $user->contact_number ?? null;
+                // Get phone from user contact_number, require if registered user should have one
+                $phoneNumber = $user->contact_number ?? 'N/A';
                 
                 try {
                     $petOwner = PetOwner::create([
@@ -65,7 +65,7 @@ class PetRegistrationController extends Controller
                         'last_name' => $lastName,
                         'email' => $user->email,
                         'phone_number' => $phoneNumber,
-                        'house_no' => '',
+                        'blk_lot_ph' => '',
                         'street' => '',
                         'subdivision' => '',
                         'barangay' => '',
@@ -77,29 +77,87 @@ class PetRegistrationController extends Controller
             }
             
             Log::info('Using owner_id: ' . ($petOwner->owner_id ?? 'null'));
+            
+            // Validate that pet owner exists before creating pet
+            if (!$petOwner) {
+                return back()->with('error', 'Unable to create pet owner record. Please contact support.')->withInput();
+            }
 
             // Handle file uploads
             $petImagePath = null;
             $bodyMarkImagePath = null;
 
+            Log::info('Form all inputs: ', $request->all());
+            
+            // Handle file uploads - save to public/images folder
+            $petImagePath = null;
+            $bodyMarkImagePath = null;
+
+            Log::info('Has pet_image file: ' . ($request->hasFile('pet_image') ? 'yes' : 'no'));
+            Log::info('pet_image file info: ', $request->file('pet_image') ? [$request->file('pet_image')->getClientOriginalName()] : ['no file']);
+            
             if ($request->hasFile('pet_image')) {
-                $petImagePath = $request->file('pet_image')->store('pets', 'public');
+                $file = $request->file('pet_image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $uploadPath = public_path('images/pets');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0777, true);
+                }
+                $file->move($uploadPath, $filename);
+                $petImagePath = 'images/pets/' . $filename;
+                Log::info('Pet image stored at: ' . $petImagePath);
             }
 
             if ($request->hasFile('body_mark_image')) {
-                $bodyMarkImagePath = $request->file('body_mark_image')->store('pets/body-marks', 'public');
+                $file = $request->file('body_mark_image');
+                $filename = time() . '_body_' . $file->getClientOriginalName();
+                $uploadPath = public_path('images/pets');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0777, true);
+                }
+                $file->move($uploadPath, $filename);
+                $bodyMarkImagePath = 'images/pets/' . $filename;
+            }
+
+            // Calculate birthdate from estimated age if birthdate not provided
+            $birthdate = null;
+            
+            if ($request->filled('pet_birthdate')) {
+                // Known birthdate provided
+                $birthdate = $request->input('pet_birthdate');
+            } elseif ($request->filled('estimated_age')) {
+                // Calculate birthdate from estimated age
+                $estimatedAge = $request->input('estimated_age');
+                $years = 0;
+                $months = 0;
+                
+                if ($estimatedAge === 'less_than_3_months') {
+                    $months = 2; // approx 2 months
+                } elseif ($estimatedAge === '3_to_12_months') {
+                    $months = 7; // approx 7 months
+                } elseif (preg_match('/^(\d+)_years$/', $estimatedAge, $matches)) {
+                    $years = (int)$matches[1];
+                }
+                
+                if ($months > 0) {
+                    $birthdate = now()->subMonths($months)->format('Y-m-d');
+                } elseif ($years > 0) {
+                    $birthdate = now()->subYears($years)->format('Y-m-d');
+                }
             }
 
             // Create the pet - use correct field names matching Pet model
+            Log::info('Saving pet_image: ' . ($petImagePath ?? 'null'));
+            
             $pet = Pet::create([
                 'owner_id' => $petOwner ? $petOwner->owner_id : null,
                 'pet_name' => $validated['pet_name'],
                 'species' => $validated['pet_type'],
                 'breed' => $validated['pet_breed'],
-                'sex' => $validated['gender'],
-                'birthdate' => $validated['pet_birthdate'] ?? null,
-                'age' => $validated['estimated_age'] ?? null,
-                'weight' => $validated['pet_weight'] ?? null,
+                'gender' => $validated['gender'],
+                'birthdate' => $birthdate,
+                'estimated_age' => $validated['estimated_age'] ?? null,
+                'pet_weight' => $validated['pet_weight'] ?? null,
                 'body_mark_details' => $validated['body_mark_details'] ?? null,
                 'pet_image' => $petImagePath,
                 'body_mark_image' => $bodyMarkImagePath,
