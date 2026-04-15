@@ -129,54 +129,111 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-// Appointment Slots (Public - for service forms like kapon, vaccination, adoption)
+// Appointment Slots (Public - for kapon only)
 Route::get('/appointments/slots', function (Request $request) {
     $date = $request->query('date');
-    $serviceType = $request->query('type', 'kapon');
+    $serviceType = 'kapon'; // Only kapon for now
     
     if (!$date) {
         return response()->json(['success' => false, 'message' => 'Date is required'], 400);
     }
     
-    // Define available time slots (8 AM to 5 PM, hourly)
-    $timeSlots = [
-        '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'
-    ];
-    
-    // Daily capacity (can be adjusted)
-    $capacityLimit = 12;
+    // Kapon capacity: 2 per hour, 12 per day
     $hourlyCapacity = 2;
+    $dailyCapacity = 12;
     
-    // Get existing appointments for this date and service type
-    $serviceForm = \App\Models\ServiceForm::where('form_type', $serviceType)->first();
-    $existingCount = 0;
+    // Time slots: 8 AM to 4 PM (removed 12:00 and 16:00)
+    $timeSlots = ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00'];
     
-    if ($serviceForm) {
-        $existingCount = \App\Models\FormSubmission::where('form_id', $serviceForm->id)
-            ->whereDate('created_at', $date)
-            ->count();
+    // Get existing kapon appointments from appointments table
+    $existingByHour = \App\Models\Appointment::where('appointment_date', $date)
+        ->where('service_type', 'kapon')
+        ->get()
+        ->groupBy('appointment_time')
+        ->map(fn($group) => $group->count())
+        ->toArray();
+    
+    // Get kapon requests from spay_neuter_reports table (pending + scheduled)
+    $existingKapon = \App\Models\SpayNeuterReport::whereDate('scheduled_at', $date)
+        ->whereIn('status', ['pending', 'scheduled'])
+        ->whereNotNull('scheduled_at')
+        ->get();
+    
+    // Count by hour from spay_neuter_reports
+    $reportsByHour = [];
+    foreach ($existingKapon as $report) {
+        $time = date('H:00', strtotime($report->scheduled_at));
+        if (!isset($reportsByHour[$time])) {
+            $reportsByHour[$time] = 0;
+        }
+        $reportsByHour[$time]++;
+    }
+    
+    // Merge counts from both tables
+    $combinedByHour = [];
+    foreach ($timeSlots as $time) {
+        $combinedByHour[$time] = ($existingByHour[$time] ?? 0) + ($reportsByHour[$time] ?? 0);
     }
     
     // Build slot data
-    $slots = collect($timeSlots)->map(function ($time) use ($date) {
+    $slots = collect($timeSlots)->map(function ($time) use ($combinedByHour, $hourlyCapacity) {
+        $count = $combinedByHour[$time] ?? 0;
+        
+        $status = 'available';
+        if ($count >= $hourlyCapacity) {
+            $status = 'full';
+        } elseif ($count >= $hourlyCapacity - 1) {
+            $status = 'limited';
+        }
+        
         return [
             'time' => $time,
             'display_time' => \Carbon\Carbon::parse($time)->format('h:i A'),
-            'status' => 'available',
+            'status' => $status,
             'is_past' => false,
+            'remaining' => max(0, $hourlyCapacity - $count),
         ];
     })->toArray();
     
-    $dailyRemaining = max(0, $capacityLimit - $existingCount);
+    $dailyRemaining = max(0, $dailyCapacity - array_sum($combinedByHour));
     
     return response()->json([
         'success' => true,
         'slots' => $slots,
-        'daily_weight_used' => $existingCount,
+        'daily_weight_used' => array_sum($combinedByHour),
         'daily_remaining' => $dailyRemaining,
-        'capacity_limit' => $capacityLimit,
+        'capacity_limit' => $dailyCapacity,
         'hourly_capacity' => $hourlyCapacity,
+        'service_type' => 'kapon',
     ]);
 })->name('api.appointments.slots');
+
+// Check if a specific pet already has a kapon appointment
+Route::get('/appointments/check-pet/{petName}/{userId}', function ($petName, $userId) {
+    $existingAppointment = \App\Models\SpayNeuterReport::where('user_id', $userId)
+        ->where('pet_name', $petName)
+        ->whereIn('status', ['pending', 'scheduled'])
+        ->whereNotNull('scheduled_at')
+        ->orderBy('scheduled_at', 'asc')
+        ->first();
+    
+    if ($existingAppointment) {
+        return response()->json([
+            'success' => true,
+            'already_booked' => true,
+            'pet_name' => $petName,
+            'scheduled_at' => $existingAppointment->scheduled_at,
+            'scheduled_date' => \Carbon\Carbon::parse($existingAppointment->scheduled_at)->format('F j, Y'),
+            'scheduled_time' => \Carbon\Carbon::parse($existingAppointment->scheduled_at)->format('h:i A'),
+            'status' => $existingAppointment->status,
+        ]);
+    }
+    
+    return response()->json([
+        'success' => true,
+        'already_booked' => false,
+        'pet_name' => $petName,
+    ]);
+});
 
 // Additional Public API endpoints can be added as needed

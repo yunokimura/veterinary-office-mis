@@ -719,6 +719,7 @@ Route::get('/kapon', function () {
 // Kapon Form Page Route - Public
 Route::get('/kapon/form', function () {
     $user = auth()->user();
+    $userId = $user ? $user->id : null;
     $petOwner = $user ? $user->petOwner : null;
     $pets = $petOwner ? $petOwner->pets : collect([]);
 
@@ -735,7 +736,7 @@ Route::get('/kapon/form', function () {
         ];
     })->toArray();
 
-    return view('Client.kapon_form', compact('user', 'petOwner', 'petsArray'));
+    return view('Client.kapon_form', compact('user', 'petOwner', 'petsArray', 'userId'));
 });
 
 // Kapon Form POST Route
@@ -751,6 +752,27 @@ Route::post('/kapon/form', function (\Illuminate\Http\Request $request) {
     
     if (!$petOwner) {
         return redirect()->back()->with('error', 'Please complete your profile first.');
+    }
+
+    // Get pet details from form's pets_data JSON
+    $petsData = json_decode($request->input('pets_data'), true);
+    
+    // Double booking check - prevent same pet from being scheduled twice
+    foreach ($validated['selected_pets'] as $petId) {
+        $pet = collect($petsData)->firstWhere('id', (string)$petId);
+        
+        if ($pet && isset($pet['name'])) {
+            $existingBooking = \App\Models\SpayNeuterReport::where('user_id', auth()->id())
+                ->where('pet_name', $pet['name'])
+                ->whereDate('scheduled_at', $validated['appointment_date'])
+                ->whereIn('status', ['pending', 'scheduled'])
+                ->whereNotNull('scheduled_at')
+                ->exists();
+            
+            if ($existingBooking) {
+                return redirect()->back()->with('error', 'Pet "' . $pet['name'] . '" already has a kapon appointment scheduled for ' . \Carbon\Carbon::parse($validated['appointment_date'])->format('F j, Y') . '. Please choose a different pet or date.');
+            }
+        }
     }
 
     // Build owner info from PetOwner

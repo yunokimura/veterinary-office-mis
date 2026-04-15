@@ -3,7 +3,8 @@
 @props([
     'serviceType' => 'vaccination',
     'minDate' => '',
-    'fieldName' => 'appointment_date'
+    'fieldName' => 'appointment_date',
+    'petIds' => []
 ])
 
 <div x-data="appointmentSlotPicker()" class="space-y-4">
@@ -59,9 +60,6 @@
             <span class="flex items-center gap-1">
                 <span class="w-3 h-3 rounded-full bg-red-300"></span> Full
             </span>
-            <span class="flex items-center gap-1">
-                <span class="w-3 h-3 rounded-full bg-gray-300"></span> Not Available
-            </span>
         </div>
 
         <!-- 3-Column Grid -->
@@ -83,26 +81,15 @@
                         </svg>
                     </span>
                     
-                    <!-- Blocked Labels -->
-                    <div x-show="slot.time === '12:00'" class="text-xs mt-1 opacity-75">
-                        Lunch
-                    </div>
-                    <div x-show="slot.time === '16:00'" class="text-xs mt-1 opacity-75">
-                        Paperwork
-                    </div>
-                    
                     <!-- Slot Status Text -->
-                    <template x-if="slot.status === 'blocked'">
-                        <div class="text-xs mt-1 opacity-75">Not Available</div>
-                    </template>
                     <template x-if="slot.status === 'full'">
                         <div class="text-xs mt-1 opacity-75">Fully Booked</div>
                     </template>
                     <template x-if="slot.status === 'limited'">
-                        <div class="text-xs mt-1 opacity-75">1 slot left</div>
+                        <div class="text-xs mt-1 opacity-75"><span x-text="slot.remaining || 1"></span> Kapon slot left</div>
                     </template>
                     <template x-if="slot.status === 'available'">
-                        <div class="text-xs mt-1 opacity-75">2 slots left</div>
+                        <div class="text-xs mt-1 opacity-75"><span x-text="slot.remaining || 2"></span> Kapon slots left</div>
                     </template>
                     <template x-if="slot.is_past">
                         <div class="text-xs mt-1 opacity-75">Past</div>
@@ -140,6 +127,8 @@ function appointmentSlotPicker() {
         hourlyCapacity: 2,
         currentHour: new Date().getHours(),
         currentMinute: new Date().getMinutes(),
+        selectedPetIds: @json($petIds),
+        alreadyScheduled: [],
         
         // Use prop or default to today
         minDate: '',
@@ -184,6 +173,7 @@ function appointmentSlotPicker() {
             
             this.loading = true;
             this.selectedTime = '';
+            this.alreadyScheduled = [];
             
             // Update current time
             const now = new Date();
@@ -191,7 +181,9 @@ function appointmentSlotPicker() {
             this.currentMinute = now.getMinutes();
             
             try {
-                const response = await fetch(`/api/appointments/slots?date=${this.selectedDate}`);
+                let url = `/api/appointments/slots?date=${this.selectedDate}`;
+                
+                const response = await fetch(url);
                 const data = await response.json();
                 
                 if (data.success) {
