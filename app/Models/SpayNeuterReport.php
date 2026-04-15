@@ -21,16 +21,15 @@ class SpayNeuterReport extends Model
     protected $fillable = [
         'user_id',
         'pet_name',
-        'pet_type',
+        'species',
         'pet_breed',
         'pet_age',
-        'pet_sex',
-        'color_markings',
+        'gender',
         'owner_name',
         'owner_contact',
         'owner_address',
         'procedure_type',
-        'procedure_date',
+        'scheduled_at',
         'veterinarian',
         'clinic_name',
         'weight',
@@ -48,7 +47,7 @@ class SpayNeuterReport extends Model
     protected function casts(): array
     {
         return [
-            'procedure_date' => 'date',
+            'scheduled_at' => 'datetime',
             'report_date' => 'date',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -76,7 +75,7 @@ class SpayNeuterReport extends Model
      */
     public function scopeByPetType($query, $type)
     {
-        return $query->where('pet_type', $type);
+        return $query->where('species', $type);
     }
 
     /**
@@ -84,7 +83,7 @@ class SpayNeuterReport extends Model
      */
     public function scopeDateRange($query, $startDate, $endDate)
     {
-        return $query->whereBetween('procedure_date', [$startDate, $endDate]);
+        return $query->whereBetween('scheduled_at', [$startDate, $endDate]);
     }
 
     /**
