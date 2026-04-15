@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\OtpController;
@@ -127,5 +128,55 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{serviceForm}', [ServiceFormController::class, 'apiShow'])->name('show');
     });
 });
+
+// Appointment Slots (Public - for service forms like kapon, vaccination, adoption)
+Route::get('/appointments/slots', function (Request $request) {
+    $date = $request->query('date');
+    $serviceType = $request->query('type', 'kapon');
+    
+    if (!$date) {
+        return response()->json(['success' => false, 'message' => 'Date is required'], 400);
+    }
+    
+    // Define available time slots (8 AM to 5 PM, hourly)
+    $timeSlots = [
+        '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'
+    ];
+    
+    // Daily capacity (can be adjusted)
+    $capacityLimit = 12;
+    $hourlyCapacity = 2;
+    
+    // Get existing appointments for this date and service type
+    $serviceForm = \App\Models\ServiceForm::where('form_type', $serviceType)->first();
+    $existingCount = 0;
+    
+    if ($serviceForm) {
+        $existingCount = \App\Models\FormSubmission::where('form_id', $serviceForm->id)
+            ->whereDate('created_at', $date)
+            ->count();
+    }
+    
+    // Build slot data
+    $slots = collect($timeSlots)->map(function ($time) use ($date) {
+        return [
+            'time' => $time,
+            'display_time' => \Carbon\Carbon::parse($time)->format('h:i A'),
+            'status' => 'available',
+            'is_past' => false,
+        ];
+    })->toArray();
+    
+    $dailyRemaining = max(0, $capacityLimit - $existingCount);
+    
+    return response()->json([
+        'success' => true,
+        'slots' => $slots,
+        'daily_weight_used' => $existingCount,
+        'daily_remaining' => $dailyRemaining,
+        'capacity_limit' => $capacityLimit,
+        'hourly_capacity' => $hourlyCapacity,
+    ]);
+})->name('api.appointments.slots');
 
 // Additional Public API endpoints can be added as needed

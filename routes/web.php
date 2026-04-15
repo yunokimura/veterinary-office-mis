@@ -727,8 +727,8 @@ Route::get('/kapon/form', function () {
             'name' => $pet->pet_name,
             'species' => $pet->species,
             'breed' => $pet->breed,
-            'age' => $pet->age,
-            'weight' => $pet->weight,
+            'age' => $pet->estimated_age,
+            'weight' => $pet->pet_weight,
             'image' => $pet->pet_image,
         ];
     })->toArray();
