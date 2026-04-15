@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Welcome - Dasmariñas City VetMIS')
+@section('title', 'Welcome - Dasmariñas City Vet MIS')
 
 @push('styles')
 <style>
