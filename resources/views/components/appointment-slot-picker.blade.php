@@ -86,10 +86,18 @@
                         <div class="text-xs mt-1 opacity-75">Fully Booked</div>
                     </template>
                     <template x-if="slot.status === 'limited'">
-                        <div class="text-xs mt-1 opacity-75"><span x-text="slot.remaining || 1"></span> Kapon slot left</div>
+                        <div class="text-xs mt-1 opacity-75">
+                            <span x-text="slot.remaining"></span>
+                            <span x-text="serviceType === 'kapon' ? 'Kapon' : 'Vaccination'"></span>
+                            slot left
+                        </div>
                     </template>
                     <template x-if="slot.status === 'available'">
-                        <div class="text-xs mt-1 opacity-75"><span x-text="slot.remaining || 2"></span> Kapon slots left</div>
+                        <div class="text-xs mt-1 opacity-75">
+                            <span x-text="slot.remaining"></span>
+                            <span x-text="serviceType === 'kapon' ? 'Kapon' : 'Vaccination'"></span>
+                            slots left
+                        </div>
                     </template>
                     <template x-if="slot.is_past">
                         <div class="text-xs mt-1 opacity-75">Past</div>
@@ -153,12 +161,13 @@ function appointmentSlotPicker() {
             return this.dailyRemaining <= 0;
         },
 
-        get dailyCapacityText() {
+get dailyCapacityText() {
             if (!this.selectedDate) return '';
-            if (this.isDailyFull) return 'Fully Booked';
-            if (this.dailyRemaining >= 2) return `${this.dailyRemaining} slots available`;
-            if (this.dailyRemaining === 1) return `1 slot available`;
-            return 'Fully Booked';
+            const serviceName = this.serviceType === 'kapon' ? 'Kapon' : 'Vaccination';
+            if (this.isDailyFull) return `${serviceName} Fully Booked`;
+            if (this.dailyRemaining >= 2) return `${this.dailyRemaining} ${serviceName} slots available`;
+            if (this.dailyRemaining === 1) return `1 ${serviceName} slot available`;
+            return `${serviceName} Fully Booked`;
         },
 
         get dailyRemainingBadgeClass() {
@@ -181,7 +190,7 @@ function appointmentSlotPicker() {
             this.currentMinute = now.getMinutes();
             
             try {
-                let url = `/api/appointments/slots?date=${this.selectedDate}`;
+                let url = `/api/appointments/slots?date=${this.selectedDate}&service_type=${this.serviceType}`;
                 
                 const response = await fetch(url);
                 const data = await response.json();

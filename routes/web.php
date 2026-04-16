@@ -24,6 +24,7 @@ use App\Http\Controllers\RecordsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SystemLogController;
 use App\Http\Controllers\ClinicController;
+use App\Http\Controllers\ViewerController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\OtpController;
 use App\Http\Controllers\Client\PetRegistrationController;
@@ -1088,23 +1089,80 @@ Route::get('/vaccination/form', function () {
 
     $petsArray = $pets->map(function ($pet) {
         return [
-            'pet_id' => $pet->pet_id,
-            'pet_name' => $pet->pet_name,
+            'id' => $pet->pet_id,
+            'name' => $pet->pet_name,
             'species' => $pet->species,
             'breed' => $pet->breed,
-            'age' => $pet->age,
-            'weight' => $pet->weight,
-            'pet_image' => $pet->pet_image,
+            'age' => $pet->estimated_age ?? $pet->age,
+            'weight' => $pet->pet_weight ?? $pet->weight,
+            'image' => $pet->pet_image,
         ];
     })->toArray();
 
-    return view('Client.vaccination_form', compact('user', 'petOwner', 'petsArray'));
+    $userId = $user ? $user->id : null;
+
+    return view('Client.vaccination_form', compact('user', 'petOwner', 'petsArray', 'userId'));
 });
 
 // Vaccination Form POST Route
-Route::post('/vaccination/form', function () {
-    // Handle form submission - redirect or process data
-    return redirect()->back()->with('info', 'Vaccination form submission is under development.');
+Route::post('/vaccination/form', function (\Illuminate\Http\Request $request) {
+    $validated = $request->validate([
+        'owner_first_name' => 'required|string|max:255',
+        'owner_last_name' => 'required|string|max:255',
+        'owner_email' => 'required|email',
+        'owner_contact' => 'required|string|max:12',
+        'blk_lot_ph' => 'required|string|max:255',
+        'street' => 'required|string|max:255',
+        'barangay' => 'required|string|max:255',
+        'selected_pets' => 'required|array|min:1|max:3',
+        'appointment_date' => 'required|date|after_or_equal:today',
+        'appointment_time' => 'required',
+        'recent_surgery' => 'required|in:yes,no',
+    ]);
+
+    // Parse selected_pets - could be array or JSON string from hidden input
+    $selectedPetsInput = $request->input('selected_pets');
+    if (is_string($selectedPetsInput)) {
+        $selectedPets = json_decode($selectedPetsInput, true);
+    } else {
+        $selectedPets = $selectedPetsInput ?? [];
+    }
+
+    $user = auth()->user();
+    $petOwner = $user->petOwner;
+
+    // Combine date and time into scheduled_at
+    $scheduledAt = \Carbon\Carbon::parse($validated['appointment_date'] . ' ' . $validated['appointment_time']);
+
+    // Store selected pets in metadata JSON
+    $metadata = [
+        'selected_pets' => $selectedPets,
+    ];
+
+    // Add alt mobile if provided
+    if (!empty($validated['alt_mobile_number'])) {
+        $metadata['alt_mobile_number'] = $validated['alt_mobile_number'];
+    }
+
+    // Create vaccination report
+    \App\Models\VaccinationReport::create([
+        'user_id' => $user->id,
+        'owner_first_name' => $validated['owner_first_name'],
+        'owner_last_name' => $validated['owner_last_name'],
+        'owner_email' => $validated['owner_email'],
+        'owner_contact' => $validated['owner_contact'],
+        'alt_mobile_number' => $validated['alt_mobile_number'] ?? null,
+        'blk_lot_ph' => $validated['blk_lot_ph'],
+        'street' => $validated['street'],
+        'barangay' => $validated['barangay'],
+        'scheduled_at' => $scheduledAt,
+        'last_anti_rabies_date' => $validated['last_anti_rabies_date'] ?? null,
+        'recent_surgery' => $validated['recent_surgery'] === 'yes',
+        'status' => 'pending',
+        'metadata' => $metadata,
+    ]);
+
+    return redirect()->back()->with('success', 'Vaccination request submitted successfully!');
 })->middleware(['auth'])->name('vaccination.form.submit');
 
 // Owner Dashboard Route - Protected (any authenticated user)
@@ -1165,6 +1223,14 @@ Route::middleware(['auth', 'role:hospital'])->prefix('hospital')->name('hospital
     Route::get('/vaccination-reports/create', [ClinicController::class, 'createVaccinationReport'])->name('vaccination-reports.create');
     Route::post('/vaccination-reports', [ClinicController::class, 'storeVaccinationReport'])->name('vaccination-reports.store');
     Route::get('/vaccination-reports/{report}', [ClinicController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
+});
+
+// ==============================
+// VIEWER PORTAL (Viewer)
+// Access: Read-only access
+// ==============================
+Route::middleware(['auth', 'role:viewer'])->prefix('viewer')->name('viewer.')->group(function () {
+    Route::get('/dashboard', [ViewerController::class, 'dashboard'])->name('dashboard');
 });
 
 // ==============================

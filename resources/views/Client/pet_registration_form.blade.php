@@ -303,7 +303,7 @@
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Pet's Weight <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input type="text" id="petWeight" name="pet_weight" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" maxlength="3" oninput="updateWeightSuffix(); validateWeight(this)">
+                        <input type="text" id="petWeight" name="pet_weight" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" maxlength="6" oninput="updateWeightSuffix(); validateWeight(this)">
                         <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none hidden">kg</span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">If you do not know, type "N/A"</p>
@@ -958,11 +958,11 @@
             }
         }
         
-        // Validate weight input - only numbers, max 3 digits
+        // Validate weight input - numbers and decimals, max 6 characters
         function validateWeight(input) {
-            input.value = input.value.replace(/[^0-9]/g, '');
-            if (input.value.length > 3) {
-                input.value = input.value.slice(0, 3);
+            input.value = input.value.replace(/[^0-9.]/g, '');
+            if (input.value.length > 6) {
+                input.value = input.value.slice(0, 6);
             }
         }
 

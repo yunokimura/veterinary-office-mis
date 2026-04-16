@@ -6,13 +6,12 @@
 @section('subheader', 'System Administrator - Full System Access')
 
 @section('content')
-<div class="p-4 md:p-6">
-<!-- Welcome Banner -->
-<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6">
-    <h2 class="text-xl md:text-2xl font-bold mb-2" style="color: #020403;">
+<!-- Welcome Banner (FIXED) -->
+<div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 text-white">
+    <h2 class="text-xl md:text-2xl font-bold mb-2">
         Welcome back, {{ auth()->user()->name ?? 'System Administrator' }}!
     </h2>
-    <p class="text-sm md:text-base" style="color: #9ca3af;">
+    <p class="text-blue-100 text-sm md:text-base">
         Full system access and account management.
     </p>
 </div>
@@ -23,7 +22,7 @@
 <!-- Quick Stats -->
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-6 mb-6">
     <!-- Total Users -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 pl-4 md:pl-6">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500">Users</p>
@@ -75,7 +74,7 @@
     </div>
 
     <!-- System Logs -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 pr-4 md:pr-6">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500">Logs</p>
@@ -118,7 +117,7 @@
 <!-- Recent Activity -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
     <!-- Recent Users -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 pl-4 md:pl-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
         <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4">Recent Users</h3>
         <div class="divide-y divide-gray-100">
             @forelse(\App\Models\User::latest()->take(5)->get() as $user)
@@ -141,7 +140,7 @@
     </div>
 
     <!-- Recent Announcements -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 pr-4 md:pr-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
         <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4">Announcements</h3>
         <div class="divide-y divide-gray-100">
             @forelse(\App\Models\Announcement::latest()->take(5)->get() as $announcement)
@@ -202,6 +201,5 @@
             </tbody>
         </table>
     </div>
-</div>
 </div>
 @endsection

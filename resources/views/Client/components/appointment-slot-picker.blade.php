@@ -166,10 +166,11 @@ function appointmentSlotPicker() {
 
         get dailyCapacityText() {
             if (!this.selectedDate) return '';
-            if (this.isDailyFull) return 'Fully Booked';
-            if (this.dailyRemaining >= 2) return `${this.dailyRemaining} slots available`;
-            if (this.dailyRemaining === 1) return `1 slot available`;
-            return 'Fully Booked';
+            const serviceName = this.serviceType === 'kapon' ? 'Kapon' : 'Vaccination';
+            if (this.isDailyFull) return `${serviceName} Fully Booked`;
+            if (this.dailyRemaining >= 2) return `${this.dailyRemaining} ${serviceName} slots available`;
+            if (this.dailyRemaining === 1) return `1 ${serviceName} slot available`;
+            return `${serviceName} Fully Booked`;
         },
 
         get dailyRemainingBadgeClass() {
@@ -191,7 +192,7 @@ function appointmentSlotPicker() {
             this.currentMinute = now.getMinutes();
             
             try {
-                const response = await fetch(`/api/appointments/slots?date=${this.selectedDate}`);
+                const response = await fetch(`/api/appointments/slots?date=${this.selectedDate}&service_type=${this.serviceType}`);
                 const data = await response.json();
                 
                 if (data.success) {

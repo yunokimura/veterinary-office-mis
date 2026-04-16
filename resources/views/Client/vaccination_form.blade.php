@@ -147,6 +147,7 @@
         <div class="bg-white border border-gray-200 rounded-lg p-8">
             <form id="vaccinationForm" method="POST" action="{{ url('/vaccination/form') }}" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="selected_pets" id="selectedPetsData" value="">
 
                 <!-- OWNER'S INFORMATION -->
                 <div class="mb-8">
@@ -365,7 +366,13 @@
                                             </div>
                                             @if(!empty($pet['image']))
                                             <div class="ml-2 flex-shrink-0">
-                                                <img src="{{ asset('storage/' . $pet['image']) }}" alt="{{ $pet['name'] }}" class="w-12 h-12 rounded-full object-cover">
+                                                @php
+                                                    $petImagePath = $pet['image'];
+                                                    if (!str_contains($petImagePath, 'images/pets') && !str_contains($petImagePath, 'http')) {
+                                                        $petImagePath = 'images/pets/' . basename($petImagePath);
+                                                    }
+                                                @endphp
+                                                <img src="{{ asset($petImagePath) }}" alt="{{ $pet['name'] }}" class="w-12 h-12 rounded-full object-cover">
                                             </div>
                                             @endif
                                         </label>
@@ -453,6 +460,7 @@
 
         // Pet data from server
         const petsData = @json($petsArray);
+        const currentUserId = @json($userId ?? null);
         
         // Format age - remove underscores and format naturally
         function formatAge(age) {
@@ -505,6 +513,8 @@
 
         function togglePetSelection(checkbox) {
             const petId = String(checkbox.value);
+            const petName = checkbox.closest('.pet-selection-card')?.querySelector('.pet-name')?.textContent || 'this pet';
+            
             if (checkbox.checked) {
                 // Check if limit of 3 is reached
                 if (selectedPets.length >= 3) {
@@ -513,13 +523,81 @@
                     showPetLimitModal();
                     return;
                 }
-                if (!selectedPets.includes(petId)) {
-                    selectedPets.push(petId);
-                }
+                
+                // Check if pet already has a vaccination appointment
+                checkPetBooking(petName, checkbox);
             } else {
                 selectedPets = selectedPets.filter(id => String(id) !== petId);
             }
             updateSelectedCount();
+        }
+        
+        async function checkPetBooking(petName, checkbox) {
+            try {
+                const url = currentUserId 
+                    ? `/api/appointments/check-vaccination-pet/${encodeURIComponent(petName)}/${currentUserId}`
+                    : `/api/appointments/check-vaccination-pet/${encodeURIComponent(petName)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.already_booked) {
+                    // Uncheck the checkbox
+                    checkbox.checked = false;
+                    
+                    // Show warning modal
+                    showAlreadyBookedModal(data);
+                    return;
+                }
+                
+                // If not booked, add to selection
+                const petId = String(checkbox.value);
+                if (!selectedPets.includes(petId)) {
+                    selectedPets.push(petId);
+                }
+                updateSelectedCount();
+            } catch (error) {
+                console.error('Failed to check pet booking:', error);
+                // On error, allow selection but log for debugging
+                const petId = String(checkbox.value);
+                if (!selectedPets.includes(petId)) {
+                    selectedPets.push(petId);
+                }
+                updateSelectedCount();
+            }
+        }
+        
+        function showAlreadyBookedModal(data) {
+            const modalHtml = `
+                <div id="alreadyBookedModal" class="fixed inset-0 z-50">
+                    <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+                    <div class="fixed inset-0 flex items-center justify-center p-4">
+                        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                            <div class="text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Already Booked</h3>
+                                <p class="text-gray-600 mb-2">${data.pet_name} already has a vaccination appointment scheduled.</p>
+                                <p class="text-gray-800 font-medium mb-4">Date: ${data.scheduled_date}<br>Time: ${data.scheduled_time}</p>
+                                <p class="text-gray-500 text-sm mb-6">Please complete this appointment first before booking a new one.</p>
+                                <button type="button" onclick="closeAlreadyBookedModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                                    I understand
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeAlreadyBookedModal() {
+            const modal = document.getElementById('alreadyBookedModal');
+            if (modal) {
+                modal.remove();
+            }
+            document.body.style.overflow = 'auto';
         }
 
         function showPetLimitModal() {
@@ -574,7 +652,12 @@
                     // Determine image source
                     let imageHtml = '';
                     if (pet.image) {
-                        imageHtml = `<img src="{{ asset('storage/') }}/${pet.image}" alt="${pet.name}" class="w-12 h-12 rounded-full object-cover">`;
+                        let imgPath = pet.image;
+                        if (!imgPath.includes('images/pets') && !imgPath.includes('http')) {
+                            imgPath = 'images/pets/' + pet.image.split('/').pop();
+                        }
+                        const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                        imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-12 h-12 rounded-full object-cover">`;
                     } else {
                         imageHtml = `<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -605,6 +688,12 @@
                     container.appendChild(petCard);
                 }
             });
+
+            // Update hidden selected_pets field for form submission
+            const selectedPetsData = document.getElementById('selectedPetsData');
+            if (selectedPetsData) {
+                selectedPetsData.value = JSON.stringify(selectedPets);
+            }
 
             closePetModal();
         }
