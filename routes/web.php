@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\CityVetController;
+use App\Http\Controllers\Client\AdoptionFormController;
 use App\Http\Controllers\Client\OtpController;
 use App\Http\Controllers\Client\PetController;
 use App\Http\Controllers\Client\PetRegistrationController;
@@ -1042,6 +1043,11 @@ Route::get('/adoption/form', function () {
 
     return view('Client.adoption_form', compact('user', 'petOwner', 'traits', 'adoptionPets'));
 })->name('adoption.form');
+
+// Adoption Form POST Route
+Route::post('/adoption/form', [AdoptionFormController::class, 'store'])
+    ->middleware(['auth'])
+    ->name('adoption.form.submit');
 
 // Store Adoption Pet Route
 Route::post('/adoption', [AdoptionPetController::class, 'store'])->name('adoption.store');
