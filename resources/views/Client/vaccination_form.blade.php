@@ -275,41 +275,29 @@
                         'serviceType' => 'vaccination',
                         'fieldName' => 'appointment'
                     ])
-                </div>
-
-                <!-- MEDICAL HISTORY -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Medical History</h3>
-
-                    <!-- Date of Last Anti-Rabies -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Date of Last Anti-Rabies</label>
-                        <input type="date" name="last_anti_rabies_date" value="{{ old('last_anti_rabies_date') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
-                    </div>
-
-                    <!-- Surgery Question -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">Did your pet undergo any surgery in the last two (2) weeks? <span class="text-red-500">*</span></label>
-                        <div class="flex space-x-6">
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" name="recent_surgery" value="yes" class="form-radio h-5 w-5 text-primary">
-                                <span class="ml-3 text-gray-700 font-medium">Yes</span>
-                            </label>
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="radio" name="recent_surgery" value="no" class="form-radio h-5 w-5 text-primary">
-                                <span class="ml-3 text-gray-700 font-medium">No</span>
-                            </label>
-                        </div>
-                    </div>
 
                     <!-- Confirmation Checkbox -->
-                    <div class="mb-8">
+                    <div class="mt-6">
                         <label class="inline-flex items-start cursor-pointer">
                             <input type="checkbox" name="confirmation" class="form-checkbox h-5 w-5 text-primary rounded mt-1">
                             <span class="ml-3 text-gray-700 text-sm">
                                 By confirming, you acknowledge that the provided information is accurate and that your pet will be available for vaccination on the selected date. <span class="text-red-500">*</span>
                             </span>
                         </label>
+                    </div>
+                </div>
+
+                <!-- MEDICAL HISTORY (Per Pet) -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Medical History</h3>
+
+                    <div id="petMedicalHistoryContainer">
+                        <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="text-gray-500 text-sm">Select pets first to see medical history forms.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -477,6 +465,16 @@
             }
             return weight + ' kg';
         }
+
+        // Toggle vaccine date field based on previous vaccine radio selection
+        function toggleVaccineDate(radio, petId) {
+            const dateContainer = document.getElementById('vaccineDateContainer_' + petId);
+            if (radio.value === 'yes') {
+                dateContainer.classList.remove('hidden');
+            } else {
+                dateContainer.classList.add('hidden');
+            }
+        }
         
         let selectedPets = [];
 
@@ -618,6 +616,7 @@
             const container = document.getElementById('selectedPetsList');
             const noPetsMessage = document.getElementById('noPetsSelected');
             const modalFooter = document.querySelector('#petModal .bg-gray-50');
+            const medicalHistoryContainer = document.getElementById('petMedicalHistoryContainer');
 
             // Restore footer if it was hidden
             if (modalFooter) {
@@ -640,6 +639,15 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <p class="text-gray-500">No pets selected yet. Click "Select Pet" to choose from your registered pets.</p>
+                    </div>
+                `;
+                // Reset medical history to empty state
+                medicalHistoryContainer.innerHTML = `
+                    <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-gray-500 text-sm">Select pets first to see medical history forms.</p>
                     </div>
                 `;
                 closePetModal();
@@ -689,6 +697,9 @@
                 }
             });
 
+            // Generate medical history cards for each selected pet
+            generateMedicalHistoryCards();
+
             // Update hidden selected_pets field for form submission
             const selectedPetsData = document.getElementById('selectedPetsData');
             if (selectedPetsData) {
@@ -696,6 +707,99 @@
             }
 
             closePetModal();
+        }
+
+        function generateMedicalHistoryCards() {
+            const container = document.getElementById('petMedicalHistoryContainer');
+            
+            if (selectedPets.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-gray-500 text-sm">Select pets first to see medical history forms.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            selectedPets.forEach(petId => {
+                const pet = petsData.find(p => String(p.id) === String(petId));
+                if (pet) {
+                    // Determine image source for header
+                    let imageHtml = '';
+                    if (pet.image) {
+                        let imgPath = pet.image;
+                        if (!imgPath.includes('images/pets') && !imgPath.includes('http')) {
+                            imgPath = 'images/pets/' + pet.image.split('/').pop();
+                        }
+                        const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                        imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-10 h-10 rounded-full object-cover">`;
+                    } else {
+                        imageHtml = `<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>`;
+                    }
+
+                    const medicalCard = document.createElement('div');
+                    medicalCard.className = 'bg-white border border-gray-200 rounded-lg p-5 mb-4';
+                    medicalCard.id = 'medical-history-' + petId;
+                    medicalCard.innerHTML = `
+                        <div class="flex items-center mb-4 pb-3 border-b">
+                            ${imageHtml}
+                            <div class="ml-3">
+                                <p class="font-semibold text-gray-900">${pet.name || 'Unknown'}</p>
+                                <p class="text-xs text-gray-500">${pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown'} • ${pet.breed || 'Unknown'}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Vaccination History Toggle -->
+                        <div class="mb-5">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Has your pet received an anti-rabies vaccine before?</label>
+                            <div class="flex space-x-6 mb-3">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="pet_medical_history[${pet.id}][has_previous_vaccine]" value="yes" 
+                                           class="form-radio h-5 w-5 text-primary" onchange="toggleVaccineDate(this, ${pet.id})">
+                                    <span class="ml-3 text-gray-700 font-medium">Yes, has received before</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="pet_medical_history[${pet.id}][has_previous_vaccine]" value="no" 
+                                           class="form-radio h-5 w-5 text-primary" onchange="toggleVaccineDate(this, ${pet.id})">
+                                    <span class="ml-3 text-gray-700 font-medium">No history / First time</span>
+                                </label>
+                            </div>
+                            
+                            <!-- Date picker (shown when "Yes" is selected) -->
+                            <div id="vaccineDateContainer_${pet.id}" class="hidden mt-3">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Date of Last Anti-Rabies</label>
+                                <input type="date" name="pet_medical_history[${pet.id}][last_anti_rabies_date]" 
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Surgery Question -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Did your pet undergo any surgery in the last two (2) weeks? <span class="text-red-500">*</span></label>
+                            <div class="flex space-x-6">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="yes" class="form-radio h-5 w-5 text-primary">
+                                    <span class="ml-3 text-gray-700 font-medium">Yes</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="no" class="form-radio h-5 w-5 text-primary">
+                                    <span class="ml-3 text-gray-700 font-medium">No</span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(medicalCard);
+                }
+            });
         }
 
         function removePet(petId) {

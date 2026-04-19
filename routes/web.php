@@ -1,34 +1,30 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\CityVetController;
+use App\Http\Controllers\Client\OtpController;
+use App\Http\Controllers\Client\PetController;
+use App\Http\Controllers\Client\PetRegistrationController;
+use App\Http\Controllers\Client\ProfileController;
+use App\Http\Controllers\ClinicController;
+use App\Http\Controllers\DiseaseControlController;
+use App\Http\Controllers\EstablishmentController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\LivestockCensusController;
+use App\Http\Controllers\LivestockController;
+use App\Http\Controllers\MeatInspectionController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RabiesCaseController;
+use App\Http\Controllers\RecordsController;
+use App\Http\Controllers\SpayNeuterController;
+use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\SystemLogController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ViewerController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
-use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SuperAdminController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CityVetController;
-use App\Http\Controllers\AdminStaffController;
-use App\Http\Controllers\DiseaseControlController;
-use App\Http\Controllers\MeatInspectionController;
-use App\Http\Controllers\BarangayController;
-use App\Http\Controllers\LivestockController;
-use App\Http\Controllers\SpayNeuterController;
-use App\Http\Controllers\EstablishmentController;
-use App\Http\Controllers\LivestockCensusController;
-use App\Http\Controllers\RabiesCaseController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\RecordsController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\SystemLogController;
-use App\Http\Controllers\ClinicController;
-use App\Http\Controllers\ViewerController;
-use App\Http\Controllers\Client\ProfileController;
-use App\Http\Controllers\Client\OtpController;
-use App\Http\Controllers\Client\PetRegistrationController;
-use App\Http\Controllers\Client\PetController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,10 +59,27 @@ require __DIR__.'/auth.php';
 |
 */
 
-
-use App\Models\Pet;
+use App\Http\Controllers\AdminAsst\AdoptionController;
+use App\Http\Controllers\AdminAsst\AppointmentController;
+use App\Http\Controllers\AdminAsst\BusinessProfileController;
+use App\Http\Controllers\AdminAsst\ClinicalActionController;
+use App\Http\Controllers\AdminAsst\DashboardController;
+use App\Http\Controllers\AdminAsst\ImpoundController;
+use App\Http\Controllers\AdminAsst\MissingPetController;
+use App\Http\Controllers\AdoptionPetController;
+use App\Http\Controllers\Client\BiteRabiesReportController;
+use App\Http\Controllers\DeviceTokenController;
+use App\Http\Controllers\MedicalRecordController;
+use App\Models\AdoptionPet;
+use App\Models\AdoptionTrait;
 use App\Models\Announcement;
+use App\Models\MissingPet;
+use App\Models\Pet;
+use App\Models\PetOwner;
 use App\Models\SpayNeuterReport;
+use App\Models\VaccinationReport;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 // ... existing imports
 
@@ -95,19 +108,20 @@ Route::get('/', function () {
         } else {
             // Unknown role - log out and redirect to login for security
             Auth::logout();
+
             return redirect()->route('login');
         }
     }
     // Get missing pets for the landing page
-    $missingPets = \App\Models\MissingPet::orderBy('last_seen_at', 'desc')
+    $missingPets = MissingPet::orderBy('last_seen_at', 'desc')
         ->limit(5)
         ->get();
-    
+
     // Get active announcements for public
     $announcements = Announcement::where('is_active', true)
         ->orderBy('created_at', 'desc')
         ->get();
-    
+
     return view('Client.welcome', compact('missingPets', 'announcements'));
 })->name('landing');
 
@@ -128,7 +142,7 @@ Route::get('/announcements/{announcement}', [AnnouncementController::class, 'pub
 Route::middleware(['auth'])->group(function () {
     Route::get('/portal/announcements', [AnnouncementController::class, 'publicIndex'])->name('announcements.portal.index');
     Route::post('/portal/announcements/mark-read', [AnnouncementController::class, 'markAsRead'])->name('announcements.markAsRead');
-    
+
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
@@ -269,9 +283,9 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     Route::get('/all-reports', [AdminController::class, 'allReports'])->name('all-reports');
 
     // Impound Records
-    Route::get('/impounds', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'index'])->name('impounds.index');
-    Route::get('/impounds/{impound}', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'show'])->name('impounds.show');
-    Route::put('/impounds/{impound}', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'updateDisposition'])->name('impounds.update');
+    Route::get('/impounds', [ImpoundController::class, 'index'])->name('impounds.index');
+    Route::get('/impounds/{impound}', [ImpoundController::class, 'show'])->name('impounds.show');
+    Route::put('/impounds/{impound}', [ImpoundController::class, 'updateDisposition'])->name('impounds.update');
 
     // Bite & Rabies Reports - View Only
     Route::get('/bite-rabies-reports', [DiseaseControlController::class, 'indexRabiesReports'])->name('rabies-bite-reports.index');
@@ -280,78 +294,77 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
 
     // ========== ADMIN ASST MODULES (merged into assistant_vet) ==========
     // Pet Registrations (Portal Gatekeeper)
-    Route::get('/pet-registrations', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'index'])->name('pet-registrations.index');
-    Route::get('/pet-registrations/create', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'create'])->name('pet-registrations.create');
-    Route::post('/pet-registrations', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'store'])->name('pet-registrations.store');
-    Route::get('/pet-registrations/{pet}', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'show'])->name('pet-registrations.show');
-    Route::get('/pet-registrations/{pet}/edit', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'edit'])->name('pet-registrations.edit');
-    Route::put('/pet-registrations/{pet}', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'update'])->name('pet-registrations.update');
-    Route::delete('/pet-registrations/{pet}', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'destroy'])->name('pet-registrations.destroy');
-    Route::post('/pet-registrations/{pet}/approve', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
+    Route::get('/pet-registrations', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'index'])->name('pet-registrations.index');
+    Route::get('/pet-registrations/create', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'create'])->name('pet-registrations.create');
+    Route::post('/pet-registrations', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'store'])->name('pet-registrations.store');
+    Route::get('/pet-registrations/{pet}', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'show'])->name('pet-registrations.show');
+    Route::get('/pet-registrations/{pet}/edit', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'edit'])->name('pet-registrations.edit');
+    Route::put('/pet-registrations/{pet}', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'update'])->name('pet-registrations.update');
+    Route::delete('/pet-registrations/{pet}', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'destroy'])->name('pet-registrations.destroy');
+    Route::post('/pet-registrations/{pet}/approve', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
 
     // Appointment/Service Requests
-    Route::get('/appointments', [\App\Http\Controllers\AdminAsst\AppointmentController::class, 'index'])->name('appointments.index');
-    Route::get('/appointments/{appointment}', [\App\Http\Controllers\AdminAsst\AppointmentController::class, 'show'])->name('appointments.show');
-    Route::post('/appointments/{appointment}/approve', [\App\Http\Controllers\AdminAsst\AppointmentController::class, 'approve'])->name('appointments.approve');
-    Route::post('/appointments/{appointment}/reject', [\App\Http\Controllers\AdminAsst\AppointmentController::class, 'reject'])->name('appointments.reject');
-    Route::post('/appointments/{appointment}/complete', [\App\Http\Controllers\AdminAsst\AppointmentController::class, 'complete'])->name('appointments.complete');
-    Route::post('/appointments/{appointment}/reset', [\App\Http\Controllers\AdminAsst\AppointmentController::class, 'reset'])->name('appointments.reset');
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+    Route::post('/appointments/{appointment}/approve', [AppointmentController::class, 'approve'])->name('appointments.approve');
+    Route::post('/appointments/{appointment}/reject', [AppointmentController::class, 'reject'])->name('appointments.reject');
+    Route::post('/appointments/{appointment}/complete', [AppointmentController::class, 'complete'])->name('appointments.complete');
+    Route::post('/appointments/{appointment}/reset', [AppointmentController::class, 'reset'])->name('appointments.reset');
 
     // Business Profiles (Poultry & Livestock)
-    Route::get('/business-profiles', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'index'])->name('business-profiles.index');
-    Route::get('/business-profiles/create', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'create'])->name('business-profiles.create');
-    Route::post('/business-profiles', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'store'])->name('business-profiles.store');
-    Route::get('/business-profiles/{businessProfile}', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'show'])->name('business-profiles.show');
-    Route::get('/business-profiles/{businessProfile}/edit', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'edit'])->name('business-profiles.edit');
-    Route::put('/business-profiles/{businessProfile}', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'update'])->name('business-profiles.update');
-    Route::delete('/business-profiles/{businessProfile}', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'destroy'])->name('business-profiles.destroy');
-    Route::post('/business-profiles/{businessProfile}/approve', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'approve'])->name('business-profiles.approve');
-    Route::post('/business-profiles/{businessProfile}/suspend', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'suspend'])->name('business-profiles.suspend');
-    Route::get('/business-profiles/export', [\App\Http\Controllers\AdminAsst\BusinessProfileController::class, 'export'])->name('business-profiles.export');
+    Route::get('/business-profiles', [BusinessProfileController::class, 'index'])->name('business-profiles.index');
+    Route::get('/business-profiles/create', [BusinessProfileController::class, 'create'])->name('business-profiles.create');
+    Route::post('/business-profiles', [BusinessProfileController::class, 'store'])->name('business-profiles.store');
+    Route::get('/business-profiles/{businessProfile}', [BusinessProfileController::class, 'show'])->name('business-profiles.show');
+    Route::get('/business-profiles/{businessProfile}/edit', [BusinessProfileController::class, 'edit'])->name('business-profiles.edit');
+    Route::put('/business-profiles/{businessProfile}', [BusinessProfileController::class, 'update'])->name('business-profiles.update');
+    Route::delete('/business-profiles/{businessProfile}', [BusinessProfileController::class, 'destroy'])->name('business-profiles.destroy');
+    Route::post('/business-profiles/{businessProfile}/approve', [BusinessProfileController::class, 'approve'])->name('business-profiles.approve');
+    Route::post('/business-profiles/{businessProfile}/suspend', [BusinessProfileController::class, 'suspend'])->name('business-profiles.suspend');
+    Route::get('/business-profiles/export', [BusinessProfileController::class, 'export'])->name('business-profiles.export');
 
     // Inventory (merged with city-pound)
-    Route::get('/inventory', [\App\Http\Controllers\AdminAsst\InventoryController::class, 'index'])->name('inventory.index');
-    Route::get('/inventory/create', [\App\Http\Controllers\AdminAsst\InventoryController::class, 'create'])->name('inventory.create');
-    Route::post('/inventory', [\App\Http\Controllers\AdminAsst\InventoryController::class, 'store'])->name('inventory.store');
-    Route::get('/inventory/{inventory}', [\App\Http\Controllers\AdminAsst\InventoryController::class, 'show'])->name('inventory.show');
-    Route::get('/inventory/{inventory}/edit', [\App\Http\Controllers\AdminAsst\InventoryController::class, 'edit'])->name('inventory.edit');
-    Route::put('/inventory/{inventory}', [\App\Http\Controllers\AdminAsst\InventoryController::class, 'update'])->name('inventory.update');
-    Route::delete('/inventory/{inventory}', [\App\Http\Controllers\AdminAsst\InventoryController::class, 'destroy'])->name('inventory.destroy');
-    Route::get('/inventory/low-stock', [\App\Http\Controllers\AdminAsst\InventoryController::class, 'lowStock'])->name('inventory.low-stock');
-
+    Route::get('/inventory', [App\Http\Controllers\AdminAsst\InventoryController::class, 'index'])->name('inventory.index');
+    Route::get('/inventory/create', [App\Http\Controllers\AdminAsst\InventoryController::class, 'create'])->name('inventory.create');
+    Route::post('/inventory', [App\Http\Controllers\AdminAsst\InventoryController::class, 'store'])->name('inventory.store');
+    Route::get('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'show'])->name('inventory.show');
+    Route::get('/inventory/{inventory}/edit', [App\Http\Controllers\AdminAsst\InventoryController::class, 'edit'])->name('inventory.edit');
+    Route::put('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'update'])->name('inventory.update');
+    Route::delete('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'destroy'])->name('inventory.destroy');
+    Route::get('/inventory/low-stock', [App\Http\Controllers\AdminAsst\InventoryController::class, 'lowStock'])->name('inventory.low-stock');
 
     // Impound Records (merged with city-pound)
-    Route::get('/impounds', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'index'])->name('impounds.index');
-    Route::get('/impounds/{impound}', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'show'])->name('impounds.show');
-    Route::put('/impounds/{impound}', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'updateDisposition'])->name('impounds.update');
+    Route::get('/impounds', [ImpoundController::class, 'index'])->name('impounds.index');
+    Route::get('/impounds/{impound}', [ImpoundController::class, 'show'])->name('impounds.show');
+    Route::put('/impounds/{impound}', [ImpoundController::class, 'updateDisposition'])->name('impounds.update');
 
     // Adoptions (merged with city-pound)
-    Route::get('/adoptions', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'index'])->name('adoptions.index');
-    Route::get('/adoptions/create', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'create'])->name('adoptions.create');
-    Route::post('/adoptions', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'store'])->name('adoptions.store');
-    Route::get('/adoptions/{adoption}', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'show'])->name('adoptions.show');
-    Route::post('/adoptions/{adoption}/approve', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'approve'])->name('adoptions.approve');
-    Route::post('/adoptions/{adoption}/reject', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'reject'])->name('adoptions.reject');
-    Route::post('/adoptions/{adoption}/complete', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'complete'])->name('adoptions.complete');
-    Route::post('/adoptions/{adoption}/reset', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'reset'])->name('adoptions.reset');
+    Route::get('/adoptions', [AdoptionController::class, 'index'])->name('adoptions.index');
+    Route::get('/adoptions/create', [AdoptionController::class, 'create'])->name('adoptions.create');
+    Route::post('/adoptions', [AdoptionController::class, 'store'])->name('adoptions.store');
+    Route::get('/adoptions/{adoption}', [AdoptionController::class, 'show'])->name('adoptions.show');
+    Route::post('/adoptions/{adoption}/approve', [AdoptionController::class, 'approve'])->name('adoptions.approve');
+    Route::post('/adoptions/{adoption}/reject', [AdoptionController::class, 'reject'])->name('adoptions.reject');
+    Route::post('/adoptions/{adoption}/complete', [AdoptionController::class, 'complete'])->name('adoptions.complete');
+    Route::post('/adoptions/{adoption}/reset', [AdoptionController::class, 'reset'])->name('adoptions.reset');
 
     // Clinical Actions
-    Route::get('/clinical-actions', [\App\Http\Controllers\AdminAsst\ClinicalActionController::class, 'index'])->name('clinical-actions.index');
-    Route::get('/clinical-actions/create', [\App\Http\Controllers\AdminAsst\ClinicalActionController::class, 'create'])->name('clinical-actions.create');
-    Route::post('/clinical-actions', [\App\Http\Controllers\AdminAsst\ClinicalActionController::class, 'store'])->name('clinical-actions.store');
-    Route::get('/clinical-actions/{clinicalAction}', [\App\Http\Controllers\AdminAsst\ClinicalActionController::class, 'show'])->name('clinical-actions.show');
-    Route::get('/clinical-actions/{clinicalAction}/edit', [\App\Http\Controllers\AdminAsst\ClinicalActionController::class, 'edit'])->name('clinical-actions.edit');
-    Route::put('/clinical-actions/{clinicalAction}', [\App\Http\Controllers\AdminAsst\ClinicalActionController::class, 'update'])->name('clinical-actions.update');
-    Route::delete('/clinical-actions/{clinicalAction}', [\App\Http\Controllers\AdminAsst\ClinicalActionController::class, 'destroy'])->name('clinical-actions.destroy');
+    Route::get('/clinical-actions', [ClinicalActionController::class, 'index'])->name('clinical-actions.index');
+    Route::get('/clinical-actions/create', [ClinicalActionController::class, 'create'])->name('clinical-actions.create');
+    Route::post('/clinical-actions', [ClinicalActionController::class, 'store'])->name('clinical-actions.store');
+    Route::get('/clinical-actions/{clinicalAction}', [ClinicalActionController::class, 'show'])->name('clinical-actions.show');
+    Route::get('/clinical-actions/{clinicalAction}/edit', [ClinicalActionController::class, 'edit'])->name('clinical-actions.edit');
+    Route::put('/clinical-actions/{clinicalAction}', [ClinicalActionController::class, 'update'])->name('clinical-actions.update');
+    Route::delete('/clinical-actions/{clinicalAction}', [ClinicalActionController::class, 'destroy'])->name('clinical-actions.destroy');
 
     // Medical Records
-    Route::get('/medical-records', [\App\Http\Controllers\MedicalRecordController::class, 'index'])->name('medical-records.index');
-    Route::get('/medical-records/create', [\App\Http\Controllers\MedicalRecordController::class, 'create'])->name('medical-records.create');
-    Route::post('/medical-records', [\App\Http\Controllers\MedicalRecordController::class, 'store'])->name('medical-records.store');
-    Route::get('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'show'])->name('medical-records.show');
-    Route::get('/medical-records/{medicalRecord}/edit', [\App\Http\Controllers\MedicalRecordController::class, 'edit'])->name('medical-records.edit');
-    Route::put('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'update'])->name('medical-records.update');
-    Route::delete('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
+    Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical-records.index');
+    Route::get('/medical-records/create', [MedicalRecordController::class, 'create'])->name('medical-records.create');
+    Route::post('/medical-records', [MedicalRecordController::class, 'store'])->name('medical-records.store');
+    Route::get('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'show'])->name('medical-records.show');
+    Route::get('/medical-records/{medicalRecord}/edit', [MedicalRecordController::class, 'edit'])->name('medical-records.edit');
+    Route::put('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'update'])->name('medical-records.update');
+    Route::delete('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
 
     // Rabies Geomap (Geospatial Mapping)
     Route::get('/rabies-geomap', [CityVetController::class, 'geomap'])->name('rabies-geomap');
@@ -364,33 +377,33 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
 // Access: Pet registrations, adoption, missing pets
 // ==============================
 Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admin-asst.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\AdminAsst\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Pet Registrations
-    Route::get('/pet-registrations', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'index'])->name('pet-registrations.index');
-    Route::get('/pet-registrations/{pet}', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'show'])->name('pet-registrations.show');
-    Route::post('/pet-registrations/{pet}/approve', [\App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
+    Route::get('/pet-registrations', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'index'])->name('pet-registrations.index');
+    Route::get('/pet-registrations/{pet}', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'show'])->name('pet-registrations.show');
+    Route::post('/pet-registrations/{pet}/approve', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
 
     // Adoptions
-    Route::get('/adoptions', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'index'])->name('adoptions.index');
-    Route::get('/adoptions/{adoption}', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'show'])->name('adoptions.show');
-    Route::post('/adoptions/{adoption}/approve', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'approve'])->name('adoptions.approve');
-    Route::post('/adoptions/{adoption}/reject', [\App\Http\Controllers\AdminAsst\AdoptionController::class, 'reject'])->name('adoptions.reject');
+    Route::get('/adoptions', [AdoptionController::class, 'index'])->name('adoptions.index');
+    Route::get('/adoptions/{adoption}', [AdoptionController::class, 'show'])->name('adoptions.show');
+    Route::post('/adoptions/{adoption}/approve', [AdoptionController::class, 'approve'])->name('adoptions.approve');
+    Route::post('/adoptions/{adoption}/reject', [AdoptionController::class, 'reject'])->name('adoptions.reject');
 
     // Missing Pets
-    Route::get('/missing-pets', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'index'])->name('missing-pets.index');
-    Route::get('/missing-pets/create', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'create'])->name('missing-pets.create');
-    Route::post('/missing-pets', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'store'])->name('missing-pets.store');
-    Route::get('/missing-pets/{missingPet}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'show'])->name('missing-pets.show');
-    Route::get('/missing-pets/{missingPet}/edit', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'edit'])->name('missing-pets.edit');
-    Route::put('/missing-pets/{missingPet}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'update'])->name('missing-pets.update');
-    Route::post('/missing-pets/{missingPet}/found', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
-    Route::post('/missing-pets/{missingPet}/approve', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'approve'])->name('missing-pets.approve');
+    Route::get('/missing-pets', [MissingPetController::class, 'index'])->name('missing-pets.index');
+    Route::get('/missing-pets/create', [MissingPetController::class, 'create'])->name('missing-pets.create');
+    Route::post('/missing-pets', [MissingPetController::class, 'store'])->name('missing-pets.store');
+    Route::get('/missing-pets/{missingPet}', [MissingPetController::class, 'show'])->name('missing-pets.show');
+    Route::get('/missing-pets/{missingPet}/edit', [MissingPetController::class, 'edit'])->name('missing-pets.edit');
+    Route::put('/missing-pets/{missingPet}', [MissingPetController::class, 'update'])->name('missing-pets.update');
+    Route::post('/missing-pets/{missingPet}/found', [MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
+    Route::post('/missing-pets/{missingPet}/approve', [MissingPetController::class, 'approve'])->name('missing-pets.approve');
 
     // Impound Records
-    Route::get('/impounds', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'index'])->name('impounds.index');
-    Route::get('/impounds/{impound}', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'show'])->name('impounds.show');
-    Route::put('/impounds/{impound}', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'updateDisposition'])->name('impounds.update');
+    Route::get('/impounds', [ImpoundController::class, 'index'])->name('impounds.index');
+    Route::get('/impounds/{impound}', [ImpoundController::class, 'show'])->name('impounds.show');
+    Route::put('/impounds/{impound}', [ImpoundController::class, 'updateDisposition'])->name('impounds.update');
 });
 
 // ==============================
@@ -399,56 +412,56 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
 // Access: Pet registration records, owner records, vaccination encoding
 // ==============================
 Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('admin-staff.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\RecordsController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [RecordsController::class, 'dashboard'])->name('dashboard');
 
     // Pet Records
-    Route::get('/pets', [\App\Http\Controllers\RecordsController::class, 'pets'])->name('pets.index');
-    Route::get('/pets/create', [\App\Http\Controllers\RecordsController::class, 'createPet'])->name('pets.create');
-    Route::post('/pets', [\App\Http\Controllers\RecordsController::class, 'storePet'])->name('pets.store');
-    Route::get('/pets/{pet}', [\App\Http\Controllers\RecordsController::class, 'showAnimal'])->name('pets.show');
-    Route::get('/pets/{pet}/edit', [\App\Http\Controllers\RecordsController::class, 'editAnimal'])->name('pets.edit');
-    Route::put('/pets/{pet}', [\App\Http\Controllers\RecordsController::class, 'updateAnimal'])->name('pets.update');
+    Route::get('/pets', [RecordsController::class, 'pets'])->name('pets.index');
+    Route::get('/pets/create', [RecordsController::class, 'createPet'])->name('pets.create');
+    Route::post('/pets', [RecordsController::class, 'storePet'])->name('pets.store');
+    Route::get('/pets/{pet}', [RecordsController::class, 'showAnimal'])->name('pets.show');
+    Route::get('/pets/{pet}/edit', [RecordsController::class, 'editAnimal'])->name('pets.edit');
+    Route::put('/pets/{pet}', [RecordsController::class, 'updateAnimal'])->name('pets.update');
 
     // Owner Records
-    Route::get('/owners', [\App\Http\Controllers\RecordsController::class, 'owners'])->name('owners.index');
-    Route::get('/owners/{owner}', [\App\Http\Controllers\RecordsController::class, 'showOwner'])->name('owners.show');
+    Route::get('/owners', [RecordsController::class, 'owners'])->name('owners.index');
+    Route::get('/owners/{owner}', [RecordsController::class, 'showOwner'])->name('owners.show');
 
     // Vaccination Records
-    Route::get('/vaccinations', [\App\Http\Controllers\RecordsController::class, 'vaccinations'])->name('vaccinations.index');
-    Route::get('/vaccinations/create', [\App\Http\Controllers\RecordsController::class, 'createVaccination'])->name('vaccinations.create');
-    Route::post('/vaccinations', [\App\Http\Controllers\RecordsController::class, 'storeVaccination'])->name('vaccinations.store');
-    Route::get('/vaccinations/{report}', [\App\Http\Controllers\RecordsController::class, 'showVaccination'])->name('vaccinations.show');
+    Route::get('/vaccinations', [RecordsController::class, 'vaccinations'])->name('vaccinations.index');
+    Route::get('/vaccinations/create', [RecordsController::class, 'createVaccination'])->name('vaccinations.create');
+    Route::post('/vaccinations', [RecordsController::class, 'storeVaccination'])->name('vaccinations.store');
+    Route::get('/vaccinations/{report}', [RecordsController::class, 'showVaccination'])->name('vaccinations.show');
 
     // Search Records
-    Route::get('/search', [\App\Http\Controllers\RecordsController::class, 'search'])->name('search');
+    Route::get('/search', [RecordsController::class, 'search'])->name('search');
 
     // Missing Pets
-    Route::get('/missing-pets', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'index'])->name('missing-pets.index');
-    Route::get('/missing-pets/create', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'create'])->name('missing-pets.create');
-    Route::post('/missing-pets', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'store'])->name('missing-pets.store');
-    Route::get('/missing-pets/{missingPet}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'show'])->name('missing-pets.show');
-    Route::get('/missing-pets/{missingPet}/edit', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'edit'])->name('missing-pets.edit');
-    Route::put('/missing-pets/{missingPet}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'update'])->name('missing-pets.update');
-    Route::post('/missing-pets/{missingPet}/found', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
-    Route::post('/missing-pets/{missingPet}/approve', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'approve'])->name('missing-pets.approve');
+    Route::get('/missing-pets', [MissingPetController::class, 'index'])->name('missing-pets.index');
+    Route::get('/missing-pets/create', [MissingPetController::class, 'create'])->name('missing-pets.create');
+    Route::post('/missing-pets', [MissingPetController::class, 'store'])->name('missing-pets.store');
+    Route::get('/missing-pets/{missingPet}', [MissingPetController::class, 'show'])->name('missing-pets.show');
+    Route::get('/missing-pets/{missingPet}/edit', [MissingPetController::class, 'edit'])->name('missing-pets.edit');
+    Route::put('/missing-pets/{missingPet}', [MissingPetController::class, 'update'])->name('missing-pets.update');
+    Route::post('/missing-pets/{missingPet}/found', [MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
+    Route::post('/missing-pets/{missingPet}/approve', [MissingPetController::class, 'approve'])->name('missing-pets.approve');
 
     // Adoption Pets
-    Route::get('/adoption-pets', [\App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'index'])->name('adoption-pets.index');
-    Route::get('/adoption-pets/create', [\App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'create'])->name('adoption-pets.create');
-    Route::post('/adoption-pets', [\App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'store'])->name('adoption-pets.store');
-    Route::get('/adoption-pets/{adoptionPet}', [\App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'show'])->name('adoption-pets.show');
-    Route::get('/adoption-pets/{adoptionPet}/edit', [\App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'edit'])->name('adoption-pets.edit');
-    Route::put('/adoption-pets/{adoptionPet}', [\App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'update'])->name('adoption-pets.update');
-    Route::delete('/adoption-pets/{adoptionPet}', [\App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'destroy'])->name('adoption-pets.destroy');
+    Route::get('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'index'])->name('adoption-pets.index');
+    Route::get('/adoption-pets/create', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'create'])->name('adoption-pets.create');
+    Route::post('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'store'])->name('adoption-pets.store');
+    Route::get('/adoption-pets/{adoptionPet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'show'])->name('adoption-pets.show');
+    Route::get('/adoption-pets/{adoptionPet}/edit', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'edit'])->name('adoption-pets.edit');
+    Route::put('/adoption-pets/{adoptionPet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'update'])->name('adoption-pets.update');
+    Route::delete('/adoption-pets/{adoptionPet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'destroy'])->name('adoption-pets.destroy');
 
     // Medical Records
-    Route::get('/medical-records', [\App\Http\Controllers\MedicalRecordController::class, 'index'])->name('medical-records.index');
-    Route::get('/medical-records/create', [\App\Http\Controllers\MedicalRecordController::class, 'create'])->name('medical-records.create');
-    Route::post('/medical-records', [\App\Http\Controllers\MedicalRecordController::class, 'store'])->name('medical-records.store');
-    Route::get('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'show'])->name('medical-records.show');
-    Route::get('/medical-records/{medicalRecord}/edit', [\App\Http\Controllers\MedicalRecordController::class, 'edit'])->name('medical-records.edit');
-    Route::put('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'update'])->name('medical-records.update');
-    Route::delete('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
+    Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical-records.index');
+    Route::get('/medical-records/create', [MedicalRecordController::class, 'create'])->name('medical-records.create');
+    Route::post('/medical-records', [MedicalRecordController::class, 'store'])->name('medical-records.store');
+    Route::get('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'show'])->name('medical-records.show');
+    Route::get('/medical-records/{medicalRecord}/edit', [MedicalRecordController::class, 'edit'])->name('medical-records.edit');
+    Route::put('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'update'])->name('medical-records.update');
+    Route::delete('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
 });
 
 // ==============================
@@ -457,21 +470,21 @@ Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('ad
 // Access: Shares access with city_vet (merged modules)
 // ==============================
 Route::middleware(['auth', 'role:assistant_vet'])->prefix('assistant-vet')->name('assistant-vet.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\CityVetController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [CityVetController::class, 'dashboard'])->name('dashboard');
 
     // Vaccination Records (shared with admin_staff)
-    Route::get('/vaccinations', [\App\Http\Controllers\RecordsController::class, 'vaccinations'])->name('vaccinations.index');
-    Route::get('/vaccinations/create', [\App\Http\Controllers\RecordsController::class, 'createVaccination'])->name('vaccinations.create');
-    Route::post('/vaccinations', [\App\Http\Controllers\RecordsController::class, 'storeVaccination'])->name('vaccinations.store');
+    Route::get('/vaccinations', [RecordsController::class, 'vaccinations'])->name('vaccinations.index');
+    Route::get('/vaccinations/create', [RecordsController::class, 'createVaccination'])->name('vaccinations.create');
+    Route::post('/vaccinations', [RecordsController::class, 'storeVaccination'])->name('vaccinations.store');
 
     // Medical Records
-    Route::get('/medical-records', [\App\Http\Controllers\MedicalRecordController::class, 'index'])->name('medical-records.index');
-    Route::get('/medical-records/create', [\App\Http\Controllers\MedicalRecordController::class, 'create'])->name('medical-records.create');
-    Route::post('/medical-records', [\App\Http\Controllers\MedicalRecordController::class, 'store'])->name('medical-records.store');
-    Route::get('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'show'])->name('medical-records.show');
-    Route::get('/medical-records/{medicalRecord}/edit', [\App\Http\Controllers\MedicalRecordController::class, 'edit'])->name('medical-records.edit');
-    Route::put('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'update'])->name('medical-records.update');
-    Route::delete('/medical-records/{medicalRecord}', [\App\Http\Controllers\MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
+    Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical-records.index');
+    Route::get('/medical-records/create', [MedicalRecordController::class, 'create'])->name('medical-records.create');
+    Route::post('/medical-records', [MedicalRecordController::class, 'store'])->name('medical-records.store');
+    Route::get('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'show'])->name('medical-records.show');
+    Route::get('/medical-records/{medicalRecord}/edit', [MedicalRecordController::class, 'edit'])->name('medical-records.edit');
+    Route::put('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'update'])->name('medical-records.update');
+    Route::delete('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
 });
 
 // ==============================
@@ -636,15 +649,15 @@ Route::middleware(['auth', 'role:city_vet|assistant_vet'])->prefix('rabies')->na
 // PUBLIC PAGES (Citizen Portal)
 // ==============================
 Route::prefix('pages')->name('pages.')->group(function () {
-    Route::get('/pet-owner-info', function() {
+    Route::get('/pet-owner-info', function () {
         return view('pages.pet-owner-info');
     })->name('pet-owner-info');
 
-    Route::get('/programs-schedules', function() {
+    Route::get('/programs-schedules', function () {
         return view('pages.programs-schedules');
     })->name('programs-schedules');
 
-    Route::get('/reports-safety', function() {
+    Route::get('/reports-safety', function () {
         return view('pages.reports-safety');
     })->name('reports-safety');
 });
@@ -654,16 +667,16 @@ Route::prefix('pages')->name('pages.')->group(function () {
 // ==============================
 Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
     // Store device token
-    Route::post('/device-tokens', [\App\Http\Controllers\DeviceTokenController::class, 'store'])->name('device-tokens.store');
+    Route::post('/device-tokens', [DeviceTokenController::class, 'store'])->name('device-tokens.store');
 
     // Update token usage
-    Route::put('/device-tokens/usage', [\App\Http\Controllers\DeviceTokenController::class, 'updateUsage'])->name('device-tokens.update-usage');
+    Route::put('/device-tokens/usage', [DeviceTokenController::class, 'updateUsage'])->name('device-tokens.update-usage');
 
     // Deactivate token
-    Route::delete('/device-tokens', [\App\Http\Controllers\DeviceTokenController::class, 'destroy'])->name('device-tokens.destroy');
+    Route::delete('/device-tokens', [DeviceTokenController::class, 'destroy'])->name('device-tokens.destroy');
 
     // Get user's tokens
-    Route::get('/device-tokens', [\App\Http\Controllers\DeviceTokenController::class, 'index'])->name('device-tokens.index');
+    Route::get('/device-tokens', [DeviceTokenController::class, 'index'])->name('device-tokens.index');
 });
 
 // ==============================
@@ -674,15 +687,15 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
 
 // Landing page for client portal
 Route::get('/client', function () {
-    $missingPets = \App\Models\AdoptionPet::where('is_missing', true)
+    $missingPets = AdoptionPet::where('is_missing', true)
         ->orderBy('last_seen_at', 'desc')
         ->limit(5)
         ->get();
-    
-    $announcements = \App\Models\Announcement::where('is_active', true)
+
+    $announcements = Announcement::where('is_active', true)
         ->orderBy('created_at', 'desc')
         ->get();
-    
+
     return view('Client.welcome', compact('missingPets', 'announcements'));
 });
 
@@ -734,14 +747,20 @@ Route::get('/kapon/form', function () {
             'weight' => $pet->pet_weight,
             'sex' => $pet->sex ?? $pet->gender, // Use sex or gender (either may be populated)
             'image' => $pet->pet_image,
+            'is_neutered' => $pet->is_neutered,
         ];
     })->toArray();
+
+    // Sort: non-neutered pets first, then neutered pets
+    $petsArray = collect($petsArray)->sortBy(function ($pet) {
+        return $pet['is_neutered'] === 'yes' ? 1 : 0;
+    })->values()->toArray();
 
     return view('Client.kapon_form', compact('user', 'petOwner', 'petsArray', 'userId'));
 });
 
 // Kapon Form POST Route
-Route::post('/kapon/form', function (\Illuminate\Http\Request $request) {
+Route::post('/kapon/form', function (Request $request) {
     $validated = $request->validate([
         'selected_pets' => 'required|array|min:1|max:3',
         'appointment_date' => 'required|date|after_or_equal:today',
@@ -750,35 +769,35 @@ Route::post('/kapon/form', function (\Illuminate\Http\Request $request) {
 
     // Get authenticated user's PetOwner
     $petOwner = auth()->user()->petOwner;
-    
-    if (!$petOwner) {
+
+    if (! $petOwner) {
         return redirect()->back()->with('error', 'Please complete your profile first.');
     }
 
     // Get pet details from form's pets_data JSON
     $petsData = json_decode($request->input('pets_data'), true);
-    
+
     // Double booking check - prevent same pet from being scheduled twice
     foreach ($validated['selected_pets'] as $petId) {
-        $pet = collect($petsData)->firstWhere('id', (string)$petId);
-        
+        $pet = collect($petsData)->firstWhere('id', (string) $petId);
+
         if ($pet && isset($pet['name'])) {
-            $existingBooking = \App\Models\SpayNeuterReport::where('user_id', auth()->id())
+            $existingBooking = SpayNeuterReport::where('user_id', auth()->id())
                 ->where('pet_name', $pet['name'])
                 ->whereDate('scheduled_at', $validated['appointment_date'])
                 ->whereIn('status', ['pending', 'scheduled'])
                 ->whereNotNull('scheduled_at')
                 ->exists();
-            
+
             if ($existingBooking) {
-                return redirect()->back()->with('error', 'Pet "' . $pet['name'] . '" already has a kapon appointment scheduled for ' . \Carbon\Carbon::parse($validated['appointment_date'])->format('F j, Y') . '. Please choose a different pet or date.');
+                return redirect()->back()->with('error', 'Pet "'.$pet['name'].'" already has a kapon appointment scheduled for '.Carbon::parse($validated['appointment_date'])->format('F j, Y').'. Please choose a different pet or date.');
             }
         }
     }
 
     // Build owner info from PetOwner
-    $ownerName = $petOwner->first_name . ' ' . $petOwner->last_name;
-    $ownerAddress = $petOwner->blk_lot_ph . ', ' . $petOwner->street . ', ' . $petOwner->barangay;
+    $ownerName = $petOwner->first_name.' '.$petOwner->last_name;
+    $ownerAddress = $petOwner->blk_lot_ph.', '.$petOwner->street.', '.$petOwner->barangay;
     $ownerContact = $petOwner->phone_number;
 
     // Handle photo uploads
@@ -799,16 +818,16 @@ Route::post('/kapon/form', function (\Illuminate\Http\Request $request) {
 
     // Create one SpayNeuterReport per selected pet
     foreach ($validated['selected_pets'] as $petId) {
-        $pet = collect($petsData)->firstWhere('id', (string)$petId);
-        
+        $pet = collect($petsData)->firstWhere('id', (string) $petId);
+
         // Get pet sex (use whatever is available)
         $petSex = $pet['sex'] ?? null;
-        
+
         // If sex is still null, default to 'male' to prevent DB error
         if (empty($petSex)) {
             $petSex = 'male';
         }
-        
+
         // Determine procedure type based on pet sex
         // Male → neuter, Female → spay (no "both" option)
         $procedureType = ($petSex === 'male') ? 'neuter' : 'spay';
@@ -832,7 +851,7 @@ Route::post('/kapon/form', function (\Illuminate\Http\Request $request) {
             'owner_contact' => $ownerContact,
             'owner_address' => $ownerAddress,
             'procedure_type' => $procedureType,
-            'scheduled_at' => $validated['appointment_date'] . ' ' . $validated['appointment_time'] . ':00',
+            'scheduled_at' => $validated['appointment_date'].' '.$validated['appointment_time'].':00',
             'barangay' => $petOwner->barangay,
             'weight' => $pet['weight'] ?? null,
             'status' => 'pending',
@@ -848,143 +867,144 @@ Route::post('/kapon/form', function (\Illuminate\Http\Request $request) {
 })->middleware('auth');
 
 // Adoption Page Route - Public
-Route::get('/adoption', function (\Illuminate\Http\Request $request) {
+Route::get('/adoption', function (Request $request) {
     $userPets = [];
     $client = null;
     $hasPets = false;
-    
+
     if (auth()->check()) {
-        $client = \App\Models\PetOwner::where('user_id', auth()->id())->first();
+        $client = PetOwner::where('user_id', auth()->id())->first();
         if ($client) {
             $userPets = $client->pets()->get(['species', 'gender']);
             $hasPets = $client->pets()->exists();
         }
     }
-    
-    $adoptionPets = \App\Models\AdoptionPet::with('traits');
-    
-    $availableBreeds = \App\Models\AdoptionPet::whereNotNull('breed')
+
+    $adoptionPets = AdoptionPet::with('traits');
+
+    $availableBreeds = AdoptionPet::whereNotNull('breed')
         ->where('breed', '!=', '')
         ->distinct()
         ->orderBy('breed')
         ->pluck('breed');
-    
-    $availableTraits = \App\Models\AdoptionTrait::orderBy('name')->pluck('name');
-    
+
+    $availableTraits = AdoptionTrait::orderBy('name')->pluck('name');
+
     $filter = $request->input('filter', 'all');
     $species = $request->input('species', 'all');
     $gender = $request->input('gender', 'all');
     $age = $request->input('age', 'all');
     $breeds = $request->input('breeds', 'all');
-    
+
     if ($species === 'Dog') {
         $adoptionPets = $adoptionPets->where('species', 'Dog');
     } elseif ($species === 'Cat') {
         $adoptionPets = $adoptionPets->where('species', 'Cat');
     }
-    
+
     if ($gender === 'male') {
         $adoptionPets = $adoptionPets->where('gender', 'male');
     } elseif ($gender === 'female') {
         $adoptionPets = $adoptionPets->where('gender', 'female');
     }
-    
+
     if ($age === '0-6') {
         $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-                                   ->where('date_of_birth', '>=', now()->subMonths(6));
+            ->where('date_of_birth', '>=', now()->subMonths(6));
     } elseif ($age === '6-12') {
         $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-                                   ->where('date_of_birth', '<', now()->subMonths(6))
-                                   ->where('date_of_birth', '>=', now()->subMonths(12));
+            ->where('date_of_birth', '<', now()->subMonths(6))
+            ->where('date_of_birth', '>=', now()->subMonths(12));
     } elseif ($age === '1-3') {
         $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-                                   ->where('date_of_birth', '<', now()->subMonths(12))
-                                   ->where('date_of_birth', '>=', now()->subYears(3));
+            ->where('date_of_birth', '<', now()->subMonths(12))
+            ->where('date_of_birth', '>=', now()->subYears(3));
     } elseif ($age === '3+') {
         $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-                                   ->where('date_of_birth', '<', now()->subYears(3));
+            ->where('date_of_birth', '<', now()->subYears(3));
     }
-    
-    if ($breeds !== 'all' && !empty($breeds)) {
+
+    if ($breeds !== 'all' && ! empty($breeds)) {
         $breedArray = explode(',', $breeds);
         $adoptionPets = $adoptionPets->whereIn('breed', $breedArray);
     }
-    
+
     $traits = $request->input('traits', 'all');
-    if ($traits !== 'all' && !empty($traits)) {
+    if ($traits !== 'all' && ! empty($traits)) {
         $traitArray = explode(',', $traits);
-        $adoptionPets = $adoptionPets->whereHas('traits', function($query) use ($traitArray) {
+        $adoptionPets = $adoptionPets->whereHas('traits', function ($query) use ($traitArray) {
             $query->whereIn('name', $traitArray);
         });
     }
-    
+
     $adoptionPets = $adoptionPets->paginate(10);
+
     return view('Client.adoption', compact('adoptionPets', 'userPets', 'hasPets', 'availableBreeds', 'availableTraits'));
 })->name('adoption.index');
 
 // Adoption AJAX Pagination Route
-Route::get('/adoption/paginate', function (\Illuminate\Http\Request $request) {
+Route::get('/adoption/paginate', function (Request $request) {
     $userPets = [];
     $client = null;
-    
+
     if (auth()->check()) {
-        $client = \App\Models\PetOwner::where('user_id', auth()->id())->first();
+        $client = PetOwner::where('user_id', auth()->id())->first();
         if ($client) {
             $userPets = $client->pets()->get(['species', 'gender']);
         }
     }
-    
-    $adoptionPets = \App\Models\AdoptionPet::with('traits');
-    
+
+    $adoptionPets = AdoptionPet::with('traits');
+
     $filter = $request->input('filter', 'all');
     $species = $request->input('species', 'all');
     $gender = $request->input('gender', 'all');
     $age = $request->input('age', 'all');
     $breeds = $request->input('breeds', 'all');
-    
+
     if ($species === 'Dog') {
         $adoptionPets = $adoptionPets->where('species', 'Dog');
     } elseif ($species === 'Cat') {
         $adoptionPets = $adoptionPets->where('species', 'Cat');
     }
-    
+
     if ($gender === 'male') {
         $adoptionPets = $adoptionPets->where('gender', 'male');
     } elseif ($gender === 'female') {
         $adoptionPets = $adoptionPets->where('gender', 'female');
     }
-    
+
     if ($age === '0-6') {
         $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-                                   ->where('date_of_birth', '>=', now()->subMonths(6));
+            ->where('date_of_birth', '>=', now()->subMonths(6));
     } elseif ($age === '6-12') {
         $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-                                   ->where('date_of_birth', '<', now()->subMonths(6))
-                                   ->where('date_of_birth', '>=', now()->subMonths(12));
+            ->where('date_of_birth', '<', now()->subMonths(6))
+            ->where('date_of_birth', '>=', now()->subMonths(12));
     } elseif ($age === '1-3') {
         $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-                                   ->where('date_of_birth', '<', now()->subMonths(12))
-                                   ->where('date_of_birth', '>=', now()->subYears(3));
+            ->where('date_of_birth', '<', now()->subMonths(12))
+            ->where('date_of_birth', '>=', now()->subYears(3));
     } elseif ($age === '3+') {
         $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-                                   ->where('date_of_birth', '<', now()->subYears(3));
+            ->where('date_of_birth', '<', now()->subYears(3));
     }
-    
-    if ($breeds !== 'all' && !empty($breeds)) {
+
+    if ($breeds !== 'all' && ! empty($breeds)) {
         $breedArray = explode(',', $breeds);
         $adoptionPets = $adoptionPets->whereIn('breed', $breedArray);
     }
-    
+
     $traits = $request->input('traits', 'all');
-    if ($traits !== 'all' && !empty($traits)) {
+    if ($traits !== 'all' && ! empty($traits)) {
         $traitArray = explode(',', $traits);
-        $adoptionPets = $adoptionPets->whereHas('traits', function($query) use ($traitArray) {
+        $adoptionPets = $adoptionPets->whereHas('traits', function ($query) use ($traitArray) {
             $query->whereIn('name', $traitArray);
         });
     }
-    
+
     $adoptionPets = $adoptionPets->paginate(10);
-    
+
     $pets = collect($adoptionPets->items())->map(function ($pet) {
         return [
             'id' => $pet->adoption_id,
@@ -1003,13 +1023,13 @@ Route::get('/adoption/paginate', function (\Illuminate\Http\Request $request) {
             'age' => $pet->age,
         ];
     });
-    
+
     return response()->json([
         'pets' => $pets,
         'currentPage' => $adoptionPets->currentPage(),
         'lastPage' => $adoptionPets->lastPage(),
         'hasMorePages' => $adoptionPets->hasMorePages(),
-        'total' => $adoptionPets->total()
+        'total' => $adoptionPets->total(),
     ]);
 });
 
@@ -1017,13 +1037,14 @@ Route::get('/adoption/paginate', function (\Illuminate\Http\Request $request) {
 Route::get('/adoption/form', function () {
     $user = auth()->user();
     $petOwner = $user ? $user->petOwner : null;
-    $traits = \App\Models\AdoptionTrait::orderBy('name')->get();
-    $adoptionPets = \App\Models\AdoptionPet::all();
+    $traits = AdoptionTrait::orderBy('name')->get();
+    $adoptionPets = AdoptionPet::all();
+
     return view('Client.adoption_form', compact('user', 'petOwner', 'traits', 'adoptionPets'));
 })->name('adoption.form');
 
 // Store Adoption Pet Route
-Route::post('/adoption', [\App\Http\Controllers\AdoptionPetController::class, 'store'])->name('adoption.store');
+Route::post('/adoption', [AdoptionPetController::class, 'store'])->name('adoption.store');
 
 // Missing Pets Page Route - Public
 Route::get('/missing-pets', function () {
@@ -1031,12 +1052,12 @@ Route::get('/missing-pets', function () {
         ->with('owner')
         ->orderBy('last_seen_at', 'desc')
         ->paginate(12);
-    
+
     // Get active announcements for public (all published, no audience filter)
     $announcements = Announcement::where('is_active', true)
         ->orderBy('created_at', 'desc')
         ->get();
-    
+
     return view('Client.missing_pets_page', compact('missingPets', 'announcements'));
 });
 
@@ -1045,8 +1066,8 @@ Route::get('/missing-pets/form', function () {
     $user = auth()->user();
     $petOwner = $user ? $user->petOwner : null;
     $pets = $petOwner ? $petOwner->pets : collect([]);
-    
-    $petsArray = $pets->map(function($pet) {
+
+    $petsArray = $pets->map(function ($pet) {
         return [
             'id' => $pet->pet_id,
             'name' => $pet->pet_name,
@@ -1056,10 +1077,10 @@ Route::get('/missing-pets/form', function () {
             'is_neutered' => $pet->is_neutered,
             'age' => $pet->estimated_age,
             'weight' => $pet->weight,
-            'image' => $pet->pet_image
+            'image' => $pet->pet_image,
         ];
     })->toArray();
-    
+
     return view('Client.missing_pets_form', compact('user', 'petOwner', 'petsArray'));
 })->middleware('auth')->name('missing-pets.form');
 
@@ -1085,7 +1106,7 @@ Route::get('/vaccination', function () {
 Route::get('/vaccination/form', function () {
     $user = auth()->user();
     $petOwner = $user ? $user->petOwner : null;
-    $pets = $petOwner ? \App\Models\Pet::where('owner_id', $petOwner->owner_id)->get() : collect([]);
+    $pets = $petOwner ? Pet::where('owner_id', $petOwner->owner_id)->get() : collect([]);
 
     $petsArray = $pets->map(function ($pet) {
         return [
@@ -1105,7 +1126,7 @@ Route::get('/vaccination/form', function () {
 });
 
 // Vaccination Form POST Route
-Route::post('/vaccination/form', function (\Illuminate\Http\Request $request) {
+Route::post('/vaccination/form', function (Request $request) {
     $validated = $request->validate([
         'owner_first_name' => 'required|string|max:255',
         'owner_last_name' => 'required|string|max:255',
@@ -1132,7 +1153,7 @@ Route::post('/vaccination/form', function (\Illuminate\Http\Request $request) {
     $petOwner = $user->petOwner;
 
     // Combine date and time into scheduled_at
-    $scheduledAt = \Carbon\Carbon::parse($validated['appointment_date'] . ' ' . $validated['appointment_time']);
+    $scheduledAt = Carbon::parse($validated['appointment_date'].' '.$validated['appointment_time']);
 
     // Store selected pets in metadata JSON
     $metadata = [
@@ -1140,12 +1161,12 @@ Route::post('/vaccination/form', function (\Illuminate\Http\Request $request) {
     ];
 
     // Add alt mobile if provided
-    if (!empty($validated['alt_mobile_number'])) {
+    if (! empty($validated['alt_mobile_number'])) {
         $metadata['alt_mobile_number'] = $validated['alt_mobile_number'];
     }
 
     // Create vaccination report
-    \App\Models\VaccinationReport::create([
+    VaccinationReport::create([
         'user_id' => $user->id,
         'owner_first_name' => $validated['owner_first_name'],
         'owner_last_name' => $validated['owner_last_name'],
@@ -1237,17 +1258,16 @@ Route::middleware(['auth', 'role:viewer'])->prefix('viewer')->name('viewer.')->g
 // PROFILE ROUTES (Authenticated Users)
 // ==============================
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [\App\Http\Controllers\Client\ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [\App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [\App\Http\Controllers\Client\ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // ==============================
 // BITE & RABIES REPORT - PUBLIC FORM
 // ==============================
-Route::get('/bite-rabies-report', [\App\Http\Controllers\Client\BiteRabiesReportController::class, 'create'])->name('bite-rabies-report.create');
-Route::post('/bite-rabies-report', [\App\Http\Controllers\Client\BiteRabiesReportController::class, 'store'])->name('bite-rabies-report.store');
-Route::get('/bite-rabies-report/success', [\App\Http\Controllers\Client\BiteRabiesReportController::class, 'success'])->name('bite-rabies-report.success');
-
+Route::get('/bite-rabies-report', [BiteRabiesReportController::class, 'create'])->name('bite-rabies-report.create');
+Route::post('/bite-rabies-report', [BiteRabiesReportController::class, 'store'])->name('bite-rabies-report.store');
+Route::get('/bite-rabies-report/success', [BiteRabiesReportController::class, 'success'])->name('bite-rabies-report.success');
 
 require __DIR__.'/auth.php';

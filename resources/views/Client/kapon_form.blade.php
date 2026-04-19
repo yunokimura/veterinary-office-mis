@@ -425,11 +425,19 @@
                                         @foreach($petsArray as $pet)
                                             @php
                                                 $speciesDisplay = isset($pet['species']) ? ucfirst($pet['species']) : 'Unknown';
+                                                $isNeutered = isset($pet['is_neutered']) && $pet['is_neutered'] === 'yes';
+                                                $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card';
+                                                if ($isNeutered) {
+                                                    $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100';
+                                                } else {
+                                                    $cardClasses .= ' border-gray-200 hover:bg-green-50 hover:border-primary transition-colors';
+                                                }
                                             @endphp
-                                            <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet['id'] }}">
+                                            <label class="{{ $cardClasses }}" data-pet-id="{{ $pet['id'] }}">
                                                 <input type="checkbox" name="selected_pets[]" value="{{ $pet['id'] }}" 
                                                        class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary pet-checkbox"
-                                                       onchange="togglePetSelection(this)">
+                                                       onchange="togglePetSelection(this)"
+                                                       @if($isNeutered) disabled @endif>
                                                 <div class="ml-3 flex-1">
                                                     <div class="flex items-center justify-between">
                                                         <span class="font-semibold text-gray-900 pet-name">{{ $pet['name'] }}</span>
@@ -441,7 +449,12 @@
                                                         <div class="text-gray-600">Weight: {{ isset($pet['weight']) ? (str_contains(strtolower($pet['weight']), 'kg') || strtolower($pet['weight']) == 'n/a' ? $pet['weight'] : $pet['weight'] . ' kg') : 'Unknown' }}</div>
                                                     </div>
                                                 </div>
-                                                @if(!empty($pet['image']))
+                                                @if($isNeutered)
+                                                <div class="ml-2 flex-shrink-0">
+                                                    <span class="text-xs px-2 py-1 bg-gray-200 text-gray-600 rounded font-medium">Neutered</span>
+                                                </div>
+                                                @endif
+                                                @if(!empty($pet['image']) && !$isNeutered)
                                                 <div class="ml-2 flex-shrink-0">
                                                     @php
                                                         $petImagePath = $pet['image'];
@@ -525,12 +538,16 @@
                     }
 
                     function togglePetSelection(checkbox) {
+                        // Ignore if checkbox is disabled (neutered pet)
+                        if (checkbox.disabled) {
+                            return;
+                        }
                         const petId = String(checkbox.value);
                         const petName = checkbox.closest('.pet-selection-card')?.querySelector('.pet-name')?.textContent || 'this pet';
                         
                         if (checkbox.checked) {
                             // Check if max limit reached
-                            if (selectedPets.length >= 3) {
+                            if (selectedPets.length >= 2) {
                                 checkbox.checked = false;
                                 showPetLimitModal();
                                 return;
@@ -623,7 +640,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                             </svg>
                                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Pet Limit Reached</h3>
-                                            <p class="text-gray-600 mb-6">To ensure fair slot distribution and smooth form submission, a maximum of 3 pets is allowed per transaction. Please complete this form first and submit a new application for additional pets.</p>
+                                            <p class="text-gray-600 mb-6">To ensure fair slot distribution and smooth form submission, a maximum of 2 pets is allowed per transaction. Please complete this form first and submit a new application for additional pets.</p>
                                             <button type="button" onclick="closePetLimitModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
                                                 I understand
                                             </button>
