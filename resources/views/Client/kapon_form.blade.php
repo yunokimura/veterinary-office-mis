@@ -347,14 +347,7 @@
                         </div>
                     </div>
 
-                    <!-- Slot Picker for Kapon -->
-                    @include('components.appointment-slot-picker', [
-                        'serviceType' => 'kapon',
-                        'fieldName' => 'appointment',
-                        'petIds' => []
-                    ])
-
-                    <!-- Already Scheduled Warning -->
+                    <!-- Per-pet appointment scheduling will be added dynamically -->
                     <div id="alreadyScheduledWarning" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
                         <div class="flex items-start">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -370,12 +363,12 @@
                     <!-- Photo Uploads for Each Selected Pet -->
                     <div id="petPhotosContainer" class="mb-6">
                         <label class="block text-sm font-medium pt-4 mb-3">
-                            Upload Photos <span class="text-red-500">*</span>
+                            Appointment Date & Upload Photo <span class="text-red-500">*</span>
                         </label>
                         <div id="petPhotoFields" class="space-y-4">
                             <!-- Photo upload fields will be dynamically added here -->
                             <div id="noPhotosMessage" class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
-                                <p class="text-gray-500 text-sm">Select a pet first to upload photos</p>
+                                <p class="text-gray-500 text-sm">Select a pet first to set appointment and upload photos</p>
                             </div>
                         </div>
                         <p class="text-xs text-gray-500 italic mt-2">Required views: Head, Face, Body – top and side view (while standing on all four legs) and Genitals. Max. file size: 8MB per pet</p>
@@ -505,6 +498,146 @@
                     }
                     
                     let selectedPets = [];
+                    
+                    // Per-pet kapon appointment scheduling
+                    const kaponAppointments = {};
+                    const kaponSlotsData = {};
+
+                    function toggleKaponScheduleAccordion(petId) {
+                        const content = document.getElementById('kaponScheduleContent_' + petId);
+                        const arrow = document.getElementById('kaponScheduleArrow_' + petId);
+                        if (content.classList.contains('hidden')) {
+                            content.classList.remove('hidden');
+                            arrow.classList.add('rotate-180');
+                        } else {
+                            content.classList.add('hidden');
+                            arrow.classList.remove('rotate-180');
+                        }
+                    }
+
+                    async function loadKaponPetSlots(petId) {
+                        const dateInput = document.getElementById('kaponAppointmentDate_' + petId);
+                        const selectedDate = dateInput.value;
+                        if (!selectedDate) return;
+
+                        const slotStatus = document.getElementById('kaponSlotStatus_' + petId);
+                        const timeSlots = document.getElementById('kaponTimeSlots_' + petId);
+                        
+                        slotStatus.classList.remove('hidden');
+                        timeSlots.classList.add('hidden');
+                        
+                        const capacityBadge = document.getElementById('kaponDailyCapacity_' + petId);
+                        capacityBadge.textContent = 'Loading...';
+                        capacityBadge.className = 'inline-flex items-center px-2 py-1 rounded-full bg-gray-100 text-gray-700';
+
+                        try {
+                            const response = await fetch(`/api/appointments/slots?date=${selectedDate}&service_type=kapon`);
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                kaponSlotsData[petId] = data.slots;
+                                const dailyRemaining = data.daily_remaining || 0;
+                                
+                                if (dailyRemaining <= 0) {
+                                    capacityBadge.textContent = 'Fully Booked';
+                                    capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700';
+                                } else if (dailyRemaining === 1) {
+                                    capacityBadge.textContent = '1 slot left';
+                                    capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700';
+                                } else {
+                                    capacityBadge.textContent = 'Available';
+                                    capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700';
+                                }
+                                
+                                if (data.slots && data.slots.length > 0) {
+                                    renderKaponTimeSlots(petId, data.slots);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Failed to load kapon slots:', error);
+                            capacityBadge.textContent = 'Error loading slots';
+                            capacityBadge.className = 'inline-flex items-center px-2 py-1 rounded-full bg-red-100 text-red-700';
+                        }
+                    }
+
+                    function renderKaponTimeSlots(petId, slots) {
+                        const timeSlots = document.getElementById('kaponTimeSlots_' + petId);
+                        const slotsGrid = document.getElementById('kaponSlotsGrid_' + petId);
+                        
+                        const sortedSlots = [...slots].sort((a, b) => a.time.localeCompare(b.time));
+                        
+                        slotsGrid.innerHTML = '';
+                        
+                        const currentTime = new Date();
+                        const isToday = kaponAppointments[petId]?.date === currentTime.toISOString().split('T')[0];
+                        const currentHour = currentTime.getHours();
+                        const currentMinute = currentTime.getMinutes();
+                        
+                        sortedSlots.forEach(slot => {
+                            const [slotHour, slotMinute] = slot.time.split(':').map(Number);
+                            const slotTimeInMinutes = slotHour * 60 + slotMinute;
+                            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+                            const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
+                            
+                            const isDisabled = slot.status === 'blocked' || slot.status === 'full' || isPast || slot.is_past;
+                            const isSelected = kaponAppointments[petId]?.time === slot.time;
+                            
+                            let btnClass = 'py-3 px-2 rounded-lg border-2 text-sm font-medium transition-all ';
+                            if (isDisabled) {
+                                btnClass += 'border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50';
+                            } else if (isSelected) {
+                                btnClass += 'bg-primary border-primary text-white';
+                            } else if (slot.status === 'limited') {
+                                btnClass += 'border-yellow-300 text-yellow-700 bg-yellow-50 hover:border-yellow-500';
+                            } else if (slot.status === 'full') {
+                                btnClass += 'border-red-200 text-red-400 cursor-not-allowed bg-red-50';
+                            } else {
+                                btnClass += 'border-green-300 text-green-700 bg-green-50 hover:border-green-500';
+                            }
+                            
+                            const slotBtn = document.createElement('button');
+                            slotBtn.type = 'button';
+                            slotBtn.className = btnClass;
+                            slotBtn.disabled = isDisabled;
+                            slotBtn.textContent = slot.display_time || slot.time;
+                            slotBtn.onclick = () => selectKaponPetTime(petId, slot);
+                            
+                            slotsGrid.appendChild(slotBtn);
+                        });
+                        
+                        timeSlots.classList.remove('hidden');
+                    }
+
+                    function selectKaponPetTime(petId, slot) {
+                        const date = document.getElementById('kaponAppointmentDate_' + petId).value;
+                        
+                        kaponAppointments[petId] = {
+                            date: date,
+                            time: slot.time,
+                            display_time: slot.display_time
+                        };
+                        
+                        document.getElementById('kaponHiddenDate_' + petId).value = date;
+                        document.getElementById('kaponHiddenTime_' + petId).value = slot.time;
+                        
+                        const summary = document.getElementById('kaponSelectedSummary_' + petId);
+                        const selectedDateSpan = document.getElementById('kaponSelectedDate_' + petId);
+                        const selectedTimeSpan = document.getElementById('kaponSelectedTime_' + petId);
+                        
+                        const dateObj = new Date(date + 'T00:00:00');
+                        selectedDateSpan.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                        selectedTimeSpan.textContent = slot.display_time || slot.time;
+                        
+                        summary.classList.remove('hidden');
+                        
+                        const statusBadge = document.getElementById('kaponScheduleStatus_' + petId);
+                        statusBadge.textContent = 'Scheduled';
+                        statusBadge.className = 'text-xs text-green-600 font-medium mr-2';
+                        
+                        if (kaponSlotsData[petId]) {
+                            renderKaponTimeSlots(petId, kaponSlotsData[petId]);
+                        }
+                    }
 
                     function openPetModal() {
                         // Check if user has no pets registered
@@ -754,13 +887,70 @@
                                 `;
                                 container.appendChild(petCard);
 
-                                // Add photo upload field for this pet
+                                // Add photo upload field for this pet with scheduling
                                 const photoField = document.createElement('div');
                                 photoField.className = 'bg-gray-50 border border-gray-200 rounded-lg p-4';
                                 photoField.innerHTML = `
                                     <div class="flex items-center mb-2">
                                         <span class="font-medium text-sm text-gray-700">${pet.name}</span>
                                     </div>
+                                    
+                                    <!-- Scheduling Accordion -->
+                                    <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+                                        <button type="button" onclick="toggleKaponScheduleAccordion(${pet.id})" class="w-full flex items-center justify-between px-3 py-2 bg-gray-100 hover:bg-gray-200 transition-colors text-left">
+                                            <div class="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <span class="text-sm font-medium text-gray-700">Schedule Surgery</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <span id="kaponScheduleStatus_${pet.id}" class="text-xs text-gray-500 mr-2">Not scheduled</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" id="kaponScheduleArrow_${pet.id}" class="w-4 h-4 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
+                                        </button>
+                                        <div id="kaponScheduleContent_${pet.id}" class="hidden px-3 py-3 border-t border-gray-200">
+                                            <!-- Date Picker -->
+                                            <div class="mb-3">
+                                                <label class="block text-xs font-medium text-gray-700 mb-1">Select Date <span class="text-red-500">*</span></label>
+                                                <input type="date" 
+                                                       id="kaponAppointmentDate_${pet.id}" 
+                                                       min="${new Date().toISOString().split('T')[0]}"
+                                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                                       onchange="loadKaponPetSlots(${pet.id})">
+                                            </div>
+                                            
+                                            <!-- Availability Status -->
+                                            <div id="kaponSlotStatus_${pet.id}" class="mb-3 hidden">
+                                                <div class="flex items-center gap-2 text-xs">
+                                                    <span id="kaponDailyCapacity_${pet.id}" class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700">
+                                                        Loading...
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Time Slots -->
+                                            <div id="kaponTimeSlots_${pet.id}" class="mb-3 hidden">
+                                                <label class="block text-xs font-medium text-gray-700 mb-2">Select Time <span class="text-red-500">*</span></label>
+                                                <div class="grid grid-cols-3 gap-1" id="kaponSlotsGrid_${pet.id}"></div>
+                                            </div>
+                                            
+                                            <!-- Selected Summary -->
+                                            <div id="kaponSelectedSummary_${pet.id}" class="hidden bg-green-50 border border-green-200 rounded-lg p-2">
+                                                <p class="text-xs text-green-700 font-medium">
+                                                    Selected: <span id="kaponSelectedDate_${pet.id}">-</span> at <span id="kaponSelectedTime_${pet.id}">-</span>
+                                                </p>
+                                            </div>
+                                            
+                                            <!-- Hidden inputs -->
+                                            <input type="hidden" name="pet_appointments[${pet.id}][date]" id="kaponHiddenDate_${pet.id}" value="">
+                                            <input type="hidden" name="pet_appointments[${pet.id}][time]" id="kaponHiddenTime_${pet.id}" value="">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Photo Upload -->
                                     <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                                         <input type="file" name="pet_photos[${pet.id}][]" id="pet_photos_${pet.id}" multiple accept="image/*" class="hidden" onchange="handleFileSelect(this, ${pet.id})">
                                         <label for="pet_photos_${pet.id}" class="cursor-pointer">

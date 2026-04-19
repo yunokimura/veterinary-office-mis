@@ -266,30 +266,9 @@
                     </div>
                 </div>
 
-                <!-- APPOINTMENT DATE -->
+                <!-- MEDICAL HISTORY & APPOINTMENTS (Per Pet) -->
                 <div class="mb-8">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Appointment Date</h3>
-
-                    <!-- Slot Picker -->
-                    @include('components.appointment-slot-picker', [
-                        'serviceType' => 'vaccination',
-                        'fieldName' => 'appointment'
-                    ])
-
-                    <!-- Confirmation Checkbox -->
-                    <div class="mt-6">
-                        <label class="inline-flex items-start cursor-pointer">
-                            <input type="checkbox" name="confirmation" class="form-checkbox h-5 w-5 text-primary rounded mt-1">
-                            <span class="ml-3 text-gray-700 text-sm">
-                                By confirming, you acknowledge that the provided information is accurate and that your pet will be available for vaccination on the selected date. <span class="text-red-500">*</span>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- MEDICAL HISTORY (Per Pet) -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Medical History</h3>
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Medical History & Appointments</h3>
 
                     <div id="petMedicalHistoryContainer">
                         <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -299,6 +278,16 @@
                             <p class="text-gray-500 text-sm">Select pets first to see medical history forms.</p>
                         </div>
                     </div>
+                </div>
+
+                <!-- Confirmation Checkbox -->
+                <div class="mt-6">
+                    <label class="inline-flex items-start cursor-pointer">
+                        <input type="checkbox" name="confirmation" class="form-checkbox h-5 w-5 text-primary rounded mt-1">
+                        <span class="ml-3 text-gray-700 text-sm">
+                            By confirming, you acknowledge that the provided information is accurate and that your pet will be available for vaccination on the selected date(s). <span class="text-red-500">*</span>
+                        </span>
+                    </label>
                 </div>
 
                 <!-- Submit Button -->
@@ -473,6 +462,153 @@
                 dateContainer.classList.remove('hidden');
             } else {
                 dateContainer.classList.add('hidden');
+            }
+        }
+
+        // Per-pet appointment scheduling functions
+        const petAppointments = {};
+        const petSlotsData = {};
+
+        function toggleScheduleAccordion(petId) {
+            const content = document.getElementById('scheduleContent_' + petId);
+            const arrow = document.getElementById('scheduleArrow_' + petId);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
+        }
+
+        async function loadPetSlots(petId) {
+            const dateInput = document.getElementById('appointmentDate_' + petId);
+            const selectedDate = dateInput.value;
+            if (!selectedDate) return;
+
+            const slotStatus = document.getElementById('slotStatus_' + petId);
+            const timeSlots = document.getElementById('timeSlots_' + petId);
+            
+            slotStatus.classList.remove('hidden');
+            timeSlots.classList.add('hidden');
+            
+            const capacityBadge = document.getElementById('dailyCapacity_' + petId);
+            capacityBadge.textContent = 'Loading...';
+            capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700';
+
+            try {
+                const response = await fetch(`/api/appointments/slots?date=${selectedDate}&service_type=vaccination`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    petSlotsData[petId] = data.slots;
+                    const dailyRemaining = data.daily_remaining || 0;
+                    
+                    // Update capacity badge
+                    if (dailyRemaining <= 0) {
+                        capacityBadge.textContent = 'Fully Booked';
+                        capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700';
+                    } else if (dailyRemaining === 1) {
+                        capacityBadge.textContent = '1 slot left';
+                        capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700';
+                    } else {
+                        capacityBadge.textContent = 'Available';
+                        capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700';
+                    }
+                    
+                    // Render time slots
+                    if (data.slots && data.slots.length > 0) {
+                        renderTimeSlots(petId, data.slots);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load slots:', error);
+                capacityBadge.textContent = 'Error loading slots';
+                capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700';
+            }
+        }
+
+        function renderTimeSlots(petId, slots) {
+            const timeSlots = document.getElementById('timeSlots_' + petId);
+            const slotsGrid = document.getElementById('slotsGrid_' + petId);
+            
+            // Sort slots by time
+            const sortedSlots = [...slots].sort((a, b) => a.time.localeCompare(b.time));
+            
+            slotsGrid.innerHTML = '';
+            
+            const currentTime = new Date();
+            const isToday = petAppointments[petId]?.date === currentTime.toISOString().split('T')[0];
+            const currentHour = currentTime.getHours();
+            const currentMinute = currentTime.getMinutes();
+            
+            sortedSlots.forEach(slot => {
+                const [slotHour, slotMinute] = slot.time.split(':').map(Number);
+                const slotTimeInMinutes = slotHour * 60 + slotMinute;
+                const currentTimeInMinutes = currentHour * 60 + currentMinute;
+                const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
+                
+                const isDisabled = slot.status === 'blocked' || slot.status === 'full' || isPast || slot.is_past;
+                const isSelected = petAppointments[petId]?.time === slot.time;
+                
+                let btnClass = 'py-3 px-2 rounded-lg border-2 text-sm font-medium transition-all ';
+                if (isDisabled) {
+                    btnClass += 'border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50';
+                } else if (isSelected) {
+                    btnClass += 'bg-primary border-primary text-white';
+                } else if (slot.status === 'limited') {
+                    btnClass += 'border-yellow-300 text-yellow-700 bg-yellow-50 hover:border-yellow-500';
+                } else if (slot.status === 'full') {
+                    btnClass += 'border-red-200 text-red-400 cursor-not-allowed bg-red-50';
+                } else {
+                    btnClass += 'border-green-300 text-green-700 bg-green-50 hover:border-green-500';
+                }
+                
+                const slotBtn = document.createElement('button');
+                slotBtn.type = 'button';
+                slotBtn.className = btnClass;
+                slotBtn.disabled = isDisabled;
+                slotBtn.textContent = slot.display_time || slot.time;
+                slotBtn.onclick = () => selectPetTime(petId, slot);
+                
+                slotsGrid.appendChild(slotBtn);
+            });
+            
+            timeSlots.classList.remove('hidden');
+        }
+
+        function selectPetTime(petId, slot) {
+            const date = document.getElementById('appointmentDate_' + petId).value;
+            
+            petAppointments[petId] = {
+                date: date,
+                time: slot.time,
+                display_time: slot.display_time
+            };
+            
+            // Update hidden inputs
+            document.getElementById('hiddenDate_' + petId).value = date;
+            document.getElementById('hiddenTime_' + petId).value = slot.time;
+            
+            // Update summary display
+            const summary = document.getElementById('selectedSummary_' + petId);
+            const selectedDateSpan = document.getElementById('selectedDate_' + petId);
+            const selectedTimeSpan = document.getElementById('selectedTime_' + petId);
+            
+            const dateObj = new Date(date + 'T00:00:00');
+            selectedDateSpan.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+            selectedTimeSpan.textContent = slot.display_time || slot.time;
+            
+            summary.classList.remove('hidden');
+            
+            // Update status badge
+            const statusBadge = document.getElementById('scheduleStatus_' + petId);
+            statusBadge.textContent = 'Scheduled';
+            statusBadge.className = 'text-xs text-green-600 font-medium mr-2';
+            
+            // Re-render slots to show selection
+            if (petSlotsData[petId]) {
+                renderTimeSlots(petId, petSlotsData[petId]);
             }
         }
         
@@ -758,6 +894,63 @@
                             </div>
                         </div>
                         
+                        <!-- Appointment Scheduling (Collapsible) -->
+                        <div class="mb-6 border border-gray-200 rounded-lg overflow-hidden">
+                            <button type="button" onclick="toggleScheduleAccordion(${pet.id})" class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <span class="font-medium text-gray-700">Schedule Appointment</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span id="scheduleStatus_${pet.id}" class="text-xs text-gray-500 mr-2">Not scheduled</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="scheduleArrow_${pet.id}" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </button>
+                            <div id="scheduleContent_${pet.id}" class="hidden px-4 py-4 border-t border-gray-200">
+                                <!-- Date Picker -->
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Date <span class="text-red-500">*</span></label>
+                                    <input type="date" 
+                                           id="appointmentDate_${pet.id}" 
+                                           min="${new Date().toISOString().split('T')[0]}"
+                                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                                           onchange="loadPetSlots(${pet.id})">
+                                </div>
+                                
+                                <!-- Availability Status -->
+                                <div id="slotStatus_${pet.id}" class="mb-4 hidden">
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <span id="dailyCapacity_${pet.id}" class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700">
+                                            Loading...
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Time Slots Grid -->
+                                <div id="timeSlots_${pet.id}" class="mb-4 hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-3">Select Time <span class="text-red-500">*</span></label>
+                                    <div class="grid grid-cols-3 gap-2" id="slotsGrid_${pet.id}">
+                                        <!-- Slots will be loaded dynamically -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Selected Summary -->
+                                <div id="selectedSummary_${pet.id}" class="hidden bg-green-50 border border-green-200 rounded-lg p-3">
+                                    <p class="text-sm text-green-700 font-medium">
+                                        Selected: <span id="selectedDate_${pet.id}">-</span> at <span id="selectedTime_${pet.id}">-</span>
+                                    </p>
+                                </div>
+                                
+                                <!-- Hidden inputs for form submission -->
+                                <input type="hidden" name="pet_appointments[${pet.id}][date]" id="hiddenDate_${pet.id}" value="">
+                                <input type="hidden" name="pet_appointments[${pet.id}][time]" id="hiddenTime_${pet.id}" value="">
+                            </div>
+                        </div>
+
                         <!-- Vaccination History Toggle -->
                         <div class="mb-5">
                             <label class="block text-sm font-medium text-gray-700 mb-3">Has your pet received an anti-rabies vaccine before?</label>
