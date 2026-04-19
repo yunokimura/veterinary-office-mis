@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Mail\OtpMail;
-use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Mail\OtpMail;
+use App\Mail\WelcomeMail;
+use App\Models\PetOwner;
+use App\Models\SystemLog;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
-use Carbon\Carbon;
 
 class OtpController extends Controller
 {
@@ -20,7 +24,7 @@ class OtpController extends Controller
     {
         $email = session('email');
 
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('login');
         }
 
@@ -38,10 +42,10 @@ class OtpController extends Controller
 
         // Always return success to prevent user enumeration
         // If user exists, send OTP; otherwise, silently fail
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => true,
-                'message' => 'If an account exists with this email, an OTP has been sent.'
+                'message' => 'If an account exists with this email, an OTP has been sent.',
             ]);
         }
 
@@ -61,7 +65,7 @@ class OtpController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'OTP sent successfully'
+            'message' => 'OTP sent successfully',
         ]);
     }
 
@@ -71,18 +75,18 @@ class OtpController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'otp' => 'required|digits:6'
+            'otp' => 'required|digits:6',
         ]);
 
         $email = session('email');
 
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('login');
         }
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return back()->with('error', 'User not found')->withInput();
         }
 
@@ -92,7 +96,7 @@ class OtpController extends Controller
         }
 
         // Verify OTP using Hash::check()
-        if (!$user->verifyOtp($request->otp)) {
+        if (! $user->verifyOtp($request->otp)) {
             return back()->with('error', 'Invalid OTP code. Please try again.')->withInput();
         }
 
@@ -101,26 +105,26 @@ class OtpController extends Controller
             'is_verified' => true,
             'otp_code' => null,
             'otp_expires_at' => null,
-            'email_verified_at' => Carbon::now()
+            'email_verified_at' => Carbon::now(),
         ]);
 
         // Log the user in
         Auth::login($user);
 
         // System log for successful login
-        \App\Models\SystemLog::create([
+        SystemLog::create([
             'user_id' => $user->id,
             'action' => 'login',
             'event' => 'login',
             'module' => 'Authentication',
-            'description' => "User logged in via OTP verification",
+            'description' => 'User logged in via OTP verification',
             'ip_address' => request()->ip(),
             'status' => 'success',
         ]);
 
         // Clear session
         session()->forget('email');
-        
+
         // Check if this was from registration
         $wasRegistration = session('registration_pending');
         session()->forget('registration_pending');
@@ -128,11 +132,20 @@ class OtpController extends Controller
         if ($wasRegistration) {
             // Send welcome email after verification
             try {
-                Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user));
+                Mail::to($user->email)->send(new WelcomeMail($user));
             } catch (\Exception $e) {
-                \Log::warning('Welcome email could not be sent: ' . $e->getMessage());
+                \Log::warning('Welcome email could not be sent: '.$e->getMessage());
             }
-            return redirect()->route('owner.dashboard')->with('success', 'Email verified successfully! Welcome to Vet MIS.');
+
+            // Check if user has any registered pets
+            $petOwner = PetOwner::where('user_id', $user->id)->first();
+            $hasPets = $petOwner && $petOwner->pets()->exists();
+
+            if ($hasPets) {
+                return redirect()->route('owner.dashboard')->with('success', 'Email verified successfully! Welcome back to Vet MIS.');
+            } else {
+                return redirect()->route('pet.registration.form')->with('info', "Let's create a profile for your first furry friend!");
+            }
         }
 
         return redirect()->route('owner.dashboard')->with('success', 'Email verified successfully!');
@@ -145,13 +158,13 @@ class OtpController extends Controller
     {
         $email = session('email');
 
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('login');
         }
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('login');
         }
 
@@ -176,7 +189,7 @@ class OtpController extends Controller
     {
         $email = session('reset_password_email');
 
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('password.request');
         }
 
@@ -189,17 +202,17 @@ class OtpController extends Controller
     public function sendResetOtp(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'email']
+            'email' => ['required', 'email'],
         ]);
 
         $email = $request->email;
         $user = User::where('email', $email)->first();
 
         // Always return success to prevent user enumeration
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => true,
-                'message' => 'If an account exists with this email, a verification code has been sent.'
+                'message' => 'If an account exists with this email, a verification code has been sent.',
             ]);
         }
 
@@ -219,7 +232,7 @@ class OtpController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Verification code sent successfully!'
+            'message' => 'Verification code sent successfully!',
         ]);
     }
 
@@ -229,18 +242,18 @@ class OtpController extends Controller
     public function verifyResetOtp(Request $request)
     {
         $request->validate([
-            'otp' => 'required|digits:6'
+            'otp' => 'required|digits:6',
         ]);
 
         $email = session('reset_password_email');
 
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('password.request')->with('error', 'Session expired. Please try again.');
         }
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('password.request')->with('error', 'User not found.');
         }
 
@@ -250,14 +263,14 @@ class OtpController extends Controller
         }
 
         // Verify OTP using Hash::check()
-        if (!$user->verifyOtp($request->otp)) {
+        if (! $user->verifyOtp($request->otp)) {
             return back()->with('error', 'Invalid verification code. Please try again.');
         }
 
         // OTP is valid - clear it and generate a password reset token
         $user->update([
             'otp_code' => null,
-            'otp_expires_at' => null
+            'otp_expires_at' => null,
         ]);
 
         // Generate password reset token
@@ -276,13 +289,13 @@ class OtpController extends Controller
     {
         $email = session('reset_password_email');
 
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('password.request');
         }
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('password.request');
         }
 

@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             AnimalBiteReportSeeder::class,
             InventorySeeder::class,
             FacilitySeeder::class,
-            SpayNeuterSeeder::class,
         ]);
     }
 }
