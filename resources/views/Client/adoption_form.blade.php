@@ -771,6 +771,37 @@
                     
                     let selectedAdoptionPets = [];
 
+                    function updateHomePhotoFields() {
+                        const windowsField = document.getElementById('windowsField');
+                        const frontBackyardField = document.getElementById('frontBackyardField');
+                        
+                        if (!windowsField || !frontBackyardField) return;
+                        
+                        let hasCat = false;
+                        let hasDog = false;
+                        
+                        selectedAdoptionPets.forEach(petId => {
+                            const pet = adoptionPetsData.find(p => String(p.adoption_id) === String(petId));
+                            if (pet) {
+                                const species = pet.species ? pet.species.toLowerCase() : '';
+                                if (species === 'cat') hasCat = true;
+                                if (species === 'dog') hasDog = true;
+                            }
+                        });
+                        
+                        if (hasCat) {
+                            windowsField.classList.remove('hidden');
+                        } else {
+                            windowsField.classList.add('hidden');
+                        }
+                        
+                        if (hasDog) {
+                            frontBackyardField.classList.remove('hidden');
+                        } else {
+                            frontBackyardField.classList.add('hidden');
+                        }
+                    }
+
                     function openAdoptionPetModal() {
                         // Check if no pets available
                         if (adoptionPetsData.length === 0) {
@@ -999,21 +1030,21 @@
 
                         <!-- Bedroom/s -->
                         <div>
-                            <label class="block text-sm font-medium mb-1.5">Bedroom/s (if your pet will have access)</label>
+                            <label class="block text-sm font-medium mb-1.5">Bedroom/s (optional)</label>
                             <input type="file" name="photo_bedroom" accept="image/*"
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                         </div>
 
                         <!-- Windows (if adopting a cat) -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Windows (if adopting a cat)</label>
+                        <div id="windowsField" class="hidden">
+                            <label class="block text-sm font-medium mb-1.5">Windows <span class="text-red-500">*</span></label>
                             <input type="file" name="photo_windows" accept="image/*"
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                         </div>
 
                         <!-- Front & backyard (if adopting a dog) -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Front & backyard (if adopting a dog)</label>
+                        <div id="frontBackyardField" class="hidden">
+                            <label class="block text-sm font-medium mb-1.5">Front & backyard <span class="text-red-500">*</span></label>
                             <input type="file" name="photo_backyard" accept="image/*"
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                         </div>
@@ -1304,6 +1335,11 @@
 
         // Show the target part
         document.getElementById('part' + step).classList.remove('hidden');
+        
+        // Update conditional fields based on selected pets
+        if (step === 4) {
+            updateHomePhotoFields();
+        }
 
         // Update progress bar
         const progress = (step / 6) * 100;
