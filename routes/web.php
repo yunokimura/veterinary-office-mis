@@ -796,6 +796,22 @@ Route::post('/kapon/form', function (Request $request) {
         }
     }
 
+    // Check for slot availability with locking to prevent race conditions
+    try {
+        $bookingService = new AppointmentBookingService;
+        $bookingService->checkAndBookKaponSlot(
+            $validated['appointment_date'],
+            $validated['appointment_time'],
+            array_map(function ($id) use ($petsData) {
+                $pet = collect($petsData)->firstWhere('id', (string) $id);
+
+                return $pet['name'] ?? null;
+            }, $validated['selected_pets'])
+        );
+    } catch (AppointmentSlotTakenException $e) {
+        return redirect()->back()->with('error', $e->getMessage())->withInput();
+    }
+
     // Build owner info from PetOwner
     $ownerName = $petOwner->first_name.' '.$petOwner->last_name;
     $ownerAddress = $petOwner->blk_lot_ph.', '.$petOwner->street.', '.$petOwner->barangay;
@@ -1153,6 +1169,17 @@ Route::post('/vaccination/form', function (Request $request) {
         $selectedPets = json_decode($selectedPetsInput, true);
     } else {
         $selectedPets = $selectedPetsInput ?? [];
+    }
+
+    // Check for slot availability with locking to prevent race conditions
+    try {
+        $bookingService = new AppointmentBookingService;
+        $bookingService->checkAndBookVaccinationSlot(
+            $validated['appointment_date'],
+            $validated['appointment_time']
+        );
+    } catch (AppointmentSlotTakenException $e) {
+        return redirect()->back()->with('error', $e->getMessage())->withInput();
     }
 
     $user = auth()->user();

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Exceptions\AppointmentSlotTakenException;
 use App\Http\Controllers\Controller;
 use App\Models\AdoptionApplication;
 use App\Models\Appointment;
-use Carbon\Carbon;
+use App\Services\AppointmentBookingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,7 +39,13 @@ class AdoptionFormController extends Controller
 
         $interviewDate = $validated['interview_date'];
         $interviewTime = $validated['interview_time'];
-        $scheduledAt = Carbon::parse("{$interviewDate} {$interviewTime}");
+
+        try {
+            $bookingService = new AppointmentBookingService;
+            $bookingService->checkAndBookAdoptionSlot($interviewDate, $interviewTime);
+        } catch (AppointmentSlotTakenException $e) {
+            return redirect()->back()->with('error', $e->getMessage())->withInput();
+        }
 
         $adoptionApplication = AdoptionApplication::create([
             'user_id' => $user->id,
