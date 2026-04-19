@@ -520,6 +520,16 @@
                         const selectedDate = dateInput.value;
                         if (!selectedDate) return;
 
+                        // Clear previous selection when date changes
+                        if (kaponAppointments[petId] && kaponAppointments[petId].date !== selectedDate) {
+                            delete kaponAppointments[petId];
+                            document.getElementById('kaponHiddenDate_' + petId).value = '';
+                            document.getElementById('kaponHiddenTime_' + petId).value = '';
+                            document.getElementById('kaponSelectedSummary_' + petId).classList.add('hidden');
+                            document.getElementById('kaponScheduleStatus_' + petId).textContent = 'Not scheduled';
+                            document.getElementById('kaponScheduleStatus_' + petId).className = 'text-xs text-gray-500 mr-2';
+                        }
+
                         const slotStatus = document.getElementById('kaponSlotStatus_' + petId);
                         const timeSlots = document.getElementById('kaponTimeSlots_' + petId);
                         
@@ -569,7 +579,9 @@
                         slotsGrid.innerHTML = '';
                         
                         const currentTime = new Date();
-                        const isToday = kaponAppointments[petId]?.date === currentTime.toISOString().split('T')[0];
+                        const selectedDateInput = document.getElementById('kaponAppointmentDate_' + petId).value;
+                        const todayStr = currentTime.toISOString().split('T')[0];
+                        const isToday = selectedDateInput === todayStr;
                         const currentHour = currentTime.getHours();
                         const currentMinute = currentTime.getMinutes();
                         

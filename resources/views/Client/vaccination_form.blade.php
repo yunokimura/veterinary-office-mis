@@ -486,6 +486,16 @@
             const selectedDate = dateInput.value;
             if (!selectedDate) return;
 
+            // Clear previous selection when date changes
+            if (petAppointments[petId] && petAppointments[petId].date !== selectedDate) {
+                delete petAppointments[petId];
+                document.getElementById('hiddenDate_' + petId).value = '';
+                document.getElementById('hiddenTime_' + petId).value = '';
+                document.getElementById('selectedSummary_' + petId).classList.add('hidden');
+                document.getElementById('scheduleStatus_' + petId).textContent = 'Not scheduled';
+                document.getElementById('scheduleStatus_' + petId).className = 'text-xs text-gray-500 mr-2';
+            }
+
             const slotStatus = document.getElementById('slotStatus_' + petId);
             const timeSlots = document.getElementById('timeSlots_' + petId);
             
@@ -538,7 +548,9 @@
             slotsGrid.innerHTML = '';
             
             const currentTime = new Date();
-            const isToday = petAppointments[petId]?.date === currentTime.toISOString().split('T')[0];
+            const selectedDateInput = document.getElementById('appointmentDate_' + petId).value;
+            const todayStr = currentTime.toISOString().split('T')[0];
+            const isToday = selectedDateInput === todayStr;
             const currentHour = currentTime.getHours();
             const currentMinute = currentTime.getMinutes();
             
