@@ -771,6 +771,26 @@
                     
                     let selectedAdoptionPets = [];
 
+                    function toggleInterviewFields() {
+                        const zoomYes = document.querySelector('input[name="zoom_interview"][value="Yes"]');
+                        const zoomNo = document.querySelector('input[name="zoom_interview"][value="No"]');
+                        const zoomDateTimeField = document.getElementById('zoomDateTimeField');
+                        const scheduleInterviewField = document.getElementById('scheduleInterviewField');
+                        
+                        if (!zoomDateTimeField || !scheduleInterviewField) return;
+                        
+                        if (zoomYes && zoomYes.checked) {
+                            zoomDateTimeField.classList.remove('hidden');
+                            scheduleInterviewField.classList.add('hidden');
+                        } else if (zoomNo && zoomNo.checked) {
+                            zoomDateTimeField.classList.add('hidden');
+                            scheduleInterviewField.classList.remove('hidden');
+                        } else {
+                            zoomDateTimeField.classList.add('hidden');
+                            scheduleInterviewField.classList.remove('hidden');
+                        }
+                    }
+
                     function updateHomePhotoFields() {
                         const windowsField = document.getElementById('windowsField');
                         const frontBackyardField = document.getElementById('frontBackyardField');
@@ -1121,41 +1141,26 @@
                             </p>
                             <div class="flex gap-4 mt-2">
                                 <label class="inline-flex items-center">
-                                    <input type="radio" name="zoom_interview" value="Yes" class="text-primary">
+                                    <input type="radio" name="zoom_interview" value="Yes" class="text-primary" onchange="toggleInterviewFields()">
                                     <span class="ml-2">Yes</span>
                                 </label>
                                 <label class="inline-flex items-center">
-                                    <input type="radio" name="zoom_interview" value="No" class="text-primary">
+                                    <input type="radio" name="zoom_interview" value="No" class="text-primary" onchange="toggleInterviewFields()">
                                     <span class="ml-2">No</span>
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Preferred date for Zoom interview -->
-                        <div>
+                        <!-- Preferred date and time for Zoom interview -->
+                        <div id="zoomDateTimeField" class="hidden">
                             <label class="block text-sm font-medium mb-1.5">
-                                Preferred date for Zoom interview
+                                Preferred date and time for Zoom interview <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" name="zoom_date"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                        </div>
-
-                        <!-- Preferred time for Zoom interview -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Preferred time for Zoom interview
-                            </label>
-                            <div class="flex gap-4">
-                                <input type="number" name="zoom_time_hour" placeholder="HH" min="1" max="12"
-                                       class="w-20 px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                <input type="number" name="zoom_time_min" placeholder="MM" min="0" max="59"
-                                       class="w-20 px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                <select name="zoom_time_ampm"
-                                        class="w-24 px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none appearance-none bg-white"
-                                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px 12px;">
-                                    <option value="AM">AM</option>
-                                    <option value="PM">PM</option>
-                                </select>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <input type="date" name="zoom_date"
+                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                <input type="time" name="zoom_time"
+                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
                             <p class="text-xs text-gray-500 italic mt-2">
                                 We can't guarantee the availability of your requested time.
@@ -1180,10 +1185,10 @@
                         </div>
 
                         <!-- Interview Appointment Slot Picker -->
-                        <div class="mt-6 pt-6 border-t border-gray-200">
+                        <div id="scheduleInterviewField" class="mt-6 pt-6 border-t border-gray-200">
                             <h4 class="text-md font-semibold text-gray-800 mb-4">Schedule Interview Appointment</h4>
                             <p class="text-sm text-gray-500 mb-4">
-                                Select a date and time for your adoption interview. You can choose Zoom or in-person.
+                                Select a date and time for your adoption interview.
                             </p>
                             @include('components.appointment-slot-picker', [
                                 'serviceType' => 'adoption_interview',

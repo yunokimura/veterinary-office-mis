@@ -49,8 +49,8 @@
             Select Time <span class="text-red-500">*</span>
         </label>
         
-        <!-- Legend -->
-        <div class="flex flex-wrap gap-3 mb-4 text-xs">
+        <!-- Legend (hide for adoption_interview) -->
+        <div x-show="serviceType !== 'adoption_interview'" class="flex flex-wrap gap-3 mb-4 text-xs">
             <span class="flex items-center gap-1">
                 <span class="w-3 h-3 rounded-full bg-green-400"></span> Available
             </span>
@@ -81,18 +81,18 @@
                         </svg>
                     </span>
                     
-                    <!-- Slot Status Text -->
+                    <!-- Slot Status Text (hide for adoption_interview) -->
                     <template x-if="slot.status === 'full'">
                         <div class="text-xs mt-1 opacity-75">Fully Booked</div>
                     </template>
-                    <template x-if="slot.status === 'limited'">
+                    <template x-if="slot.status === 'limited' && serviceType !== 'adoption_interview'">
                         <div class="text-xs mt-1 opacity-75">
                             <span x-text="slot.remaining"></span>
                             <span x-text="serviceType === 'kapon' ? 'Kapon' : 'Vaccination'"></span>
                             slot left
                         </div>
                     </template>
-                    <template x-if="slot.status === 'available'">
+                    <template x-if="slot.status === 'available' && serviceType !== 'adoption_interview'">
                         <div class="text-xs mt-1 opacity-75">
                             <span x-text="slot.remaining"></span>
                             <span x-text="serviceType === 'kapon' ? 'Kapon' : 'Vaccination'"></span>
@@ -163,6 +163,13 @@ function appointmentSlotPicker() {
 
 get dailyCapacityText() {
             if (!this.selectedDate) return '';
+            
+            // Simplified for adoption_interview
+            if (this.serviceType === 'adoption_interview') {
+                if (this.isDailyFull) return 'Fully Booked';
+                return 'Available';
+            }
+            
             const serviceName = this.serviceType === 'kapon' ? 'Kapon' : 'Vaccination';
             if (this.isDailyFull) return `${serviceName} Fully Booked`;
             if (this.dailyRemaining >= 2) return `${this.dailyRemaining} ${serviceName} slots available`;
@@ -233,6 +240,17 @@ get dailyCapacityText() {
 
         getSlotClasses(slot) {
             const isPast = this.isSlotPast(slot);
+            
+            // Simplified for adoption_interview: Green = available, Grey = unavailable
+            if (this.serviceType === 'adoption_interview') {
+                if (slot.status === 'blocked' || slot.status === 'full' || isPast || slot.is_past) {
+                    return 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed';
+                }
+                if (this.selectedTime === slot.time) {
+                    return 'bg-primary border-primary text-white';
+                }
+                return 'bg-green-50 border-green-300 text-green-700 hover:border-green-500 hover:bg-green-100';
+            }
             
             if (slot.status === 'blocked') {
                 if (slot.time === '12:00') {
