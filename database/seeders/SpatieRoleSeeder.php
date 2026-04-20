@@ -81,14 +81,13 @@ class SpatieRoleSeeder extends Seeder
         }
 
         $firstAdmin = User::orderBy('id', 'asc')->first();
-        
+
         if ($firstAdmin) {
             $roleMapping = [
                 'super_admin' => 'super_admin',
                 'city_vet' => 'city_vet',
                 'admin_staff' => 'admin_staff',
                 'admin_asst' => 'admin_staff',
-                'records_staff' => 'records_staff',
                 'assistant_vet' => 'city_vet',
                 'livestock_inspector' => 'city_vet',
                 'meat_inspector' => 'city_vet',
@@ -99,9 +98,9 @@ class SpatieRoleSeeder extends Seeder
 
             $existingRole = $firstAdmin->getRoleNames()->first();
             $spatieRole = $roleMapping[$existingRole] ?? 'admin_staff';
-            
+
             $firstAdmin->assignRole($spatieRole);
-            
+
             $this->command->info("Assigned '{$spatieRole}' role to first admin (ID: {$firstAdmin->id})");
         } else {
             $this->command->warn('No admin users found. Please create an admin user first.');

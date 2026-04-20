@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Facility;
+use App\Models\PetOwner;
+use App\Models\SystemLog;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -25,17 +29,17 @@ class UserController extends Controller
     public function index(Request $request)
     {
         // Check if user can access admin panel
-        if (!auth()->user()->canAccessAdminPanel()) {
+        if (! auth()->user()->canAccessAdminPanel()) {
             return redirect()->route('home')->with('error', 'You do not have permission to access this area.');
         }
 
         $search = $request->get('search', '');
         $role = $request->get('role', '');
-        
+
         $users = User::when($search, function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
-            })
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+        })
             ->when($role, function ($query) use ($role) {
                 $query->where('role', $role);
             })
@@ -47,7 +51,7 @@ class UserController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     * Permission: Must have level >= 3 (records_staff) to create users
+     * Permission: Must have level >= 3 to create users
      */
     public function create()
     {
@@ -60,8 +64,8 @@ class UserController extends Controller
         $assignableRoles = auth()->user()->getAssignableRoles();
 
         // Get facilities for dropdown (only Super Admin sees this)
-        $facilities = auth()->user()->hasRole('super_admin') 
-            ? \App\Models\Facility::orderBy('name')->get() 
+        $facilities = auth()->user()->hasRole('super_admin')
+            ? Facility::orderBy('name')->get()
             : collect();
 
         return view('admin.users.create', compact('assignableRoles', 'facilities'));
@@ -88,12 +92,12 @@ class UserController extends Controller
         ]);
 
         // Check if user can assign the requested role
-        if (!auth()->user()->canAssignRole($validated['role'])) {
-            return back()->with('error', 'You cannot assign the role "' . $validated['role'] . '".');
+        if (! auth()->user()->canAssignRole($validated['role'])) {
+            return back()->with('error', 'You cannot assign the role "'.$validated['role'].'".');
         }
 
         // Prevent creating super_admin by non-super_admin
-        if ($validated['role'] === User::ROLE_SUPER_ADMIN && !auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($validated['role'] === User::ROLE_SUPER_ADMIN && ! auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
             return back()->with('error', 'You cannot create Super Administrator accounts.');
         }
 
@@ -113,7 +117,7 @@ class UserController extends Controller
         ];
 
         // Only Super Admin can assign facility_id
-        if (auth()->user()->hasRole('super_admin') && !empty($validated['facility_id'])) {
+        if (auth()->user()->hasRole('super_admin') && ! empty($validated['facility_id'])) {
             $userData['facility_id'] = $validated['facility_id'];
         }
 
@@ -123,7 +127,7 @@ class UserController extends Controller
         $user->assignRole($validated['role']);
 
         if ($validated['role'] === User::ROLE_CITIZEN) {
-            \App\Models\PetOwner::create([
+            PetOwner::create([
                 'user_id' => $user->id,
                 'first_name' => $firstName,
                 'last_name' => $lastName,
@@ -132,7 +136,7 @@ class UserController extends Controller
             ]);
         }
 
-        \App\Models\SystemLog::create([
+        SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'create_user',
             'event' => 'create',
@@ -142,9 +146,10 @@ class UserController extends Controller
             'status' => 'success',
         ]);
 
-        \App\Services\NotificationService::userCreated($user);
+        NotificationService::userCreated($user);
 
         $redirectRoute = request()->routeIs('super-admin.*') ? 'super-admin.users.index' : 'admin.users.index';
+
         return redirect()->route($redirectRoute)->with('success', 'User created successfully.');
     }
 
@@ -175,8 +180,8 @@ class UserController extends Controller
         $assignableRoles = auth()->user()->getAssignableRoles();
 
         // Get facilities for dropdown (only Super Admin can modify)
-        $facilities = auth()->user()->hasRole('super_admin') 
-            ? \App\Models\Facility::orderBy('name')->get() 
+        $facilities = auth()->user()->hasRole('super_admin')
+            ? Facility::orderBy('name')->get()
             : collect();
 
         return view('admin.users.edit', compact('user', 'assignableRoles', 'facilities'));
@@ -194,7 +199,7 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|string',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
@@ -205,9 +210,9 @@ class UserController extends Controller
         // ============================================
         // SUPER ADMIN SELF-PROTECTION VALIDATION RULES
         // ============================================
-        
+
         $currentRole = $user->getRoleAttribute();
-        
+
         // 1. If user is super_admin trying to change their own role -> BLOCK
         if (auth()->user()->hasRole(User::ROLE_SUPER_ADMIN) && $user->isSelf() && $validated['role'] !== $currentRole) {
             return back()->with('error', 'You cannot change your own role as Super Administrator.');
@@ -216,17 +221,17 @@ class UserController extends Controller
         // 2. Check role change permissions
         if ($validated['role'] !== $currentRole) {
             // Check if user can assign the new role
-            if (!auth()->user()->canAssignRole($validated['role'])) {
-                return back()->with('error', 'You cannot assign the role "' . $validated['role'] . '".');
+            if (! auth()->user()->canAssignRole($validated['role'])) {
+                return back()->with('error', 'You cannot assign the role "'.$validated['role'].'".');
             }
 
             // Prevent changing to super_admin by non-super_admin
-            if ($validated['role'] === User::ROLE_SUPER_ADMIN && !auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
+            if ($validated['role'] === User::ROLE_SUPER_ADMIN && ! auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
                 return back()->with('error', 'You cannot change a user to Super Administrator.');
             }
 
             // Prevent non-super_admin from modifying super_admin
-            if ($user->hasRole(User::ROLE_SUPER_ADMIN) && !auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
+            if ($user->hasRole(User::ROLE_SUPER_ADMIN) && ! auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
                 return back()->with('error', 'You cannot modify Super Administrator accounts.');
             }
         }
@@ -249,7 +254,7 @@ class UserController extends Controller
             $updateData['facility_id'] = $validated['facility_id'] ?? null;
         }
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $updateData['password'] = Hash::make($validated['password']);
         }
 
@@ -260,7 +265,7 @@ class UserController extends Controller
             $user->syncRoles($validated['role']);
         }
 
-        \App\Models\SystemLog::create([
+        SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'update_user',
             'event' => 'update',
@@ -275,7 +280,7 @@ class UserController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * VALIDATION RULES:
      * - Cannot delete your own account
      * - Super admin cannot delete their own account
@@ -299,13 +304,13 @@ class UserController extends Controller
         }
 
         // Cannot delete super_admin unless you are super_admin
-        if ($user->isSuperAdmin() && !auth()->user()->isSuperAdmin()) {
+        if ($user->isSuperAdmin() && ! auth()->user()->isSuperAdmin()) {
             return back()->with('error', 'You cannot delete Super Administrator accounts.');
         }
 
         $user->delete();
 
-        \App\Models\SystemLog::create([
+        SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'delete_user',
             'event' => 'delete',
@@ -342,7 +347,7 @@ class UserController extends Controller
         $newStatus = $user->status === 'active' ? 'inactive' : 'active';
         $user->update(['status' => $newStatus]);
 
-        \App\Models\SystemLog::create([
+        SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'toggle_user_status',
             'event' => 'update',
@@ -353,6 +358,7 @@ class UserController extends Controller
         ]);
 
         $statusText = $newStatus === 'active' ? 'activated' : 'deactivated';
+
         return back()->with('success', "User {$statusText} successfully.");
     }
 }

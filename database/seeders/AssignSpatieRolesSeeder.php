@@ -11,17 +11,17 @@ class AssignSpatieRolesSeeder extends Seeder
     public function run(): void
     {
         // Ensure roles exist
-        $roles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 
-                  'meat_inspector', 'livestock_inspector', 'disease_control', 
-                  'barangay_encoder', 'viewer', 'pet_owner', 'clinic', 'hospital', 'city_pound'];
-        
+        $roles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet',
+            'meat_inspector', 'livestock_inspector', 'disease_control',
+            'barangay_encoder', 'viewer', 'pet_owner', 'clinic', 'hospital', 'city_pound'];
+
         foreach ($roles as $roleName) {
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
         }
 
         // Map legacy role column to Spatie roles (using accessor for backward compatibility)
         $users = User::whereDoesntHave('roles')->get();
-        
+
         $roleMapping = [
             'super_admin' => 'super_admin',
             'city_vet' => 'city_vet',
@@ -31,7 +31,6 @@ class AssignSpatieRolesSeeder extends Seeder
             'assistant_vet' => 'assistant_vet',
             'meat_inspector' => 'meat_inspector',
             'livestock_inspector' => 'livestock_inspector',
-            'records_staff' => 'records_staff',
             'disease_control' => 'disease_control',
             'barangay_encoder' => 'barangay_encoder',
             'viewer' => 'viewer',
@@ -45,10 +44,10 @@ class AssignSpatieRolesSeeder extends Seeder
             // Use the role attribute for backward compatibility (reads from Spatie roles)
             $currentRole = $user->getRoleNames()->first();
             $spatieRole = $roleMapping[$currentRole] ?? 'viewer';
-            
+
             // Remove existing roles and assign new one
             $user->syncRoles($spatieRole);
-            
+
             $this->command->info("Assigned '{$spatieRole}' to user {$user->email} (was: {$currentRole})");
         }
 

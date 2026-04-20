@@ -104,7 +104,6 @@
                 <option value="clinic" {{ request('role') == 'clinic' ? 'selected' : '' }}>Clinic</option>
                 <option value="livestock_inspector" {{ request('role') == 'livestock_inspector' ? 'selected' : '' }}>Livestock Inspector</option>
                 <option value="meat_inspector" {{ request('role') == 'meat_inspector' ? 'selected' : '' }}>Meat Inspector</option>
-                <option value="records_staff" {{ request('role') == 'records_staff' ? 'selected' : '' }}>Records Staff</option>
                 <option value="city_pound" {{ request('role') == 'city_pound' ? 'selected' : '' }}>City Pound</option>
                 <option value="pet_owner" {{ request('role') == 'pet_owner' ? 'selected' : '' }}>Pet Owner</option>
             </select>

@@ -42,7 +42,7 @@ class UserPolicy
             return false;
         }
 
-        // Must have at least level 3 (records_staff) to create users
+        // Must have at least level 3 to create users
         return $user->getHierarchyLevel() >= 3;
     }
 
@@ -59,7 +59,7 @@ class UserPolicy
         }
 
         // Cannot modify super_admin unless you are also super_admin (and not yourself)
-        if ($targetUser->isSuperAdmin() && !$targetUser->isSelf()) {
+        if ($targetUser->isSuperAdmin() && ! $targetUser->isSelf()) {
             return $user->canModifySuperAdmin();
         }
 

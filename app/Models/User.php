@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
-use App\Models\PetOwner;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, Authorizable
 {
-    use Authenticatable, Notifiable, HasRoles;
+    use Authenticatable, HasRoles, Notifiable;
 
     protected $guard_name = 'web';
 
@@ -77,8 +76,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
         $parts = array_filter([
             $this->first_name,
             $this->middle_name,
-            $this->last_name
+            $this->last_name,
         ]);
+
         return implode(' ', $parts);
     }
 
@@ -92,6 +92,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             $this->attributes['first_name'] = null;
             $this->attributes['middle_name'] = null;
             $this->attributes['last_name'] = null;
+
             return;
         }
 
@@ -136,7 +137,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
 
     public function verifyOtp(string $otp): bool
     {
-        if (!$this->otp_code || !$this->otp_expires_at) {
+        if (! $this->otp_code || ! $this->otp_expires_at) {
             return false;
         }
 
@@ -230,16 +231,25 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
 
     // Role constants - Clean Role Structure for Vet MIS (7 roles)
     public const ROLE_SUPER_ADMIN = 'super_admin';          // IT Personnel
+
     public const ROLE_CITY_VET = 'city_vet';               // City Veterinarian (Admin/Office Head)
+
     public const ROLE_ADMIN_STAFF = 'admin_staff';         // Administrative Assistant IV (Book Binder 4)
+
     public const ROLE_ADMIN_ASST = 'admin_asst';           // Administrative Assistant (Gatekeeper)
+
     public const ROLE_ASSISTANT_VET = 'assistant_vet';     // Assistant Veterinarian (Vet 3)
+
     public const ROLE_CLINIC = 'clinic';                   // External Vet Clinic
+
     public const ROLE_HOSPITAL = 'hospital';                // External Vet Hospital
+
     public const ROLE_LIVESTOCK_INSPECTOR = 'livestock_inspector'; // Livestock Inspector (Book Binder 1)
+
     public const ROLE_MEAT_INSPECTOR = 'meat_inspector';     // Meat & Post-Abattoir Inspector
-    public const ROLE_RECORDS_STAFF = 'records_staff';       // Records Management
+
     public const ROLE_CITY_POUND = 'city_pound';             // City Pound Personnel
+
     public const ROLE_PET_OWNER = 'pet_owner';                  // Pet owner/citizen portal
 
     /**
@@ -267,15 +277,6 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public function isCityVet(): bool
     {
         return $this->hasRole('city_vet');
-    }
-
-    /**
-     * Check if user is a records staff.
-     * Uses Spatie hasRole() for permission checking.
-     */
-    public function isRecordsStaff(): bool
-    {
-        return $this->hasRole('records_staff');
     }
 
     /**
@@ -330,6 +331,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public function getEffectiveRole(): string
     {
         $roles = $this->getRoleNames();
+
         return $roles->first() ?? 'viewer';
     }
 
@@ -363,7 +365,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      */
     public function getRoleDisplayName(): string
     {
-        return match($this->getRoleAttribute()) {
+        return match ($this->getRoleAttribute()) {
             self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
             self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV',
@@ -373,7 +375,6 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_HOSPITAL => 'External Vet Hospital',
             self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
             self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
-            self::ROLE_RECORDS_STAFF => 'Records Staff',
             self::ROLE_CITY_POUND => 'City Pound Personnel',
             self::ROLE_PET_OWNER => 'Pet Owner',
             default => 'Unknown',
@@ -412,9 +413,8 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_ASSISTANT_VET => 5,      // Assistant Veterinarian
             self::ROLE_CLINIC => 4,              // External Vet Clinic
             self::ROLE_HOSPITAL => 4,              // External Vet Hospital
-            self::ROLE_LIVESTOCK_INSPECTOR => 4,// Livestock Inspector
+            self::ROLE_LIVESTOCK_INSPECTOR => 4, // Livestock Inspector
             self::ROLE_MEAT_INSPECTOR => 4,     // Meat & Post-Abattoir Inspector
-            self::ROLE_RECORDS_STAFF => 3,      // Records Management
             self::ROLE_CITY_POUND => 3,         // City Pound Personnel
             self::ROLE_PET_OWNER => 1,            // Pet owner / citizen portal
         ];
@@ -426,6 +426,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public function getHierarchyLevel(): int
     {
         $role = $this->getRoleAttribute();
+
         return self::getRoleHierarchy()[$role] ?? 0;
     }
 
@@ -456,6 +457,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public function canAssignRole(string $role): bool
     {
         $roleLevel = self::getRoleHierarchy()[$role] ?? 0;
+
         return $this->getHierarchyLevel() >= $roleLevel;
     }
 
@@ -483,7 +485,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      */
     public function canAccessAdminPanel(): bool
     {
-        return !$this->hasRole(self::ROLE_PET_OWNER);
+        return ! $this->hasRole(self::ROLE_PET_OWNER);
     }
 
     /**
@@ -525,7 +527,6 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_CLINIC,
             self::ROLE_LIVESTOCK_INSPECTOR,
             self::ROLE_MEAT_INSPECTOR,
-            self::ROLE_RECORDS_STAFF,
             self::ROLE_CITY_POUND,
         ];
     }
@@ -602,8 +603,8 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public function hasReadAnnouncement(int $announcementId): bool
     {
         return $this->announcementReads()
-                    ->where('announcement_id', $announcementId)
-                    ->exists();
+            ->where('announcement_id', $announcementId)
+            ->exists();
     }
 
     /**
@@ -611,7 +612,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      */
     public function markAnnouncementAsRead(int $announcementId): void
     {
-        if (!$this->hasReadAnnouncement($announcementId)) {
+        if (! $this->hasReadAnnouncement($announcementId)) {
             AnnouncementRead::create([
                 'announcement_id' => $announcementId,
                 'user_id' => $this->id,

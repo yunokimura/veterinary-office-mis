@@ -409,7 +409,7 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
 
 // ==============================
 // ADMIN STAFF PORTAL
-// Role: Admin Staff (Records Staff)
+// Role: Admin Staff
 // Access: Pet registration records, owner records, vaccination encoding
 // ==============================
 Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('admin-staff.')->group(function () {

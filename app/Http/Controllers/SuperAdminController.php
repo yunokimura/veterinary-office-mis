@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
+use App\Models\Barangay;
+use App\Models\BiteRabiesReport;
+use App\Models\Pet;
+use App\Models\RabiesVaccinationReport;
+use App\Models\SystemLog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use App\Models\User;
-use App\Models\Pet;
-use App\Models\Announcement;
-use App\Models\SystemLog;
-use App\Models\RabiesVaccinationReport;
-use App\Models\BiteRabiesReport;
-use App\Models\Barangay;
-use Carbon\Carbon;
 
 class SuperAdminController extends Controller
 {
@@ -40,7 +38,6 @@ class SuperAdminController extends Controller
             'veterinarians' => User::where('role', 'veterinarian')->count(),
             'livestock_inspectors' => User::where('role', 'livestock_inspector')->count(),
             'meat_inspectors' => User::where('role', 'meat_inspector')->count(),
-            'records_staff' => User::where('role', 'records_staff')->count(),
             'barangay_encoders' => User::where('role', 'barangay_encoder')->count(),
             'viewers' => User::where('role', 'viewer')->count(),
 
@@ -114,7 +111,7 @@ class SuperAdminController extends Controller
         return response()->json([
             'success' => true,
             'data' => $stats,
-            'year' => $year
+            'year' => $year,
         ]);
     }
 
@@ -135,7 +132,6 @@ class SuperAdminController extends Controller
             'veterinarian' => 'Veterinarian III',
             'livestock_inspector' => 'Livestock Inspector',
             'meat_inspector' => 'Meat Inspector',
-            'records_staff' => 'Records Staff',
             'disease_control' => 'Assistant Veterinary',
             'barangay_encoder' => 'Barangay Encoder',
             'viewer' => 'Viewer/Supervisor',
@@ -153,7 +149,7 @@ class SuperAdminController extends Controller
         return response()->json([
             'success' => true,
             'data' => $formattedRoles,
-            'total' => array_sum($roles)
+            'total' => array_sum($roles),
         ]);
     }
 
@@ -171,7 +167,7 @@ class SuperAdminController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('action', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -183,7 +179,7 @@ class SuperAdminController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $logs
+            'data' => $logs,
         ]);
     }
 
@@ -197,14 +193,14 @@ class SuperAdminController extends Controller
         $format = $request->format ?? 'csv';
 
         $data = [];
-        $filename = 'system_report_' . $year . '_' . now()->format('YmdHis');
+        $filename = 'system_report_'.$year.'_'.now()->format('YmdHis');
 
         switch ($type) {
             case 'users':
                 $data = User::select(['id', 'name', 'email', 'role', 'status', 'created_at'])
                     ->get()
                     ->toArray();
-                $filename = 'users_report_' . $year;
+                $filename = 'users_report_'.$year;
                 break;
 
             case 'rabies':
@@ -212,21 +208,21 @@ class SuperAdminController extends Controller
                     ->whereYear('incident_date', $year)
                     ->get()
                     ->toArray();
-                $filename = 'rabies_cases_report_' . $year;
+                $filename = 'rabies_cases_report_'.$year;
                 break;
 
             case 'vaccinations':
                 $data = RabiesVaccinationReport::whereYear('vaccination_date', $year)
                     ->get()
                     ->toArray();
-                $filename = 'vaccinations_report_' . $year;
+                $filename = 'vaccinations_report_'.$year;
                 break;
 
             case 'bite_reports':
                 $data = BiteRabiesReport::whereYear('incident_date', $year)
                     ->get()
                     ->toArray();
-                $filename = 'bite_reports_report_' . $year;
+                $filename = 'bite_reports_report_'.$year;
                 break;
 
             case 'summary':
@@ -237,13 +233,13 @@ class SuperAdminController extends Controller
                     'total_users' => User::count(),
                     'total_clients' => User::where('role', 'pet_owner')->count(),
                     'total_animals' => Pet::count(),
-            'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
+                    'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
                     'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
-            'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
+                    'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
                     'total_barangays' => Barangay::count(),
                     'total_announcements' => Announcement::count(),
                 ];
-                $filename = 'system_summary_' . $year;
+                $filename = 'system_summary_'.$year;
                 break;
         }
 
@@ -260,7 +256,7 @@ class SuperAdminController extends Controller
             'success' => true,
             'data' => $data,
             'filename' => $filename,
-            'format' => $format
+            'format' => $format,
         ]);
     }
 
@@ -303,7 +299,7 @@ class SuperAdminController extends Controller
             'user_id' => auth()->id(),
             'action' => 'update_settings',
             'event' => 'update',
-            'description' => "Updated system settings: " . json_encode($validated),
+            'description' => 'Updated system settings: '.json_encode($validated),
             'ip_address' => request()->ip(),
         ]);
 
@@ -325,7 +321,7 @@ class SuperAdminController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -376,6 +372,7 @@ class SuperAdminController extends Controller
         ]);
 
         $statusText = $newStatus === 'active' ? 'activated' : 'deactivated';
+
         return back()->with('success', "User {$user->name} {$statusText} successfully.");
     }
 }

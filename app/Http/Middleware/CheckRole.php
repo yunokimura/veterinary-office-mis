@@ -12,11 +12,11 @@ class CheckRole
      * Handle an incoming request.
      * Uses Spatie hasRole() for permission checking.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        if (!$request->user()) {
+        if (! $request->user()) {
             return redirect()->route('login');
         }
 
@@ -36,7 +36,7 @@ class CheckRole
 
         // User doesn't have the required role - redirect to their own dashboard
         $userRole = $user->getEffectiveRole();
-        
+
         // Map roles to their dashboards
         $roleDashboards = [
             'city_vet' => 'admin.dashboard',
@@ -45,7 +45,6 @@ class CheckRole
             'assistant_vet' => 'assistant-vet.dashboard',
             'livestock_inspector' => 'livestock.dashboard',
             'meat_inspector' => 'meat-inspection.dashboard',
-            'records_staff' => 'admin-staff.dashboard',
             'disease_control' => 'disease-control.dashboard',
             'clinic' => 'clinic.dashboard',
             'hospital' => 'hospital.dashboard',
