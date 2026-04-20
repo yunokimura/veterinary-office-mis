@@ -119,7 +119,7 @@
     <aside id="sidebar" class="sidebar bg-green-800 text-white">
         <!-- Brand -->
         <div class="flex items-center justify-start gap-3 px-3 h-16 border-b border-green-700">
-            <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 object-contain">
+            <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 rounded-full object-contain ring-1 ring-white">
             <div class="min-w-0">
                 <h1 class="font-bold text-[14px] leading-tight truncate">Dasmariñas City Vet</h1>
                 <p class="text-[10px] text-green-200 leading-tight">Veterinary Office MIS</p>
@@ -156,7 +156,7 @@
         @endphp
 
         <!-- Navigation -->
-        <nav class="px-3 py-4 overflow-y-auto" style="height: calc(100vh - 140px);">
+        <nav class="px-3 py-2 overflow-y-auto" style="height: calc(100vh - 140px);">
             <div class="sidebar-section-label">Main</div>
             <a href="{{ route($dashboardRoute) }}"
                class="nav-item {{ request()->routeIs($prefix.'.dashboard') ? 'active-nav' : '' }}">

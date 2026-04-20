@@ -18,7 +18,7 @@
 @endphp
 
 <!-- Welcome Banner (FIXED) -->
-<div class="bg-gray-50 rounded-xl shadow-lg p-4 md:p-6 mb-6 border border-gray-200">
+<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
     <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
         {{ $greeting }}, {{ auth()->user()->name ?? 'System Administrator' }}!
     </h2>
@@ -102,21 +102,21 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
     <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <a href="{{ route('super-admin.users.create') }}" class="flex flex-col items-center p-3 md:p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
+        <a href="{{ route('super-admin.users.create') }}" class="flex flex-col items-center p-3 md:p-4 bg-blue-100 hover:bg-blue-200 rounded-xl transition group">
             <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-person-plus text-white text-lg md:text-xl"></i>
             </div>
             <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Add User</span>
         </a>
 
-        <a href="{{ route('super-admin.announcements.create') }}" class="flex flex-col items-center p-3 md:p-4 bg-green-50 hover:bg-green-100 rounded-xl transition group">
+        <a href="{{ route('super-admin.announcements.create') }}" class="flex flex-col items-center p-3 md:p-4 bg-green-100 hover:bg-green-200 rounded-xl transition group">
             <div class="w-10 h-10 md:w-12 md:h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-megaphone text-white text-lg md:text-xl"></i>
             </div>
             <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Announce</span>
         </a>
 
-        <a href="{{ route('super-admin.system-logs.index') }}" class="flex flex-col items-center p-3 md:p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition group">
+        <a href="{{ route('super-admin.system-logs.index') }}" class="flex flex-col items-center p-3 md:p-4 bg-gray-100 hover:bg-gray-200 rounded-xl transition group">
             <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-journal-text text-white text-lg md:text-xl"></i>
             </div>
