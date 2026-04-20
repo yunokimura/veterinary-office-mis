@@ -105,7 +105,7 @@
                     <i class="bi bi-list text-xl text-slate-600"></i>
                 </button>
                 <div class="flex items-center gap-2">
-                    <img src="{{ asset('images/dasma logo.png') }}" alt="Logo" class="w-7 h-7 rounded object-contain">
+                    <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-7 h-7 rounded object-contain">
                     <span class="font-bold text-slate-800 text-sm">City Vet MIS</span>
                 </div>
             </div>
@@ -118,12 +118,13 @@
     <!-- Sidebar -->
     <aside id="sidebar" class="sidebar bg-green-800 text-white">
         <!-- Brand -->
-        <div class="flex items-center gap-3 px-5 h-16 border-b border-green-700">
-            <img src="{{ asset('images/dasma logo.png') }}" alt="Logo" class="w-9 h-9 rounded-lg object-contain bg-white p-0.5">
+        <div class="flex items-center justify-center gap-3 px-5 h-16 border-b border-green-700">
+            <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 rounded-lg object-contain bg-white p-0.5">
             <div class="min-w-0">
                 <h1 class="font-bold text-[14px] leading-tight truncate">Dasmariñas City Vet</h1>
-                <p class="text-[10px] text-green-200 leading-tight">Disease Surveillance MIS</p>
+                <p class="text-[10px] text-green-200 leading-tight">Veterinary Office MIS</p>
             </div>
+        </div>
         </div>
 
         <!-- User Info -->

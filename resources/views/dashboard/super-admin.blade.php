@@ -6,12 +6,23 @@
 @section('subheader', 'System Administrator - Full System Access')
 
 @section('content')
+@php
+    $hour = date('H');
+    if ($hour >= 5 && $hour < 12) {
+        $greeting = 'Good morning';
+    } elseif ($hour >= 12 && $hour < 18) {
+        $greeting = 'Good afternoon';
+    } else {
+        $greeting = 'Good evening';
+    }
+@endphp
+
 <!-- Welcome Banner (FIXED) -->
-<div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 text-white">
-    <h2 class="text-xl md:text-2xl font-bold mb-2">
-        Welcome back, {{ auth()->user()->name ?? 'System Administrator' }}!
+<div class="bg-gray-50 rounded-xl shadow-lg p-4 md:p-6 mb-6 border border-gray-200">
+    <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
+        {{ $greeting }}, {{ auth()->user()->name ?? 'System Administrator' }}!
     </h2>
-    <p class="text-blue-100 text-sm md:text-base">
+    <p class="text-sm md:text-base text-gray-600">
         Full system access and account management.
     </p>
 </div>
