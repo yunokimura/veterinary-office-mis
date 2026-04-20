@@ -36,7 +36,7 @@
 <!-- Header -->
 <header class="bg-white border-b border-gray-200">
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center space-x-4">
-        <img src="{{ asset('images/dasma logo.png') }}" class="w-12 h-12 object-contain" alt="Logo">
+        <img src="{{ asset('images/Dasmalogof.png') }}" class="w-12 h-12 object-contain" alt="Logo">
         <div>
             <h1 class="text-lg font-bold">Dasmariñas City Veterinary Services</h1>
             <p class="text-sm text-gray-600">Official Veterinary Office of Dasmariñas City</p>

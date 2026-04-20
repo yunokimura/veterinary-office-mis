@@ -125,7 +125,6 @@
                 <p class="text-[10px] text-green-200 leading-tight">Veterinary Office MIS</p>
             </div>
         </div>
-        </div>
 
         <!-- User Info -->
         <div class="px-4 py-3 border-b border-green-700">

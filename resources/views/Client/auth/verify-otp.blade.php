@@ -39,7 +39,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center space-x-4">
                 <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
-                    <img src="{{ asset('images/dasma logo.png') }}" alt="Dasmariñas City Logo" class="w-full h-full object-contain">
+                    <img src="{{ asset('images/Dasmalogof.png') }}" alt="Dasmariñas City Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
                     <h1 class="text-xl font-bold text-gray-900">Dasmariñas City Veterinary Services</h1>

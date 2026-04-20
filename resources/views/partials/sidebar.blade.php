@@ -3,7 +3,7 @@
     <!-- Brand -->
     <div class="p-6 border-b border-green-700">
         <div class="flex items-center gap-3">
-            <img src="{{ asset('images/dasma logo.png') }}" alt="Logo" class="w-10 h-10 rounded-lg object-contain bg-white p-1">
+            <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-10 h-10 rounded-lg object-contain bg-white p-1">
             <div>
                 <h1 class="font-bold text-lg">Dasmariñas City Veterinary Services</h1>
                 <p class="text-xs text-green-200">

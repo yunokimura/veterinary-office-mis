@@ -40,7 +40,7 @@
             <!-- Government Logo -->
             <div class="flex items-center space-x-3">
                 <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
-                    <img src="{{ asset('images/dasma logo.png') }}" alt="Dasmariñas City Logo" class="w-full h-full object-contain">
+                    <img src="{{ asset('images/Dasmalogof.png') }}" alt="Dasmariñas City Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-gray-900">Dasmariñas City Veterinary Services</h1>

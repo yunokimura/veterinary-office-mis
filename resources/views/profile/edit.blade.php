@@ -49,7 +49,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <img src="{{ asset('images/dasma logo.png') }}" alt="Logo" class="h-12 w-12">
+                    <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="h-12 w-12">
                     <div>
                         <h1 class="text-xl font-bold text-primary">Dasmariñas City Veterinary Services</h1>
                         <p class="text-gray-500 text-sm">Pet Management System</p>
