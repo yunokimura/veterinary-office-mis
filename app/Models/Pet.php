@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Pet extends Model
 {
     protected $table = 'pets';
+
     protected $primaryKey = 'pet_id';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -27,8 +29,6 @@ class Pet extends Model
         'vaccination_status',
         'vaccination_date',
         'next_vaccination_date',
-        'license_number',
-        'license_expiry',
         'microchip_number',
         'health_status',
         'medical_history',
@@ -68,7 +68,7 @@ class Pet extends Model
 
     public function userOwner(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'owner_id', 'id');
+        return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 
     public function barangay(): BelongsTo

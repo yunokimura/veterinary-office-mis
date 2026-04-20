@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\BiteRabiesReport;
 use App\Models\Pet;
-use App\Models\User;
 use App\Models\PetOwner;
 use App\Models\RabiesVaccinationReport;
-use App\Models\BiteRabiesReport;
+use App\Models\User;
 use App\Models\Vaccination;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * RecordsController - Records Management Module
@@ -72,12 +71,11 @@ class RecordsController extends Controller
         $pets = Pet::with(['owner', 'barangay'])
             ->when($search, function ($query) use ($search) {
                 $query->where('pet_name', 'like', "%{$search}%")
-                      ->orWhere('license_number', 'like', "%{$search}%")
-                      ->orWhereHas('owner', function ($q) use ($search) {
-                          $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhereHas('owner', function ($q) use ($search) {
+                        $q->where('first_name', 'like', "%{$search}%")
                             ->orWhere('last_name', 'like', "%{$search}%")
                             ->orWhere('email', 'like', "%{$search}%");
-                      });
+                    });
             })
             ->when($species, function ($query) use ($species) {
                 $query->where('species', $species);
@@ -101,6 +99,7 @@ class RecordsController extends Controller
     {
         // Use PetOwner model for owners (pet owners)
         $owners = PetOwner::orderBy('last_name')->get();
+
         return view('records-staff.pets.create', compact('owners'));
     }
 
@@ -120,7 +119,6 @@ class RecordsController extends Controller
             'owner_id' => 'nullable|exists:pet_owners,owner_id',
             'owner_name' => 'nullable|string|max:255',
             'owner_contact' => 'nullable|string|max:20',
-            'license_number' => 'nullable|string|unique:pets',
             'microchip_number' => 'nullable|string',
             'health_status' => 'nullable|string',
             'vaccination_status' => 'nullable|string|in:vaccinated,unvaccinated,pending',
@@ -129,9 +127,9 @@ class RecordsController extends Controller
 
         // Handle owner - either select existing or create new
         $ownerId = null;
-        if (!empty($request->owner_id)) {
+        if (! empty($request->owner_id)) {
             $ownerId = $request->owner_id;
-        } elseif (!empty($request->owner_name)) {
+        } elseif (! empty($request->owner_name)) {
             // Create a new pet owner
             $owner = PetOwner::create([
                 'first_name' => $request->owner_name,
@@ -150,7 +148,6 @@ class RecordsController extends Controller
             'gender' => $validated['gender'] ?? null,
             'color' => $validated['color'] ?? null,
             'weight' => $validated['weight'] ?? null,
-            'license_number' => $validated['license_number'] ?? null,
             'microchip_number' => $validated['microchip_number'] ?? null,
             'health_status' => $validated['health_status'] ?? null,
             'vaccination_status' => $validated['vaccination_status'] ?? 'unvaccinated',
@@ -166,6 +163,7 @@ class RecordsController extends Controller
     public function showAnimal(Pet $pet)
     {
         $pet->load('owner', 'vaccinations');
+
         return view('records-staff.pets.show', compact('pet'));
     }
 
@@ -175,6 +173,7 @@ class RecordsController extends Controller
     public function editAnimal(Pet $pet)
     {
         $owners = User::where('role', 'pet_owner')->orderBy('name')->get();
+
         return view('records-staff.pets.edit', compact('pet', 'owners'));
     }
 
@@ -192,7 +191,6 @@ class RecordsController extends Controller
             'color' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'owner_id' => 'nullable|exists:pet_owners,owner_id',
-            'license_number' => 'nullable|string|unique:pets,license_number,' . $pet->pet_id,
             'microchip_number' => 'nullable|string',
             'health_status' => 'nullable|string',
             'vaccination_status' => 'nullable|string|in:vaccinated,unvaccinated,pending',
@@ -217,9 +215,9 @@ class RecordsController extends Controller
             ->whereHas('petOwner', function ($query) use ($search) {
                 $query->when($search, function ($q) use ($search) {
                     $q->where('first_name', 'like', "%{$search}%")
-                      ->orWhere('last_name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%")
-                      ->orWhere('phone_number', 'like', "%{$search}%");
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone_number', 'like', "%{$search}%");
                 });
             })
             ->with('petOwner')
@@ -236,7 +234,7 @@ class RecordsController extends Controller
     public function showOwner(User $owner)
     {
         $petOwner = $owner->petOwner;
-        
+
         return view('records-staff.owners.show', compact('owner', 'petOwner'));
     }
 
@@ -246,6 +244,7 @@ class RecordsController extends Controller
     public function createVaccination()
     {
         $pets = Pet::orderBy('pet_name')->get();
+
         return view('records-staff.vaccinations.create', compact('pets'));
     }
 
@@ -315,8 +314,8 @@ class RecordsController extends Controller
         $vaccinations = RabiesVaccinationReport::with('user')
             ->when($search, function ($query) use ($search) {
                 $query->where('patient_name', 'like', "%{$search}%")
-                      ->orWhere('pet_name', 'like', "%{$search}%")
-                      ->orWhere('vaccine_brand', 'like', "%{$search}%");
+                    ->orWhere('pet_name', 'like', "%{$search}%")
+                    ->orWhere('vaccine_brand', 'like', "%{$search}%");
             })
             ->when($status, function ($query) use ($status) {
                 $query->where('status', $status);
@@ -351,7 +350,6 @@ class RecordsController extends Controller
 
         // Search pets
         $pets = Pet::where('name', 'like', "%{$search}%")
-            ->orWhere('license_number', 'like', "%{$search}%")
             ->orWhere('microchip_number', 'like', "%{$search}%")
             ->with('owner')
             ->take(10)
@@ -361,8 +359,8 @@ class RecordsController extends Controller
         $owners = User::where('role', 'pet_owner')
             ->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%")
-                      ->orWhere('contact_number', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('contact_number', 'like', "%{$search}%");
             })
             ->withCount('pets')
             ->take(10)

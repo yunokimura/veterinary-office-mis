@@ -26,8 +26,8 @@
                         </div>
                     </div>
                     <div class="mt-3">
-                        <span class="badge bg-warning">{{ $pendingPetRegistrations }}</span>
-                        <small class="text-muted">Pending Registration</small>
+                        <span class="badge bg-success">{{ $totalPets }}</span>
+                        <small class="text-muted">Total Pets</small>
                     </div>
                 </div>
                 <div class="card-footer bg-transparent border-0">
@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div class="card-footer bg-transparent border-0">
-                    <a href="{{ route('admin-asst.adoptions.index') }}" class="text-info text-decoration-none small">
+                    <a href="{{ route('admin-asst.adoption-pets.index') }}" class="text-info text-decoration-none small">
                         Manage Adoptions <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -196,15 +196,11 @@
                             <tbody>
                                 @forelse($recentPetRegistrations as $pet)
                                 <tr>
-                                    <td>{{ $pet->name }}</td>
+                                    <td>{{ $pet->pet_name }}</td>
                                     <td><span class="badge bg-secondary">{{ ucfirst($pet->species) }}</span></td>
                                     <td>{{ $pet->userOwner ? $pet->userOwner->name : 'N/A' }}</td>
                                     <td>
-                                        @if($pet->license_number)
-                                            <span class="badge bg-success">Registered</span>
-                                        @else
-                                            <span class="badge bg-warning">Pending</span>
-                                        @endif
+                                        <span class="badge bg-success">Registered</span>
                                     </td>
                                 </tr>
                                 @empty
@@ -230,27 +226,27 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Adopter</th>
-                                    <th>Contact</th>
-                                    <th>Request Date</th>
+                                    <th>Pet Name</th>
+                                    <th>Species</th>
+                                    <th>Added</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($recentAdoptions as $adoption)
                                 <tr>
-                                    <td>{{ $adoption->adopter_name }}</td>
-                                    <td>{{ $adoption->adopter_contact }}</td>
-                                    <td>{{ $adoption->requested_at->format('M d, Y') }}</td>
+                                    <td>{{ $adoption->pet_name }}</td>
+                                    <td>{{ $adoption->species }}</td>
+                                    <td>{{ $adoption->created_at ? $adoption->created_at->format('M d, Y') : 'N/A' }}</td>
                                     <td>
-                                        <span class="badge bg-{{ $adoption->request_status == 'pending' ? 'warning' : ($adoption->request_status == 'approved' ? 'success' : ($adoption->request_status == 'rejected' ? 'danger' : 'info')) }}">
-                                            {{ ucfirst($adoption->request_status) }}
+                                        <span class="badge bg-{{ $adoption->is_approved ? 'success' : 'warning' }}">
+                                            {{ $adoption->is_approved ? 'Approved' : 'Pending' }}
                                         </span>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">No recent adoption requests</td>
+                                    <td colspan="4" class="text-center text-muted py-4">No pets available for adoption</td>
                                 </tr>
                                 @endforelse
                             </tbody>

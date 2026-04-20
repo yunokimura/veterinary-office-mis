@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\AdminAsst;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pet;
 use App\Models\Barangay;
+use App\Models\Pet;
 use App\Models\PetOwner;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,15 +18,6 @@ class PetRegistrationController extends Controller
     public function index(Request $request)
     {
         $query = Pet::query()->with('owner');
-
-        // Filter by status
-        if ($request->filled('status')) {
-            if ($request->status === 'registered') {
-                $query->whereNotNull('license_number');
-            } elseif ($request->status === 'pending') {
-                $query->whereNull('license_number');
-            }
-        }
 
         // Filter by species
         if ($request->filled('species')) {
@@ -42,30 +32,25 @@ class PetRegistrationController extends Controller
         // Search by name or owner
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('pet_name', 'like', '%' . $search . '%')
-                  ->orWhere('breed', 'like', '%' . $search . '%')
-                  ->orWhereHas('owner', function($uq) use ($search) {
-                      $uq->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%');
-                  });
+            $query->where(function ($q) use ($search) {
+                $q->where('pet_name', 'like', '%'.$search.'%')
+                    ->orWhere('breed', 'like', '%'.$search.'%')
+                    ->orWhereHas('owner', function ($uq) use ($search) {
+                        $uq->where('first_name', 'like', '%'.$search.'%')
+                            ->orWhere('last_name', 'like', '%'.$search.'%');
+                    });
             });
         }
 
         $pets = $query->orderBy('created_at', 'desc')->paginate(15);
         $barangays = Barangay::orderBy('barangay_name')->get();
 
-        // Statistics
         $totalCount = Pet::count();
-        $registeredCount = Pet::whereNotNull('license_number')->count();
-        $pendingCount = Pet::whereNull('license_number')->count();
 
         return view('admin-asst.pet-registrations.index', compact(
-            'pets', 
+            'pets',
             'barangays',
-            'totalCount',
-            'registeredCount',
-            'pendingCount'
+            'totalCount'
         ));
     }
 
@@ -76,7 +61,7 @@ class PetRegistrationController extends Controller
     {
         $barangays = Barangay::orderBy('barangay_name')->get();
         $owners = PetOwner::orderBy('last_name')->get();
-        
+
         return view('admin-asst.pet-registrations.create', compact('barangays', 'owners'));
     }
 
@@ -108,15 +93,7 @@ class PetRegistrationController extends Controller
             $photoPath = $request->file('photo')->store('pets', 'public');
         }
 
-        // Generate license number for registered pets
-        $licenseNumber = null;
-        if ($request->filled('generate_license')) {
-            $licenseNumber = 'LIC-' . date('Y') . '-' . str_pad(Pet::count() + 1, 6, '0', STR_PAD_LEFT);
-        }
-
         $validated['pet_image'] = $photoPath;
-        $validated['license_number'] = $licenseNumber;
-        $validated['license_expiry'] = $licenseNumber ? now()->addYear() : null;
 
         Pet::create($validated);
 
@@ -130,7 +107,7 @@ class PetRegistrationController extends Controller
     public function show(Pet $pet)
     {
         $pet->load('owner', 'barangay');
-        
+
         return view('admin-asst.pet-registrations.show', compact('pet'));
     }
 
@@ -141,7 +118,7 @@ class PetRegistrationController extends Controller
     {
         $barangays = Barangay::orderBy('barangay_name')->get();
         $owners = PetOwner::orderBy('last_name')->get();
-        
+
         return view('admin-asst.pet-registrations.edit', compact('pet', 'barangays', 'owners'));
     }
 
@@ -165,8 +142,6 @@ class PetRegistrationController extends Controller
             'medical_history' => 'nullable|string',
             'notes' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'license_number' => 'nullable|string|max:50',
-            'license_expiry' => 'nullable|date',
         ]);
 
         // Handle file upload
@@ -193,26 +168,11 @@ class PetRegistrationController extends Controller
         if ($pet->pet_image) {
             Storage::disk('public')->delete($pet->pet_image);
         }
-        
+
         $pet->delete();
 
         return redirect()->route('admin-asst.pet-registrations.index')
             ->with('success', 'Pet registration deleted successfully!');
-    }
-
-    /**
-     * Approve/Register a pet (issue license).
-     */
-    public function approve(Pet $pet)
-    {
-        $licenseNumber = 'LIC-' . date('Y') . '-' . str_pad(Pet::count() + 1, 6, '0', STR_PAD_LEFT);
-        
-        $pet->update([
-            'license_number' => $licenseNumber,
-            'license_expiry' => now()->addYear(),
-        ]);
-
-        return redirect()->back()->with('success', 'Pet approved and license issued: ' . $licenseNumber);
     }
 
     /**
@@ -222,8 +182,6 @@ class PetRegistrationController extends Controller
     {
         $stats = [
             'total' => Pet::count(),
-            'registered' => Pet::whereNotNull('license_number')->count(),
-            'pending' => Pet::whereNull('license_number')->count(),
             'by_species' => Pet::select('species', DB::raw('count(*) as count'))
                 ->groupBy('species')
                 ->pluck('count', 'species')

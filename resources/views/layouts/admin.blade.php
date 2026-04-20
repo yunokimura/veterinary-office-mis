@@ -19,6 +19,7 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
@@ -82,6 +83,11 @@
             .sidebar.open { transform: translateX(0); }
             main { margin-left: 0; }
             .sidebar-overlay.active { display: block !important; }
+        }
+        .content-wrapper {
+            padding: 1.5rem;
+            background-color: #f8fafc;
+            min-height: 100vh;
         }
     </style>
 </head>
@@ -290,8 +296,11 @@
             <a href="{{ route('admin-asst.pet-registrations.index') }}" class="nav-item {{ request()->routeIs('admin-asst.pet-registrations.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-paw"></i><span>Pet Registrations</span>
             </a>
-            <a href="{{ route('admin-asst.adoptions.index') }}" class="nav-item {{ request()->routeIs('admin-asst.adoptions.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-heart-fill"></i><span>Adoptions</span>
+            <a href="{{ route('admin-asst.adoption-applications.index') }}" class="nav-item {{ request()->routeIs('admin-asst.adoption-applications.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-heart-fill"></i><span>Adoption Applications</span>
+            </a>
+            <a href="{{ route('admin-asst.adoption-pets.index') }}" class="nav-item {{ request()->routeIs('admin-asst.adoption-pets.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-paw"></i><span>Adoption Pets</span>
             </a>
             <a href="{{ route('admin-asst.missing-pets.index') }}" class="nav-item {{ request()->routeIs('admin-asst.missing-pets.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-search"></i><span>Missing Pets</span>

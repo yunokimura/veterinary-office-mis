@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barangay;
 use App\Models\Pet;
 use App\Models\PetOwner;
-use App\Models\Barangay;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -32,8 +33,8 @@ class PetController extends Controller
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('breed', 'like', '%' . $request->search . '%');
+                $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('breed', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -73,8 +74,6 @@ class PetController extends Controller
             'vaccination_status' => 'nullable|in:vaccinated,unvaccinated,pending',
             'vaccination_date' => 'nullable|date',
             'next_vaccination_date' => 'nullable|date',
-            'license_number' => 'nullable|string|max:50',
-            'license_expiry' => 'nullable|date',
             'microchip_number' => 'nullable|string|max:50',
             'health_status' => 'nullable|in:healthy,sick,deceased',
             'medical_history' => 'nullable|string',
@@ -91,7 +90,7 @@ class PetController extends Controller
 
         Pet::create($request->validated());
 
-        \App\Services\NotificationService::petRegistrationCreated(Pet::latest()->first()->id);
+        NotificationService::petRegistrationCreated(Pet::latest()->first()->id);
 
         return redirect()->route('pets.index')
             ->with('success', 'Pet registered successfully.');
@@ -120,8 +119,6 @@ class PetController extends Controller
             'vaccination_status' => 'nullable|in:vaccinated,unvaccinated,pending',
             'vaccination_date' => 'nullable|date',
             'next_vaccination_date' => 'nullable|date',
-            'license_number' => 'nullable|string|max:50',
-            'license_expiry' => 'nullable|date',
             'microchip_number' => 'nullable|string|max:50',
             'health_status' => 'nullable|in:healthy,sick,deceased',
             'medical_history' => 'nullable|string',

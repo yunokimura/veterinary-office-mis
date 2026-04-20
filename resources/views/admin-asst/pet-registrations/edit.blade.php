@@ -94,14 +94,6 @@
                                 <label class="form-label">Health Status</label>
                                 <input type="text" name="health_status" class="form-control" value="{{ old('health_status', $pet->health_status) }}">
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">License Number</label>
-                                <input type="text" name="license_number" class="form-control" value="{{ old('license_number', $pet->license_number) }}" placeholder="LIC-2026-000001">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">License Expiry</label>
-                                <input type="date" name="license_expiry" class="form-control" value="{{ old('license_expiry', $pet->license_expiry?->format('Y-m-d')) }}">
-                            </div>
                         </div>
 
                         <div class="mb-3">

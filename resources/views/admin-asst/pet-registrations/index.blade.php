@@ -140,18 +140,7 @@
                             <td>{{ $pet->breed }}</td>
                             <td>{{ $pet->userOwner ? $pet->userOwner->name : 'N/A' }}</td>
                             <td>
-                                @if($pet->license_number)
-                                    <code>{{ $pet->license_number }}</code>
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($pet->license_number)
-                                    <span class="badge bg-success">Registered</span>
-                                @else
-                                    <span class="badge bg-warning">Pending</span>
-                                @endif
+                                <span class="badge bg-success">Registered</span>
                             </td>
                             <td>{{ $pet->created_at->format('M d, Y') }}</td>
                             <td class="text-end">
@@ -161,14 +150,6 @@
                                 <a href="{{ route('admin-asst.pet-registrations.edit', $pet) }}" class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                @if(!$pet->license_number)
-                                    <form action="{{ route('admin-asst.pet-registrations.approve', $pet) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Approve and issue license for this pet?')">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </form>
-                                @endif
                                 <form action="{{ route('admin-asst.pet-registrations.destroy', $pet) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this record?')">
                                     @csrf
                                     @method('DELETE')

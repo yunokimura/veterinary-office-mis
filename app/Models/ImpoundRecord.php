@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use App\Traits\HasStatusApproval;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
 
 class ImpoundRecord extends Model
 {
     use HasStatusApproval;
 
-    protected $table = 'impound_records';
+    protected $table = 'impounds';
+
     protected $primaryKey = 'impound_id';
 
     protected $fillable = [

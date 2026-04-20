@@ -7,14 +7,6 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-paw me-2"></i>Pet Registration Details</h2>
         <div>
-            @if(!$pet->license_number)
-                <form action="{{ route('admin-asst.pet-registrations.approve', $pet) }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-success me-2" onclick="return confirm('Approve and issue license for this pet?')">
-                        <i class="fas fa-check-circle me-2"></i>Approve & Issue License
-                    </button>
-                </form>
-            @endif
             <a href="{{ route('admin-asst.pet-registrations.edit', $pet) }}" class="btn btn-warning me-2">
                 <i class="fas fa-edit me-2"></i>Edit
             </a>
@@ -31,13 +23,7 @@
                 <div class="card-header bg-white py-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">{{ $pet->name }}</h4>
-                        @if($pet->license_number)
-                            <span class="badge bg-success fs-6">
-                                <i class="fas fa-certificate me-1"></i> {{ $pet->license_number }}
-                            </span>
-                        @else
-                            <span class="badge bg-warning fs-6">Pending Registration</span>
-                        @endif
+                        <span class="badge bg-success fs-6">Registered</span>
                     </div>
                 </div>
                 <div class="card-body">
@@ -87,14 +73,6 @@
                                 <tr>
                                     <td class="text-muted">Health Status:</td>
                                     <td>{{ $pet->health_status ?? 'Not specified' }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">License #:</td>
-                                    <td>{{ $pet->license_number ?? 'Not issued' }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">License Expiry:</td>
-                                    <td>{{ $pet->license_expiry ? $pet->license_expiry->format('M d, Y') : 'Not applicable' }}</td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">Microchip #:</td>

@@ -157,20 +157,9 @@
             <!-- License & ID -->
             <div class="mb-8">
                 <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
-                    <i class="bi bi-credit-card text-purple-600"></i> License & Identification
+                    <i class="bi bi-credit-card text-purple-600"></i> Identification
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- License Number -->
-                    <div>
-                        <label for="license_number" class="block text-sm font-medium text-gray-700 mb-2">License Number</label>
-                        <input type="text" name="license_number" id="license_number" value="{{ old('license_number') }}" 
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition @error('license_number') border-red-500 @enderror"
-                            placeholder="Enter license number">
-                        @error('license_number')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
                     <!-- Microchip Number -->
                     <div>
                         <label for="microchip_number" class="block text-sm font-medium text-gray-700 mb-2">Microchip Number</label>

@@ -56,10 +56,6 @@
                             <p class="font-medium">{{ $pet->weight ?? 'Unknown' }} kg</p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">License Number</p>
-                            <p class="font-medium">{{ $pet->license_number ?? 'N/A' }}</p>
-                        </div>
-                        <div>
                             <p class="text-sm text-gray-500">Microchip Number</p>
                             <p class="font-medium">{{ $pet->microchip_number ?? 'N/A' }}</p>
                         </div>
