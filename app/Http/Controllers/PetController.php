@@ -33,7 +33,7 @@ class PetController extends Controller
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->search.'%')
+                $q->where('pet_name', 'like', '%'.$request->search.'%')
                     ->orWhere('breed', 'like', '%'.$request->search.'%');
             });
         }

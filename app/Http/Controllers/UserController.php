@@ -10,6 +10,7 @@ use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -36,17 +37,26 @@ class UserController extends Controller
         $search = $request->get('search', '');
         $role = $request->get('role', '');
 
-        $users = User::when($search, function ($query) use ($search) {
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
-        })
+        $users = User::with('barangay')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('middle_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
             ->when($role, function ($query) use ($role) {
-                $query->where('role', $role);
+                $query->whereHas('roles', function ($q) use ($role) {
+                    $q->where('name', $role);
+                });
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('admin.users.index', compact('users', 'search'));
+        $roles = Role::where('guard_name', 'web')->orderBy('name')->pluck('name')->toArray();
+
+        return view('admin.users.index', compact('users', 'search', 'roles'));
     }
 
     /**
@@ -344,7 +354,7 @@ class UserController extends Controller
         }
 
         // Toggle status
-        $newStatus = $user->status === 'active' ? 'inactive' : 'active';
+        $newStatus = $user->status === 'active' ? 'deactivated' : 'active';
         $user->update(['status' => $newStatus]);
 
         SystemLog::create([

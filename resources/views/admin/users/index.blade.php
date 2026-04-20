@@ -6,56 +6,20 @@
 @section('subheader', 'Manage system users and permissions')
 
 @section('content')
-<!-- Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-500">Total Users</p>
-                <p class="text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\User::count() }}</p>
-            </div>
-            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-people text-blue-600 text-2xl"></i>
-            </div>
-        </div>
-    </div>
+@php
+    // Get all roles for dropdown
+    $roles = \Spatie\Permission\Models\Role::where('guard_name', 'web')->orderBy('name')->pluck('name')->toArray();
 
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-500">Admins</p>
-                <p class="text-3xl font-bold text-green-600 mt-1">{{ \App\Models\User::whereIn('role', ['super_admin', 'city_vet'])->count() }}</p>
-            </div>
-            <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-shield-check text-green-600 text-2xl"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-500">Staff</p>
-                <p class="text-3xl font-bold text-blue-600 mt-1">{{ \App\Models\User::whereIn('role', ['admin_staff', 'assistant_vet', 'livestock_inspector', 'meat_inspector'])->count() }}</p>
-            </div>
-            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-person-badge text-blue-600 text-2xl"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-500">Pet Owners</p>
-                <p class="text-3xl font-bold text-purple-600 mt-1">{{ \App\Models\User::where('role', 'pet_owner')->count() }}</p>
-            </div>
-            <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-person text-purple-600 text-2xl"></i>
-            </div>
-        </div>
-    </div>
-</div>
+    // Stats based on actual Spatie role assignments
+    $stats = [
+        'total_users' => \App\Models\User::count(),
+        'admins' => \App\Models\User::role(['super_admin', 'city_vet'])->count(),
+        'staff' => \App\Models\User::role(['admin_staff', 'assistant_vet', 'livestock_inspector', 'meat_inspector'])->count(),
+        'pet_owners' => \App\Models\User::role('pet_owner')->count(),
+        'active' => \App\Models\User::where('status', 'active')->count(),
+        'deactivated' => \App\Models\User::where('status', 'deactivated')->count(),
+    ];
+@endphp
 
 <!-- Quick Actions -->
 @can('create-users')
@@ -84,6 +48,74 @@
 </div>
 @endcan
 
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Total Users</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['total_users'] }}</p>
+            </div>
+            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-people text-blue-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Admins</p>
+                <p class="text-3xl font-bold text-green-600 mt-1">{{ $stats['admins'] }}</p>
+            </div>
+            <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-shield-check text-green-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Staff</p>
+                <p class="text-3xl font-bold text-blue-600 mt-1">{{ $stats['staff'] }}</p>
+            </div>
+            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-person-badge text-blue-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Pet Owners</p>
+                <p class="text-3xl font-bold text-purple-600 mt-1">{{ $stats['pet_owners'] }}</p>
+            </div>
+            <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-person text-purple-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="{{ route('admin.users.create') }}" class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-person-plus text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Add User</span>
+        </a>
+
+        <a href="{{ route('admin.users.index') }}" class="flex flex-col items-center p-4 bg-green-50 hover:bg-green-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-list-ul text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">View All</span>
+        </a>
+    </div>
+</div>
+@endcan
+
 <!-- Users Table -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -94,19 +126,18 @@
                 <input type="text" name="search" placeholder="Search users..." value="{{ request('search') }}" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
                 <i class="bi bi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
-            <!-- Filter -->
-            <select name="role" onchange="this.form.submit()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">All Roles</option>
-                <option value="super_admin" {{ request('role') == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                <option value="city_vet" {{ request('role') == 'city_vet' ? 'selected' : '' }}>City Vet</option>
-                <option value="admin_staff" {{ request('role') == 'admin_staff' ? 'selected' : '' }}>Admin Staff</option>
-                <option value="assistant_vet" {{ request('role') == 'assistant_vet' ? 'selected' : '' }}>Assistant Vet</option>
-                <option value="clinic" {{ request('role') == 'clinic' ? 'selected' : '' }}>Clinic</option>
-                <option value="livestock_inspector" {{ request('role') == 'livestock_inspector' ? 'selected' : '' }}>Livestock Inspector</option>
-                <option value="meat_inspector" {{ request('role') == 'meat_inspector' ? 'selected' : '' }}>Meat Inspector</option>
-                <option value="city_pound" {{ request('role') == 'city_pound' ? 'selected' : '' }}>City Pound</option>
-                <option value="pet_owner" {{ request('role') == 'pet_owner' ? 'selected' : '' }}>Pet Owner</option>
-            </select>
+            <!-- Filter by Role -->
+            <div class="relative min-w-max">
+                <select name="role" onchange="this.form.submit()" class="px-4 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+                    <option value="">All Roles</option>
+                    @foreach($roles as $r)
+                        <option value="{{ $r }}" {{ request('role') == $r ? 'selected' : '' }}>
+                            {{ ucwords(str_replace('_', ' ', $r)) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
             @if(request('search') || request('role'))
                 <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
             @endif
@@ -163,7 +194,7 @@
                             @if($user->status == 'active')
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Active</span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Inactive</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Deactivated</span>
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

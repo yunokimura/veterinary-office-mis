@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Role;
 
 class SuperAdminController extends Controller
 {
@@ -28,7 +29,7 @@ class SuperAdminController extends Controller
             // User statistics
             'total_users' => User::count(),
             'active_users' => User::where('status', 'active')->count(),
-            'inactive_users' => User::where('status', 'inactive')->count(),
+            'deactivated_users' => User::where('status', 'deactivated')->count(),
 
             // Role breakdown - Clean structure (8 active roles)
             'super_admins' => User::where('role', 'super_admin')->count(),
@@ -320,13 +321,17 @@ class SuperAdminController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('middle_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
         if ($role) {
-            $query->where('role', $role);
+            $query->whereHas('roles', function ($q) use ($role) {
+                $q->where('name', $role);
+            });
         }
 
         if ($status) {
@@ -334,7 +339,7 @@ class SuperAdminController extends Controller
         }
 
         $users = $query->latest()->paginate(20);
-        $roles = User::distinct()->pluck('role');
+        $roles = Role::where('guard_name', 'web')->orderBy('name')->pluck('name')->toArray();
 
         return view('super-admin.users', compact('users', 'roles', 'search', 'role', 'status'));
     }
@@ -359,7 +364,7 @@ class SuperAdminController extends Controller
             return back()->with('error', 'You cannot deactivate your own Super Administrator account.');
         }
 
-        $newStatus = $user->status === 'active' ? 'inactive' : 'active';
+        $newStatus = $user->status === 'active' ? 'deactivated' : 'active';
 
         $user->update(['status' => $newStatus]);
 

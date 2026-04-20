@@ -349,7 +349,7 @@ class RecordsController extends Controller
         }
 
         // Search pets
-        $pets = Pet::where('name', 'like', "%{$search}%")
+        $pets = Pet::where('pet_name', 'like', "%{$search}%")
             ->orWhere('microchip_number', 'like', "%{$search}%")
             ->with('owner')
             ->take(10)
@@ -358,7 +358,9 @@ class RecordsController extends Controller
         // Search owners
         $owners = User::where('role', 'pet_owner')
             ->where(function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
+                $query->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('middle_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('contact_number', 'like', "%{$search}%");
             })

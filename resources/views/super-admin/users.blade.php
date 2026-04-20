@@ -6,21 +6,26 @@
 
 @section('content')
 @php
-    $roleNames = [
-        'super_admin' => 'Super Admin (IT)',
-        'city_vet' => 'City Veterinarian',
-        'admin_staff' => 'Administrative Assistant IV',
-        'assistant_vet' => 'Assistant Veterinarian',
-        'livestock_inspector' => 'Livestock Inspector',
-        'meat_inspector' => 'Meat Inspector',
-        'city_pound' => 'City Pound Personnel',
-        'pet_owner' => 'Pet Owner',
+    $roleLabels = [
+        'super_admin'           => 'Super Admin (IT)',
+        'city_vet'              => 'City Veterinarian (Admin)',
+        'admin_staff'           => 'Administrative Assistant IV',
+        'admin_asst'            => 'Admin Assistant',
+        'assistant_vet'         => 'Assistant Veterinarian',
+        'livestock_inspector'   => 'Livestock Inspector',
+        'meat_inspector'        => 'Meat Inspector',
+        'city_pound'            => 'City Pound Personnel',
+        'pet_owner'             => 'Pet Owner',
+        'clinic'                => 'External Vet Clinic',
+        'hospital'              => 'External Vet Hospital',
+        'viewer'                => 'Viewers',
+        'disease_control'       => 'Disease Control',
+        'barangay_encoder'      => 'Barangay Encoder',
     ];
 
     $statusColors = [
         'active' => 'bg-green-100 text-green-800',
-        'inactive' => 'bg-gray-100 text-gray-800',
-        'suspended' => 'bg-red-100 text-red-800',
+        'deactivated' => 'bg-gray-100 text-gray-800',
     ];
 @endphp
 
@@ -31,30 +36,32 @@
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                 <input type="text" name="search" value="{{ $search }}" placeholder="Search by name or email..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
-            <div class="w-40">
+            <div class="relative min-w-max">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                <select name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <select name="role" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500"
+                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
                     <option value="">All Roles</option>
                     @foreach($roles as $r)
                         <option value="{{ $r }}" {{ $role == $r ? 'selected' : '' }}>
-                            {{ $roleNames[$r] ?? $r }}
+                            {{ $roleLabels[$r] ?? ucwords(str_replace('_', ' ', $r)) }}
                         </option>
                     @endforeach
                 </select>
             </div>
-            <div class="w-40">
+            <div class="relative w-48">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">All Status</option>
-                    <option value="active" {{ $status == 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                    <option value="suspended" {{ $status == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                <select name="status" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500"
+                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+                     <option value="">All Status</option>
+                     <option value="active" {{ $status == 'active' ? 'selected' : '' }}>Active</option>
+                     <option value="deactivated" {{ $status == 'deactivated' ? 'selected' : '' }}>Deactivated</option>
                 </select>
             </div>
+            
             <div>
-                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <i class="bi bi-search mr-2"></i>Search
                 </button>
             </div>
@@ -89,7 +96,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                {{ $roleNames[$user->getRoleAttribute()] ?? $user->getRoleAttribute() }}
+                                {{ $roleLabels[$user->getRoleAttribute()] ?? ucwords(str_replace('_', ' ', $user->getRoleAttribute())) }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
