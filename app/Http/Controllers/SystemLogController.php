@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\SystemLog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class SystemLogController extends Controller
 {
@@ -49,18 +49,27 @@ class SystemLogController extends Controller
         if ($request->has('search') && $request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('description', 'like', "%{$request->search}%")
-                  ->orWhere('ip_address', 'like', "%{$request->search}%");
+                    ->orWhere('ip_address', 'like', "%{$request->search}%");
             });
         }
 
         $logs = $query->orderBy('created_at', 'desc')
-                      ->paginate(25)
-                      ->appends($request->query());
+            ->paginate(25)
+            ->appends($request->query());
 
-        // Get filter options
-        $modules = SystemLog::distinct()->pluck('module')->sort()->values();
-        $actions = SystemLog::distinct()->pluck('action')->sort()->values();
-        $users = \App\Models\User::orderBy('name')->pluck('name', 'id');
+        // Get filter options (filter out empty/null values)
+        $modules = SystemLog::distinct()
+            ->pluck('module')
+            ->filter(fn ($m) => $m && trim($m) !== '')
+            ->sort()
+            ->values();
+
+        $actions = SystemLog::distinct()
+            ->pluck('action')
+            ->filter(fn ($a) => $a && trim($a) !== '')
+            ->sort()
+            ->values();
+        $users = User::orderBy('name')->pluck('name', 'id');
 
         return view('admin.system-logs.index', compact('logs', 'modules', 'actions', 'users'));
     }
@@ -71,6 +80,7 @@ class SystemLogController extends Controller
     public function show($id)
     {
         $log = SystemLog::with('user')->findOrFail($id);
+
         return view('admin.system-logs.show', compact('log'));
     }
 
@@ -115,9 +125,9 @@ class SystemLogController extends Controller
             ]);
         });
 
-        $filename = 'system_logs_' . now()->format('Y-m-d_His') . '.csv';
+        $filename = 'system_logs_'.now()->format('Y-m-d_His').'.csv';
 
-        return response($csv->map(fn($row) => implode(',', $row))->implode("\n"))
+        return response($csv->map(fn ($row) => implode(',', $row))->implode("\n"))
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', "attachment; filename=\"$filename\"");
     }
@@ -139,7 +149,7 @@ class SystemLogController extends Controller
      */
     public static function record($action, $module, $recordId = null, $description = null, $status = 'success')
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return null;
         }
 
