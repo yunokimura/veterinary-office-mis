@@ -7,21 +7,32 @@
 @section('content')
 @php
     $roleLabels = [
-        'super_admin'           => 'Super Admin (IT)',
+        'super_admin'           => 'Super Admin',
         'city_vet'              => 'City Veterinarian (Admin)',
-        'admin_staff'           => 'Administrative Assistant IV',
-        'admin_asst'            => 'Admin Assistant',
         'assistant_vet'         => 'Assistant Veterinarian',
-        'livestock_inspector'   => 'Livestock Inspector',
+        'admin_asst'            => 'Administrative Assistant',
+        'livestock_inspector'   => 'Livestock & Poultry Inspector',
         'meat_inspector'        => 'Meat Inspector',
-        'city_pound'            => 'City Pound Personnel',
+        'clinic'                => 'Veterinary Clinic',
+        'hospital'              => 'Hospital',
         'pet_owner'             => 'Pet Owner',
-        'clinic'                => 'External Vet Clinic',
-        'hospital'              => 'External Vet Hospital',
-        'viewer'                => 'Viewers',
-        'disease_control'       => 'Disease Control',
-        'barangay_encoder'      => 'Barangay Encoder',
     ];
+
+    // Hierarchical role order (used to sort $roles)
+    $roleOrder = [
+        'super_admin',
+        'city_vet',
+        'assistant_vet',
+        'admin_asst',
+        'livestock_inspector',
+        'meat_inspector',
+        'clinic',
+        'hospital',
+        'pet_owner',
+    ];
+
+    // Sort roles by hierarchical order
+    usort($roles, fn($a, $b) => array_search($a, $roleOrder) - array_search($b, $roleOrder));
 
     $statusColors = [
         'active' => 'bg-green-100 text-green-800',
