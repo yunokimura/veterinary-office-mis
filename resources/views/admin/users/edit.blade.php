@@ -32,13 +32,46 @@
                     <i class="bi bi-person text-blue-600"></i> Personal Information
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Name -->
+                    <!-- First Name -->
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" 
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('name') border-red-500 @enderror"
-                            placeholder="Enter full name" required>
-                        @error('name')
+                        <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">First Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="first_name" id="first_name" value="{{ old('first_name', $user->first_name) }}"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('first_name') border-red-500 @enderror"
+                            placeholder="Enter first name" required>
+                        @error('first_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Middle Name -->
+                    <div>
+                        <label for="middle_name" class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
+                        <input type="text" name="middle_name" id="middle_name" value="{{ old('middle_name', $user->middle_name) }}"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('middle_name') border-red-500 @enderror"
+                            placeholder="Enter middle name">
+                        @error('middle_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">Last Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="last_name" id="last_name" value="{{ old('last_name', $user->last_name) }}"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('last_name') border-red-500 @enderror"
+                            placeholder="Enter last name" required>
+                        @error('last_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Suffix -->
+                    <div>
+                        <label for="suffix" class="block text-sm font-medium text-gray-700 mb-2">Suffix</label>
+                        <input type="text" name="suffix" id="suffix" value="{{ old('suffix', $user->suffix) }}"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('suffix') border-red-500 @enderror"
+                            placeholder="Jr., Sr., III, etc.">
+                        @error('suffix')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

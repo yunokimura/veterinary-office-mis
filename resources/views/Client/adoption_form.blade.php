@@ -300,11 +300,10 @@
                             <!-- Company/Business Name -->
                             <div>
                                 <label class="block text-sm font-medium mb-1.5">
-                                    Company/Business Name <span class="text-red-500">*</span>
+                                    Company/Business Name
                                 </label>
                                 <input type="text" name="company" placeholder="Company/Business Name"
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                <p class="text-xs text-gray-500 italic mt-1">Please type N/A if unemployed</p>
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
 
                             <!-- Social Media -->
@@ -314,7 +313,6 @@
                                 </label>
                                 <input type="text" name="social_media" placeholder="Facebook/Instagram URL"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                <p class="text-xs text-gray-500 italic mt-1">Please type N/A if none</p>
                             </div>
 
                             <!-- Status -->

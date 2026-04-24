@@ -129,6 +129,21 @@ Route::get('/', function () {
     return view('Client.welcome', compact('missingPets', 'announcements'));
 })->name('landing');
 
+// Public Home Route - Always shows welcome page
+Route::get('/home', function () {
+    // Get missing pets for the landing page
+    $missingPets = MissingPet::orderBy('last_seen_at', 'desc')
+        ->limit(5)
+        ->get();
+
+    // Get active announcements for public
+    $announcements = Announcement::where('is_active', true)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    return view('Client.welcome', compact('missingPets', 'announcements'));
+})->name('public.home');
+
 // ==============================
 // AUTHENTICATION ROUTES - Client Portal (Default)
 // ==============================

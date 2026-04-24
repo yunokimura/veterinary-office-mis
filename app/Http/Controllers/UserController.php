@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\Facility;
 use App\Models\PetOwner;
 use App\Models\SystemLog;
@@ -37,13 +38,27 @@ class UserController extends Controller
         $search = $request->get('search', '');
         $role = $request->get('role', '');
 
-        $users = User::with('barangay')
+        $users = User::with(['adminProfile', 'petOwnerProfile', 'organizationProfile', 'barangay'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('first_name', 'like', "%{$search}%")
-                        ->orWhere('middle_name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
+                    // Search in users table
+                    $q->where('email', 'like', "%{$search}%")
+                      // Search in admin profiles
+                        ->orWhereHas('adminProfile', function ($sq) use ($search) {
+                            $sq->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('middle_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%");
+                        })
+                      // Search in pet owner profiles
+                        ->orWhereHas('petOwnerProfile', function ($sq) use ($search) {
+                            $sq->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('middle_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%");
+                        })
+                      // Search in organization profiles
+                        ->orWhereHas('organizationProfile', function ($sq) use ($search) {
+                            $sq->where('name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->when($role, function ($query) use ($role) {
@@ -92,12 +107,14 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:100',
+            'middle_name' => 'nullable|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'suffix' => 'nullable|string|max:20',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
-            'facility_id' => 'nullable|exists:facilities,id',
             'contact_number' => 'nullable|string|max:20',
         ]);
 
@@ -111,38 +128,44 @@ class UserController extends Controller
             return back()->with('error', 'You cannot create Super Administrator accounts.');
         }
 
-        // Parse name into first_name and last_name
-        $nameParts = explode(' ', $validated['name'], 2);
-        $firstName = $nameParts[0] ?? '';
-        $lastName = $nameParts[1] ?? '';
-
-        $userData = [
-            'first_name' => $firstName,
-            'last_name' => $lastName,
+        // Create user with only auth fields
+        $user = User::create([
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'barangay_id' => $validated['barangay_id'] ?? null,
-            'contact_number' => $validated['contact_number'] ?? null,
             'status' => 'active',
-        ];
-
-        // Only Super Admin can assign facility_id
-        if (auth()->user()->hasRole('super_admin') && ! empty($validated['facility_id'])) {
-            $userData['facility_id'] = $validated['facility_id'];
-        }
-
-        $user = User::create($userData);
+        ]);
 
         // Assign Spatie role
         $user->assignRole($validated['role']);
+        // Sync role column for backward compatibility
+        $user->update(['role' => $validated['role']]);
 
-        if ($validated['role'] === User::ROLE_CITIZEN) {
+        // Create profile based on role type
+        $adminRoles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 'livestock_inspector', 'meat_inspector'];
+
+        if (in_array($validated['role'], $adminRoles)) {
+            // Create admin profile
+            Admin::create([
+                'user_id' => $user->id,
+                'first_name' => $validated['first_name'],
+                'middle_name' => $validated['middle_name'] ?? null,
+                'last_name' => $validated['last_name'],
+                'suffix' => $validated['suffix'] ?? null,
+                'role_type' => $validated['role'],
+                'barangay_id' => $validated['barangay_id'] ?? null,
+                'contact_number' => $validated['contact_number'] ?? null,
+                'date_of_birth' => null,
+            ]);
+        } elseif ($validated['role'] === 'pet_owner') {
+            // Create pet owner profile
             PetOwner::create([
                 'user_id' => $user->id,
-                'first_name' => $firstName,
-                'last_name' => $lastName,
+                'first_name' => $validated['first_name'],
+                'middle_name' => $validated['middle_name'] ?? null,
+                'last_name' => $validated['last_name'],
+                'suffix' => $validated['suffix'] ?? null,
                 'phone_number' => $validated['contact_number'] ?? null,
-                'email' => $validated['email'],
+                'date_of_birth' => null,
             ]);
         }
 
@@ -208,12 +231,14 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:100',
+            'middle_name' => 'nullable|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'suffix' => 'nullable|string|max:20',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|string',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
-            'facility_id' => 'nullable|exists:facilities,id',
             'contact_number' => 'nullable|string|max:20',
         ]);
 
@@ -246,23 +271,10 @@ class UserController extends Controller
             }
         }
 
-        // Parse name into first_name and last_name
-        $nameParts = explode(' ', $validated['name'], 2);
-        $firstName = $nameParts[0] ?? '';
-        $lastName = $nameParts[1] ?? '';
-
+        // Update user auth fields only
         $updateData = [
-            'first_name' => $firstName,
-            'last_name' => $lastName,
             'email' => $validated['email'],
-            'barangay_id' => $validated['barangay_id'] ?? null,
-            'contact_number' => $validated['contact_number'] ?? null,
         ];
-
-        // Only Super Admin can change facility_id
-        if (auth()->user()->hasRole('super_admin')) {
-            $updateData['facility_id'] = $validated['facility_id'] ?? null;
-        }
 
         if (! empty($validated['password'])) {
             $updateData['password'] = Hash::make($validated['password']);
@@ -273,6 +285,68 @@ class UserController extends Controller
         // Update Spatie role if changed
         if ($validated['role'] !== $currentRole) {
             $user->syncRoles($validated['role']);
+            $user->update(['role' => $validated['role']]); // Sync column
+
+            // Handle role change: delete old profile, create new one
+            $adminRoles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 'livestock_inspector', 'meat_inspector'];
+
+            // Remove old profile
+            if ($user->adminProfile) {
+                $user->adminProfile->delete();
+            }
+            if ($user->petOwnerProfile) {
+                $user->petOwnerProfile->delete();
+            }
+            if ($user->organizationProfile) {
+                $user->organizationProfile->delete();
+            }
+
+            // Create new profile based on new role
+            if (in_array($validated['role'], $adminRoles)) {
+                Admin::create([
+                    'user_id' => $user->id,
+                    'first_name' => $validated['first_name'],
+                    'middle_name' => $validated['middle_name'] ?? null,
+                    'last_name' => $validated['last_name'],
+                    'suffix' => $validated['suffix'] ?? null,
+                    'role_type' => $validated['role'],
+                    'barangay_id' => $validated['barangay_id'] ?? null,
+                    'contact_number' => $validated['contact_number'] ?? null,
+                    'date_of_birth' => null,
+                ]);
+            } elseif ($validated['role'] === 'pet_owner') {
+                PetOwner::create([
+                    'user_id' => $user->id,
+                    'first_name' => $validated['first_name'],
+                    'middle_name' => $validated['middle_name'] ?? null,
+                    'last_name' => $validated['last_name'],
+                    'suffix' => $validated['suffix'] ?? null,
+                    'phone_number' => $validated['contact_number'] ?? null,
+                    'date_of_birth' => null,
+                ]);
+            }
+        } else {
+            // Role unchanged, just update existing profile
+            $adminRoles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 'livestock_inspector', 'meat_inspector'];
+
+            if (in_array($validated['role'], $adminRoles) && $user->adminProfile) {
+                $user->adminProfile->update([
+                    'first_name' => $validated['first_name'],
+                    'middle_name' => $validated['middle_name'] ?? null,
+                    'last_name' => $validated['last_name'],
+                    'suffix' => $validated['suffix'] ?? null,
+                    'barangay_id' => $validated['barangay_id'] ?? null,
+                    'contact_number' => $validated['contact_number'] ?? null,
+                ]);
+            } elseif ($validated['role'] === 'pet_owner' && $user->petOwnerProfile) {
+                $user->petOwnerProfile->update([
+                    'first_name' => $validated['first_name'],
+                    'middle_name' => $validated['middle_name'] ?? null,
+                    'last_name' => $validated['last_name'],
+                    'suffix' => $validated['suffix'] ?? null,
+                    'phone_number' => $validated['contact_number'] ?? null,
+                ]);
+            }
         }
 
         SystemLog::create([

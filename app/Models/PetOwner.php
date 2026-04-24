@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PetOwner extends Model
 {
     protected $table = 'pet_owners';
+
     protected $primaryKey = 'owner_id';
 
     protected $fillable = [
@@ -27,6 +28,7 @@ class PetOwner extends Model
         'province',
         'date_of_birth',
         'email',
+        'address_id',
     ];
 
     protected $casts = [

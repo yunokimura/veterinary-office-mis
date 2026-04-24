@@ -70,6 +70,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
 
     /**
      * Get the user's full name (accessor for backward compatibility).
+     * Uses profile-based accessors (first_name, last_name from profile if available).
      */
     public function getNameAttribute(): string
     {
@@ -619,5 +620,123 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
                 'read_at' => now(),
             ]);
         }
+    }
+
+    // ========================================================================
+    // Profile Relationships (Normalized Data)
+    // ========================================================================
+
+    /**
+     * Get the admin profile associated with this user (if staff).
+     */
+    public function adminProfile()
+    {
+        return $this->hasOne(Admin::class, 'user_id');
+    }
+
+    /**
+     * Get the pet owner profile associated with this user (if pet owner).
+     */
+    public function petOwnerProfile()
+    {
+        return $this->hasOne(PetOwner::class, 'user_id');
+    }
+
+    /**
+     * Get the organization profile associated with this user (if contact for clinic/hospital).
+     */
+    public function organizationProfile()
+    {
+        return $this->hasOne(Organization::class, 'contact_user_id');
+    }
+
+    /**
+     * Get the active profile based on user's role.
+     * Returns: Admin|PetOwner|Organization|null
+     * Usage: $user->profile (accessor)
+     */
+    public function getProfileAttribute()
+    {
+        if ($this->hasRole('pet_owner')) {
+            return $this->petOwnerProfile;
+        }
+
+        if ($this->hasRole([
+            'super_admin', 'city_vet', 'admin_staff', 'admin_asst',
+            'assistant_vet', 'livestock_inspector', 'meat_inspector',
+        ])) {
+            return $this->adminProfile;
+        }
+
+        if ($this->hasRole(['clinic', 'hospital', 'bite_center'])) {
+            return $this->organizationProfile;
+        }
+
+        return null;
+    }
+
+    // ========================================================================
+    // Backward-Compatibility Accessors
+    // These fetch data from profile tables when old columns are empty/dropped.
+    // ========================================================================
+
+    /**
+     * Get first_name from profile if available.
+     */
+    public function getFirstNameAttribute($value)
+    {
+        $profile = $this->profile;
+        if ($profile && isset($profile->first_name) && $profile->first_name) {
+            return $profile->first_name;
+        }
+
+        return $value ?? $this->attributes['first_name'] ?? null;
+    }
+
+    /**
+     * Get middle_name from profile if available.
+     */
+    public function getMiddleNameAttribute($value)
+    {
+        $profile = $this->profile;
+        if ($profile && isset($profile->middle_name)) {
+            return $profile->middle_name;
+        }
+
+        return $value ?? $this->attributes['middle_name'] ?? null;
+    }
+
+    /**
+     * Get last_name from profile if available.
+     */
+    public function getLastNameAttribute($value)
+    {
+        $profile = $this->profile;
+        if ($profile && isset($profile->last_name) && $profile->last_name) {
+            return $profile->last_name;
+        }
+
+        return $value ?? $this->attributes['last_name'] ?? null;
+    }
+
+    /**
+     * Get contact_number from profile (admin/organization) or pet_owner phone_number.
+     */
+    public function getContactNumberAttribute($value)
+    {
+        $profile = $this->profile;
+        if ($profile) {
+            if ($profile instanceof Admin && $profile->contact_number) {
+                return $profile->contact_number;
+            }
+            if ($profile instanceof PetOwner && $profile->phone_number) {
+                return $profile->phone_number;
+            }
+            if ($profile instanceof Organization && $profile->contact_number) {
+                return $profile->contact_number;
+            }
+        }
+
+        return $value ?? $this->attributes['contact_number'] ?? null;
     }
 }
