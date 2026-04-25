@@ -219,89 +219,95 @@
                     Demographic & Service Coverage
                 </h2>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="bg-gray-50 rounded-xl p-5 flex items-start space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                        </div>
-                        <span class="text-gray-700">Urban and suburban pet-owning households</span>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-5 flex items-start space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                        </div>
-                        <span class="text-gray-700">Livestock and poultry raisers</span>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-5 flex items-start space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                        </div>
-                        <span class="text-gray-700">Meat vendors and food business operators</span>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-5 flex items-start space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
-                        <span class="text-gray-700">Barangay officials and designated animal welfare officers</span>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-5 flex items-start space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
-                        <span class="text-gray-700">General public at risk of zoonotic diseases</span>
-                    </div>
+                     <div class="bg-red-50 rounded-xl p-5 flex items-start space-x-3">
+                         <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                             </svg>
+                         </div>
+                         <span class="text-red-700">Urban and suburban pet-owning households</span>
+                     </div>
+                     <div class="bg-purple-100 rounded-xl p-5 flex items-start space-x-3">
+                         <div class="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center flex-shrink-0">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                             </svg>
+                         </div>
+                         <span class="text-purple-700">Livestock and poultry raisers</span>
+                     </div>
+                     <div class="bg-blue-50 rounded-xl p-5 flex items-start space-x-3">
+                         <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                             </svg>
+                         </div>
+                         <span class="text-blue-700">Meat vendors and food business operators</span>
+                     </div>
+                     <div class="bg-amber-50 rounded-xl p-5 flex items-start space-x-3">
+                         <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                             </svg>
+                         </div>
+                         <span class="text-amber-700">Barangay officials and designated animal welfare officers</span>
+                     </div>
+                     <div class="bg-green-50 rounded-xl p-5 flex items-start space-x-3">
+                         <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                             </svg>
+                         </div>
+                         <span class="text-green-700">General public at risk of zoonotic diseases</span>
+                     </div>
                 </div>
             </div>
 
-            <!-- III. Vision -->
-            <div class="mb-16">
+            <!-- Mission & Vision Section -->
+            <section class="py-16 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-7">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Mission & Vision</h2>
+                        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Guiding principles that drive our commitment to animal welfare and public health</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Mission Card -->
+                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8">
+                            <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
+                            <p class="text-gray-600 text-lg leading-relaxed">
+                                To uphold the principles of One Health by protecting human health, promoting animal welfare, and
+                                safeguarding the environment through accessible veterinary services, disease prevention and
+                                control, responsible pet ownership advocacy, food safety regulation, and strong community
+                                partnerships.
+                            </p>
+                        </div>
+                        
+                        <!-- Vision Card -->
+                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8">
+                            <div class="w-16 h-16 bg-secondary/10 rounded-xl flex items-center justify-center mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
+                            <p class="text-gray-600 text-lg leading-relaxed">
+                                A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- V. Core Functional Areas -->
+            <div class="mb-8 pt-20">
                 <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
                     <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
                         <span class="text-white font-bold">III</span>
-                    </span>
-                    Vision
-                </h2>
-                <div class="bg-gradient-to-r from-primary to-primary-light rounded-2xl p-8 shadow-lg">
-                    <p class="text-white text-xl md:text-2xl font-medium text-center leading-relaxed">
-                        A model One Health city where human health, animal welfare, food safety, and environmental
-                        protection are fully integrated through proactive disease prevention, responsible stewardship, and
-                        sustainable veterinary governance.
-                    </p>
-                </div>
-            </div>
-
-            <!-- IV. Mission -->
-            <div class="mb-16">
-                <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
-                        <span class="text-white font-bold">IV</span>
-                    </span>
-                    Mission <span class="text-lg font-normal text-gray-500 ml-2">(One Health–Centered)</span>
-                </h2>
-                <div class="bg-gray-50 rounded-2xl p-8 border-l-4 border-primary">
-                    <p class="text-gray-700 text-lg leading-relaxed">
-                        To uphold the principles of One Health by protecting human health, promoting animal welfare, and
-                        safeguarding the environment through accessible veterinary services, disease prevention and
-                        control, responsible pet ownership advocacy, food safety regulation, and strong community
-                        partnerships.
-                    </p>
-                </div>
-            </div>
-
-            <!-- V. Core Functional Areas -->
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
-                        <span class="text-white font-bold">V</span>
                     </span>
                     Core Functional Areas
                 </h2>
