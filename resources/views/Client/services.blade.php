@@ -220,7 +220,7 @@
 
                 <!-- Card 3: Vaccination -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
-                    <div class="h-48 bg-gradient-to-br from-primary to-secondary p-6 flex items-center justify-center">
+                    <div class="h-48 bg-sky-600 p-6 flex items-center justify-center">
                         <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
@@ -256,7 +256,7 @@
                                 <span class="text-gray-700 text-sm">Reminder notifications</span>
                             </li>
                         </ul>
-                        <a href="{{ url('/vaccination') }}" class="w-full block text-center bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors">
+                        <a href="{{ url('/vaccination') }}" class="w-full block text-center bg-sky-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors">
                             Learn More
                         </a>
                     </div>
@@ -264,7 +264,7 @@
 
                 <!-- Card 4: Adoption -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
-                    <div class="h-48 bg-gradient-to-br from-secondary to-secondary-light p-6 flex items-center justify-center">
+                    <div class="h-48 bg-amber-500 p-6 flex items-center justify-center">
                         <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -291,16 +291,10 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span class="text-gray-700 text-sm">Microchipped & registered</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
                                 <span class="text-gray-700 text-sm">Adoption support & guidance</span>
                             </li>
                         </ul>
-                        <a href="{{ url('/adoption') }}" class="w-full block text-center bg-secondary text-white py-3 rounded-xl font-semibold hover:bg-secondary-light transition-colors">
+                        <a href="{{ url('/adoption') }}" class="w-full block text-center bg-amber-500 text-white py-3 rounded-xl font-semibold hover:bg-secondary-light transition-colors">
                             Learn More
                         </a>
                     </div>
