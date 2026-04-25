@@ -122,13 +122,14 @@
      <section class="py-16" style="background: linear-gradient(135deg, #066D33 0%, #077a40 100%);">
          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
              <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <!-- Left Column: Text Content -->
-                  <div class="">
-                      <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">Leading the way in animal welfare and public health.</h1>
-                      <p class="text-lg text-gray-100 leading-relaxed">
-                          Discover how the Dasmariñas City Veterinary Office serves our community by bridging the gap between animal care and human well-being under the One Health initiative.
-                      </p>
-                  </div>
+                   <!-- Left Column: Text Content -->
+                   <div class="max-w-2xl">
+                       <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white pb-5">Leading the way in animal welfare and public health.</h1>
+                       <p class="text-lg text-gray-100 leading-relaxed">
+                           Discover how the Dasmariñas City Veterinary Office serves our community by bridging the gap between animal care and 
+                           human well-being under the One Health initiative.
+                       </p>
+                   </div>
 
                  <!-- Right Column: Carousel -->
                  <div class="relative">
