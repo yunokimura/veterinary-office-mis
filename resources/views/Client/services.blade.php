@@ -256,7 +256,7 @@
                                 <span class="text-gray-700 text-sm">Reminder notifications</span>
                             </li>
                         </ul>
-                        <a href="{{ url('/vaccination') }}" class="w-full block text-center bg-sky-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors">
+                        <a href="{{ url('/vaccination') }}" class="w-full block text-center bg-sky-600 text-white py-3 rounded-xl font-semibold hover:bg-sky-700 transition-colors">
                             Learn More
                         </a>
                     </div>
@@ -293,8 +293,14 @@
                                 </svg>
                                 <span class="text-gray-700 text-sm">Adoption support & guidance</span>
                             </li>
+                            <li class="flex items-center space-x-2 invisible">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-gray-700 text-sm">&nbsp;</span>
+                            </li>
                         </ul>
-                        <a href="{{ url('/adoption') }}" class="w-full block text-center bg-amber-500 text-white py-3 rounded-xl font-semibold hover:bg-secondary-light transition-colors">
+                        <a href="{{ url('/adoption') }}" class="w-full block text-center bg-amber-500 text-white py-3 rounded-xl font-semibold hover:bg-amber-600 transition-colors">
                             Learn More
                         </a>
                     </div>
