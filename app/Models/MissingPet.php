@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Carbon\Carbon;
 
 class MissingPet extends Model
 {
     use HasFactory;
 
     protected $primaryKey = 'missing_id';
+
     public $incrementing = true;
 
     protected $casts = [
@@ -33,15 +34,16 @@ class MissingPet extends Model
         'status',
     ];
 
-    public function traits(): BelongsToMany
-    {
-        return $this->belongsToMany(AdoptionTrait::class, 'pet_traits', 'adoption_id', 'trait_id')
-            ->withTimestamps();
-    }
+    // Traits relationship removed - pet_traits now uses pet_id, not adoption_id
+    // public function traits()
+    // {
+    //     return $this->belongsToMany(AdoptionTrait::class, 'pet_traits', 'adoption_id', 'trait_id')
+    //         ->withTimestamps();
+    // }
 
     public function getWeightAttribute($value)
     {
-        return $value ? $value . ' kg' : null;
+        return $value ? $value.' kg' : null;
     }
 
     public function getAgeAttribute()
@@ -50,7 +52,7 @@ class MissingPet extends Model
             return $this->attributes['age'];
         }
 
-        if (!$this->date_of_birth) {
+        if (! $this->date_of_birth) {
             return null;
         }
 
@@ -60,9 +62,10 @@ class MissingPet extends Model
 
         if ($years < 1) {
             $months = $birthDate->diffInMonths($now);
-            return $months . ' ' . ($months === 1 ? 'month' : 'months') . ' old';
+
+            return $months.' '.($months === 1 ? 'month' : 'months').' old';
         }
 
-        return $years . ' ' . ($years === 1 ? 'year' : 'years') . ' old';
+        return $years.' '.($years === 1 ? 'year' : 'years').' old';
     }
 }

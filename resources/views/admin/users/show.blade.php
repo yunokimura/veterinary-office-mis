@@ -41,10 +41,10 @@
                     <p class="font-medium text-gray-800 capitalize">{{ str_replace('_', ' ', $user->getRoleAttribute()) }}</p>
                 </div>
 
-                @if($user->barangay_id)
+                @if($user->adminProfile?->barangay_id)
                 <div class="p-4 bg-gray-50 rounded-lg">
                     <p class="text-sm text-gray-500 mb-1">Barangay</p>
-                    <p class="font-medium text-gray-800">{{ $user->barangay?->barangay_name }}</p>
+                    <p class="font-medium text-gray-800">{{ $user->adminProfile?->barangay?->barangay_name ?? 'N/A' }}</p>
                 </div>
                 @endif
 

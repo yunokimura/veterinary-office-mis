@@ -20,7 +20,7 @@ class MigrateProfilesAndAddresses extends Command
      *
      * @var string
      */
-    protected $signature = 'db:migrate-profiles 
+    protected $signature = 'profiles:migrate 
                             {--dry-run : Preview changes without saving}
                             {--force : Skip confirmation prompt}';
 
@@ -185,14 +185,34 @@ class MigrateProfilesAndAddresses extends Command
         $skipped = 0;
 
         foreach ($petOwners as $po) {
-            try {
-                $barangayId = null;
-                if ($po->barangay) {
-                    $key = strtolower(trim($po->barangay));
-                    if (! isset($barangayCache[$key])) {
-                        $brgy = Barangay::whereRaw('LOWER(barangay_name) LIKE ?', ["%{$key}%"])->first();
-                        $barangayCache[$key] = $brgy?->barangay_id;
-                    }
+            $barangayId = null;
+            if ($po->barangay) {
+                $key = strtolower(trim($po->barangay));
+                if (!isset($barangayCache[$key])) {
+                    $brgy = Barangay::whereRaw('LOWER(barangay_name) LIKE ?', ["%{$key}%"])->first();
+                    $barangayCache[$key] = $brgy?->barangay_id;
+                }
+                $barangayId = $barangayCache[$key];
+            }
+
+            $address = Address::create([
+                'addressable_type' => 'pet_owner',
+                'addressable_id' => $po->owner_id,
+                'block_lot_phase' => $po->blk_lot_ph,
+                'street' => $po->street,
+                'subdivision' => $po->subdivision,
+                'barangay_id' => $barangayId,
+                // ⭐ NEW: Copy city and province
+                'city' => $po->city,      // Now stored in addresses.city
+                'province' => $po->province, // Now stored in addresses.province
+                'postal_code' => null,
+                'is_primary' => true,
+            ]);
+
+            $po->update(['address_id' => $address->id]);
+            $updated++;
+            $this->line("  Set address_id {$address->id} for pet_owner {$po->owner_id} (city: {$po->city}, province: {$po->province})");
+        }
                     $barangayId = $barangayCache[$key];
                 }
 

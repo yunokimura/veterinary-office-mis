@@ -72,7 +72,6 @@ use App\Http\Controllers\AdoptionPetController;
 use App\Http\Controllers\Client\BiteRabiesReportController;
 use App\Http\Controllers\DeviceTokenController;
 use App\Http\Controllers\MedicalRecordController;
-use App\Models\AdoptionPet;
 use App\Models\AdoptionTrait;
 use App\Models\Announcement;
 use App\Models\MissingPet;
@@ -494,10 +493,10 @@ Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('ad
     Route::get('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'index'])->name('adoption-pets.index');
     Route::get('/adoption-pets/create', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'create'])->name('adoption-pets.create');
     Route::post('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'store'])->name('adoption-pets.store');
-    Route::get('/adoption-pets/{adoptionPet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'show'])->name('adoption-pets.show');
-    Route::get('/adoption-pets/{adoptionPet}/edit', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'edit'])->name('adoption-pets.edit');
-    Route::put('/adoption-pets/{adoptionPet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'update'])->name('adoption-pets.update');
-    Route::delete('/adoption-pets/{adoptionPet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'destroy'])->name('adoption-pets.destroy');
+    Route::get('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'show'])->name('adoption-pets.show');
+    Route::get('/adoption-pets/{pet}/edit', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'edit'])->name('adoption-pets.edit');
+    Route::put('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'update'])->name('adoption-pets.update');
+    Route::delete('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'destroy'])->name('adoption-pets.destroy');
 
     // Medical Records
     Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical-records.index');
@@ -732,7 +731,7 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
 
 // Landing page for client portal
 Route::get('/client', function () {
-    $missingPets = AdoptionPet::where('is_missing', true)
+    $missingPets = MissingPet::where('status', 'missing')
         ->orderBy('last_seen_at', 'desc')
         ->limit(5)
         ->get();
@@ -941,9 +940,10 @@ Route::get('/adoption', function (Request $request) {
         }
     }
 
-    $adoptionPets = AdoptionPet::with('traits');
+    $adoptionPets = Pet::where('source_module', 'adoption_pets')->with('traits');
 
-    $availableBreeds = AdoptionPet::whereNotNull('breed')
+    $availableBreeds = Pet::where('source_module', 'adoption_pets')
+        ->whereNotNull('breed')
         ->where('breed', '!=', '')
         ->distinct()
         ->orderBy('breed')
@@ -1015,7 +1015,7 @@ Route::get('/adoption/paginate', function (Request $request) {
         }
     }
 
-    $adoptionPets = AdoptionPet::with('traits');
+    $adoptionPets = Pet::where('source_module', 'adoption_pets')->with('traits');
 
     $filter = $request->input('filter', 'all');
     $species = $request->input('species', 'all');
@@ -1099,7 +1099,7 @@ Route::get('/adoption/form', function () {
     $user = auth()->user();
     $petOwner = $user ? $user->petOwner : null;
     $traits = AdoptionTrait::orderBy('name')->get();
-    $adoptionPets = AdoptionPet::all();
+    $adoptionPets = Pet::where('source_module', 'adoption_pets')->get();
 
     return view('Client.adoption_form', compact('user', 'petOwner', 'traits', 'adoptionPets'));
 })->name('adoption.form');
@@ -1114,8 +1114,7 @@ Route::post('/adoption', [AdoptionPetController::class, 'store'])->name('adoptio
 
 // Missing Pets Page Route - Public
 Route::get('/missing-pets', function () {
-    $missingPets = Pet::where('is_missing', true)
-        ->with('owner')
+    $missingPets = MissingPet::where('status', 'missing')
         ->orderBy('last_seen_at', 'desc')
         ->paginate(12);
 

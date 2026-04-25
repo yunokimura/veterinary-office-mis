@@ -30,16 +30,10 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      * @var list<string>
      */
     protected $fillable = [
-        'first_name',
-        'middle_name',
-        'last_name',
         'email',
         'password',
-        'barangay_id',
-        'facility_id',
-        'contact_number',
-        'address',
         'status',
+        'organization_id',
         // OTP fields
         'otp_code',
         'otp_expires_at',

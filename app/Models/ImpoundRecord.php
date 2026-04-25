@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @deprecated Scheduled for deletion 2026-05-24
+ */
 class ImpoundRecord extends Model
 {
     use HasStatusApproval;

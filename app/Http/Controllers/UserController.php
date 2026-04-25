@@ -153,6 +153,7 @@ class UserController extends Controller
                 'suffix' => $validated['suffix'] ?? null,
                 'role_type' => $validated['role'],
                 'barangay_id' => $validated['barangay_id'] ?? null,
+                'facility_id' => $validated['facility_id'] ?? null,
                 'contact_number' => $validated['contact_number'] ?? null,
                 'date_of_birth' => null,
             ]);
@@ -311,6 +312,7 @@ class UserController extends Controller
                     'suffix' => $validated['suffix'] ?? null,
                     'role_type' => $validated['role'],
                     'barangay_id' => $validated['barangay_id'] ?? null,
+                    'facility_id' => $validated['facility_id'] ?? null,
                     'contact_number' => $validated['contact_number'] ?? null,
                     'date_of_birth' => null,
                 ]);
@@ -336,6 +338,7 @@ class UserController extends Controller
                     'last_name' => $validated['last_name'],
                     'suffix' => $validated['suffix'] ?? null,
                     'barangay_id' => $validated['barangay_id'] ?? null,
+                    'facility_id' => $validated['facility_id'] ?? null,
                     'contact_number' => $validated['contact_number'] ?? null,
                 ]);
             } elseif ($validated['role'] === 'pet_owner' && $user->petOwnerProfile) {

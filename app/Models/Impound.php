@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @deprecated Scheduled for deletion 2026-05-24
+ */
 class Impound extends Model
 {
     protected $table = 'impounds';
+
     protected $primaryKey = 'impound_id';
 
     protected $fillable = [

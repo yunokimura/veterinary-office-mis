@@ -21,8 +21,6 @@ class Pet extends Model
         'pet_name',
         'species',
         'breed',
-        'sex',
-        'age',
         'gender',
         'color',
         'weight',
@@ -59,6 +57,8 @@ class Pet extends Model
         'birthdate' => 'date',
         'is_approved' => 'boolean',
         'consolidated_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function owner(): BelongsTo
@@ -95,5 +95,45 @@ class Pet extends Model
     {
         return $this->belongsToMany(AdoptionTrait::class, 'pet_traits', 'pet_id', 'trait_id')
             ->withTimestamps();
+    }
+
+    // Accessors for compatibility with adoption_pets views
+    public function getImageAttribute($value)
+    {
+        return $this->pet_image;
+    }
+
+    public function getAgeAttribute()
+    {
+        if ($this->birthdate) {
+            return $this->birthdate->diffInYears(now());
+        }
+        if ($this->estimated_age) {
+            $num = preg_replace('/\D/', '', $this->estimated_age);
+
+            return is_numeric($num) ? (int) $num : null;
+        }
+
+        return null;
+    }
+
+    public function getDescriptionAttribute()
+    {
+        return $this->notes;
+    }
+
+    public function getWeightAttribute()
+    {
+        return $this->pet_weight;
+    }
+
+    public function getDateOfBirthAttribute($value)
+    {
+        return $this->birthdate;
+    }
+
+    public function getIsAgeEstimatedAttribute()
+    {
+        return ! empty($this->estimated_age);
     }
 }

@@ -182,7 +182,7 @@
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                         <option value="">None</option>
                         @foreach(\App\Models\Barangay::orderBy('barangay_name')->get() as $barangay)
-                            <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id', $user->barangay_id) == $barangay->barangay_id ? 'selected' : '' }}>
+                            <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id', $user->adminProfile?->barangay_id) == $barangay->barangay_id ? 'selected' : '' }}>
                                 {{ $barangay->barangay_name }}
                             </option>
                         @endforeach
@@ -204,21 +204,21 @@
                         <option value="">None</option>
                         <optgroup label="Animal Bite Centers (ABC)">
                             @foreach($facilities->where('type', 'abc') as $facility)
-                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->facility_id) == $facility->id ? 'selected' : '' }}>
+                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->adminProfile?->facility_id) == $facility->id ? 'selected' : '' }}>
                                     {{ $facility->name }}
                                 </option>
                             @endforeach
                         </optgroup>
                         <optgroup label="Veterinary Clinics">
                             @foreach($facilities->where('type', 'clinic') as $facility)
-                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->facility_id) == $facility->id ? 'selected' : '' }}>
+                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->adminProfile?->facility_id) == $facility->id ? 'selected' : '' }}>
                                     {{ $facility->name }}
                                 </option>
                             @endforeach
                         </optgroup>
                         <optgroup label="Hospitals">
                             @foreach($facilities->where('type', 'hospital') as $facility)
-                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->facility_id) == $facility->id ? 'selected' : '' }}>
+                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->adminProfile?->facility_id) == $facility->id ? 'selected' : '' }}>
                                     {{ $facility->name }}
                                 </option>
                             @endforeach

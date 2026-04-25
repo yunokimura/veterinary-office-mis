@@ -16,9 +16,9 @@ class AdoptionTrait extends Model
         'name',
     ];
 
-    public function adoptionPets(): BelongsToMany
+    public function pets(): BelongsToMany
     {
-        return $this->belongsToMany(AdoptionPet::class, 'pet_traits')
+        return $this->belongsToMany(Pet::class, 'pet_traits', 'trait_id', 'pet_id')
             ->withTimestamps();
     }
 }

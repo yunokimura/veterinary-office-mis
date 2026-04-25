@@ -15,6 +15,7 @@ class Admin extends Model
         'suffix',
         'role_type',
         'barangay_id',
+        'facility_id',
         'contact_number',
         'date_of_birth',
     ];

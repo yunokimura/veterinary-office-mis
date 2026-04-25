@@ -4,7 +4,6 @@ namespace App\Http\Controllers\AdminAsst;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdoptionApplication;
-use App\Models\AdoptionPet;
 use App\Models\FormSubmission;
 use App\Models\ImpoundRecord;
 use App\Models\InventoryControl;
@@ -27,7 +26,8 @@ class DashboardController extends Controller
             ->where('expiry_date', '>=', now())
             ->count();
 
-        $totalAdoptions = AdoptionPet::count();
+        // Total adoption listings: count of pets listed for adoption (source_module = 'adoption_pets')
+        $totalAdoptions = Pet::where('source_module', 'adoption_pets')->count();
         $pendingAdoptions = AdoptionApplication::where('status', 'pending')->count();
         $approvedAdoptions = AdoptionApplication::where('status', 'approved')->count();
 
@@ -35,7 +35,8 @@ class DashboardController extends Controller
         $availableForAdoption = ImpoundRecord::where('current_disposition', 'impounded')->count();
 
         $recentPetRegistrations = Pet::latest()->take(5)->get();
-        $recentAdoptions = AdoptionPet::latest()->take(5)->get();
+        // Recent adoption listings: pets recently added for adoption
+        $recentAdoptions = Pet::where('source_module', 'adoption_pets')->latest()->take(5)->get();
         $recentSubmissions = FormSubmission::with('form')->latest()->take(5)->get();
 
         $monthlyRegistrations = Pet::select(

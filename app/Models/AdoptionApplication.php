@@ -33,6 +33,7 @@ class AdoptionApplication extends Model
         'zoom_time',
         'zoom_time_ampm',
         'shelter_visit',
+        'selected_pet_id',
     ];
 
     protected $casts = [
@@ -44,5 +45,10 @@ class AdoptionApplication extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function pet(): BelongsTo
+    {
+        return $this->belongsTo(Pet::class, 'selected_pet_id');
     }
 }

@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AdoptionPet;
-use App\Models\AdoptionTrait;
+use App\Models\Pet;
 use Illuminate\Http\Request;
 
 class AdoptionPetController extends Controller
@@ -30,20 +29,37 @@ class AdoptionPetController extends Controller
             $imagePath = $request->file('image')->store('adoption-pets', 'public');
         }
 
-        $pet = AdoptionPet::create([
+        // Convert age to estimated_age string format or compute from DOB
+        $estimatedAge = $validated['age'].' years';
+        if (! empty($validated['date_of_birth'])) {
+            // Optionally compute from date_of_birth but store as estimated_age based on provided age
+            $estimatedAge = $validated['age'].' years';
+        }
+
+        $now = now();
+        $pet = Pet::create([
             'pet_name' => $validated['pet_name'],
             'species' => $validated['species'],
             'breed' => $validated['breed'] ?? null,
-            'age' => $validated['age'],
             'gender' => $validated['gender'],
-            'description' => $validated['description'] ?? null,
-            'weight' => $validated['weight'] ?? null,
-            'image' => $imagePath,
-            'date_of_birth' => $validated['date_of_birth'] ?? null,
-            'is_age_estimated' => $validated['is_age_estimated'] ?? false,
+            'birthdate' => $validated['date_of_birth'] ?? null,
+            'pet_weight' => $validated['weight'] ?? null,
+            'notes' => $validated['description'] ?? null,
+            'pet_image' => $imagePath,
+            'source_module' => 'adoption_pets',
+            'source_module_id' => null,
+            'is_approved' => false,
+            'pet_status' => 'pending',
+            'estimated_age' => $estimatedAge,
+            'is_neutered' => false,
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
 
-        if (!empty($validated['traits'])) {
+        // Link source_module_id to self
+        Pet::where('pet_id', $pet->pet_id)->update(['source_module_id' => $pet->pet_id]);
+
+        if (! empty($validated['traits'])) {
             $pet->traits()->attach($validated['traits']);
         }
 

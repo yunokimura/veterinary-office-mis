@@ -31,7 +31,8 @@ class AdoptionFormController extends Controller
             'interview_date' => 'required|date|after_or_equal:today',
             'interview_time' => 'required',
             'shelter_visit' => 'nullable|in:Yes,No',
-            'selected_pet_id' => 'nullable|integer',
+            'selected_adoption_pets' => 'nullable|array',
+            'selected_adoption_pets.*' => 'integer|exists:pets,pet_id',
             'questionnaire' => 'nullable|array',
         ]);
 
@@ -45,6 +46,14 @@ class AdoptionFormController extends Controller
             $bookingService->checkAndBookAdoptionSlot($interviewDate, $interviewTime);
         } catch (AppointmentSlotTakenException $e) {
             return redirect()->back()->with('error', $e->getMessage())->withInput();
+        }
+
+        // Get selected pet IDs from form (array) - take first if multiple
+        $selectedPetId = null;
+        if ($request->has('selected_adoption_pets') && is_array($request->input('selected_adoption_pets'))) {
+            $selectedPetId = $request->input('selected_adoption_pets')[0] ?? null;
+        } elseif ($request->filled('selected_pet_id')) {
+            $selectedPetId = $request->input('selected_pet_id');
         }
 
         $adoptionApplication = AdoptionApplication::create([
@@ -68,6 +77,7 @@ class AdoptionFormController extends Controller
             'zoom_date' => $interviewDate,
             'zoom_time' => $interviewTime,
             'shelter_visit' => $validated['shelter_visit'] ?? 'No',
+            'selected_pet_id' => $selectedPetId,
         ]);
 
         Appointment::create([

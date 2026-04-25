@@ -724,8 +724,8 @@
                                     <p class="text-sm text-gray-600 mb-4">Select up to 2 pets for adoption:</p>
                                     <div class="space-y-3" id="adoptionPetSelectionList">
                                         @foreach($adoptionPets as $pet)
-                                            <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet->adoption_id }}">
-                                                <input type="checkbox" name="selected_adoption_pets[]" value="{{ $pet->adoption_id }}" 
+                                            <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet->pet_id }}">
+                                                <input type="checkbox" name="selected_adoption_pets[]" value="{{ $pet->pet_id }}" 
                                                        class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary adoption-pet-checkbox"
                                                        onchange="toggleAdoptionPetSelection(this)">
                                                 <div class="ml-3 flex-1">
@@ -799,7 +799,7 @@
                         let hasDog = false;
                         
                         selectedAdoptionPets.forEach(petId => {
-                            const pet = adoptionPetsData.find(p => String(p.adoption_id) === String(petId));
+                            const pet = adoptionPetsData.find(p => String(p.pet_id) === String(petId));
                             if (pet) {
                                 const species = pet.species ? pet.species.toLowerCase() : '';
                                 if (species === 'cat') hasCat = true;
@@ -938,7 +938,7 @@
                         }
 
                         selectedAdoptionPets.forEach(petId => {
-                            const pet = adoptionPetsData.find(p => String(p.adoption_id) === String(petId));
+                            const pet = adoptionPetsData.find(p => String(p.pet_id) === String(petId));
                             if (pet) {
                                 // Determine image source
                                 let imageHtml = '';
@@ -966,7 +966,7 @@
                                             <p class="text-xs text-gray-600 mt-1">Gender: ${pet.gender || 'Unknown'} • Age: ${pet.age || 'Unknown'}</p>
                                         </div>
                                     </div>
-                                    <button type="button" onclick="removeAdoptionPet(${pet.adoption_id})" class="text-red-500 hover:text-red-700 p-1">
+                                    <button type="button" onclick="removeAdoptionPet(${pet.pet_id})" class="text-red-500 hover:text-red-700 p-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
@@ -1271,7 +1271,7 @@
         const preselectedPetId = urlParams.get('pet_id');
         if (preselectedPetId) {
             // Find the pet in adoptionPetsData
-            const pet = adoptionPetsData.find(p => String(p.adoption_id) === String(preselectedPetId));
+            const pet = adoptionPetsData.find(p => String(p.pet_id) === String(preselectedPetId));
             if (pet) {
                 // Auto-select the pet
                 selectedAdoptionPets.push(String(preselectedPetId));
@@ -1287,7 +1287,7 @@
                 container.innerHTML = '';
                 
                 selectedAdoptionPets.forEach(petId => {
-                    const petData = adoptionPetsData.find(p => String(p.adoption_id) === String(petId));
+                    const petData = adoptionPetsData.find(p => String(p.pet_id) === String(petId));
                     if (petData) {
                         const imageHtml = petData.image 
                             ? `<img src="${assetBaseUrl}${petData.image}" alt="${petData.pet_name}" class="w-16 h-16 rounded-lg object-cover">`
@@ -1311,7 +1311,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
-                                <input type="hidden" name="selected_adoption_pets[]" value="${petData.adoption_id}">
+                                <input type="hidden" name="selected_adoption_pets[]" value="${petData.pet_id}">
                             </div>
                         `;
                         container.innerHTML += petCard;
