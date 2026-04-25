@@ -126,8 +126,8 @@
         </div>
     </section>
 
-    <!-- Main Content -->
-    <section class="py-16 bg-white">
+     <!-- Main Content -->
+     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- I. Office Background -->
             <div class="mb-16">
@@ -137,7 +137,7 @@
                     </span>
                     Office Background
                 </h2>
-                <div class="flex flex-col lg:flex-row gap-8 items-start">
+                 <div class="flex flex-col lg:flex-row gap-8 items-center">
                     <div class="flex-1">
                         <p class="text-gray-700 text-lg leading-relaxed">
                             The Dasmariñas City Veterinary Office (CVO) serves as the primary local government unit
@@ -149,14 +149,9 @@
                             protection under the One Health framework.
                         </p>
                     </div>
-                    <div class="lg:w-1/3">
-                        <div class="bg-gray-200 rounded-2xl h-64 flex items-center justify-center overflow-hidden shadow-lg">
-                            <div class="text-center p-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <p class="text-gray-500 font-medium">Placeholder Picture</p>
-                            </div>
+                     <div class="lg:w-1/3">
+                        <div class="rounded-2xl h-80 overflow-hidden shadow-lg">
+                            <img src="{{ asset('images/about_us1.jpg') }}" alt="About Us - Dasmariñas City Veterinary Services" class="w-full h-full object-cover">
                         </div>
                     </div>
                 </div>

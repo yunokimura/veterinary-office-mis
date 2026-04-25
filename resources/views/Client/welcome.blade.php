@@ -149,17 +149,8 @@
                         programs, and join our community initiatives.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        @auth
-                            <a href="{{ url('/pet-registration') }}" class="bg-primary text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-light transition-all shadow-lg text-center">
-                                Register Your Pet
-                            </a>
-                        @else
-                            <button onclick="showLoginModal()" class="bg-primary text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-light transition-all shadow-lg text-center">
-                                Register Your Pet
-                            </button>
-                        @endauth
-                        <a href="{{ url('/adoption') }}" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-colors text-center">
-                            Adopt a Pet
+                        <a href="{{ url('/services') }}" class="bg-primary text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-light transition-all shadow-lg text-center">
+                            View Our Services
                         </a>
                     </div>
                 </div>
@@ -302,7 +293,7 @@
                 @forelse($missingPets as $pet)
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->missing_id }})">
                     <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                        <img src="{{ $pet->photo_img ? asset($pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
+                         <img src="{{ $pet->photo_img ? asset('storage/'.$pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
                         <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->status) }}</span>
                     </div>
                     <div class="p-4">
@@ -394,198 +385,41 @@
         </div>
     </section>
 
-    <!-- Service Cards Section -->
+    <!-- Mission & Vision Section -->
     <section class="py-16 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Comprehensive veterinary services to keep your pets healthy and happy</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Mission & Vision</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Guiding principles that drive our commitment to animal welfare and public health</p>
             </div>
             
             <div class="grid md:grid-cols-2 gap-8">
-                <!-- Card 1: Register Your Pet -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover" id="register">
-                    <div class="h-48 bg-gradient-to-br from-primary to-primary-light p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                            </svg>
-                        </div>
+                <!-- Mission Card -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8">
+                    <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Register Your Pet</h3>
-                        <p class="text-gray-600 mb-4">Register your pet with the city to ensure proper tracking and compliance with local regulations.</p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Official pet registration certificate</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Vaccination tracking & reminders</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Lost pet recovery assistance</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Community safety benefits</span>
-                            </li>
-                        </ul>
-                        @auth
-                            <a href="{{ url('/pet-registration') }}" class="block w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors text-center">
-                                Start Registration
-                            </a>
-                        @else
-                            <button onclick="showLoginModal()" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors text-center">
-                                Start Registration
-                            </button>
-                        @endauth
-                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
+                    <p class="text-gray-600 text-lg leading-relaxed">
+                        To uphold the principles of One Health by protecting human health, promoting animal welfare, and safeguarding the environment through accessible veterinary services, disease prevention and control, responsible pet ownership advocacy, food safety regulation, and strong community partnerships.
+                    </p>
                 </div>
-
-                <!-- Card 2: Vaccination -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
-                    <div class="h-48 bg-gradient-to-br from-primary to-secondary p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                            </svg>
-                        </div>
+                
+                <!-- Vision Card -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8">
+                    <div class="w-16 h-16 bg-secondary/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                        </svg>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Anti-Rabies Vaccination</h3>
-                        <p class="text-gray-600 mb-4">Keep your pets protected with our comprehensive vaccination programs for dogs and cats.</p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Rabies vaccination</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Core vaccines (DHPP, FVRCP)</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Vaccination records</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Reminder notifications</span>
-                            </li>
-                        </ul>
-                        <button class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors">
-                            Schedule Vaccination
-                        </button>
-                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
+                    <p class="text-gray-600 text-lg leading-relaxed">
+                        A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
+                    </p>
                 </div>
-
-                <!-- Card 2.5: Kapon (Spay/Neuter) -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
-                    <div class="h-48 bg-gradient-to-br from-purple-500 to-purple-600 p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Kapon (Spay/Neuter)</h3>
-                        <p class="text-gray-600 mb-4">Help control the pet population and give your furry friends a healthier life with our spay and neuter services.</p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Safe and professional surgery</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Low-cost program available</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Pre and post-surgery care</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Reduces stray animal population</span>
-                            </li>
-                        </ul>
-                        <button class="w-full bg-purple-500 text-white py-3 rounded-xl font-semibold hover:bg-purple-600 transition-colors">
-                            Learn More
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Card 4: Pet Adoption -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover" id="adopt">
-                    <div class="h-48 bg-gradient-to-br from-secondary to-secondary-light p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Pet Adoption</h3>
-                        <p class="text-gray-600 mb-4">Give a loving home to a furry friend in need. Browse our available pets waiting for their forever families.</p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Browse available pets</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Health checked & vaccinated</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Microchipped & registered</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Adoption support & guidance</span>
-                            </li>
-                        </ul>
-                        <a href="{{ url('/adoption') }}" class="w-full inline-block bg-secondary text-white py-3 rounded-xl font-semibold hover:bg-secondary-light transition-colors text-center">
-                            Meet the Pets
-                        </a>
-                    </div>
-                </div>
-
-                </div>
+            </div>
         </div>
     </section>
 
@@ -927,7 +761,7 @@
             if (!pet) return;
             
             const imageUrl = pet.photo_img 
-                ? "{{ asset('') }}/" + pet.photo_img 
+                ? "{{ asset('storage') }}/" + pet.photo_img
                 : "https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image";
             
             document.getElementById('modalPetImage').src = imageUrl;
