@@ -129,15 +129,15 @@
      <!-- Main Content -->
      <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- I. Office Background -->
-            <div class="mb-16">
-                <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
-                        <span class="text-white font-bold">I</span>
-                    </span>
-                    Office Background
-                </h2>
-                 <div class="flex flex-col lg:flex-row gap-8 items-center">
+             <!-- I. Office Background -->
+             <div class="mb-16">
+                 <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                     <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
+                         <span class="text-white font-bold">I</span>
+                     </span>
+                     Office Background
+                 </h2>
+                  <div class="flex flex-col lg:flex-row gap-8">
                     <div class="flex-1">
                         <p class="text-gray-700 text-lg leading-relaxed">
                             The Dasmariñas City Veterinary Office (CVO) serves as the primary local government unit
@@ -150,10 +150,10 @@
                         </p>
                     </div>
                      <div class="lg:w-1/3">
-                        <div class="rounded-2xl h-80 overflow-hidden shadow-lg">
-                            <img src="{{ asset('images/about_us1.jpg') }}" alt="About Us - Dasmariñas City Veterinary Services" class="w-full h-full object-cover">
-                        </div>
-                    </div>
+                         <div class="rounded-2xl h-80 overflow-hidden shadow-lg -mt-20">
+                             <img src="{{ asset('images/about_us1.jpg') }}" alt="About Us - Dasmariñas City Veterinary Services" class="w-full h-full object-cover">
+                         </div>
+                     </div>
                 </div>
             </div>
 
