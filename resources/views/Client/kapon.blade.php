@@ -280,121 +280,42 @@
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">Follow these simple steps to schedule your pet's spay/neuter appointment</p>
             </div>
             
-            <!-- Row 1: Steps 1 and 2 -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Step 1 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden step-card">
-                    <div class="h-48 bg-gradient-to-br from-purple-500 to-purple-600 p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4">Step 1: Check Eligibility</h3>
-                        <div class="space-y-3 text-gray-700">
-                            <p>For the procedure, ensure that your cat is at least <strong> 5 months old </strong> and must weight <strong> 2-3kg</strong>, while dogs be at least <strong> 6 months old</strong>. Your pets should be <strong> 100% healthy</strong> with no recent sickness in the past month. </p>
-                            
-                            <div class="bg-red-50 border-l-4 border-red-500 p-4 mt-4">
-                                <h4 class="font-semibold text-red-700 mb-2">Important Notes:</h4>
-                                <ul class="space-y-2 text-sm">
-                                    <li>❌ Pets below these thresholds will not be accepted.</li>
-                                    <li>✔️ Older pets may be accepted, subject to a health check.</li>
-                                </ul>
-                            </div>
-                        </div>
+                <div class="relative">
+                    <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg z-10">1</div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 pt-16 mt-4 min-h-[200px] h-full">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">Complete Owner Registration</h3>
+                        <p class="text-gray-600 text-sm">Login or create an account, then fill out your personal information including name, contact details, and address.</p>
                     </div>
                 </div>
-
+                
                 <!-- Step 2 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden step-card">
-                    <div class="h-48 bg-gradient-to-br from-red-400 to-red-500 p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4">Step 2: Get a Blood Test</h3>
-                        <div class="space-y-3 text-gray-700">
-                            <p>Blood testing (CBC, SGPT, CREA) is <strong>required</strong> to ensure pets are fit for surgery. This applies to:</p>
-                            <ul class="list-disc list-inside space-y-1 ml-2">
-                                <li>Mixed/purebred pets</li>
-                                <li>Pets older than 4 years</li>
-                            </ul>
-                            <p class="mt-2">Strongly recommended for younger/healthy pets at least <strong>2-7 days before</strong> the appointment.</p>
-                            
-                            <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-4">
-                                <p class="text-green-700 font-medium">Blood test package available at PAWS clinic for <strong>₱1,250</strong> (inclusive of check-up)</p>
-                                <p class="text-sm text-green-600 mt-1">Available at 8:30 AM on Monday and Thursday for confirmed clients</p>
-                            </div>
-                        </div>
+                <div class="relative">
+                    <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-lg z-10">2</div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 pt-16 mt-4 min-h-[200px] h-full">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">Select Pet(s) and Schedule</h3>
+                        <p class="text-gray-600 text-sm">Choose your pet(s) (max 2 per booking), select an available date/time slot, and upload required photos (head, body from top/side, genitals).</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Row 2: Steps 3 and 4 -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                
                 <!-- Step 3 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden step-card">
-                    <div class="h-48 bg-gradient-to-br from-blue-400 to-blue-500 p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4">Step 3: Take Photos</h3>
-                        <div class="space-y-3 text-gray-700">
-                            <p>You will be asked to submit photos of your pet's:</p>
-                            <ul class="list-disc list-inside space-y-1 ml-2">
-                                <li>Head</li>
-                                <li>Body top view</li>
-                                <li>Body side view</li>
-                                <li>Genitals</li>
-                            </ul>
-                            
-                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-4">
-                                <p class="text-yellow-700 font-medium">Note:</p>
-                                <p class="text-sm text-yellow-600">Photos of brachycephalic breeds, small breeds, and overweight breeds need veterinarian evaluation before blood test.</p>
-                            </div>
-                        </div>
+                <div class="relative">
+                    <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-lg z-10">3</div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 pt-16 mt-4 min-h-[200px] h-full">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">Pet Agreements & Health Declaration</h3>
+                        <p class="text-gray-600 text-sm">Answer per-pet health questions, complete the blood test agreement (if required), and acknowledge pre-surgery requirements.</p>
                     </div>
                 </div>
-
+                
                 <!-- Step 4 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden step-card">
-                    <div class="h-48 bg-gradient-to-br from-green-400 to-green-500 p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4">Step 4: Pay Online</h3>
-                        <div class="space-y-3 text-gray-700">
-                            <p>Complete your payment at least <strong>3 days prior</strong> to your chosen appointment.</p>
-                            <p>You will only be charged the base rate. Additional fees will be computed on the day of surgery.</p>
-                            
-                            <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-4">
-                                <p class="text-green-700 font-medium">Ready with the above requirements?</p>
-                                <p class="text-sm text-green-600 mt-1">A PAWS staff will confirm your kapon appointment after payment.</p>
-                            </div>
-                        </div>
+                <div class="relative">
+                    <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-lg z-10">4</div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 pt-16 mt-4 min-h-[200px] h-full">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">Accept Terms and Submit</h3>
+                        <p class="text-gray-600 text-sm">Review and accept general conditions, acknowledge the liability disclaimer, and submit your application for confirmation.</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Book Button -->
-            <div class="text-center">
-                <a href="#" class="inline-block bg-primary text-white px-12 py-5 rounded-xl font-semibold text-xl hover:bg-primary-light transition-colors shadow-lg">
-                    Book Your Pet
-                </a>
             </div>
         </div>
     </section>
@@ -468,11 +389,6 @@
                         </svg>
                         <span class="text-gray-700">1 piece of doormat</span>
                     </div>
-                </div>
-                
-                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-xl">
-                    <h4 class="font-semibold text-yellow-700 mb-2">Schedule: February 20, 2026 / 8am sharp!</h4>
-                    <p class="text-yellow-600 font-medium">Note: fasting 10 - 12 hours</p>
                 </div>
             </div>
         </div>
