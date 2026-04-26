@@ -39,6 +39,22 @@
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(6, 109, 51, 0.15);
         }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(6, 109, 51, 0.15);
+        }
+        .missing-pet-card {
+            cursor: pointer;
+        }
+        .missing-pet-card:hover .pet-image {
+            transform: scale(1.05);
+        }
+        .pet-image {
+            transition: transform 0.3s ease;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50">
@@ -442,9 +458,12 @@
                         <h3 class="font-semibold text-gray-900 mb-1">Description</h3>
                         <p id="modalPetDescription" class="text-gray-600 text-sm"></p>
                     </div>
-                    <button class="w-full bg-amber-500 text-white text-center px-6 py-3 rounded-xl font-semibold hover:bg-amber-600 transition-colors mt-auto">
-                        Contact Owner
-                    </button>
+                    <a href="mailto:vetdasma@yahoo.com" target="_blank" class="w-full bg-primary text-white text-center px-6 py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors mt-auto block flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Contact CVO
+                    </a>
                 </div>
             </div>
         </div>
@@ -695,31 +714,35 @@
                     <p class="text-gray-400 text-sm mt-1">Try adjusting your filters or check back later.</p>
                 </div>`;
             } else {
-                pets.forEach(pet => {
-                    const genderClass = pet.gender && pet.gender.toLowerCase() === 'female' ? 'text-pink-500' : 'text-blue-500';
-                    const genderSymbol = pet.gender && pet.gender.toLowerCase() === 'female' ? '♀' : '♂';
-                    
-                    html += `
-                    <button type="button" onclick="openPetModal(${pet.missing_id})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
-                        <div class="aspect-square bg-gradient-to-br from-amber-400/20 to-amber-500/30 relative">
-                            ${pet.photo_img 
-                                ? `<img src="${pet.photo_img}" alt="${pet.name}" class="w-full h-full object-cover">`
-                                : `<svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-amber-500/40 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>`
-                            }
-                            <span class="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-800">${pet.species}</span>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-gray-900">${pet.name}</h3>
-                            <p class="text-sm text-gray-500">${pet.breed || 'Breed not available'}</p>
-                            <div class="flex items-center space-x-3 mt-2 text-xs">
-                                <span class="${genderClass}">${genderSymbol} ${pet.gender}</span>
-                                <span class="text-gray-400">•</span>
-                                <span class="text-gray-600">${pet.location || 'Location not available'}</span>
-                            </div>
-                        </div>
-                    </button>`;
+                 pets.forEach(pet => {
+                     html += `
+                     <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(${pet.missing_id})">
+                         <div class="aspect-square bg-gray-200 relative overflow-hidden">
+                              <img src="${pet.photo_img ? pet.photo_img : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image'}" alt="${pet.name}" class="w-full h-full object-cover pet-image">
+                             <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">${pet.status ? pet.status.toUpperCase() : ''}</span>
+                         </div>
+                         <div class="p-4">
+                             <h3 class="text-lg font-bold text-gray-900 mb-2">${pet.name}</h3>
+                             <div class="space-y-2 text-sm">
+                                 <div class="flex justify-between">
+                                     <span class="text-gray-500">Age:</span>
+                                     <span class="text-gray-700 font-medium">${pet.age || 'N/A'} years</span>
+                                 </div>
+                                 <div class="flex justify-between">
+                                     <span class="text-gray-500">Weight:</span>
+                                     <span class="text-gray-700 font-medium">${pet.weight || 'N/A'}</span>
+                                 </div>
+                                 <div class="border-t pt-2 mt-2">
+                                     <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
+                                     <p class="text-gray-700 font-medium text-xs">${pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}</p>
+                                 </div>
+                                 <div>
+                                     <p class="text-gray-500 text-xs mb-1">Location:</p>
+                                     <p class="text-gray-700 font-medium text-xs">${pet.location || 'N/A'}</p>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>`;
                 });
             }
             
@@ -783,7 +806,7 @@
             document.getElementById('modalPetBreed').textContent = pet.breed || 'Breed not available';
             document.getElementById('modalPetAge').textContent = pet.age || 'Age not available';
             document.getElementById('modalPetGender').textContent = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1).toLowerCase() : 'Not available';
-            document.getElementById('modalPetWeight').textContent = pet.weight ? pet.weight + ' kg' : 'Weight not available';
+             document.getElementById('modalPetWeight').textContent = pet.weight || 'Weight not available';
             document.getElementById('modalPetColor').textContent = pet.color || 'Color not available';
             document.getElementById('modalPetLocation').textContent = pet.location || 'Location not available';
             document.getElementById('modalPetLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleDateString() : 'Date not available';
