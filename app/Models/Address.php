@@ -14,6 +14,8 @@ class Address extends Model
         'street',
         'subdivision',
         'barangay_id',
+        'city',
+        'province',
         'postal_code',
         'is_primary',
     ];

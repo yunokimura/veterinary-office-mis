@@ -110,14 +110,17 @@ class RegisteredUserController extends Controller
 
         // Create address for the pet owner
         $barangay = Barangay::where('barangay_name', $request->barangay)->first();
-        $petOwner->address()->create([
+        $address = $petOwner->address()->create([
             'block_lot_phase' => $houseNo,
             'street' => $request->street_name,
             'subdivision' => $request->subdivision,
             'barangay_id' => $barangay ? $barangay->barangay_id : null,
-            'city' => 'Dasmariñas City',
-            'province' => 'Cavite',
+            'city' => $barangay ? $barangay->city.' City' : null,
+            'province' => $barangay ? $barangay->province : null,
         ]);
+
+        // Update pet owner with address_id
+        $petOwner->update(['address_id' => $address->id]);
 
         // Generate OTP
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
