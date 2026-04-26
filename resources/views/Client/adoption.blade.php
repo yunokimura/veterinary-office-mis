@@ -205,9 +205,9 @@
                 <div class="space-y-4">
                     <p class="text-sm text-gray-500 mb-3">Filter by:</p>
                     
-                    <button onclick="filterPets('filter', 'all')" class="filter-btn w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-primary text-white text-left" data-filter="all" data-filter-type="filter">
-                        All Pets
-                    </button>
+                     <button onclick="clearFilters()" class="filter-btn w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-primary text-white text-left" data-filter="all" data-filter-type="filter">
+                         All Pets
+                     </button>
                     
                     <!-- Species filters side by side -->
                     <div class="grid grid-cols-2 gap-3">
@@ -462,6 +462,7 @@
         let adoptionPets = {!! json_encode($adoptionPets->map(function($pet) { return [ 'id' => $pet->pet_id, 'pet_name' => $pet->pet_name, 'species' => $pet->species, 'breed' => $pet->breed, 'gender' => $pet->gender, 'age' => $pet->age, 'date_of_birth' => $pet->date_of_birth, 'is_age_estimated' => $pet->is_age_estimated, 'weight' => $pet->weight, 'description' => $pet->description, 'traits' => $pet->traits->pluck('name')->toArray(), 'image' => asset(str_replace(' ', '%20', $pet->image)) ]; })) !!};
         let currentPage = {{ $adoptionPets->currentPage() }};
         let lastPage = {{ $adoptionPets->lastPage() }};
+        let hasMorePages = {{ $adoptionPets->hasMorePages() ? 'true' : 'false' }};
         let currentFilter = 'all';
         let currentSpecies = 'all';
         let currentGender = 'all';
@@ -469,6 +470,7 @@
         let currentBreeds = [];
         let currentTraits = [];
         let currentModalPetId = null;
+        let requestCounter = 0;
 
         function proceedToAdoption() {
             const petId = currentModalPetId;
@@ -484,7 +486,7 @@
             const ageParam = urlParams.get('age');
             const breedsParam = urlParams.get('breeds');
             const traitsParam = urlParams.get('traits');
-            
+
             if (filterParam && ['all', 'Dog', 'Cat', 'recommended'].includes(filterParam)) {
                 currentFilter = filterParam;
             }
@@ -515,6 +517,8 @@
             }
             updateFilterButtons();
             renderPagination();
+            // Ensure all filter UI elements are synced (checkboxes, etc.)
+            syncFilterUI();
         });
         
         function updateFilterButtons() {
@@ -522,13 +526,18 @@
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 const filterType = btn.dataset.filterType || 'filter';
                 const filterValue = btn.dataset.filter;
-                
+
                 let isActive = false;
-                
+
                 if (filterType === 'filter') {
-                    // For "All Pets" - highlight when no species filter is selected
+                    // "All Pets" should highlight only when NO filters are active (including currentFilter)
                     if (filterValue === 'all') {
-                        isActive = currentSpecies === 'all';
+                        isActive = (currentFilter === 'all' &&
+                                   currentSpecies === 'all' &&
+                                   currentGender === 'all' &&
+                                   currentAge === 'all' &&
+                                   currentBreeds.length === 0 &&
+                                   currentTraits.length === 0);
                     } else {
                         // Other filters like "recommended" - highlight when explicitly selected
                         isActive = currentFilter === filterValue;
@@ -540,21 +549,25 @@
                 } else if (filterType === 'age') {
                     isActive = currentAge !== 'all' && currentAge === filterValue;
                 }
-                
+
                 if (isActive) {
                     btn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
-                    
-                    // Gender-specific colors
-                    if (filterValue === 'male') {
-                        btn.classList.add('bg-blue-300', 'text-blue-900', 'ring-2', 'ring-blue-400');
-                    } else if (filterValue === 'female') {
-                        btn.classList.add('bg-pink-200', 'text-pink-900', 'ring-2', 'ring-pink-300');
+
+                    // Gender-specific colors for gender buttons only
+                    if (filterType === 'gender') {
+                        if (filterValue === 'male') {
+                            btn.classList.add('bg-blue-300', 'text-blue-900', 'ring-2', 'ring-blue-400');
+                        } else if (filterValue === 'female') {
+                            btn.classList.add('bg-pink-200', 'text-pink-900', 'ring-2', 'ring-pink-300');
+                        }
                     } else {
                         btn.classList.add('bg-primary', 'text-white', 'ring-2', 'ring-green-400');
                     }
                 } else {
                     // Remove all highlight classes
-                    btn.classList.remove('bg-primary', 'text-white', 'bg-blue-300', 'text-blue-900', 'ring-2', 'ring-blue-400', 'bg-pink-200', 'text-pink-900', 'ring-pink-300', 'ring-green-400');
+                    btn.classList.remove('bg-primary', 'text-white', 'ring-2', 'ring-green-400',
+                                        'bg-blue-300', 'text-blue-900', 'ring-blue-400',
+                                        'bg-pink-200', 'text-pink-900', 'ring-pink-300');
                     btn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
                 }
             });
@@ -621,15 +634,34 @@
         }
         
         function filterPets(filterType, filterValue) {
+            // If selecting any manual filter (species/gender/age), clear special filter state
+            if (filterType !== 'filter') {
+                currentFilter = 'all';
+            }
+
             // Check if we're clicking on an already active filter - if so, deselect it
             let shouldDeselect = false;
-            
+
             if (filterType === 'filter') {
                 if (currentFilter !== 'all' && currentFilter === filterValue) {
                     currentFilter = 'all';
                     shouldDeselect = true;
                 } else {
                     currentFilter = filterValue;
+                }
+
+                // If selecting "recommended", clear all other filters to avoid conflicts
+                if (filterValue === 'recommended') {
+                    currentSpecies = 'all';
+                    currentGender = 'all';
+                    currentAge = 'all';
+                    currentBreeds = [];
+                    currentTraits = [];
+                    // Uncheck breed and trait checkboxes
+                    document.querySelectorAll('.breed-checkbox').forEach(cb => cb.checked = false);
+                    document.querySelectorAll('.trait-checkbox').forEach(cb => cb.checked = false);
+                    updateBreedSelection();
+                    updateTraitsSelection();
                 }
             } else if (filterType === 'species') {
                 if (currentSpecies !== 'all' && currentSpecies === filterValue) {
@@ -653,7 +685,7 @@
                     currentAge = filterValue;
                 }
             }
-            
+
             // Update button highlights - don't auto-apply
             updateFilterButtons();
         }
@@ -666,32 +698,20 @@
             currentAge = 'all';
             currentBreeds = [];
             currentTraits = [];
-            
+
             // Uncheck breed and trait filter checkboxes
             document.querySelectorAll('.breed-checkbox').forEach(cb => cb.checked = false);
             document.querySelectorAll('.trait-checkbox').forEach(cb => cb.checked = false);
-            
-            // Reset all dropdown displays
-            const speciesDisplay = document.getElementById('selected-species-display');
-            if (speciesDisplay) speciesDisplay.textContent = 'Select species';
-            
-            const genderDisplay = document.getElementById('selected-gender-display');
-            if (genderDisplay) genderDisplay.textContent = 'Select gender';
-            
-            const ageDisplay = document.getElementById('selected-age-display');
-            if (ageDisplay) ageDisplay.textContent = 'Select age';
-            
+
+            // Reset breed and traits dropdown displays
             const breedsDisplay = document.getElementById('selected-breeds-display');
             if (breedsDisplay) breedsDisplay.textContent = 'Select breeds';
-            
+
             const traitsDisplay = document.getElementById('selected-traits-display');
             if (traitsDisplay) traitsDisplay.textContent = 'Select traits';
-            
-            // Update filter buttons
-            updateFilterButtons();
-            
-            // Load page 1 with no filters
-            window.location.href = '/adoption?page=1';
+
+            // Reload page to clear URL query and reset state
+            window.location.href = '/adoption';
         }
         
         function applyFilters() {
@@ -702,20 +722,20 @@
             const overlay = document.getElementById('filterOverlay');
             panel.classList.add('translate-x-full');
             overlay.classList.add('opacity-0');
-            setTimeout(() => overlay.classList.add('hidden'), 300);
-            document.body.style.overflow = 'auto';
-        }
-        
-        function loadPage(page, filter = null, species = null, gender = null, age = null, breeds = null, traits = null) {
+             setTimeout(() => overlay.classList.add('hidden'), 300);
+             document.body.style.overflow = 'auto';
+         }
+         
+         function loadPage(page, filter = null, species = null, gender = null, age = null, breeds = null, traits = null) {
             const filterParam = filter || currentFilter;
             const speciesParam = species || currentSpecies;
             const genderParam = gender || currentGender;
             const ageParam = age || currentAge;
             const breedsParam = breeds || (currentBreeds.length > 0 ? currentBreeds.join(',') : '');
             const traitsParam = traits || (currentTraits.length > 0 ? currentTraits.join(',') : '');
-            
+
             let url = '/adoption/paginate?page=' + page;
-            
+
             if (filterParam && filterParam !== 'all') {
                 url += '&filter=' + filterParam;
             }
@@ -734,47 +754,71 @@
             if (traitsParam) {
                 url += '&traits=' + traitsParam;
             }
-            
+
+            // Increment request counter for sequencing
+            const requestId = ++requestCounter;
+
+            // Show loading state
+            const grid = document.getElementById('pets-grid');
+            grid.innerHTML = '<div class="col-span-full text-center py-12"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-primary"></div><p class="text-gray-500 mt-2">Loading pets...</p></div>';
+
             fetch(url)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    // Ignore stale responses (out of order)
+                    if (requestId !== requestCounter) {
+                        return;
+                    }
+
                     // Update pets data
                     adoptionPets = data.pets;
                     currentPage = data.currentPage;
                     lastPage = data.lastPage;
-                    
+                    hasMorePages = data.hasMorePages || false;
+
                     // Update pet count
-                    document.getElementById('pet-count').textContent = data.total;
-                    
+                    const countEl = document.getElementById('pet-count');
+                    if (countEl) countEl.textContent = data.total;
+
                     // Render new pets
                     renderPets(data.pets);
-                    
+
                     // Render pagination
                     renderPagination();
-                    
+
                     // Sync filter UI state after page load
                     syncFilterUI();
-                    
+
                     // Scroll to pets section
                     document.getElementById('pets-section').scrollIntoView({ behavior: 'smooth' });
                 })
                 .catch(error => {
+                    // Ignore stale responses
+                    if (requestId !== requestCounter) {
+                        return;
+                    }
                     console.error('Error loading page:', error);
-                    alert('Error loading pets. Please try again.');
+                    // Show error message in grid
+                    grid.innerHTML = '<div class="col-span-full text-center py-12"><svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-red-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><p class="text-gray-500 text-lg">Unable to load pets.</p><p class="text-gray-400 text-sm mt-1">Please check your connection and try again.</p><button onclick="loadPage(' + page + ')" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-light">Retry</button></div>';
                 });
         }
         
         function renderPets(pets) {
             const grid = document.getElementById('pets-grid');
             let html = '';
-            
+
             if (pets.length === 0) {
-                // Generate dynamic message based on active filters
-                const filterNames = {
+                // Build active filters list with labels
+                const filterLabels = {
                     'all': 'All Pets',
                     'Dog': 'Dogs',
                     'Cat': 'Cats',
-                    'recommended': 'recommended',
+                    'recommended': 'Recommended for You',
                     'male': 'male',
                     'female': 'female',
                     '0-6': '0–6 months',
@@ -782,75 +826,77 @@
                     '1-3': '1–3 years',
                     '3+': '3+ years'
                 };
-                
-                let activeFilters = [];
-                let filterMessage = '';
-                
-                // Check which filters are active
-                if (currentFilter !== 'all' && currentFilter !== 'Dog' && currentFilter !== 'Cat') {
-                    // Special filters like 'recommended'
-                    if (currentFilter === 'recommended') {
-                        activeFilters.push('recommended');
-                    }
+
+                const activeFilters = [];
+
+                if (currentFilter !== 'all') {
+                    activeFilters.push({ type: 'filter', value: currentFilter, label: filterLabels[currentFilter] || currentFilter });
                 }
                 if (currentSpecies !== 'all') {
-                    activeFilters.push('species: ' + (filterNames[currentSpecies] || currentSpecies));
+                    activeFilters.push({ type: 'species', value: currentSpecies, label: filterLabels[currentSpecies] || currentSpecies });
                 }
                 if (currentGender !== 'all') {
-                    activeFilters.push('gender: ' + (filterNames[currentGender] || currentGender));
+                    activeFilters.push({ type: 'gender', value: currentGender, label: filterLabels[currentGender] || currentGender });
                 }
                 if (currentAge !== 'all') {
-                    activeFilters.push('age: ' + (filterNames[currentAge] || currentAge));
+                    activeFilters.push({ type: 'age', value: currentAge, label: filterLabels[currentAge] || currentAge });
                 }
-                if (currentBreeds.length > 0) {
-                    if (currentBreeds.length === 1) {
-                        activeFilters.push('breed: ' + currentBreeds[0]);
-                    } else {
-                        activeFilters.push('breed: ' + currentBreeds.join(', '));
-                    }
-                }
-                if (currentTraits.length > 0) {
-                    if (currentTraits.length === 1) {
-                        activeFilters.push('trait: ' + currentTraits[0]);
-                    } else {
-                        activeFilters.push('traits: ' + currentTraits.join(', '));
-                    }
-                }
-                
-                // Generate appropriate message
+                currentBreeds.forEach(breed => activeFilters.push({ type: 'breed', value: breed, label: breed }));
+                currentTraits.forEach(trait => activeFilters.push({ type: 'trait', value: trait, label: trait }));
+
+                let filterMessage = '';
+                let suggestion = '';
+
                 if (activeFilters.length === 0) {
-                    filterMessage = 'No pets found.';
+                    filterMessage = 'No pets are currently available for adoption.';
+                    suggestion = 'Please check back later or contact us for updates.';
                 } else if (activeFilters.length === 1) {
-                    // Single filter - use singular message
-                    const filter = activeFilters[0];
-                    if (filter.startsWith('species: ')) {
-                        const species = filter.replace('species: ', '');
-                        filterMessage = 'No ' + species + 's available for adoption.';
-                    } else if (filter.startsWith('gender: ')) {
-                        const gender = filter.replace('gender: ', '');
-                        filterMessage = 'No ' + gender + ' pets available.';
-                    } else if (filter.startsWith('age: ')) {
-                        filterMessage = 'No pets found in this age range.';
-                    } else if (filter.startsWith('breed: ')) {
-                        filterMessage = 'No pets found with this breed.';
-                    } else if (filter.startsWith('trait: ')) {
-                        filterMessage = 'No pets have this trait.';
-                    } else if (filter === 'recommended') {
-                        filterMessage = 'No recommended pets found for you at this time.';
-                    } else {
-                        filterMessage = 'No pets found with this filter.';
+                    const f = activeFilters[0];
+                    switch (f.type) {
+                        case 'species':
+                            filterMessage = `No ${f.label.toLowerCase()}s are available for adoption at this time.`;
+                            suggestion = 'Try a different species or check back later.';
+                            break;
+                        case 'gender':
+                            filterMessage = `No ${f.label} pets are available for adoption at this time.`;
+                            suggestion = 'Try a different gender or check back later.';
+                            break;
+                        case 'age':
+                            filterMessage = `There are no pets in the age of ${f.label} available for adoption at this time.`;
+                            suggestion = 'Try a different age range or check back later.';
+                            break;
+                        case 'breed':
+                            filterMessage = `No pets with breed "${f.label}" are available for adoption at this time.`;
+                            suggestion = 'Try a different breed or check back later.';
+                            break;
+                        case 'trait':
+                            filterMessage = `No pets with trait "${f.label}" are available for adoption at this time.`;
+                            suggestion = 'Try different traits or check back later.';
+                            break;
+                        case 'filter':
+                            if (f.value === 'recommended') {
+                                filterMessage = 'No recommended pets matched your profile at this time.';
+                                suggestion = 'Update your profile or explore other pets.';
+                            } else {
+                                filterMessage = `No ${f.label} are available for adoption at this time.`;
+                                suggestion = 'Try a different filter or check back later.';
+                            }
+                            break;
                     }
                 } else {
-                    // Multiple filters - use plural message
-                    filterMessage = 'No pets found with these filters.';
+                    filterMessage = 'The selected filters didn\'t find any pets matching your criteria.';
+                    suggestion = 'Try broadening your search by removing some filters or adjusting your criteria.';
                 }
-                
+
                 html = `<div class="col-span-full text-center py-12">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
                     <p class="text-gray-500 text-lg">${filterMessage}</p>
-                    <p class="text-gray-400 text-sm mt-1">Try selecting different filters or clear the filter.</p>
+                    <p class="text-gray-400 text-sm mt-1">${suggestion}</p>
+                    <button onclick="clearFilters()" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                        Clear All Filters
+                    </button>
                 </div>`;
             } else {
                 pets.forEach(pet => {
@@ -858,7 +904,7 @@
                     const genderIcon = isFemale ? '♀' : '♂';
                     const genderClass = isFemale ? 'text-pink-500' : 'text-blue-500';
                     const genderDisplay = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : '';
-                    
+
                     // Format age with proper singular/plural
                     let ageDisplay = 'Age not available';
                     if (pet.age !== null && pet.age !== undefined) {
@@ -873,15 +919,15 @@
                             ageDisplay = 'Age not available';
                         }
                     }
-                    
-                    const imageHtml = pet.image 
+
+                    const imageHtml = pet.image
                         ? `<img src="${pet.image}" alt="${pet.pet_name}" class="w-full h-full object-cover">`
                         : `<svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-pink-500/40 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                          </svg>`;
-                    
+                        </svg>`;
+
                     html += `<button type="button" onclick="openPetModal(${pet.id})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
-                        <div class="aspect-square bg-gradient-to-bp from-pink-400/20 to-pink-500/30 relative">
+                        <div class="aspect-square bg-gradient-to-br from-pink-400/20 to-pink-500/30 relative">
                             ${imageHtml}
                             <span class="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-[#E6F4EA] text-gray-800">${pet.species}</span>
                         </div>
@@ -897,14 +943,14 @@
                     </button>`;
                 });
             }
-            
+
             grid.innerHTML = html;
         }
         
         function renderPagination() {
             const nav = document.getElementById('pagination-nav');
             let html = '';
-            
+
             // Previous button
             if (currentPage === 1) {
                 html += `<span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
@@ -919,7 +965,7 @@
                     </svg>
                 </button>`;
             }
-            
+
             // Page numbers
             for (let i = 1; i <= lastPage; i++) {
                 if (i === currentPage) {
@@ -928,10 +974,10 @@
                     html += `<button onclick="loadPage(${i})" class="px-4 py-2 text-gray-600 bg-white hover:bg-primary hover:text-white rounded-lg transition-colors">${i}</button>`;
                 }
             }
-            
-            // Next button
-            if (currentPage < lastPage) {
-                html += `<button onclick="loadPage(${currentPage + 1})" class="px-4 py-2 text-white bg-primary hover:bg-primary-light rounded-lg transition-colors">
+
+            // Next button - use hasMorePages flag
+            if (hasMorePages) {
+                html += `<button onclick="loadPage(${currentPage + 1})" class="px-4 py-2 text-primary bg-primary hover:bg-primary-light rounded-lg transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
@@ -943,10 +989,10 @@
                     </svg>
                 </span>`;
             }
-            
+
             nav.innerHTML = html;
         }
-        
+
         function openPetModal(petId) {
             const pet = adoptionPets.find(p => p.id === petId);
             if (!pet) return;
@@ -1049,13 +1095,45 @@
         function syncFilterUI() {
             // Sync species buttons (All/Dog/Cat)
             updateFilterButtons();
-            
+
+            // Sync gender buttons
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                const filterValue = btn.dataset.filter;
+                const isActive = currentGender !== 'all' && currentGender === filterValue;
+                
+                if (isActive) {
+                    btn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                    if (filterValue === 'male') {
+                        btn.classList.add('bg-blue-300', 'text-blue-900', 'ring-2', 'ring-blue-400');
+                    } else if (filterValue === 'female') {
+                        btn.classList.add('bg-pink-200', 'text-pink-900', 'ring-2', 'ring-pink-300');
+                    }
+                } else {
+                    btn.classList.remove('bg-blue-300', 'text-blue-900', 'ring-2', 'ring-blue-400', 'bg-pink-200', 'text-pink-900', 'ring-pink-300');
+                    btn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                }
+            });
+
+            // Sync age buttons
+            document.querySelectorAll('.age-btn').forEach(btn => {
+                const filterValue = btn.dataset.filter;
+                const isActive = currentAge !== 'all' && currentAge === filterValue;
+                
+                if (isActive) {
+                    btn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                    btn.classList.add('bg-primary', 'text-white', 'ring-2', 'ring-green-400');
+                } else {
+                    btn.classList.remove('bg-primary', 'text-white', 'ring-2', 'ring-green-400');
+                    btn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                }
+            });
+
             // Sync breed checkboxes
             document.querySelectorAll('.breed-checkbox').forEach(checkbox => {
                 checkbox.checked = currentBreeds.includes(checkbox.value);
             });
             updateBreedSelection();
-            
+
             // Sync trait checkboxes
             document.querySelectorAll('.trait-checkbox').forEach(checkbox => {
                 checkbox.checked = currentTraits.includes(checkbox.value);

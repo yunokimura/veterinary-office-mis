@@ -957,32 +957,60 @@ Route::get('/adoption', function (Request $request) {
     $age = $request->input('age', 'all');
     $breeds = $request->input('breeds', 'all');
 
-    if ($species === 'Dog') {
-        $adoptionPets = $adoptionPets->where('species', 'Dog');
-    } elseif ($species === 'Cat') {
-        $adoptionPets = $adoptionPets->where('species', 'Cat');
-    }
+    // Handle special filters first
+    if ($filter === 'recommended' && auth()->check() && $hasPets) {
+        // Recommended: prioritize pets matching user's existing pets species/gender
+        $userSpecies = $userPets->pluck('species')->filter()->unique()->toArray();
+        $userGenders = $userPets->pluck('gender')->filter()->unique()->toArray();
 
-    if ($gender === 'male') {
-        $adoptionPets = $adoptionPets->where('gender', 'male');
-    } elseif ($gender === 'female') {
-        $adoptionPets = $adoptionPets->where('gender', 'female');
-    }
+        // Only apply ordering if we have valid matches
+        $hasSpeciesMatches = ! empty($userSpecies);
+        $hasGenderMatches = ! empty($userGenders);
 
-    if ($age === '0-6') {
-        $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-            ->where('date_of_birth', '>=', now()->subMonths(6));
-    } elseif ($age === '6-12') {
-        $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-            ->where('date_of_birth', '<', now()->subMonths(6))
-            ->where('date_of_birth', '>=', now()->subMonths(12));
-    } elseif ($age === '1-3') {
-        $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-            ->where('date_of_birth', '<', now()->subMonths(12))
-            ->where('date_of_birth', '>=', now()->subYears(3));
-    } elseif ($age === '3+') {
-        $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-            ->where('date_of_birth', '<', now()->subYears(3));
+        if ($hasSpeciesMatches || $hasGenderMatches) {
+            if ($hasSpeciesMatches) {
+                $adoptionPets = $adoptionPets->orderByRaw(
+                    'CASE WHEN species IN ('.implode(',', array_fill(0, count($userSpecies), '?')).') THEN 0 ELSE 1 END',
+                    $userSpecies
+                );
+            }
+            if ($hasGenderMatches) {
+                $adoptionPets = $adoptionPets->orderByRaw(
+                    'CASE WHEN gender IN ('.implode(',', array_fill(0, count($userGenders), '?')).') THEN 0 ELSE 1 END',
+                    $userGenders
+                );
+            }
+        }
+        // Continue to apply other filters (breeds, traits) below
+    } else {
+        // Normal filter application
+        if ($species === 'Dog') {
+            $adoptionPets = $adoptionPets->where('species', 'Dog');
+        } elseif ($species === 'Cat') {
+            $adoptionPets = $adoptionPets->where('species', 'Cat');
+        }
+
+        if ($gender === 'male') {
+            $adoptionPets = $adoptionPets->where('gender', 'male');
+        } elseif ($gender === 'female') {
+            $adoptionPets = $adoptionPets->where('gender', 'female');
+        }
+
+        if ($age === '0-6') {
+            $adoptionPets = $adoptionPets->whereNotNull('birthdate')
+                ->where('birthdate', '>=', now()->subMonths(6));
+        } elseif ($age === '6-12') {
+            $adoptionPets = $adoptionPets->whereNotNull('birthdate')
+                ->where('birthdate', '<', now()->subMonths(6))
+                ->where('birthdate', '>=', now()->subMonths(12));
+        } elseif ($age === '1-3') {
+            $adoptionPets = $adoptionPets->whereNotNull('birthdate')
+                ->where('birthdate', '<', now()->subMonths(12))
+                ->where('birthdate', '>=', now()->subYears(3));
+        } elseif ($age === '3+') {
+            $adoptionPets = $adoptionPets->whereNotNull('birthdate')
+                ->where('birthdate', '<', now()->subYears(3));
+        }
     }
 
     if ($breeds !== 'all' && ! empty($breeds)) {
@@ -1007,11 +1035,13 @@ Route::get('/adoption', function (Request $request) {
 Route::get('/adoption/paginate', function (Request $request) {
     $userPets = [];
     $client = null;
+    $hasPets = false;
 
     if (auth()->check()) {
         $client = PetOwner::where('user_id', auth()->id())->first();
         if ($client) {
             $userPets = $client->pets()->get(['species', 'gender']);
+            $hasPets = $client->pets()->exists();
         }
     }
 
@@ -1023,32 +1053,60 @@ Route::get('/adoption/paginate', function (Request $request) {
     $age = $request->input('age', 'all');
     $breeds = $request->input('breeds', 'all');
 
-    if ($species === 'Dog') {
-        $adoptionPets = $adoptionPets->where('species', 'Dog');
-    } elseif ($species === 'Cat') {
-        $adoptionPets = $adoptionPets->where('species', 'Cat');
-    }
+    // Handle special filters first
+    if ($filter === 'recommended' && auth()->check() && $hasPets) {
+        // Recommended: prioritize pets matching user's existing pets species/gender
+        $userSpecies = $userPets->pluck('species')->filter()->unique()->toArray();
+        $userGenders = $userPets->pluck('gender')->filter()->unique()->toArray();
 
-    if ($gender === 'male') {
-        $adoptionPets = $adoptionPets->where('gender', 'male');
-    } elseif ($gender === 'female') {
-        $adoptionPets = $adoptionPets->where('gender', 'female');
-    }
+        // Only apply ordering if we have valid matches
+        $hasSpeciesMatches = ! empty($userSpecies);
+        $hasGenderMatches = ! empty($userGenders);
 
-    if ($age === '0-6') {
-        $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-            ->where('date_of_birth', '>=', now()->subMonths(6));
-    } elseif ($age === '6-12') {
-        $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-            ->where('date_of_birth', '<', now()->subMonths(6))
-            ->where('date_of_birth', '>=', now()->subMonths(12));
-    } elseif ($age === '1-3') {
-        $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-            ->where('date_of_birth', '<', now()->subMonths(12))
-            ->where('date_of_birth', '>=', now()->subYears(3));
-    } elseif ($age === '3+') {
-        $adoptionPets = $adoptionPets->whereNotNull('date_of_birth')
-            ->where('date_of_birth', '<', now()->subYears(3));
+        if ($hasSpeciesMatches || $hasGenderMatches) {
+            if ($hasSpeciesMatches) {
+                $adoptionPets = $adoptionPets->orderByRaw(
+                    'CASE WHEN species IN ('.implode(',', array_fill(0, count($userSpecies), '?')).') THEN 0 ELSE 1 END',
+                    $userSpecies
+                );
+            }
+            if ($hasGenderMatches) {
+                $adoptionPets = $adoptionPets->orderByRaw(
+                    'CASE WHEN gender IN ('.implode(',', array_fill(0, count($userGenders), '?')).') THEN 0 ELSE 1 END',
+                    $userGenders
+                );
+            }
+        }
+        // Continue to apply other filters (breeds, traits) below
+    } else {
+        // Normal filter application
+        if ($species === 'Dog') {
+            $adoptionPets = $adoptionPets->where('species', 'Dog');
+        } elseif ($species === 'Cat') {
+            $adoptionPets = $adoptionPets->where('species', 'Cat');
+        }
+
+        if ($gender === 'male') {
+            $adoptionPets = $adoptionPets->where('gender', 'male');
+        } elseif ($gender === 'female') {
+            $adoptionPets = $adoptionPets->where('gender', 'female');
+        }
+
+        if ($age === '0-6') {
+            $adoptionPets = $adoptionPets->whereNotNull('birthdate')
+                ->where('birthdate', '>=', now()->subMonths(6));
+        } elseif ($age === '6-12') {
+            $adoptionPets = $adoptionPets->whereNotNull('birthdate')
+                ->where('birthdate', '<', now()->subMonths(6))
+                ->where('birthdate', '>=', now()->subMonths(12));
+        } elseif ($age === '1-3') {
+            $adoptionPets = $adoptionPets->whereNotNull('birthdate')
+                ->where('birthdate', '<', now()->subMonths(12))
+                ->where('birthdate', '>=', now()->subYears(3));
+        } elseif ($age === '3+') {
+            $adoptionPets = $adoptionPets->whereNotNull('birthdate')
+                ->where('birthdate', '<', now()->subYears(3));
+        }
     }
 
     if ($breeds !== 'all' && ! empty($breeds)) {
