@@ -300,27 +300,33 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div id="pets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @forelse($missingPets as $pet)
-                <button type="button" onclick="openPetModal({{ $pet->missing_id }})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
-                    <div class="aspect-square bg-gradient-to-br from-amber-400/20 to-amber-500/30 relative">
-                        @if($pet->photo_img)
-                            <img src="{{ asset($pet->photo_img) }}" alt="{{ $pet->name }}" class="w-full h-full object-cover">
-                        @else
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-amber-500/40 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        @endif
-                        <span class="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-800">{{ $pet->species }}</span>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-gray-900">{{ $pet->name }}</h3>
-                        <p class="text-sm text-gray-500">{{ $pet->breed }}</p>
-                        <div class="flex items-center space-x-3 mt-2 text-xs">
-                            <span class="@if(strtolower($pet->gender) === 'female') text-pink-500 @else text-blue-500 @endif">{{ $pet->gender === 'Female' || $pet->gender === 'female' ? '♀' : '♂' }} {{ ucfirst($pet->gender) }}</span>
-                            <span class="text-gray-400">•</span>
-                            <span class="text-gray-600">{{ $pet->location ?? 'Location not available' }}</span>
-                        </div>
-                    </div>
-                </button>
+<div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->missing_id }})">
+    <div class="aspect-square bg-gray-200 relative overflow-hidden">
+         <img src="{{ $pet->photo_img ? asset('storage/'.$pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
+        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->status) }}</span>
+    </div>
+    <div class="p-4">
+        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
+        <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+                <span class="text-gray-500">Age:</span>
+                <span class="text-gray-700 font-medium">{{ $pet->age }} years</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-500">Weight:</span>
+                <span class="text-gray-700 font-medium">{{ $pet->weight }}</span>
+            </div>
+            <div class="border-t pt-2 mt-2">
+                <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
+                <p class="text-gray-700 font-medium text-xs">{{ $pet->last_seen_at->format('M d, Y - h:i A') }}</p>
+            </div>
+            <div>
+                <p class="text-gray-500 text-xs mb-1">Location:</p>
+                <p class="text-gray-700 font-medium text-xs">{{ $pet->location }}</p>
+            </div>
+        </div>
+    </div>
+</div>
                 @empty
                 <div class="col-span-full text-center py-12">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -766,7 +772,7 @@
             nav.innerHTML = html;
         }
         
-        function openPetModal(petId) {
+        function showPetModal(petId) {
             const pet = missingPetsData.find(p => p.missing_id === petId);
             if (!pet) return;
             
