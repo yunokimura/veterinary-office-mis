@@ -365,7 +365,20 @@
                         <div class="flex items-center space-x-3 mt-2 text-xs">
                             <span class="@if($pet->gender === 'female') text-pink-500 @else text-blue-500 @endif">{{ $pet->gender === 'female' ? '♀' : '♂' }} {{ ucfirst($pet->gender) }}</span>
                             <span class="text-gray-400">•</span>
-                            <span class="text-gray-600">{{ $pet->age }} years</span>
+                            <span class="text-gray-600">
+                                @php
+                                    $age = $pet->age;
+                                    if ($age === null):
+                                @endphp
+                                    Age not available
+                                @elseif ($age == 0)
+                                    < 1 year
+                                @elseif ($age == 1)
+                                    1 year
+                                @else
+                                    {{ $age }} years
+                                @endif
+                            </span>
                         </div>
                     </div>
                 </button>
@@ -380,48 +393,9 @@
                 @endforelse
             </div>
             
-            <!-- Pagination -->
+            <!-- Pagination - Rendered via JavaScript -->
             <div class="mt-8 flex justify-center">
-                <nav class="flex items-center gap-1" id="pagination-nav">
-                    <!-- Previous Page -->
-                    @if ($adoptionPets->onFirstPage())
-                        <span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </span>
-                    @else
-                        <button onclick="loadPage({{ $adoptionPets->currentPage() - 1 }})" class="px-4 py-2 text-white bg-primary hover:bg-primary-light rounded-lg transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
-                    @endif
-
-                    <!-- Page Numbers -->
-                    @for ($i = 1; $i <= $adoptionPets->lastPage(); $i++)
-                        @if ($i == $adoptionPets->currentPage())
-                            <span class="px-4 py-2 text-white bg-primary font-medium rounded-lg">{{ $i }}</span>
-                        @else
-                            <button onclick="loadPage({{ $i }})" class="px-4 py-2 text-gray-600 bg-white hover:bg-primary hover:text-white rounded-lg transition-colors">{{ $i }}</button>
-                        @endif
-                    @endfor
-
-                    <!-- Next Page -->
-                    @if ($adoptionPets->hasMorePages())
-                        <button onclick="loadPage({{ $adoptionPets->currentPage() + 1 }})" class="px-4 py-2 text-white bg-primary hover:bg-primary-light rounded-lg transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    @else
-                        <span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </span>
-                    @endif
-                </nav>
+                <nav class="flex items-center gap-1" id="pagination-nav"></nav>
             </div>
         </div>
     </section>
@@ -518,7 +492,7 @@
                 currentSpecies = speciesParam;
             }
             if (genderParam && ['Male', 'Female'].includes(genderParam)) {
-                currentGender = genderParam;
+                currentGender = genderParam.toLowerCase();
             }
             if (ageParam && ['0-6', '6-12', '1-3', '3+'].includes(ageParam)) {
                 currentAge = ageParam;
@@ -540,6 +514,7 @@
                 updateTraitsSelection();
             }
             updateFilterButtons();
+            renderPagination();
         });
         
         function updateFilterButtons() {
@@ -570,9 +545,9 @@
                     btn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
                     
                     // Gender-specific colors
-                    if (filterValue === 'Male') {
+                    if (filterValue === 'male') {
                         btn.classList.add('bg-blue-300', 'text-blue-900', 'ring-2', 'ring-blue-400');
-                    } else if (filterValue === 'Female') {
+                    } else if (filterValue === 'female') {
                         btn.classList.add('bg-pink-200', 'text-pink-900', 'ring-2', 'ring-pink-300');
                     } else {
                         btn.classList.add('bg-primary', 'text-white', 'ring-2', 'ring-green-400');
@@ -590,8 +565,8 @@
                 'Dog': 'Dogs',
                 'Cat': 'Cats',
                 'recommended': 'Recommended for You',
-                'Male': 'Male',
-                'Female': 'Female',
+                'male': 'Male',
+                'female': 'Female',
                 '0-6': '0–6 months',
                 '6-12': '6–12 months',
                 '1-3': '1–3 years',
@@ -692,10 +667,7 @@
             currentBreeds = [];
             currentTraits = [];
             
-            // Uncheck all filter checkboxes
-            document.querySelectorAll('.species-checkbox').forEach(cb => cb.checked = false);
-            document.querySelectorAll('.gender-checkbox').forEach(cb => cb.checked = false);
-            document.querySelectorAll('.age-checkbox').forEach(cb => cb.checked = false);
+            // Uncheck breed and trait filter checkboxes
             document.querySelectorAll('.breed-checkbox').forEach(cb => cb.checked = false);
             document.querySelectorAll('.trait-checkbox').forEach(cb => cb.checked = false);
             
@@ -780,6 +752,9 @@
                     // Render pagination
                     renderPagination();
                     
+                    // Sync filter UI state after page load
+                    syncFilterUI();
+                    
                     // Scroll to pets section
                     document.getElementById('pets-section').scrollIntoView({ behavior: 'smooth' });
                 })
@@ -800,8 +775,8 @@
                     'Dog': 'Dogs',
                     'Cat': 'Cats',
                     'recommended': 'recommended',
-                    'Male': 'male',
-                    'Female': 'female',
+                    'male': 'male',
+                    'female': 'female',
                     '0-6': '0–6 months',
                     '6-12': '6–12 months',
                     '1-3': '1–3 years',
@@ -819,10 +794,10 @@
                     }
                 }
                 if (currentSpecies !== 'all') {
-                    activeFilters.push('species: ' + filterNames[currentSpecies] || currentSpecies);
+                    activeFilters.push('species: ' + (filterNames[currentSpecies] || currentSpecies));
                 }
                 if (currentGender !== 'all') {
-                    activeFilters.push('gender: ' + filterNames[currentGender] || currentGender);
+                    activeFilters.push('gender: ' + (filterNames[currentGender] || currentGender));
                 }
                 if (currentAge !== 'all') {
                     activeFilters.push('age: ' + (filterNames[currentAge] || currentAge));
@@ -879,16 +854,34 @@
                 </div>`;
             } else {
                 pets.forEach(pet => {
-                    const genderIcon = pet.gender === 'Female' ? '♀' : '♂';
-                    const genderClass = pet.gender === 'Female' ? 'text-pink-500' : 'text-blue-500';
+                    const isFemale = pet.gender && pet.gender.toLowerCase() === 'female';
+                    const genderIcon = isFemale ? '♀' : '♂';
+                    const genderClass = isFemale ? 'text-pink-500' : 'text-blue-500';
+                    const genderDisplay = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : '';
+                    
+                    // Format age with proper singular/plural
+                    let ageDisplay = 'Age not available';
+                    if (pet.age !== null && pet.age !== undefined) {
+                        const ageNum = Number(pet.age);
+                        if (ageNum === 0) {
+                            ageDisplay = '< 1 year';
+                        } else if (ageNum === 1) {
+                            ageDisplay = ageNum + ' year';
+                        } else if (!isNaN(ageNum) && ageNum > 1) {
+                            ageDisplay = ageNum + ' years';
+                        } else {
+                            ageDisplay = 'Age not available';
+                        }
+                    }
+                    
                     const imageHtml = pet.image 
                         ? `<img src="${pet.image}" alt="${pet.pet_name}" class="w-full h-full object-cover">`
                         : `<svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-pink-500/40 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                           </svg>`;
+                          </svg>`;
                     
                     html += `<button type="button" onclick="openPetModal(${pet.id})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
-                        <div class="aspect-square bg-gradient-to-br from-pink-400/20 to-pink-500/30 relative">
+                        <div class="aspect-square bg-gradient-to-bp from-pink-400/20 to-pink-500/30 relative">
                             ${imageHtml}
                             <span class="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-[#E6F4EA] text-gray-800">${pet.species}</span>
                         </div>
@@ -896,9 +889,9 @@
                             <h3 class="font-bold text-gray-900">${pet.pet_name}</h3>
                             <p class="text-sm text-gray-500">${pet.breed}</p>
                             <div class="flex items-center space-x-3 mt-2 text-xs">
-                                <span class="${genderClass}">${genderIcon} ${pet.gender}</span>
+                                <span class="${genderClass}">${genderIcon} ${genderDisplay}</span>
                                 <span class="text-gray-400">•</span>
-                                <span class="text-gray-600">${pet.age || 'Age not available'}</span>
+                                <span class="text-gray-600">${ageDisplay}</span>
                             </div>
                         </div>
                     </button>`;
@@ -988,7 +981,7 @@
                 document.getElementById('modalPetAge').textContent = 'Age not available';
             }
             
-            document.getElementById('modalPetGender').textContent = pet.gender;
+            document.getElementById('modalPetGender').textContent = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : '';
             document.getElementById('modalPetWeight').textContent = pet.weight || '';
             document.getElementById('modalPetDescription').textContent = pet.description || 'No description available';
             document.getElementById('modalPetTraits').textContent = Array.isArray(pet.traits) ? pet.traits.join(', ') : (pet.traits || 'No traits listed');
@@ -1050,6 +1043,24 @@
             } else {
                 display.textContent = selectedTraits.length + ' traits selected';
             }
+        }
+        
+        // Synchronize filter UI with current state (after pagination)
+        function syncFilterUI() {
+            // Sync species buttons (All/Dog/Cat)
+            updateFilterButtons();
+            
+            // Sync breed checkboxes
+            document.querySelectorAll('.breed-checkbox').forEach(checkbox => {
+                checkbox.checked = currentBreeds.includes(checkbox.value);
+            });
+            updateBreedSelection();
+            
+            // Sync trait checkboxes
+            document.querySelectorAll('.trait-checkbox').forEach(checkbox => {
+                checkbox.checked = currentTraits.includes(checkbox.value);
+            });
+            updateTraitsSelection();
         }
         
         // Close dropdown when clicking outside

@@ -1068,8 +1068,7 @@ Route::get('/adoption/paginate', function (Request $request) {
 
     $pets = collect($adoptionPets->items())->map(function ($pet) {
         return [
-            'id' => $pet->adoption_id,
-            'adoption_id' => $pet->adoption_id,
+            'id' => $pet->pet_id,
             'pet_name' => $pet->pet_name,
             'species' => $pet->species,
             'gender' => $pet->gender,
@@ -1077,7 +1076,7 @@ Route::get('/adoption/paginate', function (Request $request) {
             'description' => $pet->description,
             'traits' => $pet->traits->pluck('name')->toArray(),
             'weight' => $pet->weight,
-            'image' => $pet->image ? asset($pet->image) : null,
+            'image' => $pet->image ? asset(str_replace(' ', '%20', $pet->image)) : null,
             'image_path' => $pet->image,
             'date_of_birth' => $pet->date_of_birth,
             'is_age_estimated' => $pet->is_age_estimated,
