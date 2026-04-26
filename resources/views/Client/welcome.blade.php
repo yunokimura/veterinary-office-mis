@@ -149,8 +149,8 @@
                         programs, and join our community initiatives.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="{{ url('/services') }}" class="bg-primary text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-light transition-all shadow-lg text-center">
-                            View Our Services
+                        <a href="{{ url('/about-us') }}" class="bg-primary text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary-light transition-all shadow-lg text-center">
+                            Learn More About Us
                         </a>
                     </div>
                 </div>
