@@ -97,6 +97,16 @@ class Pet extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Scope for pets available for adoption (approved + correct source + status).
+     */
+    public function scopeAvailableForAdoption($query)
+    {
+        return $query->where('source_module', 'adoption_pets')
+            ->where('pet_status', 'available')
+            ->where('is_approved', true);
+    }
+
     // Accessors for compatibility with adoption_pets views
     public function getImageAttribute($value)
     {

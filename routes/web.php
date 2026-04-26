@@ -940,7 +940,7 @@ Route::get('/adoption', function (Request $request) {
         }
     }
 
-    $adoptionPets = Pet::where('source_module', 'adoption_pets')->with('traits');
+    $adoptionPets = Pet::availableForAdoption()->with('traits');
 
     $availableBreeds = Pet::where('source_module', 'adoption_pets')
         ->whereNotNull('breed')
@@ -1015,7 +1015,7 @@ Route::get('/adoption/paginate', function (Request $request) {
         }
     }
 
-    $adoptionPets = Pet::where('source_module', 'adoption_pets')->with('traits');
+    $adoptionPets = Pet::availableForAdoption()->with('traits');
 
     $filter = $request->input('filter', 'all');
     $species = $request->input('species', 'all');
