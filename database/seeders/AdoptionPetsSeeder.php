@@ -35,7 +35,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/buster.jpg',
+                'pet_image' => 'images/adoption pets/buster.jpg',
             ],
             [
                 'pet_name' => 'Chase',
@@ -47,7 +47,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/chase.jpg',
+                'pet_image' => 'images/adoption pets/chase.jpg',
             ],
             [
                 'pet_name' => 'Cozmo',
@@ -59,7 +59,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/cozmo.jpg',
+                'pet_image' => 'images/adoption pets/cozmo.jpg',
             ],
             [
                 'pet_name' => 'Oliver',
@@ -71,7 +71,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/oliver.jpg',
+                'pet_image' => 'images/adoption pets/oliver.jpg',
             ],
             [
                 'pet_name' => 'Shadow',
@@ -83,7 +83,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/shadow.jpg',
+                'pet_image' => 'images/adoption pets/shadow.jpg',
             ],
             [
                 'pet_name' => 'James',
@@ -95,7 +95,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/james.jpg',
+                'pet_image' => 'images/adoption pets/james.jpg',
             ],
             [
                 'pet_name' => 'Mark',
@@ -107,7 +107,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/mark.jpg',
+                'pet_image' => 'images/adoption pets/mark.jpg',
             ],
             [
                 'pet_name' => 'Benson',
@@ -119,7 +119,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/benson.jpg',
+                'pet_image' => 'images/adoption pets/benson.jpg',
             ],
 
             // CATS (7)
@@ -133,7 +133,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/bella.jpg',
+                'pet_image' => 'images/adoption pets/bella.jpg',
             ],
             [
                 'pet_name' => 'Daisy',
@@ -145,7 +145,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/daisy.jpg',
+                'pet_image' => 'images/adoption pets/daisy.jpg',
             ],
             [
                 'pet_name' => 'Lottie',
@@ -157,7 +157,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/lottie.jpg',
+                'pet_image' => 'images/adoption pets/lottie.jpg',
             ],
             [
                 'pet_name' => 'Naya',
@@ -169,7 +169,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/naya.jpg',
+                'pet_image' => 'images/adoption pets/naya.jpg',
             ],
             [
                 'pet_name' => 'Leekie',
@@ -181,7 +181,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/leekie.jpg',
+                'pet_image' => 'images/adoption pets/leekie.jpg',
             ],
             [
                 'pet_name' => 'Xioming',
@@ -193,7 +193,7 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/xioming.jpg',
+                'pet_image' => 'images/adoption pets/xioming.jpg',
             ],
             [
                 'pet_name' => 'Smokey',
@@ -205,15 +205,15 @@ class AdoptionPetsSeeder extends Seeder
                 'is_neutered' => false,
                 'is_crossbreed' => false,
                 'vaccination_status' => 'vaccinated',
-                'pet_image' => 'adoption pets/smokey.jpg',
+                'pet_image' => 'images/adoption pets/smokey.jpg',
             ],
         ];
 
         $now = now();
 
         foreach ($pets as $petData) {
-            // Use firstOrCreate to avoid duplicates if seeder re-run
-            $pet = Pet::firstOrCreate(
+            // Use updateOrCreate to ensure existing pets get updated with correct data
+            $pet = Pet::updateOrCreate(
                 ['pet_name' => $petData['pet_name'], 'species' => $petData['species']],
                 array_merge($petData, [
                     'source_module' => 'adoption_pets',

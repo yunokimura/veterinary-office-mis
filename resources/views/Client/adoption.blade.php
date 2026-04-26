@@ -219,18 +219,18 @@
                         </button>
                     </div>
                     
-                    <!-- Gender filters side by side -->
-                    <div class="mt-4">
-                        <p class="text-sm text-gray-500 mb-3">Gender:</p>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="filterPets('gender', 'Male')" class="filter-btn gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="Male" data-filter-type="gender">
-                                ♂ Male
-                            </button>
-                            <button onclick="filterPets('gender', 'Female')" class="filter-btn gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="Female" data-filter-type="gender">
-                                ♀ Female
-                            </button>
+                        <!-- Gender filters side by side -->
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-500 mb-3">Gender:</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="filterPets('gender', 'male')" class="filter-btn gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="male" data-filter-type="gender">
+                                    ♂ Male
+                                </button>
+                                <button onclick="filterPets('gender', 'female')" class="filter-btn gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="female" data-filter-type="gender">
+                                    ♀ Female
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     
                     <!-- Age filters -->
                     <div class="mt-4">
@@ -348,10 +348,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div id="pets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @forelse($adoptionPets as $pet)
-                <button type="button" onclick="openPetModal({{ $pet->adoption_id }})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
+                <button type="button" onclick="openPetModal({{ $pet->pet_id }})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
                     <div class="aspect-square bg-gradient-to-br from-pink-400/20 to-pink-500/30 relative">
                         @if($pet->image)
-                            <img src="{{ asset($pet->image) }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover">
+                            <img src="{{ asset(str_replace(' ', '%20', $pet->image)) }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover">
                         @else
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-pink-500/40 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -363,9 +363,9 @@
                         <h3 class="font-bold text-gray-900">{{ $pet->pet_name }}</h3>
                         <p class="text-sm text-gray-500">{{ $pet->breed }}</p>
                         <div class="flex items-center space-x-3 mt-2 text-xs">
-                            <span class="@if($pet->gender === 'Female') text-pink-500 @else text-blue-500 @endif">{{ $pet->gender === 'Female' ? '♀' : '♂' }} {{ $pet->gender }}</span>
+                            <span class="@if($pet->gender === 'female') text-pink-500 @else text-blue-500 @endif">{{ $pet->gender === 'female' ? '♀' : '♂' }} {{ ucfirst($pet->gender) }}</span>
                             <span class="text-gray-400">•</span>
-                            <span class="text-gray-600">{{ $pet->age ?? 'Age not available' }}</span>
+                            <span class="text-gray-600">{{ $pet->age }} years</span>
                         </div>
                     </div>
                 </button>
@@ -485,7 +485,7 @@
     </div>
 
     <script>
-        let adoptionPets = {!! json_encode($adoptionPets->map(function($pet) { return [ 'adoption_id' => $pet->adoption_id, 'pet_name' => $pet->pet_name, 'species' => $pet->species, 'breed' => $pet->breed, 'gender' => $pet->gender, 'age' => $pet->age, 'date_of_birth' => $pet->date_of_birth, 'is_age_estimated' => $pet->is_age_estimated, 'weight' => $pet->weight, 'description' => $pet->description, 'traits' => $pet->traits->pluck('name')->toArray(), 'image' => $pet->image ]; })) !!};
+        let adoptionPets = {!! json_encode($adoptionPets->map(function($pet) { return [ 'id' => $pet->pet_id, 'pet_name' => $pet->pet_name, 'species' => $pet->species, 'breed' => $pet->breed, 'gender' => $pet->gender, 'age' => $pet->age, 'date_of_birth' => $pet->date_of_birth, 'is_age_estimated' => $pet->is_age_estimated, 'weight' => $pet->weight, 'description' => $pet->description, 'traits' => $pet->traits->pluck('name')->toArray(), 'image' => asset(str_replace(' ', '%20', $pet->image)) ]; })) !!};
         let currentPage = {{ $adoptionPets->currentPage() }};
         let lastPage = {{ $adoptionPets->lastPage() }};
         let currentFilter = 'all';
@@ -887,7 +887,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                            </svg>`;
                     
-                    html += `<button type="button" onclick="openPetModal(${pet.adoption_id})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
+                    html += `<button type="button" onclick="openPetModal(${pet.id})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
                         <div class="aspect-square bg-gradient-to-br from-pink-400/20 to-pink-500/30 relative">
                             ${imageHtml}
                             <span class="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-[#E6F4EA] text-gray-800">${pet.species}</span>
@@ -955,7 +955,7 @@
         }
         
         function openPetModal(petId) {
-            const pet = adoptionPets.find(p => p.adoption_id === petId);
+            const pet = adoptionPets.find(p => p.id === petId);
             if (!pet) return;
             
             document.getElementById('modalPetName').textContent = pet.pet_name;

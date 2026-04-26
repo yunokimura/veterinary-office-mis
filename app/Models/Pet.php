@@ -116,7 +116,7 @@ class Pet extends Model
     public function getAgeAttribute()
     {
         if ($this->birthdate) {
-            return $this->birthdate->diffInYears(now());
+            return (int) $this->birthdate->diffInYears(now());
         }
         if ($this->estimated_age) {
             $num = preg_replace('/\D/', '', $this->estimated_age);
