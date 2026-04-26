@@ -20,14 +20,7 @@ class PetOwner extends Model
         'suffix',
         'phone_number',
         'alternate_phone_number',
-        'blk_lot_ph',
-        'street',
-        'subdivision',
-        'barangay',
-        'city',
-        'province',
         'date_of_birth',
-        'email',
         'address_id',
     ];
 
@@ -51,5 +44,10 @@ class PetOwner extends Model
         return $query->whereHas('user', function ($q) {
             $q->where('status', 'active');
         });
+    }
+
+    public function address()
+    {
+        return $this->morphOne(Address::class, 'addressable');
     }
 }

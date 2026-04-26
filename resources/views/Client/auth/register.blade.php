@@ -232,36 +232,31 @@
                             @enderror
                         </div>
 
-                        <!-- Block/Lot/Phase/House No. -->
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium mb-1.5">
-                                Block/Lot/Phase/House No. <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex rounded-lg border border-gray-300 overflow-hidden focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
-                                <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-gray-300">
-                                    <span class="text-sm text-gray-600 whitespace-nowrap">Blk</span>
-                                </div>
-                                <input type="text" name="block_lot_phase_house_no_1" value="{{ old('block_lot_phase_house_no_1') }}"
-                                       class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                                <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-l border-gray-300">
-                                    <span class="text-sm text-gray-600 whitespace-nowrap">Lot</span>
-                                </div>
-                                <input type="text" name="block_lot_phase_house_no_2" value="{{ old('block_lot_phase_house_no_2') }}"
-                                       class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                                <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-l border-gray-300">
-                                    <span class="text-sm text-gray-600 whitespace-nowrap">Ph</span>
-                                </div>
-                                <input type="text" name="block_lot_phase_house_no_3" value="{{ old('block_lot_phase_house_no_3') }}"
-                                       class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="1" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                                <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-l border-gray-300">
-                                    <span class="text-sm text-gray-600 whitespace-nowrap">House No.</span>
-                                </div>
-                                <input type="text" name="block_lot_phase_house_no_4" value="{{ old('block_lot_phase_house_no_4') }}"
-                                       class="w-full px-2 py-2.5 outline-none bg-white text-center rounded-r-lg" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                            </div>
-                            @error('block_lot_phase_house_no')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                         <!-- Block/Lot/Phase -->
+                         <div class="md:col-span-2">
+                             <label class="block text-sm font-medium mb-1.5">
+                                 Block/Lot/Phase <span class="text-red-500">*</span>
+                             </label>
+                             <div class="flex rounded-lg border border-gray-300 overflow-hidden focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                                 <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-gray-300">
+                                     <span class="text-sm text-gray-600 whitespace-nowrap">Blk</span>
+                                 </div>
+                                 <input type="text" name="block_lot_phase_house_no_1" value="{{ old('block_lot_phase_house_no_1') }}"
+                                        class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                 <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-l border-gray-300">
+                                     <span class="text-sm text-gray-600 whitespace-nowrap">Lot</span>
+                                 </div>
+                                 <input type="text" name="block_lot_phase_house_no_2" value="{{ old('block_lot_phase_house_no_2') }}"
+                                        class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                 <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-l border-gray-300">
+                                     <span class="text-sm text-gray-600 whitespace-nowrap">Ph</span>
+                                 </div>
+                                 <input type="text" name="block_lot_phase_house_no_3" value="{{ old('block_lot_phase_house_no_3') }}"
+                                        class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="1" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                             </div>
+                              @error('block_lot_phase_house_no')
+                                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                              @enderror
                         </div>
 
                         <!-- Street Name -->

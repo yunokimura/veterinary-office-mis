@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Mail\OtpMail;
-use App\Models\User;
+use App\Models\Barangay;
 use App\Models\PetOwner;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Registered;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Carbon\Carbon;
 
 class RegisteredUserController extends Controller
 {
@@ -30,7 +30,7 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
@@ -58,21 +58,29 @@ class RegisteredUserController extends Controller
 
         // Combine block/lot/phase/house no fields
         $houseNo = $request->block_lot_phase_house_no;
-        if (!$houseNo && ($request->block_lot_phase_house_no_1 || $request->block_lot_phase_house_no_2 || $request->block_lot_phase_house_no_3)) {
+        if (! $houseNo && ($request->block_lot_phase_house_no_1 || $request->block_lot_phase_house_no_2 || $request->block_lot_phase_house_no_3)) {
             $parts = [];
-            if ($request->block_lot_phase_house_no_1) $parts[] = 'Blk ' . $request->block_lot_phase_house_no_1;
-            if ($request->block_lot_phase_house_no_2) $parts[] = 'Lot ' . $request->block_lot_phase_house_no_2;
-            if ($request->block_lot_phase_house_no_3) $parts[] = 'Ph ' . $request->block_lot_phase_house_no_3;
-            if ($request->block_lot_phase_house_no_4) $parts[] = '# ' . $request->block_lot_phase_house_no_4;
+            if ($request->block_lot_phase_house_no_1) {
+                $parts[] = 'Blk '.$request->block_lot_phase_house_no_1;
+            }
+            if ($request->block_lot_phase_house_no_2) {
+                $parts[] = 'Lot '.$request->block_lot_phase_house_no_2;
+            }
+            if ($request->block_lot_phase_house_no_3) {
+                $parts[] = 'Ph '.$request->block_lot_phase_house_no_3;
+            }
+            if ($request->block_lot_phase_house_no_4) {
+                $parts[] = '# '.$request->block_lot_phase_house_no_4;
+            }
             $houseNo = implode(' ', $parts);
         }
 
-        if (!$houseNo) {
+        if (! $houseNo) {
             return back()->withErrors(['block_lot_phase_house_no' => 'Block/Lot/Phase is required']);
         }
 
         // Combine date of birth
-        $dateOfBirth = $request->dob_year . '-' . str_pad($request->dob_month, 2, '0', STR_PAD_LEFT) . '-' . str_pad($request->dob_day, 2, '0', STR_PAD_LEFT);
+        $dateOfBirth = $request->dob_year.'-'.str_pad($request->dob_month, 2, '0', STR_PAD_LEFT).'-'.str_pad($request->dob_day, 2, '0', STR_PAD_LEFT);
 
         // Create user with 'pet_owner' role (using Spatie)
         $user = User::create([
@@ -89,7 +97,7 @@ class RegisteredUserController extends Controller
         $user->assignRole('pet_owner');
 
         // Create pet owner profile
-        PetOwner::create([
+        $petOwner = PetOwner::create([
             'user_id' => $user->id,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -97,23 +105,27 @@ class RegisteredUserController extends Controller
             'suffix' => $request->suffix,
             'phone_number' => $request->phone_number,
             'alternate_phone_number' => $request->alternate_phone_number,
-            'blk_lot_ph' => $houseNo,
+            'date_of_birth' => $dateOfBirth,
+        ]);
+
+        // Create address for the pet owner
+        $barangay = Barangay::where('barangay_name', $request->barangay)->first();
+        $petOwner->address()->create([
+            'block_lot_phase' => $houseNo,
             'street' => $request->street_name,
             'subdivision' => $request->subdivision,
-            'barangay' => $request->barangay,
+            'barangay_id' => $barangay ? $barangay->barangay_id : null,
             'city' => 'Dasmariñas City',
             'province' => 'Cavite',
-            'date_of_birth' => $dateOfBirth,
-            'email' => $request->email,
         ]);
 
         // Generate OTP
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        
+
         // Save OTP to user (expires in 10 minutes)
         $user->update([
             'otp_code' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(10)
+            'otp_expires_at' => Carbon::now()->addMinutes(10),
         ]);
 
         // Send OTP email
