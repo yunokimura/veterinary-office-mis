@@ -167,110 +167,134 @@
     <!-- Announcement / Campaign Section -->
     <section class="py-16 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Low-cost Kapon Program -->
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8 card-hover">
-                <div class="md:flex">
-                    <div class="md:w-2/3 p-8">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <span class="bg-primary/10 text-primary text-sm font-medium px-3 py-1 rounded-full">Upcoming Event</span>
-                                <h2 class="text-2xl font-bold text-gray-900 mt-1">Low-cost Kapon Program</h2>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-6">Free spay/neuter services for qualified pet owners. Help control the pet population and give your furry friends a healthier life.</p>
-                        <div class="grid sm:grid-cols-3 gap-4">
-                            <div class="flex items-center space-x-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span class="text-gray-700">February 15, 2025</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <span class="text-gray-700">City Veterinary Office</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="text-gray-700">8:00 AM - 4:00 PM</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:w-1/3 bg-primary/5 p-8 flex flex-col justify-center items-center text-center">
-                        <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <p class="text-primary font-semibold text-lg">Limited Slots Available!</p>
-                        <p class="text-gray-600 text-sm mt-2">Pre-registration required</p>
-                        <button class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
-                            Register Now
-                        </button>
-                    </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
+                Latest Updates & Programs
+            </h2>
+            
+            @if($announcements && $announcements->count() > 0)
+                <div class="space-y-8">
+                    @foreach($announcements as $announcement)
+                        @include('components.campaign-card', ['announcement' => $announcement])
+                    @endforeach
                 </div>
-            </div>
+                
+                <!-- View All Button -->
+                <div class="text-center mt-10">
+                    <a href="{{ route('announcements.public.index') }}"
+                       class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors shadow-lg">
+                        View All Announcements
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+            @else
+                <!-- Fallback: Static content if no announcements -->
+                <div class="space-y-8">
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
+                        <div class="md:flex">
+                            <div class="md:w-2/3 p-8">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="bg-primary/10 text-primary text-sm font-medium px-3 py-1 rounded-full">Upcoming Event</span>
+                                        <h2 class="text-2xl font-bold text-gray-900 mt-1">Low-cost Kapon Program</h2>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-6">Free spay/neuter services for qualified pet owners. Help control the pet population and give your furry friends a healthier life.</p>
+                                <div class="grid sm:grid-cols-3 gap-4">
+                                    <div class="flex items-center space-x-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span class="text-gray-700">February 15, 2025</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        <span class="text-gray-700">City Veterinary Office</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span class="text-gray-700">8:00 AM - 4:00 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="md:w-1/3 bg-primary/5 p-8 flex flex-col justify-center items-center text-center">
+                                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <p class="text-primary font-semibold text-lg">Limited Slots Available!</p>
+                                <p class="text-gray-600 text-sm mt-2">Pre-registration required</p>
+                                <button class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                                    Register Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Discounted Rabies Vaccination -->
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
-                <div class="md:flex">
-                    <div class="md:w-2/3 p-8">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
+                        <div class="md:flex">
+                            <div class="md:w-2/3 p-8">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="bg-secondary/10 text-secondary text-sm font-medium px-3 py-1 rounded-full">Limited Time Offer</span>
+                                        <h2 class="text-2xl font-bold text-gray-900 mt-1">Discounted Rabies Vaccination</h2>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-6">Protect your pets and community with our affordable rabies vaccination program. Rabies vaccination is required by law and essential for public health.</p>
+                                <div class="flex flex-wrap gap-4">
+                                    <div class="flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span class="text-gray-700">50% OFF regular price</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span class="text-gray-700">Free certificate</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span class="text-gray-700">Valid for 1 year</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <span class="bg-secondary/10 text-secondary text-sm font-medium px-3 py-1 rounded-full">Limited Time Offer</span>
-                                <h2 class="text-2xl font-bold text-gray-900 mt-1">Discounted Rabies Vaccination</h2>
+                            <div class="md:w-1/3 bg-secondary/5 p-8 flex flex-col justify-center items-center text-center">
+                                <div class="w-20 h-20 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <p class="text-secondary font-bold text-3xl">₱150</p>
+                                <p class="text-gray-600 text-sm mt-1">Regular price: ₱300</p>
+                                <button class="mt-4 bg-secondary text-white px-6 py-2 rounded-lg font-medium hover:bg-secondary-light transition-colors">
+                                    Book Appointment
+                                </button>
                             </div>
                         </div>
-                        <p class="text-gray-600 mb-6">Protect your pets and community with our affordable rabies vaccination program. Rabies vaccination is required by law and essential for public health.</p>
-                        <div class="flex flex-wrap gap-4">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700">50% OFF regular price</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700">Free certificate</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700">Valid for 1 year</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:w-1/3 bg-secondary/5 p-8 flex flex-col justify-center items-center text-center">
-                        <div class="w-20 h-20 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <p class="text-secondary font-bold text-3xl">₱150</p>
-                        <p class="text-gray-600 text-sm mt-1">Regular price: ₱300</p>
-                        <button class="mt-4 bg-secondary text-white px-6 py-2 rounded-lg font-medium hover:bg-secondary-light transition-colors">
-                            Book Appointment
-                        </button>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </section>
 
@@ -334,54 +358,73 @@
         </div>
     </section>
 
-    <!-- Recent Campaign Section -->
+    <!-- Featured Campaign Section -->
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Recent Campaign</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Our commitment to serving the community extends beyond our office walls. See our recent outreach programs.</p>
-            </div>
+            @php
+                // Get first active announcement for featured section
+                $featuredAnnouncement = $announcements->first();
+            @endphp
             
-            <div class="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-3xl overflow-hidden shadow-lg">
-                <div class="md:flex">
-                    <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-md mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+            @if($featuredAnnouncement)
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        Featured {{ ucfirst($featuredAnnouncement->category) }}
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        {{ \Illuminate\Support\Str::limit(strip_tags($featuredAnnouncement->content), 120) }}
+                    </p>
+                </div>
+                
+                @include('components.featured-campaign-card', ['announcement' => $featuredAnnouncement])
+            @else
+                <!-- Fallback static content -->
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Recent Program</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Check our latest programs and initiatives for the community.</p>
+                </div>
+                
+                <div class="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-3xl overflow-hidden shadow-lg">
+                    <div class="md:flex">
+                        <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-md mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Barangay Veterinary Outreach Program</h3>
+                            <p class="text-gray-600 text-lg mb-6">Our team visited multiple barangays to provide free veterinary services, including pet check-ups, vaccinations, and health education for pet owners.</p>
+                            <div class="flex flex-wrap gap-4">
+                                <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <span class="text-gray-700">500+ Pets Treated</span>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    </svg>
+                                    <span class="text-gray-700">12 Barangays Visited</span>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                    </svg>
+                                    <span class="text-gray-700">1,200+ Residents Served</span>
+                                </div>
+                            </div>
                         </div>
-                        <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Barangay Veterinary Outreach Program</h3>
-                        <p class="text-gray-600 text-lg mb-6">Our team visited multiple barangays to provide free veterinary services, including pet check-ups, vaccinations, and health education for pet owners. We believe that accessible veterinary care is key to a healthier community.</p>
-                        <div class="flex flex-wrap gap-4">
-                            <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700">500+ Pets Treated</span>
-                            </div>
-                            <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                </svg>
-                                <span class="text-gray-700">12 Barangays Visited</span>
-                            </div>
-                            <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                                <span class="text-gray-700">1,200+ Residents Served</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:w-1/2 flex items-center justify-center p-8">
-                        <div class="relative w-full max-w-lg">
-                            <div class="aspect-video bg-white rounded-2xl shadow-xl overflow-hidden">
-                                <img src="{{ asset('images/recentcamp.jpg') }}" alt="Barangay Veterinary Outreach Program" class="w-full h-full object-cover">
+                        <div class="md:w-1/2 flex items-center justify-center p-8">
+                            <div class="relative w-full max-w-lg">
+                                <div class="aspect-video bg-white rounded-2xl shadow-xl overflow-hidden">
+                                    <img src="{{ asset('images/recentcamp.jpg') }}" alt="Barangay Veterinary Outreach Program" class="w-full h-full object-cover">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </section>
 
