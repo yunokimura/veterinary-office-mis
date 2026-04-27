@@ -57,7 +57,7 @@
                 @enderror
             </div>
 
-            <!-- Category & Is Active Row -->
+            <!-- Category & Status Row -->
             <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Category -->
                 <div>
@@ -78,27 +78,28 @@
                     @enderror
                 </div>
 
-                <!-- Is Active -->
+                <!-- Status -->
                 <div>
-                    <label for="is_active" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="bi bi-toggle-on me-1 text-green-600"></i>Status
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="bi bi-toggle-on me-1 text-green-600"></i>Status <span class="text-red-500">*</span>
                     </label>
-                    <div class="flex items-center mt-2">
-                        <input type="checkbox"
-                               id="is_active"
-                               name="is_active"
-                               value="1"
-                               {{ old('is_active', 1) ? 'checked' : '' }}
-                               class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500">
-                        <label for="is_active" class="ml-2 text-sm text-gray-600">Active (published)</label>
-                    </div>
-                    @error('is_active')
+                    <select class="w-full px-4 py-3 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 @error('status') border-red-500 @enderror"
+                            id="status"
+                            name="status"
+                            required
+                            style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+                        <option value="">Select status</option>
+                        <option value="Draft" {{ old('status', 'Draft') == 'Draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="Published" {{ old('status') == 'Published' ? 'selected' : '' }}>Published</option>
+                        <option value="Archived" {{ old('status') == 'Archived' ? 'selected' : '' }}>Archived</option>
+                    </select>
+                    @error('status')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
-            <!-- Event Details Row (conditional) -->
+             <!-- Event Details Row (conditional) -->
             <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 event-fields @if(old('category') != 'event') hidden @endif">
                 <!-- Event Date -->
                 <div>
@@ -174,14 +175,20 @@
                     <label for="contact_number" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="bi bi-telephone me-1 text-green-600"></i>Contact Number
                     </label>
-                    <input type="tel"
-                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('contact_number') border-red-500 @enderror"
-                           id="contact_number"
-                           name="contact_number"
-                           value="{{ old('contact_number') }}"
-                           placeholder="Enter contact number"
-                           maxlength="11"
-                           pattern="[0-9]*">
+                    <div class="flex">
+                        <span class="inline-flex items-center px-4 py-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">+63</span>
+                        <input type="tel"
+                               class="w-full px-4 py-3 rounded-r-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('contact_number') border-red-500 @enderror"
+                               id="contact_number"
+                               name="contact_number"
+                               value="{{ old('contact_number') }}"
+                               placeholder="943 210 2012"
+                               maxlength="12"
+                               pattern="[0-9\s]{12}"
+                               inputmode="numeric"
+                               onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                               oninput="this.value = this.value.replace(/\D/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3').trim()">
+                    </div>
                     @error('contact_number')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -363,11 +370,19 @@
         preview.classList.add('hidden');
     }
 
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        // Trigger category change to set initial state
-        document.getElementById('category').dispatchEvent(new Event('change'));
-    });
-</script>
+     // Initialize on page load
+     document.addEventListener('DOMContentLoaded', function() {
+         // Trigger category change to set initial state
+         document.getElementById('category').dispatchEvent(new Event('change'));
+     });
+
+     // Strip spaces from contact_number before form submission
+     document.getElementById('announcementForm').addEventListener('submit', function() {
+         const contactInput = document.getElementById('contact_number');
+         if (contactInput && contactInput.value) {
+             contactInput.value = contactInput.value.replace(/\s/g, '');
+         }
+     });
+ </script>
 @endpush
 @endsection

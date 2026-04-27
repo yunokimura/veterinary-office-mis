@@ -109,11 +109,13 @@ class AnnouncementController extends Controller
             'content' => 'required|string',
             'category' => 'required|in:campaign,event',
             'is_active' => 'nullable|boolean',
+            'status' => 'required|in:Draft,Published,Archived',
             'event_date' => 'nullable|required_if:category,event|date',
             'event_time' => 'nullable',
             'location' => 'nullable|required_if:category,event|string|max:255',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
-            'contact_number' => 'nullable|string|max:15',
+            'contact_number' => 'nullable|string|max:11',
+            'organized_by' => 'required|string|max:255',
             'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'attachment_path' => 'nullable|mimes:pdf|max:5120',
         ]);
@@ -123,6 +125,16 @@ class AnnouncementController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
+
+        $data = $validator->validated();
+
+        // Sanitize contact_number: strip spaces
+        if (isset($data['contact_number'])) {
+            $data['contact_number'] = str_replace(' ', '', $data['contact_number']);
+        }
+
+        // Sync is_active based on status
+        $data['is_active'] = ($data['status'] === 'Published');
 
         $photoPath = null;
         if ($request->hasFile('photo_path')) {
@@ -135,7 +147,7 @@ class AnnouncementController extends Controller
         }
 
         $announcement = Announcement::create(array_merge(
-            $validator->validated(),
+            $data,
             [
                 'photo_path' => $photoPath,
                 'attachment_path' => $attachmentPath,
@@ -163,11 +175,13 @@ class AnnouncementController extends Controller
             'content' => 'required|string',
             'category' => 'required|in:campaign,event',
             'is_active' => 'nullable|boolean',
+            'status' => 'required|in:Draft,Published,Archived',
             'event_date' => 'nullable|required_if:category,event|date',
             'event_time' => 'nullable',
             'location' => 'nullable|required_if:category,event|string|max:255',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
-            'contact_number' => 'nullable|string|max:15',
+            'contact_number' => 'nullable|string|max:11',
+            'organized_by' => 'required|string|max:255',
             'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'attachment_path' => 'nullable|mimes:pdf|max:5120',
         ]);
@@ -179,6 +193,14 @@ class AnnouncementController extends Controller
         }
 
         $data = $validator->validated();
+
+        // Sanitize contact_number: strip spaces
+        if (isset($data['contact_number'])) {
+            $data['contact_number'] = str_replace(' ', '', $data['contact_number']);
+        }
+
+        // Sync is_active based on status
+        $data['is_active'] = ($data['status'] === 'Published');
 
         if ($request->hasFile('photo_path')) {
             if ($announcement->photo_path) {

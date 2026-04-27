@@ -70,6 +70,7 @@ class Announcement extends Model
         'photo_path',
         'category',
         'is_active',
+        'status',
         'event_date',
         'event_time',
         'location',

@@ -59,10 +59,10 @@
                                             <i class="bi bi-megaphone text-green-600 text-xl"></i>
                                         </div>
                                     @endif
-                                    <div>
-                                        <p class="font-medium text-gray-800">{{ $announcement->title }}</p>
-                                        <p class="text-sm text-gray-500 truncate max-w-xs">{{ Str::limit($announcement->description, 50) }}</p>
-                                    </div>
+                                     <div>
+                                         <p class="font-medium text-gray-800">{{ $announcement->title }}</p>
+                                         <p class="text-sm text-gray-500 truncate max-w-xs">{{ Str::limit($announcement->content, 50) }}</p>
+                                     </div>
                                 </div>
                             </td>
                             <td class="px-4 py-4">
