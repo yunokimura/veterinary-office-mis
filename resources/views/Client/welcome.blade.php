@@ -593,18 +593,21 @@
                 hideLoginModal();
             }
         });
-        function toggleDropdown() {
-            document.getElementById('userDropdown').classList.toggle('hidden');
-        }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('userDropdown');
-            const button = event.target.closest('button');
-            if (dropdown && !button && !dropdown.contains(event.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('userDropdown');
+    const button = event.target.closest('button');
+    if (dropdown && !button && !dropdown.contains(event.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
     </script>
     
     <!-- Missing Pet Detail Modal -->
@@ -758,9 +761,11 @@
         // Close modal when clicking outside
         document.addEventListener('click', function(event) {
             const modal = document.getElementById('petDetailModal');
-            const overlay = modal.querySelector('.fixed.inset-0');
-            if (overlay && event.target === overlay) {
-                hidePetModal();
+            if (modal) {
+                const overlay = modal.querySelector('.fixed.inset-0');
+                if (overlay && event.target === overlay) {
+                    hidePetModal();
+                }
             }
         });
         
