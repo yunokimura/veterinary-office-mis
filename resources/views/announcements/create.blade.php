@@ -73,27 +73,44 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
+
+            <!-- Location Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <!-- Barangay -->
+                <div>
+                    <label for="barangay" class="block text-sm font-medium text-gray-700 mb-2">Barangay <span class="text-red-500">*</span></label>
+                    <select name="barangay" id="barangay" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('barangay') border-red-500 @enderror" required>
+                        <option value="">Select barangay</option>
+                        <option value="poblacion" {{ old('barangay') == 'poblacion' ? 'selected' : '' }}>Poblacion</option>
+                        <option value="san-antonio" {{ old('barangay') == 'san-antonio' ? 'selected' : '' }}>San Antonio</option>
+                        <option value="san-jose" {{ old('barangay') == 'san-jose' ? 'selected' : '' }}>San Jose</option>
+                        <option value="san-juan" {{ old('barangay') == 'san-juan' ? 'selected' : '' }}>San Juan</option>
+                        <option value="san-nicolas" {{ old('barangay') == 'san-nicolas' ? 'selected' : '' }}>San Nicolas</option>
+                    </select>
+                    @error('barangay')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
                 <!-- Location -->
                 <div>
-                    <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Location (Optional)</label>
+                    <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Location <span class="text-red-500">*</span></label>
                     <input type="text" name="location" id="location" value="{{ old('location') }}" 
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('location') border-red-500 @enderror"
-                        placeholder="Enter event location">
+                        placeholder="Enter event location" required>
                     @error('location')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-            </div>
 
-            <!-- Additional Event Details -->
-            <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mb-6">
                 <!-- Contact Number -->
                 <div>
-                    <label for="contact_number" class="block text-sm font-medium text-gray-700 mb-2">Contact Number (Optional)</label>
-                    <input type="text" name="contact_number" id="contact_number" value="{{ old('contact_number') }}" 
+                    <label for="contact_number" class="block text-sm font-medium text-gray-700 mb-2">Contact Number <span class="text-red-500">*</span></label>
+                    <input type="tel" name="contact_number" id="contact_number" value="{{ old('contact_number') }}" 
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('contact_number') border-red-500 @enderror"
-                        placeholder="Enter contact number">
+                        placeholder="Enter contact number" required maxlength="11" pattern="[0-9]*">
                     @error('contact_number')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -158,4 +175,45 @@
         </form>
     </div>
 </div>
+
+<script>
+    // File upload preview functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Photo upload preview
+        const photoInput = document.getElementById('photo_path');
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+                const photoLabel = this.nextElementSibling.querySelector('p:nth-child(2)');
+                if (photoLabel) {
+                    photoLabel.textContent = fileName;
+                    // Change color if file is selected
+                    if (fileName !== 'No file selected') {
+                        photoLabel.style.color = '#059669'; // green-600
+                    } else {
+                        photoLabel.style.color = '#6b7280'; // gray-500
+                    }
+                }
+            });
+        }
+
+        // Attachment upload preview
+        const attachmentInput = document.getElementById('attachment_path');
+        if (attachmentInput) {
+            attachmentInput.addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+                const attachmentLabel = this.nextElementSibling.querySelector('p:nth-child(2)');
+                if (attachmentLabel) {
+                    attachmentLabel.textContent = fileName;
+                    // Change color if file is selected
+                    if (fileName !== 'No file selected') {
+                        attachmentLabel.style.color = '#059669'; // green-600
+                    } else {
+                        attachmentLabel.style.color = '#6b7280'; // gray-500
+                    }
+                }
+            });
+        }
+    });
+</script>
 @endsection
