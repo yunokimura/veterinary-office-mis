@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
+use App\Models\PetOwner;
 use App\Models\SystemLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -69,7 +71,23 @@ class SystemLogController extends Controller
             ->filter(fn ($a) => $a && trim($a) !== '')
             ->sort()
             ->values();
-        $users = User::orderBy('name')->pluck('name', 'id');
+
+        // Get users from admins table
+        $adminUsers = Admin::selectRaw('user_id as id, CONCAT_WS(" ", first_name, middle_name, last_name) as name')
+            ->whereNotNull('first_name')
+            ->orderByRaw('CONCAT_WS(" ", first_name, middle_name, last_name)')
+            ->get();
+
+        // Get users from pet_owners table
+        $petOwnerUsers = PetOwner::selectRaw('user_id as id, CONCAT_WS(" ", first_name, middle_name, last_name) as name')
+            ->whereNotNull('first_name')
+            ->orderByRaw('CONCAT_WS(" ", first_name, middle_name, last_name)')
+            ->get();
+
+        // Combine and sort by name, then pluck for dropdown
+        $users = $adminUsers->concat($petOwnerUsers)
+            ->sortBy('name')
+            ->pluck('name', 'id');
 
         return view('admin.system-logs.index', compact('logs', 'modules', 'actions', 'users'));
     }
