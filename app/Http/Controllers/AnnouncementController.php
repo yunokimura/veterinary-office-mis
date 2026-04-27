@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\Barangay;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -13,13 +15,15 @@ class AnnouncementController extends Controller
     private function canManage()
     {
         $user = Auth::user();
+
         return $user && $user->hasAnyRole(['super_admin', 'city_vet', 'admin_asst', 'admin_staff']);
     }
 
     private function getAdminRedirectRoute()
     {
         $role = Auth::user()->getRoleAttribute();
-        return match($role) {
+
+        return match ($role) {
             'super_admin' => 'super-admin.announcements.index',
             'city_vet' => 'admin.announcements.index',
             'admin_asst', 'admin_staff' => 'admin-staff.announcements.index',
@@ -40,7 +44,7 @@ class AnnouncementController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         $announcements = $query->orderBy('created_at', 'desc')->paginate(15);
@@ -58,7 +62,7 @@ class AnnouncementController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         $campaigns = $query->orderBy('created_at', 'desc')->paginate(15);
@@ -76,7 +80,7 @@ class AnnouncementController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         $events = $query->orderBy('event_date', 'asc')->paginate(15);
@@ -93,7 +97,9 @@ class AnnouncementController extends Controller
 
     public function create()
     {
-        return view('announcements.create');
+        $barangays = Barangay::orderBy('barangay_name')->get();
+
+        return view('announcements.create', compact('barangays'));
     }
 
     public function store(Request $request)
@@ -106,6 +112,7 @@ class AnnouncementController extends Controller
             'event_date' => 'nullable|required_if:category,event|date',
             'event_time' => 'nullable',
             'location' => 'nullable|required_if:category,event|string|max:255',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'contact_number' => 'nullable|string|max:15',
             'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'attachment_path' => 'nullable|mimes:pdf|max:5120',
@@ -127,7 +134,7 @@ class AnnouncementController extends Controller
             $attachmentPath = $request->file('attachment_path')->store('announcements', 'public');
         }
 
-        Announcement::create(array_merge(
+        $announcement = Announcement::create(array_merge(
             $validator->validated(),
             [
                 'photo_path' => $photoPath,
@@ -136,7 +143,7 @@ class AnnouncementController extends Controller
             ]
         ));
 
-        \App\Services\NotificationService::announcementCreated(Announcement::latest()->first()->id);
+        NotificationService::announcementCreated($announcement->id);
 
         return redirect()->route('announcements.index')
             ->with('success', 'Announcement created successfully.');
@@ -144,7 +151,9 @@ class AnnouncementController extends Controller
 
     public function edit(Announcement $announcement)
     {
-        return view('announcements.edit', compact('announcement'));
+        $barangays = Barangay::orderBy('barangay_name')->get();
+
+        return view('announcements.edit', compact('announcement', 'barangays'));
     }
 
     public function update(Request $request, Announcement $announcement)
@@ -157,6 +166,7 @@ class AnnouncementController extends Controller
             'event_date' => 'nullable|required_if:category,event|date',
             'event_time' => 'nullable',
             'location' => 'nullable|required_if:category,event|string|max:255',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'contact_number' => 'nullable|string|max:15',
             'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'attachment_path' => 'nullable|mimes:pdf|max:5120',
@@ -209,8 +219,8 @@ class AnnouncementController extends Controller
     {
         $announcement->load('createdBy');
 
-        $view = $announcement->category === 'event' 
-            ? 'public.events.show' 
+        $view = $announcement->category === 'event'
+            ? 'public.events.show'
             : 'public.campaigns.show';
 
         return view($view, compact('announcement'));
