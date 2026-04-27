@@ -4,6 +4,44 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $inventory_item_id
+ * @property int $user_id
+ * @property string $movement_type
+ * @property int $quantity
+ * @property int $previous_quantity
+ * @property int $new_quantity
+ * @property string|null $reference_number
+ * @property string|null $remarks
+ * @property \Illuminate\Support\Carbon $movement_date
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $formatted_type
+ * @property-read mixed $type_badge
+ * @property-read \App\Models\InventoryItem $inventoryItem
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement adjustment()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement dateRange($startDate, $endDate)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement stockIn()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement stockOut()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereInventoryItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereMovementDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereMovementType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereNewQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement wherePreviousQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereRemarks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockMovement whereUserId($value)
+ * @mixin \Eloquent
+ */
 class StockMovement extends Model
 {
     /**

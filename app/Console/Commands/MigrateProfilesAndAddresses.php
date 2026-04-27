@@ -188,34 +188,14 @@ class MigrateProfilesAndAddresses extends Command
             $barangayId = null;
             if ($po->barangay) {
                 $key = strtolower(trim($po->barangay));
-                if (!isset($barangayCache[$key])) {
+                if (! isset($barangayCache[$key])) {
                     $brgy = Barangay::whereRaw('LOWER(barangay_name) LIKE ?', ["%{$key}%"])->first();
                     $barangayCache[$key] = $brgy?->barangay_id;
                 }
                 $barangayId = $barangayCache[$key];
             }
 
-            $address = Address::create([
-                'addressable_type' => 'pet_owner',
-                'addressable_id' => $po->owner_id,
-                'block_lot_phase' => $po->blk_lot_ph,
-                'street' => $po->street,
-                'subdivision' => $po->subdivision,
-                'barangay_id' => $barangayId,
-                // ⭐ NEW: Copy city and province
-                'city' => $po->city,      // Now stored in addresses.city
-                'province' => $po->province, // Now stored in addresses.province
-                'postal_code' => null,
-                'is_primary' => true,
-            ]);
-
-            $po->update(['address_id' => $address->id]);
-            $updated++;
-            $this->line("  Set address_id {$address->id} for pet_owner {$po->owner_id} (city: {$po->city}, province: {$po->province})");
-        }
-                    $barangayId = $barangayCache[$key];
-                }
-
+            try {
                 $address = Address::create([
                     'addressable_type' => 'pet_owner',
                     'addressable_id' => $po->owner_id,
@@ -223,14 +203,16 @@ class MigrateProfilesAndAddresses extends Command
                     'street' => $po->street,
                     'subdivision' => $po->subdivision,
                     'barangay_id' => $barangayId,
-                    'city' => $po->city,
-                    'province' => $po->province,
+                    // ⭐ NEW: Copy city and province
+                    'city' => $po->city,      // Now stored in addresses.city
+                    'province' => $po->province, // Now stored in addresses.province
                     'postal_code' => null,
                     'is_primary' => true,
                 ]);
 
                 $po->update(['address_id' => $address->id]);
                 $created++;
+                $this->line("  Set address_id {$address->id} for pet_owner {$po->owner_id} (city: {$po->city}, province: {$po->province})");
             } catch (Exception $e) {
                 $this->warn("  Failed to create address for pet_owner ID {$po->owner_id}: ".$e->getMessage());
                 $skipped++;

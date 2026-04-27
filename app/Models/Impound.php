@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @deprecated Scheduled for deletion 2026-05-24
+ * @property-read \App\Models\User|null $capturedBy
+ * @property-read \App\Models\Pet|null $pet
+ * @property-read \App\Models\StrayReport|null $strayReport
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Impound newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Impound newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Impound query()
+ * @mixin \Eloquent
  */
 class Impound extends Model
 {

@@ -10,6 +10,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @deprecated Scheduled for deletion 2026-05-24
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AdoptionRequest> $adoptionRequests
+ * @property-read int|null $adoption_requests_count
+ * @property-read \App\Models\User|null $approvedBy
+ * @property-read \App\Models\Barangay|null $barangay
+ * @property-read \App\Models\User|null $recordedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ImpoundStatusHistory> $statusHistory
+ * @property-read int|null $status_history_count
+ * @property-read \App\Models\StrayReport|null $strayReport
+ * @method static Builder<static>|ImpoundRecord approved()
+ * @method static Builder<static>|ImpoundRecord closed()
+ * @method static Builder<static>|ImpoundRecord impounded()
+ * @method static Builder<static>|ImpoundRecord newModelQuery()
+ * @method static Builder<static>|ImpoundRecord newQuery()
+ * @method static Builder<static>|ImpoundRecord pending()
+ * @method static Builder<static>|ImpoundRecord query()
+ * @mixin \Eloquent
  */
 class ImpoundRecord extends Model
 {

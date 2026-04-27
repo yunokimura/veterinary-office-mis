@@ -5,6 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $series_id
+ * @property string $series_name
+ * @property int $year
+ * @property int $last_number
+ * @property string $prefix
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries whereLastNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries wherePrefix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries whereSeriesId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries whereSeriesName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CertificateSeries whereYear($value)
+ * @mixin \Eloquent
+ */
 class CertificateSeries extends Model
 {
     use HasFactory;

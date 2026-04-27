@@ -7,6 +7,87 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @property int $id
+ * @property string $status
+ * @property string $report_number
+ * @property string $patient_name
+ * @property string|null $patient_first_name
+ * @property string|null $patient_middle_name
+ * @property string|null $patient_suffix
+ * @property int $age
+ * @property string $gender
+ * @property string|null $patient_address
+ * @property string|null $patient_contact
+ * @property string|null $patient_barangay
+ * @property int|null $barangay_id
+ * @property string|null $incident_barangay
+ * @property string|null $exact_location
+ * @property \Illuminate\Support\Carbon $incident_date
+ * @property string $exposure_type
+ * @property string|null $bite_site
+ * @property string $category
+ * @property string $animal_type
+ * @property string $animal_status
+ * @property string $vaccination_status
+ * @property string|null $animal_owner_name
+ * @property string|null $animal_owner_contact
+ * @property int|null $reported_by
+ * @property string|null $reporting_facility
+ * @property string|null $date_reported
+ * @property array<array-key, mixed>|null $wound_management
+ * @property string|null $post_exposure_prophylaxis
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $user_id
+ * @property-read \App\Models\Barangay|null $barangay
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Notification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \App\Models\Barangay|null $patientBarangay
+ * @property-read \App\Models\User|null $reportedBy
+ * @method static Builder<static>|BiteRabiesReport byAnimalType(string $type)
+ * @method static Builder<static>|BiteRabiesReport byBarangay(int $barangayId)
+ * @method static Builder<static>|BiteRabiesReport byCategory(string $category)
+ * @method static Builder<static>|BiteRabiesReport byDateRange(string $from, string $to)
+ * @method static Builder<static>|BiteRabiesReport newModelQuery()
+ * @method static Builder<static>|BiteRabiesReport newQuery()
+ * @method static Builder<static>|BiteRabiesReport query()
+ * @method static Builder<static>|BiteRabiesReport whereAge($value)
+ * @method static Builder<static>|BiteRabiesReport whereAnimalOwnerContact($value)
+ * @method static Builder<static>|BiteRabiesReport whereAnimalOwnerName($value)
+ * @method static Builder<static>|BiteRabiesReport whereAnimalStatus($value)
+ * @method static Builder<static>|BiteRabiesReport whereAnimalType($value)
+ * @method static Builder<static>|BiteRabiesReport whereBarangayId($value)
+ * @method static Builder<static>|BiteRabiesReport whereBiteSite($value)
+ * @method static Builder<static>|BiteRabiesReport whereCategory($value)
+ * @method static Builder<static>|BiteRabiesReport whereCreatedAt($value)
+ * @method static Builder<static>|BiteRabiesReport whereDateReported($value)
+ * @method static Builder<static>|BiteRabiesReport whereExactLocation($value)
+ * @method static Builder<static>|BiteRabiesReport whereExposureType($value)
+ * @method static Builder<static>|BiteRabiesReport whereGender($value)
+ * @method static Builder<static>|BiteRabiesReport whereId($value)
+ * @method static Builder<static>|BiteRabiesReport whereIncidentBarangay($value)
+ * @method static Builder<static>|BiteRabiesReport whereIncidentDate($value)
+ * @method static Builder<static>|BiteRabiesReport whereNotes($value)
+ * @method static Builder<static>|BiteRabiesReport wherePatientAddress($value)
+ * @method static Builder<static>|BiteRabiesReport wherePatientBarangay($value)
+ * @method static Builder<static>|BiteRabiesReport wherePatientContact($value)
+ * @method static Builder<static>|BiteRabiesReport wherePatientFirstName($value)
+ * @method static Builder<static>|BiteRabiesReport wherePatientMiddleName($value)
+ * @method static Builder<static>|BiteRabiesReport wherePatientName($value)
+ * @method static Builder<static>|BiteRabiesReport wherePatientSuffix($value)
+ * @method static Builder<static>|BiteRabiesReport wherePostExposureProphylaxis($value)
+ * @method static Builder<static>|BiteRabiesReport whereReportNumber($value)
+ * @method static Builder<static>|BiteRabiesReport whereReportedBy($value)
+ * @method static Builder<static>|BiteRabiesReport whereReportingFacility($value)
+ * @method static Builder<static>|BiteRabiesReport whereStatus($value)
+ * @method static Builder<static>|BiteRabiesReport whereUpdatedAt($value)
+ * @method static Builder<static>|BiteRabiesReport whereUserId($value)
+ * @method static Builder<static>|BiteRabiesReport whereVaccinationStatus($value)
+ * @method static Builder<static>|BiteRabiesReport whereWoundManagement($value)
+ * @mixin \Eloquent
+ */
 class BiteRabiesReport extends Model
 {
     protected $table = 'bite_rabies_reports';

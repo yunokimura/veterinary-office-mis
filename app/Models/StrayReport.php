@@ -6,6 +6,45 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property int $stray_report_id
+ * @property int $barangay_id
+ * @property int|null $reported_by_user_id
+ * @property string $report_type
+ * @property string $species
+ * @property string|null $description
+ * @property string|null $location_text
+ * @property string|null $street_address
+ * @property string|null $landmark
+ * @property string|null $photo_path
+ * @property string $urgency_level
+ * @property string $report_status
+ * @property \Illuminate\Support\Carbon $reported_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Barangay $barangay
+ * @property-read \App\Models\ImpoundRecord|null $impoundRecord
+ * @property-read \App\Models\User|null $reporter
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereBarangayId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereLandmark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereLocationText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport wherePhotoPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereReportStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereReportType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereReportedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereReportedByUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereSpecies($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereStrayReportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereStreetAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StrayReport whereUrgencyLevel($value)
+ * @mixin \Eloquent
+ */
 class StrayReport extends Model
 {
     protected $primaryKey = 'stray_report_id';

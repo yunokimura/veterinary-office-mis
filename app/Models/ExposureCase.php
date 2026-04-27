@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read \App\Models\Barangay|null $barangay
+ * @property-read \App\Models\BiteRabiesReport|null $originalReport
+ * @property-read \App\Models\Barangay|null $patientBarangay
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExposureCase newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExposureCase newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExposureCase query()
+ * @mixin \Eloquent
+ */
 class ExposureCase extends Model
 {
     use HasFactory;

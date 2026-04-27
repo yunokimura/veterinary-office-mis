@@ -5,6 +5,33 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $notification_id
+ * @property int $user_id
+ * @property string $title
+ * @property string $message
+ * @property string $related_module
+ * @property int|null $related_record_id
+ * @property bool $is_read
+ * @property string|null $priority
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereIsRead($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereNotificationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification wherePriority($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereRelatedModule($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereRelatedRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereUserId($value)
+ * @mixin \Eloquent
+ */
 class Notification extends Model
 {
     protected $primaryKey = 'notification_id';

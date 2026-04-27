@@ -5,6 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read \App\Models\User|null $creator
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Livestock> $livestock
+ * @property-read int|null $livestock_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RabiesCase> $rabiesCases
+ * @property-read int|null $rabies_cases_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Owner active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Owner inBarangay($barangayId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Owner newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Owner newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Owner query()
+ * @mixin \Eloquent
+ */
 class Owner extends Model
 {
     /**

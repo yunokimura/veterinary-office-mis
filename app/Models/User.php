@@ -6,11 +6,84 @@ use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @property int $id
+ * @property string $role
+ * @property string $email
+ * @property string|null $otp_code
+ * @property \Illuminate\Support\Carbon|null $otp_expires_at
+ * @property int $is_verified
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string $password
+ * @property string|null $status
+ * @property int|null $organization_id
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read Admin|null $adminProfile
+ * @property-read Collection<int, AnnouncementRead> $announcementReads
+ * @property-read int|null $announcement_reads_count
+ * @property-read Collection<int, Announcement> $announcements
+ * @property-read int|null $announcements_count
+ * @property-read Barangay|null $barangay
+ * @property-read Collection<int, BiteRabiesReport> $biteRabiesReportsApproved
+ * @property-read int|null $bite_rabies_reports_approved_count
+ * @property-read Collection<int, BiteRabiesReport> $biteRabiesReportsReported
+ * @property-read int|null $bite_rabies_reports_reported_count
+ * @property-read Collection<int, DeviceToken> $deviceTokens
+ * @property-read int|null $device_tokens_count
+ * @property-read Facility|null $facility
+ * @property-read mixed $contact_number
+ * @property-read mixed $first_name
+ * @property-read mixed $last_name
+ * @property-read mixed $middle_name
+ * @property string $name
+ * @property-read mixed $profile
+ * @property-read Collection<int, Livestock> $livestockRecorded
+ * @property-read int|null $livestock_recorded_count
+ * @property-read Collection<int, Notification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read Organization|null $organizationProfile
+ * @property-read Collection<int, Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read PetOwner|null $petOwner
+ * @property-read PetOwner|null $petOwnerProfile
+ * @property-read Collection<int, Pet> $pets
+ * @property-read int|null $pets_count
+ * @property-read Collection<int, Role> $roles
+ * @property-read int|null $roles_count
+ * @property-read Collection<int, SystemLog> $systemLogs
+ * @property-read int|null $system_logs_count
+ *
+ * @mixin HasRoles
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User permission($permissions, $without = false)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User role($roles, $guard = null, $without = false)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsVerified($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereOrganizationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereOtpCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereOtpExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutPermission($permissions)
+ */
 class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, Authorizable
 {
     use Authenticatable, HasRoles, Notifiable;
@@ -112,7 +185,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     /**
      * Get the barangay this user is assigned to.
      */
-    public function barangay()
+    public function barangay(): BelongsTo
     {
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
     }
@@ -120,7 +193,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     /**
      * Get the facility this user is assigned to.
      */
-    public function facility()
+    public function facility(): BelongsTo
     {
         return $this->belongsTo(Facility::class, 'facility_id');
     }
@@ -623,7 +696,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     /**
      * Get the admin profile associated with this user (if staff).
      */
-    public function adminProfile()
+    public function adminProfile(): HasOne
     {
         return $this->hasOne(Admin::class, 'user_id');
     }
@@ -631,7 +704,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     /**
      * Get the pet owner profile associated with this user (if pet owner).
      */
-    public function petOwnerProfile()
+    public function petOwnerProfile(): HasOne
     {
         return $this->hasOne(PetOwner::class, 'user_id');
     }
@@ -639,7 +712,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     /**
      * Get the organization profile associated with this user (if contact for clinic/hospital).
      */
-    public function organizationProfile()
+    public function organizationProfile(): HasOne
     {
         return $this->hasOne(Organization::class, 'contact_user_id');
     }
@@ -649,7 +722,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      * Returns: Admin|PetOwner|Organization|null
      * Usage: $user->profile (accessor)
      */
-    public function getProfileAttribute()
+    public function getProfileAttribute(): Admin|PetOwner|Organization|null
     {
         if ($this->hasRole('pet_owner')) {
             return $this->petOwnerProfile;

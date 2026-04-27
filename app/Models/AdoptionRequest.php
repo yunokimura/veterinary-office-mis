@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read \App\Models\ImpoundRecord|null $impound
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AdoptionStatusHistory> $statusHistory
+ * @property-read int|null $status_history_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionRequest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionRequest query()
+ * @mixin \Eloquent
+ */
 class AdoptionRequest extends Model
 {
     protected $primaryKey = 'adoption_request_id';

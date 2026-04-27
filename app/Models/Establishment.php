@@ -6,6 +6,42 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int|null $barangay_id
+ * @property int|null $user_id
+ * @property string $name
+ * @property string $type
+ * @property string|null $permit_no
+ * @property string|null $address
+ * @property string|null $contact_number
+ * @property string|null $owner_name
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Barangay|null $barangay
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment byBarangay($barangayId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment byStatus($status)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment byType($type)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment search($search)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereBarangayId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereContactNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereOwnerName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment wherePermitNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Establishment whereUserId($value)
+ * @mixin \Eloquent
+ */
 class Establishment extends Model
 {
     use HasFactory;

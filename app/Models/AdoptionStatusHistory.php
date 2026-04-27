@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read \App\Models\AdoptionRequest|null $adoptionRequest
+ * @property-read \App\Models\User|null $updatedBy
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionStatusHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionStatusHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionStatusHistory query()
+ * @mixin \Eloquent
+ */
 class AdoptionStatusHistory extends Model
 {
     protected $primaryKey = 'adoption_status_id';

@@ -5,6 +5,82 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $status
+ * @property string $report_number
+ * @property string $patient_name
+ * @property string|null $patient_first_name
+ * @property string|null $patient_middle_name
+ * @property string|null $patient_suffix
+ * @property int $age
+ * @property string $gender
+ * @property string|null $patient_address
+ * @property string|null $patient_contact
+ * @property string|null $patient_barangay
+ * @property int|null $barangay_id
+ * @property string|null $incident_barangay
+ * @property string|null $exact_location
+ * @property \Illuminate\Support\Carbon $incident_date
+ * @property string $exposure_type
+ * @property string|null $bite_site
+ * @property string $category
+ * @property string $animal_type
+ * @property string $animal_status
+ * @property string $vaccination_status
+ * @property string|null $animal_owner_name
+ * @property string|null $animal_owner_contact
+ * @property int|null $reported_by
+ * @property string|null $reporting_facility
+ * @property string|null $date_reported
+ * @property string|null $wound_management
+ * @property string|null $post_exposure_prophylaxis
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $user_id
+ * @property-read \App\Models\Barangay|null $barangay
+ * @property-read \App\Models\Owner|null $owner
+ * @property-read \App\Models\BiteRabiesReport|null $rabiesReport
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereAge($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereAnimalOwnerContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereAnimalOwnerName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereAnimalStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereAnimalType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereBarangayId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereBiteSite($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereCategory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereDateReported($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereExactLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereExposureType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereIncidentBarangay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereIncidentDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientBarangay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientMiddleName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientSuffix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePostExposureProphylaxis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereReportNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereReportedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereReportingFacility($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereVaccinationStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereWoundManagement($value)
+ * @mixin \Eloquent
+ */
 class RabiesCase extends Model
 {
     use HasFactory;

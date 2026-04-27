@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @deprecated Scheduled for deletion 2026-05-24
+ * @property-read \App\Models\ImpoundRecord|null $impound
+ * @property-read \App\Models\User|null $updatedBy
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ImpoundStatusHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ImpoundStatusHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ImpoundStatusHistory query()
+ * @mixin \Eloquent
  */
 class ImpoundStatusHistory extends Model
 {
