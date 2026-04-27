@@ -117,16 +117,27 @@
                 </div>
             </div>
 
-            <!-- Content -->
-            <div class="mb-6">
-                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content <span class="text-red-500">*</span></label>
-                <textarea name="content" id="content" rows="8"
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('content') border-red-500 @enderror"
-                    placeholder="Enter announcement content" required>{{ old('content') }}</textarea>
-                @error('content')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+<!-- Content -->
+             <div class="mb-6">
+                 <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content <span class="text-red-500">*</span></label>
+                 <textarea name="content" id="content" rows="8"
+                     class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('content') border-red-500 @enderror"
+                     placeholder="Enter announcement content" required>{{ old('content') }}</textarea>
+                 @error('content')
+                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                 @enderror
+             </div>
+
+             <!-- Organized By -->
+             <div class="mb-6">
+                 <label for="organized_by" class="block text-sm font-medium text-gray-700 mb-2">Organized By <span class="text-red-500">*</span></label>
+                 <input type="text" name="organized_by" id="organized_by" value="{{ old('organized_by') }}" 
+                     class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('organized_by') border-red-500 @enderror"
+                     placeholder="Enter organizer name" required>
+                 @error('organized_by')
+                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                 @enderror
+             </div>
 
             <!-- Photo and Attachment Row -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

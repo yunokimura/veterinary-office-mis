@@ -76,6 +76,7 @@ class Announcement extends Model
         'barangay_id',
         'contact_number',
         'created_by',
+        'organized_by',
     ];
 
     protected $casts = [
