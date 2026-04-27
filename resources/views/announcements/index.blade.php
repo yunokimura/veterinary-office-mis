@@ -10,12 +10,20 @@
 @section('content')
 @php
     use App\Models\Announcement;
-    
+
     $totalCount = Announcement::count();
     $publishedCount = Announcement::where('status', 'Published')->count();
     $draftCount = Announcement::where('status', 'Draft')->count();
     $archivedCount = Announcement::where('status', 'Archived')->count();
 @endphp
+
+<!-- Add Announcement Button -->
+<div class="mb-6">
+    <a href="{{ route($rolePrefix . '.announcements.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition shadow-sm">
+        <i class="bi bi-plus-circle"></i>
+        Add Announcement
+    </a>
+</div>
 
 <!-- Stats Cards -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -89,12 +97,12 @@
             <div class="p-6">
                 <!-- Category Badge -->
                 <div class="mb-2">
-                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
                         {{ ucfirst($announcement->category) }}
                     </span>
                 </div>
 
-                <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">{{ $announcement->title }}</h3>
+                <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors">{{ $announcement->title }}</h3>
                 <p class="text-gray-600 mb-3 line-clamp-2 text-sm">{{ $announcement->content }}</p>
 
                 <!-- Meta Info -->
@@ -111,7 +119,7 @@
                         <i class="bi bi-eye"></i>
                         <span class="text-sm font-medium">View</span>
                     </a>
-                    <a href="{{ route($rolePrefix . '.announcements.edit', $announcement) }}" class="flex items-center gap-1 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition">
+                    <a href="{{ route($rolePrefix . '.announcements.edit', $announcement) }}" class="flex items-center gap-1 px-3 py-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition">
                         <i class="bi bi-pencil"></i>
                         <span class="text-sm font-medium">Edit</span>
                     </a>
@@ -135,7 +143,7 @@
                 </div>
                 <h3 class="text-2xl font-bold text-gray-700 mb-2">No Announcements Yet</h3>
                 <p class="text-gray-500 mb-6 max-w-md mx-auto">Create your first announcement to get started.</p>
-                <a href="{{ route($rolePrefix . '.announcements.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg shadow-lg hover:bg-blue-700 transition">
+                 <a href="{{ route($rolePrefix . '.announcements.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-medium rounded-lg shadow-lg hover:bg-green-700 transition">
                     <i class="bi bi-plus-circle text-lg"></i>
                     Create Announcement
                 </a>
