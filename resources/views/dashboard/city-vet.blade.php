@@ -6,38 +6,37 @@
 @section('subheader', 'Rabies Control & Vaccination Program Overview')
 
 @section('content')
-<!-- Welcome Banner with enhanced design -->
-<div class="relative overflow-hidden bg-gradient-to-r from-red-600 via-red-700 to-red-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 text-white">
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==')] opacity-10"></div>
-    <div class="relative flex items-center justify-between flex-wrap gap-4">
-        <div>
-            <h2 class="text-xl md:text-2xl font-bold mb-2">Welcome back, {{ auth()->user()->name ?? 'City Vet' }}!</h2>
-            <p class="text-red-100 text-sm md:text-base">Monitor rabies cases, vaccination programs, and animal health statistics.</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <div class="text-right hidden md:block">
-                <p class="text-xs text-red-200">Selected Year</p>
-                <p class="text-lg font-bold">{{ $year ?? date('Y') }}</p>
-            </div>
-            <select id="yearFilter" onchange="window.location.href='?year='+this.value" class="bg-white/20 text-white border border-white/30 rounded-lg px-4 py-2 text-sm backdrop-blur-sm focus:ring-2 focus:ring-white/50">
-                @for($y = date('Y'); $y >= date('Y')-5; $y--)
-                    <option value="{{ $y }}" {{ ($year ?? date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
-                @endfor
-            </select>
-        </div>
-    </div>
+@php
+    $hour = date('H');
+    if ($hour >= 5 && $hour < 12) {
+        $greeting = 'Good morning';
+    } elseif ($hour >= 12 && $hour < 18) {
+        $greeting = 'Good afternoon';
+    } else {
+        $greeting = 'Good evening';
+    }
+@endphp
+
+<!-- Welcome Banner -->
+<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
+    <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
+        {{ $greeting }}, {{ auth()->user()->name ?? 'City Veterinarian' }}!
+    </h2>
+    <p class="text-sm md:text-base text-gray-600">
+        Monitor rabies cases, vaccination programs, and animal health statistics.
+    </p>
 </div>
 
 <!-- Alert Banner for critical issues -->
 @if(($stats['open_cases'] ?? 0) > 0 || ($stats['confirmed_cases'] ?? 0) > 0)
-<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+<div class="bg-white border border-amber-200 rounded-xl p-4 mb-6">
     <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-            <i class="bi bi-exclamation-triangle text-amber-600 text-lg"></i>
+        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+            <i class="bi bi-exclamation-triangle text-amber-600"></i>
         </div>
         <div class="flex-1">
-            <p class="font-medium text-amber-800">Attention Required</p>
-            <p class="text-sm text-amber-700">
+            <p class="text-sm font-medium text-gray-800">Attention Required</p>
+            <p class="text-xs text-gray-600">
                 @if(($stats['open_cases'] ?? 0) > 0)
                     <span class="font-semibold">{{ $stats['open_cases'] }}</span> open case(s) pending.
                 @endif
@@ -46,7 +45,7 @@
                 @endif
             </p>
         </div>
-        <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition">
+        <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition whitespace-nowrap">
             View Cases
         </a>
     </div>
@@ -54,81 +53,68 @@
 @endif
 
 <!-- Quick Stats Grid -->
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
     <!-- Total Rabies Cases -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <p class="text-xs font-medium text-gray-500 truncate">Total Cases</p>
-                <p class="text-xl md:text-2xl font-bold text-red-600 mt-1">{{ $stats['total_rabies_cases'] ?? 0 }}</p>
+            <div>
+                <p class="text-xs md:text-sm font-medium text-gray-500">Total Cases</p>
+                <p class="text-xl md:text-3xl font-bold text-red-600 mt-1">{{ $stats['total_rabies_cases'] ?? 0 }}</p>
             </div>
-            <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
-                <i class="bi bi-exclamation-triangle text-red-600"></i>
+            <div class="w-10 h-10 md:w-14 md:h-14 bg-red-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-exclamation-triangle text-red-600 text-lg md:text-2xl"></i>
             </div>
         </div>
     </div>
 
     <!-- Open Cases -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <p class="text-xs font-medium text-gray-500 truncate">Open</p>
-                <p class="text-xl md:text-2xl font-bold text-orange-600 mt-1">{{ $stats['open_cases'] ?? 0 }}</p>
+            <div>
+                <p class="text-xs md:text-sm font-medium text-gray-500">Open</p>
+                <p class="text-xl md:text-3xl font-bold text-orange-600 mt-1">{{ $stats['open_cases'] ?? 0 }}</p>
             </div>
-            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
-                <i class="bi bi-clock text-orange-600"></i>
+            <div class="w-10 h-10 md:w-14 md:h-14 bg-orange-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-clock text-orange-600 text-lg md:text-2xl"></i>
             </div>
         </div>
     </div>
 
     <!-- Confirmed Cases -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <p class="text-xs font-medium text-gray-500 truncate">Confirmed</p>
-                <p class="text-xl md:text-2xl font-bold text-purple-600 mt-1">{{ $stats['confirmed_cases'] ?? 0 }}</p>
+            <div>
+                <p class="text-xs md:text-sm font-medium text-gray-500">Confirmed</p>
+                <p class="text-xl md:text-3xl font-bold text-purple-600 mt-1">{{ $stats['confirmed_cases'] ?? 0 }}</p>
             </div>
-            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
-                <i class="bi bi-virus text-purple-600"></i>
+            <div class="w-10 h-10 md:w-14 md:h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-virus text-purple-600 text-lg md:text-2xl"></i>
             </div>
         </div>
     </div>
 
     <!-- Bite Reports -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <p class="text-xs font-medium text-gray-500 truncate">Bites</p>
-                <p class="text-xl md:text-2xl font-bold text-green-600 mt-1">{{ $stats['total_bite_reports'] ?? 0 }}</p>
+            <div>
+                <p class="text-xs md:text-sm font-medium text-gray-500">Bite Reports</p>
+                <p class="text-xl md:text-3xl font-bold text-green-600 mt-1">{{ $stats['total_bite_reports'] ?? 0 }}</p>
             </div>
-            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
-                <i class="bi bi-file-earmark-medical text-green-600"></i>
+            <div class="w-10 h-10 md:w-14 md:h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-file-earmark-medical text-green-600 text-lg md:text-2xl"></i>
             </div>
         </div>
     </div>
 
     <!-- Vaccinations -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <p class="text-xs font-medium text-gray-500 truncate">Vaccinations</p>
-                <p class="text-xl md:text-2xl font-bold text-blue-600 mt-1">{{ $stats['total_vaccinations'] ?? 0 }}</p>
+            <div>
+                <p class="text-xs md:text-sm font-medium text-gray-500">Vaccinations</p>
+                <p class="text-xl md:text-3xl font-bold text-blue-600 mt-1">{{ $stats['total_vaccinations'] ?? 0 }}</p>
             </div>
-            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                <i class="bi bi-eyedropper text-blue-600"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Impounds -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition">
-        <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <p class="text-xs font-medium text-gray-500 truncate">Impounds</p>
-                <p class="text-xl md:text-2xl font-bold text-amber-600 mt-1">{{ $stats['active_impounds'] ?? 0 }}</p>
-            </div>
-            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                <i class="bi bi-paw text-amber-600"></i>
+            <div class="w-10 h-10 md:w-14 md:h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-eyedropper text-blue-600 text-lg md:text-2xl"></i>
             </div>
         </div>
     </div>
@@ -166,71 +152,77 @@
         <!-- Quick Actions -->
         <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
             <h3 class="text-base font-semibold text-gray-800 mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-2 gap-3">
-                <a href="{{ route('admin.vaccination-reports.index') }}" class="flex flex-col items-center p-3 bg-red-50 hover:bg-red-100 rounded-xl transition group">
-                    <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                        <i class="bi bi-eyedropper text-white"></i>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <a href="{{ route('admin.vaccination-reports.index') }}" class="flex flex-col items-center p-3 md:p-4 bg-red-100 hover:bg-red-200 rounded-xl transition group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                        <i class="bi bi-eyedropper text-white text-lg md:text-xl"></i>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 text-center">Vaccination</span>
+                    <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Vaccination</span>
                 </a>
-                <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="flex flex-col items-center p-3 bg-orange-50 hover:bg-orange-100 rounded-xl transition group">
-                    <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                        <i class="bi bi-file-earmark-medical text-white"></i>
+                <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="flex flex-col items-center p-3 md:p-4 bg-orange-100 hover:bg-orange-200 rounded-xl transition group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                        <i class="bi bi-file-earmark-medical text-white text-lg md:text-xl"></i>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 text-center">Bite Reports</span>
+                    <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Bite Reports</span>
                 </a>
-                <a href="{{ route('city-vet.impounds.index') }}" class="flex flex-col items-center p-3 bg-amber-50 hover:bg-amber-100 rounded-xl transition group">
-                    <div class="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                        <i class="bi bi-paw text-white"></i>
+                <a href="{{ route('city-vet.rabies-geomap') }}" class="flex flex-col items-center p-3 md:p-4 bg-purple-100 hover:bg-purple-200 rounded-xl transition group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                        <i class="bi bi-geo-alt-fill text-white text-lg md:text-xl"></i>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 text-center">Impounds</span>
+                    <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Heatmap</span>
                 </a>
-                <a href="{{ route('city-vet.rabies-geomap') }}" class="flex flex-col items-center p-3 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
-                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                        <i class="bi bi-geo-alt-fill text-white"></i>
+                <a href="{{ route('admin.all-reports') }}" class="flex flex-col items-center p-3 md:p-4 bg-blue-100 hover:bg-blue-200 rounded-xl transition group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                        <i class="bi bi-file-earmark-bar-graph text-white text-lg md:text-xl"></i>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 text-center">Heatmap</span>
-                </a>
-                <a href="{{ route('admin.all-reports') }}" class="flex flex-col items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
-                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                        <i class="bi bi-file-earmark-bar-graph text-white"></i>
-                    </div>
-                    <span class="text-xs font-medium text-gray-700 text-center">Reports</span>
-                </a>
-                <a href="{{ route('rabies-cases.index') }}" class="flex flex-col items-center p-3 bg-green-50 hover:bg-green-100 rounded-xl transition group">
-                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                        <i class="bi bi-list-check text-white"></i>
-                    </div>
-                    <span class="text-xs font-medium text-gray-700 text-center">All Cases</span>
+                    <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Reports</span>
                 </a>
             </div>
         </div>
 
-        <!-- Status Cards -->
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-            <h3 class="text-base font-semibold text-gray-800 mb-4">Report Status</h3>
-            <div class="space-y-3">
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                        <span class="text-sm text-gray-700">Pending Review</span>
+        <!-- Recent Bite Reports -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <h3 class="text-base font-semibold text-gray-800 mb-4">Recent Bite Reports</h3>
+            <div class="divide-y divide-gray-100">
+                @forelse(\App\Models\BiteRabiesReport::latest()->take(5)->get() as $report)
+                    <div class="py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 md:w-10 md:h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="bi bi-file-earmark-medical text-orange-600 text-sm md:text-base"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800">{{ $report->patient_name ?? 'N/A' }}</p>
+                                <p class="text-xs text-gray-500">{{ $report->barangay->barangay_name ?? 'N/A' }} • {{ $report->status }}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-400">{{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}</span>
                     </div>
-                    <span class="text-sm font-semibold text-gray-900">{{ $stats['pending_reports'] ?? 0 }}</span>
-                </div>
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span class="text-sm text-gray-700">Under Investigation</span>
+                @empty
+                    <p class="text-gray-500 text-center py-4">No recent bite reports</p>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Recent Vaccinations -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <h3 class="text-base font-semibold text-gray-800 mb-4">Recent Vaccinations</h3>
+            <div class="divide-y divide-gray-100">
+                @forelse(\App\Models\RabiesVaccinationReport::latest()->take(5)->get() as $vaccination)
+                    <div class="py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="bi bi-eyedropper text-blue-600 text-sm md:text-base"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800">{{ $vaccination->pet_name ?? $vaccination->patient_name ?? 'Vaccination' }}</p>
+                                <p class="text-xs text-gray-500">{{ $vaccination->status }}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-400">{{ \Carbon\Carbon::parse($vaccination->vaccination_date)->format('M d, Y') }}</span>
                     </div>
-                    <span class="text-sm font-semibold text-gray-900">{{ $stats['investigating_reports'] ?? 0 }}</span>
-                </div>
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span class="text-sm text-gray-700">Resolved</span>
-                    </div>
-                    <span class="text-sm font-semibold text-gray-900">{{ $stats['resolved_reports'] ?? 0 }}</span>
-                </div>
+                @empty
+                    <p class="text-gray-500 text-center py-4">No recent vaccinations</p>
+                @endforelse
             </div>
         </div>
     </div>
