@@ -10,19 +10,25 @@ class AdoptionApplicationController extends Controller
 {
     public function index(Request $request)
     {
-        $query = AdoptionApplication::query();
+        $query = AdoptionApplication::with(['owner', 'address', 'user']);
 
+        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
+        // Search across owner name, email, and phone via relationships
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', '%'.$search.'%')
-                    ->orWhere('last_name', 'like', '%'.$search.'%')
-                    ->orWhere('email', 'like', '%'.$search.'%')
-                    ->orWhere('mobile_number', 'like', '%'.$search.'%');
+                $q->whereHas('owner', function ($q2) use ($search) {
+                    $q2->where('first_name', 'like', "%$search%")
+                        ->orWhere('last_name', 'like', "%$search%")
+                        ->orWhere('phone_number', 'like', "%$search%");
+                })
+                    ->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('email', 'like', "%$search%");
+                    });
             });
         }
 
@@ -42,7 +48,7 @@ class AdoptionApplicationController extends Controller
 
     public function show(AdoptionApplication $application)
     {
-        $application->load('user');
+        $application->load(['owner', 'address', 'user']);
 
         return view('admin-asst.adoption-applications.show', compact('application'));
     }

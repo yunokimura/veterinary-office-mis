@@ -15,14 +15,6 @@ class AdoptionFormController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'mobile_number' => 'required|string|max:20',
-            'blk_lot_ph' => 'required|string|max:255',
-            'street' => 'required|string|max:255',
-            'barangay' => 'required|string|max:255',
-            'birth_date' => 'nullable|date',
             'occupation' => 'nullable|string|max:255',
             'company' => 'required|string|max:255',
             'social_media' => 'nullable|string|max:255',
@@ -34,9 +26,17 @@ class AdoptionFormController extends Controller
             'selected_adoption_pets' => 'nullable|array',
             'selected_adoption_pets.*' => 'integer|exists:pets,pet_id',
             'questionnaire' => 'nullable|array',
+            'zoom_time_ampm' => 'nullable|string|max:10',
         ]);
 
         $user = Auth::user();
+        $petOwner = $user->petOwner()->with('address')->first();
+
+        if (! $petOwner) {
+            return redirect()->back()->with('error', 'Please complete your pet owner profile first.')->withInput();
+        }
+
+        $addressId = $petOwner->address?->id;
 
         $interviewDate = $validated['interview_date'];
         $interviewTime = $validated['interview_time'];
@@ -48,7 +48,7 @@ class AdoptionFormController extends Controller
             return redirect()->back()->with('error', $e->getMessage())->withInput();
         }
 
-        // Get selected pet IDs from form (array) - take first if multiple
+        // Get selected pet ID (take first if multiple)
         $selectedPetId = null;
         if ($request->has('selected_adoption_pets') && is_array($request->input('selected_adoption_pets'))) {
             $selectedPetId = $request->input('selected_adoption_pets')[0] ?? null;
@@ -56,17 +56,12 @@ class AdoptionFormController extends Controller
             $selectedPetId = $request->input('selected_pet_id');
         }
 
+        // Create adoption application using relational references only
         $adoptionApplication = AdoptionApplication::create([
             'user_id' => $user->id,
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'email' => $validated['email'],
-            'mobile_number' => $validated['mobile_number'],
-            'alt_mobile_number' => $validated['alt_mobile_number'] ?? null,
-            'blk_lot_ph' => $validated['blk_lot_ph'],
-            'street' => $validated['street'],
-            'barangay' => $validated['barangay'],
-            'birth_date' => $validated['birth_date'] ?? null,
+            'owner_id' => $petOwner->owner_id,
+            'address_id' => $addressId,
+            'selected_pet_id' => $selectedPetId,
             'occupation' => $validated['occupation'] ?? null,
             'company' => $validated['company'],
             'social_media' => $validated['social_media'] ?? null,
@@ -76,10 +71,11 @@ class AdoptionFormController extends Controller
             'zoom_interview' => $validated['zoom_interview'],
             'zoom_date' => $interviewDate,
             'zoom_time' => $interviewTime,
+            'zoom_time_ampm' => $validated['zoom_time_ampm'] ?? null,
             'shelter_visit' => $validated['shelter_visit'] ?? 'No',
-            'selected_pet_id' => $selectedPetId,
         ]);
 
+        // Create appointment for the interview
         Appointment::create([
             'appointment_date' => $interviewDate,
             'appointment_time' => $interviewTime,
@@ -88,9 +84,9 @@ class AdoptionFormController extends Controller
             'status' => 'pending',
             'total_weight' => 1,
             'metadata' => [
-                'adopter_name' => $validated['first_name'].' '.$validated['last_name'],
-                'adopter_email' => $validated['email'],
-                'adopter_contact' => $validated['mobile_number'],
+                'adopter_name' => $petOwner->full_name,
+                'adopter_email' => $user->email,
+                'adopter_contact' => $petOwner->phone_number,
             ],
         ]);
 
