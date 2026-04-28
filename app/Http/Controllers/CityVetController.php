@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\Barangay;
 use App\Models\BiteRabiesReport;
 use App\Models\RabiesVaccinationReport;
-use App\Models\Barangay;
-use App\Models\ImpoundRecord;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CityVetController extends Controller
 {
@@ -19,8 +18,11 @@ class CityVetController extends Controller
     {
         $user = Auth::user();
 
-        // Get statistics - use bite_rabies_reports for counts
+        // Get statistics year (used for stats cards)
         $year = $request->year ?? date('Y');
+        // Separate years for charts
+        $speciesYear = $request->species_year ?? $year;
+        $monthlyYear = $request->monthly_year ?? $year;
 
         $stats = [
             'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
@@ -33,15 +35,15 @@ class CityVetController extends Controller
         // Get recent cases
         $recentCases = BiteRabiesReport::with('barangay')->latest()->take(5)->get();
 
-        // Get monthly trends for the year
-        $monthlyCases = BiteRabiesReport::whereYear('incident_date', $year)
+        // Get monthly trends for the selected year
+        $monthlyCases = BiteRabiesReport::whereYear('incident_date', $monthlyYear)
             ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
 
-        // Get cases by type
-        $casesByType = BiteRabiesReport::whereYear('incident_date', $year)
+        // Get cases by type for the selected year
+        $casesByType = BiteRabiesReport::whereYear('incident_date', $speciesYear)
             ->selectRaw('animal_type, COUNT(*) as count')
             ->groupBy('animal_type')
             ->pluck('count', 'animal_type')
@@ -61,7 +63,9 @@ class CityVetController extends Controller
             'casesByType',
             'heatmapData',
             'barangays',
-            'year'
+            'year',
+            'speciesYear',
+            'monthlyYear'
         ));
     }
 
@@ -76,22 +80,22 @@ class CityVetController extends Controller
 
         // Get heatmap data
         $heatmapData = $this->getHeatmapData($year);
-        
+
         // Get case type breakdown
         $caseTypeBreakdown = $this->getCaseTypeBreakdown($year);
-        
+
         // Get monthly timeline
         $monthlyTimeline = $this->getMonthlyTimeline($year);
-        
+
         // Get year comparison
         $yearComparison = $this->getYearComparison($year, $previousYear);
-        
+
         // Get top hotspots
         $hotspots = $this->getHotspots($year);
 
         return view('city-vet.rabies-geomap', compact(
-            'user', 
-            'heatmapData', 
+            'user',
+            'heatmapData',
             'year',
             'caseTypeBreakdown',
             'monthlyTimeline',
@@ -126,7 +130,7 @@ class CityVetController extends Controller
             $count = $caseCount ? (int) $caseCount->count : 0;
 
             return [
-                'id' => 'rabies-' . $barangay->barangay_id,
+                'id' => 'rabies-'.$barangay->barangay_id,
                 'barangay_id' => $barangay->barangay_id,
                 'barangay' => $barangay->barangay_name,
                 'name' => $barangay->barangay_name,
@@ -158,9 +162,9 @@ class CityVetController extends Controller
      */
     private function getMonthlyTimeline(int $year): array
     {
-        $months = ['Jan' => 1, 'Feb' => 2, 'Mar' => 3, 'Apr' => 4, 'May' => 5, 'Jun' => 6, 
-                   'Jul' => 7, 'Aug' => 8, 'Sep' => 9, 'Oct' => 10, 'Nov' => 11, 'Dec' => 12];
-        
+        $months = ['Jan' => 1, 'Feb' => 2, 'Mar' => 3, 'Apr' => 4, 'May' => 5, 'Jun' => 6,
+            'Jul' => 7, 'Aug' => 8, 'Sep' => 9, 'Oct' => 10, 'Nov' => 11, 'Dec' => 12];
+
         $data = [];
         foreach ($months as $monthName => $monthNum) {
             $count = BiteRabiesReport::whereYear('incident_date', $year)
@@ -168,7 +172,7 @@ class CityVetController extends Controller
                 ->count();
             $data[$monthName] = $count;
         }
-        
+
         return $data;
     }
 
@@ -179,14 +183,14 @@ class CityVetController extends Controller
     {
         $current = BiteRabiesReport::whereYear('incident_date', $currentYear)->count();
         $previous = BiteRabiesReport::whereYear('incident_date', $previousYear)->count();
-        
+
         $change = $previous > 0 ? round((($current - $previous) / $previous) * 100, 1) : 0;
-        
+
         return [
             'current' => $current,
             'previous' => $previous,
             'change' => $change,
-            'direction' => $change > 0 ? 'up' : ($change < 0 ? 'down' : 'stable')
+            'direction' => $change > 0 ? 'up' : ($change < 0 ? 'down' : 'stable'),
         ];
     }
 
@@ -206,7 +210,7 @@ class CityVetController extends Controller
                 return [
                     'barangay_id' => $item->barangay_id,
                     'barangay_name' => $item->barangay?->barangay_name ?? 'Unknown',
-                    'count' => (int) $item->count
+                    'count' => (int) $item->count,
                 ];
             })
             ->toArray();
@@ -234,7 +238,7 @@ class CityVetController extends Controller
 
         $filterLabel = $year;
         if ($dateFrom && $dateTo) {
-            $filterLabel = \Carbon\Carbon::parse($dateFrom)->format('M d') . ' - ' . \Carbon\Carbon::parse($dateTo)->format('M d, Y');
+            $filterLabel = Carbon::parse($dateFrom)->format('M d').' - '.Carbon::parse($dateTo)->format('M d, Y');
         } elseif ($month && $week) {
             $monthName = date('F', mktime(0, 0, 0, $month, 1));
             $filterLabel = "Week $week, $monthName $year";
@@ -300,7 +304,7 @@ class CityVetController extends Controller
             $count = $caseCount ? (int) $caseCount->count : 0;
 
             return [
-                'id' => 'bite-' . $barangay->barangay_id,
+                'id' => 'bite-'.$barangay->barangay_id,
                 'barangay_id' => $barangay->barangay_id,
                 'barangay' => $barangay->barangay_name,
                 'name' => $barangay->barangay_name,

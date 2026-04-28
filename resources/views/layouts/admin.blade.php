@@ -179,13 +179,7 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('city_vet'))
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Dashboard</div>
-
-            <a href="{{ route('city-vet.dashboard') }}" class="nav-item {{ request()->routeIs('city-vet.dashboard') ? 'active-nav' : '' }}">
-                <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
+            <!-- Dashboard already available under Main section -->
             <div class="sidebar-section-label">Reports</div>
 
             <a href="{{ route('admin.bite-reports.index') }}" class="nav-item {{ request()->routeIs('admin.bite-reports.*') ? 'active-nav' : '' }}">

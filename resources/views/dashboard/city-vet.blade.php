@@ -127,7 +127,15 @@
         <!-- Cases by Type Chart -->
         <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-semibold text-gray-800">Cases by Type ({{ $year ?? date('Y') }})</h3>
+                <div class="flex items-center gap-3">
+                    <h3 class="text-base font-semibold text-gray-800">Cases by Type</h3>
+                    <select onchange="window.location.href='?species_year='+this.value" 
+                            class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        @for($y = date('Y'); $y >= date('Y')-5; $y--)
+                            <option value="{{ $y }}" {{ ($speciesYear ?? date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
                 <span class="text-xs text-gray-500">Source: Rabies Case Records</span>
             </div>
             <div class="h-48 md:h-64">
@@ -138,7 +146,15 @@
         <!-- Monthly Cases Chart -->
         <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-semibold text-gray-800">Monthly Trend ({{ $year ?? date('Y') }})</h3>
+                <div class="flex items-center gap-3">
+                    <h3 class="text-base font-semibold text-gray-800">Monthly Trend</h3>
+                    <select onchange="window.location.href='?monthly_year='+this.value" 
+                            class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        @for($y = date('Y'); $y >= date('Y')-5; $y--)
+                            <option value="{{ $y }}" {{ ($monthlyYear ?? date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
                 <span class="text-xs text-gray-500">Cases per month</span>
             </div>
             <div class="h-48 md:h-64">
@@ -152,27 +168,27 @@
         <!-- Quick Actions -->
         <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
             <h3 class="text-base font-semibold text-gray-800 mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <a href="{{ route('admin.vaccination-reports.index') }}" class="flex flex-col items-center p-3 md:p-4 bg-red-100 hover:bg-red-200 rounded-xl transition group">
-                    <div class="w-10 h-10 md:w-12 md:h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="{{ route('admin.vaccination-reports.index') }}" class="flex flex-col items-center p-4 md:p-5 bg-red-100 hover:bg-red-200 rounded-xl transition group hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2">
                         <i class="bi bi-eyedropper text-white text-lg md:text-xl"></i>
                     </div>
                     <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Vaccination</span>
                 </a>
-                <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="flex flex-col items-center p-3 md:p-4 bg-orange-100 hover:bg-orange-200 rounded-xl transition group">
-                    <div class="w-10 h-10 md:w-12 md:h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="flex flex-col items-center p-4 md:p-5 bg-orange-100 hover:bg-orange-200 rounded-xl transition group hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-2">
                         <i class="bi bi-file-earmark-medical text-white text-lg md:text-xl"></i>
                     </div>
                     <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Bite Reports</span>
                 </a>
-                <a href="{{ route('city-vet.rabies-geomap') }}" class="flex flex-col items-center p-3 md:p-4 bg-purple-100 hover:bg-purple-200 rounded-xl transition group">
-                    <div class="w-10 h-10 md:w-12 md:h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <a href="{{ route('city-vet.rabies-geomap') }}" class="flex flex-col items-center p-4 md:p-5 bg-purple-100 hover:bg-purple-200 rounded-xl transition group hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2">
                         <i class="bi bi-geo-alt-fill text-white text-lg md:text-xl"></i>
                     </div>
                     <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Heatmap</span>
                 </a>
-                <a href="{{ route('admin.all-reports') }}" class="flex flex-col items-center p-3 md:p-4 bg-blue-100 hover:bg-blue-200 rounded-xl transition group">
-                    <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <a href="{{ route('admin.all-reports') }}" class="flex flex-col items-center p-4 md:p-5 bg-blue-100 hover:bg-blue-200 rounded-xl transition group hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2">
                         <i class="bi bi-file-earmark-bar-graph text-white text-lg md:text-xl"></i>
                     </div>
                     <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Reports</span>
@@ -320,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Monthly Cases Chart
     const monthlyCases = @json($monthlyCases ?? []);
     const monthLabels = Array.from({length: 12}, (_, i) => {
-        const date = new Date({{ $year ?? date('Y') }}, i, 1);
+        const date = new Date({{ $monthlyYear ?? date('Y') }}, i, 1);
         return date.toLocaleString('default', { month: 'short' });
     });
     const monthlyData = monthLabels.map((_, i) => monthlyCases[i + 1] || 0);
