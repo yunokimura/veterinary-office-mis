@@ -93,13 +93,17 @@
         @forelse($announcements as $announcement)
             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div class="p-6">
-                    <!-- Type Badge & Date -->
+                    <!-- Type, Organized By & Date -->
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
-                            @if($announcement->type)
-<span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                                {{ ucfirst($announcement->category) }}
-                            </span>
+                            @if($announcement->category)
+ <span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                                 {{ ucfirst($announcement->category) }}
+                             </span>
+                            @endif
+                            <span class="text-xs text-gray-400">{{ $announcement->organized_by ?? 'Unknown' }}</span>
+                            <span class="text-xs text-gray-300">·</span>
+                            <span class="text-xs text-gray-400">{{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}</span>
                         </div>
                     </div>
 

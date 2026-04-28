@@ -107,9 +107,13 @@
 
                 <!-- Meta Info -->
                 <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-4">
-                    <span class="inline-flex items-center px-2 py-1 bg-gray-100 rounded-lg">
+                    <span class="inline-flex items-center px-2 py-1 bg-blue-100 rounded-lg">
                         <i class="bi bi-person mr-1 text-blue-500"></i>
-                        {{ $announcement->createdBy->name ?? 'Unknown' }}
+                        {{ $announcement->organized_by ?? 'Unknown' }}
+                    </span>
+                    <span class="inline-flex items-center px-2 py-1 bg-green-100 rounded-lg">
+                        <i class="bi bi-calendar mr-1 text-green-500"></i>
+                        {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
                     </span>
                 </div>
 
