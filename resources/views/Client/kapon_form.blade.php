@@ -217,10 +217,10 @@
                                     <span class="text-gray-500 text-xs ml-2">(First name and Last name)</span>
                                 </label>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <input type="text" name="first_name" placeholder="First Name" value="{{ old('first_name', $petOwner->first_name ?? '') }}"
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                    <input type="text" name="last_name" placeholder="Last Name" value="{{ old('last_name', $petOwner->last_name ?? '') }}"
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                    <input type="text" name="first_name" placeholder="First Name" value="{{ $petOwner->first_name ?? '' }}" readonly
+                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
+                                    <input type="text" name="last_name" placeholder="Last Name" value="{{ $petOwner->last_name ?? '' }}" readonly
+                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
                                 </div>
                             </div>
 
@@ -229,8 +229,8 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     Email <span class="text-red-500">*</span>
                                 </label>
-                                <input type="email" name="email" placeholder="Enter Email" value="{{ old('email', $user->email ?? '') }}"
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                <input type="email" name="email" placeholder="Enter Email" value="{{ $user->email ?? '' }}" readonly
+                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
                             </div>
 
                             <!-- Mobile Number -->
@@ -242,8 +242,8 @@
                                     <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
                                         +63
                                     </span>
-                                    <input type="tel" name="mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('mobile_number', $petOwner->phone_number ?? '') }}"
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                    <input type="tel" name="mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ $petOwner->phone_number ?? '' }}" readonly
+                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-200 bg-gray-50 text-gray-700 outline-none">
                                 </div>
                             </div>
 
@@ -256,8 +256,7 @@
                                     <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
                                         +63
                                     </span>
-                                    <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('alt_mobile_number', $petOwner->alternate_phone_number ?? '') }}"
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                    <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('alt_mobile_number', $petOwner->alternate_phone_number ?? '') }}" class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                 </div>
                             </div>
 
@@ -266,8 +265,8 @@
                                  <label class="block text-sm font-medium mb-1.5">
                                      House No. / Unit No. <span class="text-red-500">*</span>
                                  </label>
-                                 <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->address->block_lot_phase ?? '') }}"
-                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                 <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ $petOwner->address->block_lot_phase ?? '' }}" readonly
+                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
                              </div>
 
                              <!-- Street -->
@@ -275,8 +274,8 @@
                                  <label class="block text-sm font-medium mb-1.5">
                                      Street <span class="text-red-500">*</span>
                                  </label>
-                                 <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->address->street ?? '') }}"
-                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                 <input type="text" name="street" placeholder="Street" value="{{ $petOwner->address->street ?? '' }}" readonly
+                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
                              </div>
 
                              <!-- Barangay -->
@@ -284,8 +283,8 @@
                                  <label class="block text-sm font-medium mb-1.5">
                                      Barangay <span class="text-red-500">*</span>
                                  </label>
-                                 <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->address->barangay->barangay_name ?? '') }}"
-                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                 <input type="text" name="barangay" placeholder="Barangay" value="{{ $petOwner->address->barangay->barangay_name ?? '' }}" readonly
+                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
                              </div>
                         </div>
                     </div>
@@ -1746,4 +1745,6 @@
 
 </body>
 </html>
+
+
 

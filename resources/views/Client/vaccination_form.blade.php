@@ -161,9 +161,9 @@
                                 <span class="text-gray-500 text-xs ml-2">(First name and Last name)</span>
                             </label>
                             <div class="grid grid-cols-2 gap-4">
-                                <input type="text" name="owner_first_name" placeholder="First Name" value="{{ old('owner_first_name', $petOwner->first_name ?? '') }}"
+                                <input type="text" name="owner_first_name" placeholder="First Name" value="{{ $petOwner->first_name ?? '' }}" readonly
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                <input type="text" name="owner_last_name" placeholder="Last Name" value="{{ old('owner_last_name', $petOwner->last_name ?? '') }}"
+                                <input type="text" name="owner_last_name" placeholder="Last Name" value="{{ $petOwner->last_name ?? '' }}" readonly
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 Email <span class="text-red-500">*</span>
                             </label>
-                            <input type="email" name="owner_email" placeholder="Enter Email" value="{{ old('owner_email', $user->email ?? '') }}"
+                            <input type="email" name="owner_email" placeholder="Enter Email" value="{{ $user->email ?? '' }}" readonly
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                         </div>
 
@@ -186,7 +186,7 @@
                                 <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
                                     +63
                                 </span>
-                                <input type="tel" name="owner_contact" placeholder="943 210 2012" maxlength="12" value="{{ old('owner_contact', $petOwner->phone_number ?? '') }}"
+                                <input type="tel" name="owner_contact" placeholder="943 210 2012" maxlength="12" value="{{ $petOwner->phone_number ?? '' }}" readonly
                                        class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
                         </div>
@@ -1031,3 +1031,4 @@
     </script>
 </body>
 </html>
+
