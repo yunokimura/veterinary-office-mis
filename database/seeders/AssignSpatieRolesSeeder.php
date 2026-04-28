@@ -41,8 +41,8 @@ class AssignSpatieRolesSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
-            // Use the role attribute for backward compatibility (reads from Spatie roles)
-            $currentRole = $user->getRoleNames()->first();
+            // Read legacy role column directly
+            $currentRole = $user->role;
             $spatieRole = $roleMapping[$currentRole] ?? 'viewer';
 
             // Remove existing roles and assign new one

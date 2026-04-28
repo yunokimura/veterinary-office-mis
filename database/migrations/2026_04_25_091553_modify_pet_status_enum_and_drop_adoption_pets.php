@@ -34,6 +34,11 @@ return new class extends Migration
         if (Schema::hasTable('adoption_pets')) {
             // First try to drop any foreign keys that might reference adoption_pets
             try {
+                DB::statement('ALTER TABLE pet_traits DROP FOREIGN KEY pet_traits_adoption_id_foreign');
+            } catch (Exception $e) {
+                // Constraint may not exist
+            }
+            try {
                 DB::statement('ALTER TABLE pet_traits DROP FOREIGN KEY pet_traits_adoption_pet_id_foreign');
             } catch (Exception $e) {
                 // Constraint may not exist

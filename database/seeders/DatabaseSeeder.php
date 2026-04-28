@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
             SpatieRoleSeeder::class,
             TestAccountsSeeder::class,
             UserRoleSeeder::class,
-            CreateRecordsStaffUser::class,
             AssignSpatieRolesSeeder::class,
             AdoptionTraitsSeeder::class,
             AdoptionPetsSeeder::class,
