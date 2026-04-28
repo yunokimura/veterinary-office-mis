@@ -168,30 +168,30 @@
         <!-- Quick Actions -->
         <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
             <h3 class="text-base font-semibold text-gray-800 mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="{{ route('admin.vaccination-reports.index') }}" class="flex flex-col items-center p-4 md:p-5 bg-red-100 hover:bg-red-200 rounded-xl transition group hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <a href="{{ route('admin.vaccination-reports.index') }}" class="flex flex-col items-center justify-center p-3 md:p-4 bg-white rounded-xl shadow-sm transition group hover:-translate-y-1 h-full">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-red-600 rounded-xl flex items-center justify-center mb-1 md:mb-2">
                         <i class="bi bi-eyedropper text-white text-lg md:text-xl"></i>
                     </div>
-                    <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Vaccination</span>
+                    <span class="text-xs md:text-sm font-semibold text-gray-700 text-center leading-tight whitespace-nowrap">Vaccination</span>
                 </a>
-                <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="flex flex-col items-center p-4 md:p-5 bg-orange-100 hover:bg-orange-200 rounded-xl transition group hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-2">
+                <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="flex flex-col items-center justify-center p-3 md:p-4 bg-white rounded-xl shadow-sm transition group hover:-translate-y-1 h-full">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-orange-600 rounded-xl flex items-center justify-center mb-1 md:mb-2">
                         <i class="bi bi-file-earmark-medical text-white text-lg md:text-xl"></i>
                     </div>
-                    <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Bite Reports</span>
+                    <span class="text-xs md:text-sm font-semibold text-gray-700 text-center leading-tight whitespace-nowrap">Bite Reports</span>
                 </a>
-                <a href="{{ route('city-vet.rabies-geomap') }}" class="flex flex-col items-center p-4 md:p-5 bg-purple-100 hover:bg-purple-200 rounded-xl transition group hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2">
+                <a href="{{ route('city-vet.rabies-geomap') }}" class="flex flex-col items-center justify-center p-3 md:p-4 bg-white rounded-xl shadow-sm transition group hover:-translate-y-1 h-full">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-1 md:mb-2">
                         <i class="bi bi-geo-alt-fill text-white text-lg md:text-xl"></i>
                     </div>
-                    <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Heatmap</span>
+                    <span class="text-xs md:text-sm font-semibold text-gray-700 text-center leading-tight whitespace-nowrap">Heatmap</span>
                 </a>
-                <a href="{{ route('admin.all-reports') }}" class="flex flex-col items-center p-4 md:p-5 bg-blue-100 hover:bg-blue-200 rounded-xl transition group hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2">
+                <a href="{{ route('admin.all-reports') }}" class="flex flex-col items-center justify-center p-3 md:p-4 bg-white rounded-xl shadow-sm transition group hover:-translate-y-1 h-full">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-1 md:mb-2">
                         <i class="bi bi-file-earmark-bar-graph text-white text-lg md:text-xl"></i>
                     </div>
-                    <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Reports</span>
+                    <span class="text-xs md:text-sm font-semibold text-gray-700 text-center leading-tight whitespace-nowrap">Reports</span>
                 </a>
             </div>
         </div>
