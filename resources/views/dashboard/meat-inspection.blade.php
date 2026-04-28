@@ -27,11 +27,11 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
 @section('content')
 <div class="max-w-7xl mx-auto">
     <!-- Page Header -->
-    <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl shadow-lg mb-6 p-6">
+     <div class="bg-white rounded-2xl shadow-lg mb-6 p-6 border border-gray-100">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="text-white">
-                <h1 class="text-2xl font-bold">Meat Inspection Reports</h1>
-                <p class="text-red-100">Manage and track all meat inspection records</p>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Meat Inspection Reports</h1>
+                <p class="text-gray-600 mt-1">Manage and track all meat inspection records</p>
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route($dashboardRoute) }}" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition backdrop-blur-sm">

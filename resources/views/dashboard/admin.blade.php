@@ -88,11 +88,11 @@
 <!-- Response Time Indicators -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
     @php
-        $resolvedReports = \App\Models\BiteRabiesReport::where('status', 'resolved')->whereNotNull('action_taken')->get();
+        $resolvedReports = \App\Models\BiteRabiesReport::where('status', 'Resolved')->get();
         $avgDays = $resolvedReports->count() > 0 ? round($resolvedReports->avg(function($r) {
             return $r->created_at->diffInDays($r->updated_at);
         }), 1) : 0;
-        $olderThan7Days = \App\Models\BiteRabiesReport::where('status', '!=', 'resolved')
+        $olderThan7Days = \App\Models\BiteRabiesReport::where('status', '!=', 'Resolved')
             ->where('created_at', '<', now()->subDays(7))
             ->count();
     @endphp

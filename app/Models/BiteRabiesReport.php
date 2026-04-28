@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -23,7 +25,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property int|null $barangay_id
  * @property string|null $incident_barangay
  * @property string|null $exact_location
- * @property \Illuminate\Support\Carbon $incident_date
+ * @property Carbon $incident_date
  * @property string $exposure_type
  * @property string|null $bite_site
  * @property string $category
@@ -38,14 +40,15 @@ use Illuminate\Database\Eloquent\Builder;
  * @property array<array-key, mixed>|null $wound_management
  * @property string|null $post_exposure_prophylaxis
  * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property int|null $user_id
- * @property-read \App\Models\Barangay|null $barangay
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Notification> $notifications
+ * @property-read Barangay|null $barangay
+ * @property-read Collection<int, Notification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \App\Models\Barangay|null $patientBarangay
- * @property-read \App\Models\User|null $reportedBy
+ * @property-read Barangay|null $patientBarangay
+ * @property-read User|null $reportedBy
+ *
  * @method static Builder<static>|BiteRabiesReport byAnimalType(string $type)
  * @method static Builder<static>|BiteRabiesReport byBarangay(int $barangayId)
  * @method static Builder<static>|BiteRabiesReport byCategory(string $category)
@@ -86,6 +89,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static Builder<static>|BiteRabiesReport whereUserId($value)
  * @method static Builder<static>|BiteRabiesReport whereVaccinationStatus($value)
  * @method static Builder<static>|BiteRabiesReport whereWoundManagement($value)
+ *
  * @mixin \Eloquent
  */
 class BiteRabiesReport extends Model
@@ -134,6 +138,7 @@ class BiteRabiesReport extends Model
         'wound_management',
         'post_exposure_prophylaxis',
         'notes',
+        'action_taken',
     ];
 
     protected $casts = [
@@ -193,6 +198,6 @@ class BiteRabiesReport extends Model
             ? (int) substr($lastReport->report_number, -5) + 1
             : 1;
 
-        return 'BR-' . $year . '-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        return 'BR-'.$year.'-'.str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
     }
 }

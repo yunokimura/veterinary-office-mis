@@ -180,7 +180,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'disea
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3">
+            <div class="flex justify-start gap-3">
                 <a href="{{ route($rolePrefix . '.rabies-bite-reports.index') }}"
                    class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
                     <i class="bi bi-x-circle mr-1"></i>Clear
