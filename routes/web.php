@@ -60,6 +60,7 @@ require __DIR__.'/auth.php';
 |
 */
 
+use App\Exceptions\AppointmentSlotTakenException;
 use App\Http\Controllers\AdminAsst\AdoptionApplicationController;
 use App\Http\Controllers\AdminAsst\AdoptionController;
 use App\Http\Controllers\AdminAsst\AppointmentController;
@@ -72,13 +73,16 @@ use App\Http\Controllers\AdoptionPetController;
 use App\Http\Controllers\Client\BiteRabiesReportController;
 use App\Http\Controllers\DeviceTokenController;
 use App\Http\Controllers\MedicalRecordController;
+use App\Models\Address;
 use App\Models\AdoptionTrait;
 use App\Models\Announcement;
+use App\Models\Barangay;
 use App\Models\MissingPet;
 use App\Models\Pet;
 use App\Models\PetOwner;
 use App\Models\SpayNeuterReport;
 use App\Models\VaccinationReport;
+use App\Services\AppointmentBookingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -1250,17 +1254,17 @@ Route::get('/vaccination/form', function () {
 // Vaccination Form POST Route
 Route::post('/vaccination/form', function (Request $request) {
     $validated = $request->validate([
-        'owner_first_name' => 'required|string|max:255',
-        'owner_last_name' => 'required|string|max:255',
-        'owner_email' => 'required|email',
-        'owner_contact' => 'required|string|max:12',
-        'blk_lot_ph' => 'required|string|max:255',
-        'street' => 'required|string|max:255',
-        'barangay' => 'required|string|max:255',
+        // Owner info is derived from authenticated user
         'selected_pets' => 'required|array|min:1|max:3',
         'appointment_date' => 'required|date|after_or_equal:today',
         'appointment_time' => 'required',
+        'last_anti_rabies_date' => 'nullable|date',
         'recent_surgery' => 'required|in:yes,no',
+        'alt_mobile_number' => 'nullable|string|max:12',
+        // Address fields to create a new Address record
+        'blk_lot_ph' => 'required|string|max:255',
+        'street' => 'required|string|max:255',
+        'barangay' => 'required|string|max:255',
     ]);
 
     // Parse selected_pets - could be array or JSON string from hidden input
@@ -1288,27 +1292,36 @@ Route::post('/vaccination/form', function (Request $request) {
     // Combine date and time into scheduled_at
     $scheduledAt = Carbon::parse($validated['appointment_date'].' '.$validated['appointment_time']);
 
-    // Store selected pets in metadata JSON
+    // Store selected pets and optional alt_mobile_number in metadata JSON
     $metadata = [
         'selected_pets' => $selectedPets,
     ];
-
-    // Add alt mobile if provided
     if (! empty($validated['alt_mobile_number'])) {
         $metadata['alt_mobile_number'] = $validated['alt_mobile_number'];
     }
 
-    // Create vaccination report
+    // Resolve or create Address record
+    $barangayRecord = Barangay::firstOrCreate(
+        ['barangay_name' => $validated['barangay']],
+        ['city' => 'Dasmariñas City', 'province' => 'Cavite', 'status' => 'active']
+    );
+
+    $address = Address::create([
+        'block_lot_phase' => $validated['blk_lot_ph'],
+        'street' => $validated['street'],
+        'subdivision' => null,
+        'barangay_id' => $barangayRecord->barangay_id,
+        'city' => 'Dasmariñas City',
+        'province' => 'Cavite',
+        'postal_code' => null,
+        'is_primary' => true,
+    ]);
+
+    // Create vaccination report using foreign keys
     VaccinationReport::create([
         'user_id' => $user->id,
-        'owner_first_name' => $validated['owner_first_name'],
-        'owner_last_name' => $validated['owner_last_name'],
-        'owner_email' => $validated['owner_email'],
-        'owner_contact' => $validated['owner_contact'],
-        'alt_mobile_number' => $validated['alt_mobile_number'] ?? null,
-        'blk_lot_ph' => $validated['blk_lot_ph'],
-        'street' => $validated['street'],
-        'barangay' => $validated['barangay'],
+        'owner_id' => $petOwner->owner_id,
+        'address_id' => $address->id,
         'scheduled_at' => $scheduledAt,
         'last_anti_rabies_date' => $validated['last_anti_rabies_date'] ?? null,
         'recent_surgery' => $validated['recent_surgery'] === 'yes',

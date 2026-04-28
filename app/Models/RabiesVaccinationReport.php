@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $user_id
+ * @property int|null $vaccination_report_id
  * @property string $clinic_name
  * @property string $patient_name
  * @property string $patient_contact
@@ -20,21 +23,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $pet_color
  * @property string $vaccine_brand
  * @property string|null $vaccine_batch_number
- * @property \Illuminate\Support\Carbon $vaccination_date
+ * @property Carbon $vaccination_date
  * @property mixed $vaccination_time
- * @property \Illuminate\Support\Carbon|null $next_vaccination_date
+ * @property Carbon|null $next_vaccination_date
  * @property numeric|null $weight
  * @property string $vaccination_type
  * @property string|null $observations
  * @property string $status
  * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\User|null $user
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read User|null $user
+ * @property-read VaccinationReport|null $vaccinationReport
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport completed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport pending()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereClinicName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereCreatedAt($value)
@@ -60,6 +64,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereVaccineBatchNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereVaccineBrand($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereWeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereVaccinationReportId($value)
+ *
  * @mixin \Eloquent
  */
 class RabiesVaccinationReport extends Model
@@ -88,6 +94,7 @@ class RabiesVaccinationReport extends Model
         'observations',
         'status',
         'notes',
+        'vaccination_report_id',
     ];
 
     protected $casts = [
@@ -101,6 +108,11 @@ class RabiesVaccinationReport extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function vaccinationReport(): BelongsTo
+    {
+        return $this->belongsTo(VaccinationReport::class);
     }
 
     public function scopeCompleted($query)

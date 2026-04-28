@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $owner_id
@@ -16,13 +18,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $suffix
  * @property string $phone_number
  * @property string|null $alternate_phone_number
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $date_of_birth
- * @property-read \App\Models\Address|null $address
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Pet> $pets
+ * @property-read Address|null $address
+ * @property-read Collection<int, Pet> $pets
  * @property-read int|null $pets_count
- * @property-read \App\Models\User $user
+ * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner newQuery()
@@ -39,6 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner whereSuffix($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class PetOwner extends Model
@@ -72,6 +76,11 @@ class PetOwner extends Model
     public function pets(): HasMany
     {
         return $this->hasMany(Pet::class, 'owner_id', 'owner_id');
+    }
+
+    public function vaccinationReports(): HasMany
+    {
+        return $this->hasMany(VaccinationReport::class, 'owner_id', 'owner_id');
     }
 
     public function scopeActive($query)
