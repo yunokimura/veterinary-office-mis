@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $pet_id
@@ -14,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $species
  * @property string $breed
  * @property string $gender
- * @property \Illuminate\Support\Carbon|null $birthdate
+ * @property Carbon|null $birthdate
  * @property string|null $pet_image
  * @property string $vaccination_status
  * @property string|null $vaccination_date
@@ -35,27 +37,28 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $source_module
  * @property int|null $source_module_id
  * @property bool $is_approved
- * @property \Illuminate\Support\Carbon|null $consolidated_at
+ * @property Carbon|null $consolidated_at
  * @property string $pet_status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Barangay|null $barangay
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Barangay|null $barangay
  * @property-read mixed $age
  * @property-read mixed $date_of_birth
  * @property-read mixed $description
  * @property-read mixed $image
  * @property-read mixed $is_age_estimated
  * @property-read mixed $weight
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MedicalRecord> $medicalRecords
+ * @property-read Collection<int, MedicalRecord> $medicalRecords
  * @property-read int|null $medical_records_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MissingPetsReport> $missingReport
+ * @property-read Collection<int, MissingPetsReport> $missingReport
  * @property-read int|null $missing_report_count
- * @property-read \App\Models\PetOwner|null $owner
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AdoptionTrait> $traits
+ * @property-read PetOwner|null $owner
+ * @property-read Collection<int, AdoptionTrait> $traits
  * @property-read int|null $traits_count
- * @property-read \App\Models\User|null $userOwner
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Vaccination> $vaccinations
+ * @property-read User|null $userOwner
+ * @property-read Collection<int, Vaccination> $vaccinations
  * @property-read int|null $vaccinations_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet availableForAdoption()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet newQuery()
@@ -91,6 +94,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereVaccinationDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereVaccinationStatus($value)
+ *
  * @mixin \Eloquent
  */
 class Pet extends Model
@@ -165,6 +169,11 @@ class Pet extends Model
     public function vaccinations(): HasMany
     {
         return $this->hasMany(Vaccination::class, 'pet_id');
+    }
+
+    public function spayNeuterReports(): HasMany
+    {
+        return $this->hasMany(SpayNeuterReport::class, 'pet_id', 'pet_id');
     }
 
     public function medicalRecords(): HasMany

@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
+use App\Models\Barangay;
+use App\Models\Pet;
+use App\Models\SpayNeuterReport;
+use App\Services\NotificationService;
+use App\Services\VeterinarianRotationService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use App\Models\SpayNeuterReport;
-use App\Models\Appointment;
 
 class SpayNeuterController extends Controller
 {
@@ -17,14 +21,15 @@ class SpayNeuterController extends Controller
     {
         $user = Auth::user();
         $reports = SpayNeuterReport::where('user_id', $user->id)
+            ->with(['owner', 'pet'])
             ->latest()
             ->take(5)
             ->get();
-        
+
         $totalReports = SpayNeuterReport::count();
         $completed = SpayNeuterReport::where('status', 'completed')->count();
         $scheduled = SpayNeuterReport::where('status', 'scheduled')->count();
-        
+
         return view('dashboard.spay-neuter', compact('reports', 'totalReports', 'completed', 'scheduled'));
     }
 
@@ -33,7 +38,10 @@ class SpayNeuterController extends Controller
      */
     public function create()
     {
-        return view('reports.spay_neuter_form');
+        $pets = Pet::with('owner')->orderBy('pet_name')->get();
+        $report = null;
+
+        return view('reports.spay_neuter_form', compact('pets', 'report'));
     }
 
     /**
@@ -42,30 +50,45 @@ class SpayNeuterController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'pet_name' => 'nullable|string|max:255',
-            'species' => 'required|string|in:dog,cat,other',
-            'pet_breed' => 'nullable|string|max:255',
-            'pet_age' => 'nullable|string',
-            'gender' => 'required|string|in:male,female',
-            'owner_name' => 'required|string|max:255',
-            'owner_contact' => 'nullable|string|max:255',
-            'owner_address' => 'nullable|string',
+            'pet_id' => 'required|exists:pets,pet_id',
             'procedure_type' => 'required|string|in:spay,neuter',
-            'scheduled_at' => 'nullable|date',
-            'veterinarian' => 'nullable|string|max:255',
-            'clinic_name' => 'nullable|string|max:255',
+            'scheduled_at' => 'required|date',
+            'veterinarian' => 'nullable|in:City Veterinarian,Assistant Veterinarian',
             'weight' => 'nullable|numeric|min:0',
             'status' => 'nullable|string|in:scheduled,completed,cancelled,pending',
             'remarks' => 'nullable|string',
-            'barangay' => 'nullable|string|max:255',
         ]);
 
+        // Load pet and derive owner and barangay
+        $pet = Pet::with('owner')->findOrFail($validated['pet_id']);
+        $owner = $pet->owner;
+        if (! $owner) {
+            return redirect()->back()->with('error', 'Selected pet has no owner.')->withInput();
+        }
+
+        // Resolve barangay from owner's barangay string
+        $barangay = null;
+        if ($owner->barangay) {
+            $barangay = Barangay::firstOrCreate(
+                ['barangay_name' => $owner->barangay],
+                ['city' => 'Dasmariñas City', 'province' => 'Cavite', 'status' => 'active']
+            );
+        }
+
         $validated['user_id'] = Auth::id();
+        $validated['owner_id'] = $owner->owner_id;
+        $validated['barangay_id'] = $barangay?->barangay_id;
         $validated['report_date'] = now();
+
+        // If veterinarian not provided, use rotation service to assign
+        if (empty($validated['veterinarian'])) {
+            $rotationService = new VeterinarianRotationService;
+            $validated['veterinarian'] = $rotationService->assignVeterinarian();
+        }
 
         SpayNeuterReport::create($validated);
 
-        \App\Services\NotificationService::spayNeuterCreated(SpayNeuterReport::latest()->first()->id);
+        NotificationService::spayNeuterCreated(SpayNeuterReport::latest()->first()->id);
 
         return redirect()->route('spay-neuter.reports.index')
             ->with('success', 'Spay/Neuter report submitted successfully!');
@@ -76,7 +99,7 @@ class SpayNeuterController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SpayNeuterReport::query();
+        $query = SpayNeuterReport::query()->with(['pet', 'owner', 'barangay']);
 
         // Filter by status
         if ($request->has('status') && $request->status) {
@@ -88,25 +111,28 @@ class SpayNeuterController extends Controller
             $query->where('procedure_type', $request->procedure_type);
         }
 
-        // Filter by pet type
+        // Filter by pet type/species
         if ($request->has('pet_type') && $request->pet_type) {
-            $query->where('pet_type', $request->pet_type);
+            $query->whereHas('pet', function ($q) use ($request) {
+                $q->where('species', $request->pet_type);
+            });
         }
 
-        // Filter by date range
+        // Filter by date range (scheduled_at)
         if ($request->has('start_date') && $request->start_date) {
-            $query->whereDate('procedure_date', '>=', $request->start_date);
+            $query->whereDate('scheduled_at', '>=', $request->start_date);
         }
         if ($request->has('end_date') && $request->end_date) {
-            $query->whereDate('procedure_date', '<=', $request->end_date);
+            $query->whereDate('scheduled_at', '<=', $request->end_date);
         }
 
         // Non-admin users can only see their own reports
-        if (!Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'disease_control', 'admin_staff'])) {
+        if (! Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'disease_control', 'admin_staff'])) {
             $query->where('user_id', Auth::id());
         }
 
         $reports = $query->latest()->paginate(10);
+
         return view('reports.spay_neuter_index', compact('reports'));
     }
 
@@ -116,6 +142,7 @@ class SpayNeuterController extends Controller
     public function show(SpayNeuterReport $report)
     {
         $this->authorizeReport($report);
+
         return view('reports.spay_neuter_show', compact('report'));
     }
 
@@ -125,7 +152,11 @@ class SpayNeuterController extends Controller
     public function edit(SpayNeuterReport $report)
     {
         $this->authorizeReport($report);
-        return view('reports.spay_neuter_form', compact('report'));
+        $pets = Pet::with('owner')->orderBy('pet_name')->get();
+        // Eager load relationships for the report to pre-select pet and display owner/barangay
+        $report->load(['pet', 'owner', 'barangay']);
+
+        return view('reports.spay_neuter_form', compact('report', 'pets'));
     }
 
     /**
@@ -136,23 +167,32 @@ class SpayNeuterController extends Controller
         $this->authorizeReport($report);
 
         $validated = $request->validate([
-            'pet_name' => 'nullable|string|max:255',
-            'species' => 'required|string|in:dog,cat,other',
-            'pet_breed' => 'nullable|string|max:255',
-            'pet_age' => 'nullable|string',
-            'gender' => 'required|string|in:male,female',
-            'owner_name' => 'required|string|max:255',
-            'owner_contact' => 'nullable|string|max:255',
-            'owner_address' => 'nullable|string',
+            'pet_id' => 'required|exists:pets,pet_id',
             'procedure_type' => 'required|string|in:spay,neuter',
             'scheduled_at' => 'nullable|date',
-            'veterinarian' => 'nullable|string|max:255',
-            'clinic_name' => 'nullable|string|max:255',
+            'veterinarian' => 'nullable|in:City Veterinarian,Assistant Veterinarian',
             'weight' => 'nullable|numeric|min:0',
             'status' => 'nullable|string|in:scheduled,completed,cancelled,pending',
             'remarks' => 'nullable|string',
-            'barangay' => 'nullable|string|max:255',
         ]);
+
+        // Re-derive owner_id and barangay_id from the selected pet
+        $pet = Pet::with('owner')->findOrFail($validated['pet_id']);
+        $owner = $pet->owner;
+        if (! $owner) {
+            return redirect()->back()->with('error', 'Selected pet has no owner.')->withInput();
+        }
+
+        $barangay = null;
+        if ($owner->barangay) {
+            $barangay = Barangay::firstOrCreate(
+                ['barangay_name' => $owner->barangay],
+                ['city' => 'Dasmariñas City', 'province' => 'Cavite', 'status' => 'active']
+            );
+        }
+
+        $validated['owner_id'] = $owner->owner_id;
+        $validated['barangay_id'] = $barangay?->barangay_id;
 
         // Check if status is changing to 'scheduled'
         $wasPending = $report->status === 'pending';
@@ -161,9 +201,9 @@ class SpayNeuterController extends Controller
         // Get scheduled_at from validated data or use existing
         $scheduledAt = null;
         if (isset($validated['scheduled_at'])) {
-            $scheduledAt = \Carbon\Carbon::parse($validated['scheduled_at']);
+            $scheduledAt = Carbon::parse($validated['scheduled_at']);
         } elseif ($report->scheduled_at) {
-            $scheduledAt = \Carbon\Carbon::parse($report->scheduled_at);
+            $scheduledAt = Carbon::parse($report->scheduled_at);
         }
 
         // If status changed from pending to scheduled, create an Appointment
@@ -179,31 +219,29 @@ class SpayNeuterController extends Controller
             }
 
             // Capacity limit validation for kapon
-            if ($report->procedure_type === 'kapon' || true) { // Always check for kapon service_type
-                $appointmentDate = $scheduledAt->format('Y-m-d');
-                $appointmentTime = $scheduledAt->format('H:00:00');
-                
-                // Check hourly capacity (2 per hour for kapon)
-                $hourlyCount = Appointment::where('service_type', 'kapon')
-                    ->where('appointment_date', $appointmentDate)
-                    ->where('appointment_time', '>=', $appointmentTime)
-                    ->where('appointment_time', '<', date('H:00:00', strtotime($appointmentTime . '+1 hour')))
-                    ->where('status', 'scheduled')
-                    ->count();
+            $appointmentDate = $scheduledAt->format('Y-m-d');
+            $appointmentTime = $scheduledAt->format('H:00:00');
 
-                if ($hourlyCount >= 2) {
-                    return redirect()->back()->with('error', 'Hourly capacity (2 kapon appointments per hour) is full. Please choose a different time.');
-                }
+            // Check hourly capacity (2 per hour for kapon)
+            $hourlyCount = Appointment::where('service_type', 'kapon')
+                ->where('appointment_date', $appointmentDate)
+                ->where('appointment_time', '>=', $appointmentTime)
+                ->where('appointment_time', '<', date('H:00:00', strtotime($appointmentTime.'+1 hour')))
+                ->where('status', 'scheduled')
+                ->count();
 
-                // Check daily capacity (12 per day for kapon)
-                $dailyCount = Appointment::where('service_type', 'kapon')
-                    ->where('appointment_date', $appointmentDate)
-                    ->where('status', 'scheduled')
-                    ->count();
+            if ($hourlyCount >= 2) {
+                return redirect()->back()->with('error', 'Hourly capacity (2 kapon appointments per hour) is full. Please choose a different time.');
+            }
 
-                if ($dailyCount >= 12) {
-                    return redirect()->back()->with('error', 'Daily capacity (12 kapon appointments per day) is full. Please choose a different date.');
-                }
+            // Check daily capacity (12 per day for kapon)
+            $dailyCount = Appointment::where('service_type', 'kapon')
+                ->where('appointment_date', $appointmentDate)
+                ->where('status', 'scheduled')
+                ->count();
+
+            if ($dailyCount >= 12) {
+                return redirect()->back()->with('error', 'Daily capacity (12 kapon appointments per day) is full. Please choose a different date.');
             }
 
             Appointment::create([
@@ -213,8 +251,8 @@ class SpayNeuterController extends Controller
                 'service_id' => $report->id,
                 'status' => 'scheduled',
                 'metadata' => json_encode([
-                    'pet_name' => $report->pet_name,
-                    'owner_name' => $report->owner_name,
+                    'pet_name' => $report->pet_name, // accessor
+                    'owner_name' => $report->owner_name, // accessor
                     'procedure_type' => $report->procedure_type,
                 ]),
             ]);
@@ -252,8 +290,8 @@ class SpayNeuterController extends Controller
      */
     private function authorizeReport($report)
     {
-        if ($report->user_id !== Auth::id() && 
-            !Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'disease_control', 'admin_staff'])) {
+        if ($report->user_id !== Auth::id() &&
+            ! Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'disease_control', 'admin_staff'])) {
             abort(403, 'Unauthorized action.');
         }
     }

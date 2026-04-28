@@ -11,13 +11,13 @@ use Illuminate\Support\Facades\DB;
 
 class AppointmentBookingService
 {
-    public function checkAndBookKaponSlot(string $date, string $time, array $selectedPets): void
+    public function checkAndBookKaponSlot(string $date, string $time, array $selectedPetIds): void
     {
-        DB::transaction(function () use ($date, $time, $selectedPets) {
+        DB::transaction(function () use ($date, $time, $selectedPetIds) {
             $scheduledAt = Carbon::parse("{$date} {$time}");
 
-            foreach ($selectedPets as $petId) {
-                $existingKapon = SpayNeuterReport::where('pet_name', $petId)
+            foreach ($selectedPetIds as $petId) {
+                $existingKapon = SpayNeuterReport::where('pet_id', $petId)
                     ->whereDate('scheduled_at', $date)
                     ->whereIn('status', ['pending', 'scheduled'])
                     ->whereNotNull('scheduled_at')
@@ -44,7 +44,7 @@ class AppointmentBookingService
 
             if ($kaponsInHour >= 2) {
                 throw new AppointmentSlotTakenException(
-                    'This kapon appointment slot was just taken by another user. Please select a different time.'
+                    'This kapon slot was just taken by another user. Please select a different time.'
                 );
             }
         });

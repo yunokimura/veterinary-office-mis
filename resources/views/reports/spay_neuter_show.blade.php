@@ -122,7 +122,7 @@
                 <!-- Additional Info -->
                 <div class="md:col-span-2">
                     <div class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-                        <span>Barangay: {{ $report->barangay ?? 'N/A' }}</span>
+                        <span>Barangay: {{ $report->barangay_name ?? 'N/A' }}</span>
                         <span>Report Date: {{ $report->report_date->format('M d, Y H:i') }}</span>
                     </div>
                 </div>

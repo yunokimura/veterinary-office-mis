@@ -83,6 +83,11 @@ class PetOwner extends Model
         return $this->hasMany(VaccinationReport::class, 'owner_id', 'owner_id');
     }
 
+    public function spayNeuterReports(): HasMany
+    {
+        return $this->hasMany(SpayNeuterReport::class, 'owner_id', 'owner_id');
+    }
+
     public function scopeActive($query)
     {
         return $query->whereHas('user', function ($q) {
