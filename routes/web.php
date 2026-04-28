@@ -782,7 +782,7 @@ Route::get('/kapon', function () {
 Route::get('/kapon/form', function () {
     $user = auth()->user();
     $userId = $user ? $user->id : null;
-    $petOwner = $user ? $user->petOwner : null;
+    $petOwner = $user ? $user->petOwner()->with(['address' => function ($query) { $query->with('barangay'); }])->first() : null;
     $pets = $petOwner ? $petOwner->pets : collect([]);
 
     $petsArray = $pets->map(function ($pet) {
@@ -1152,7 +1152,7 @@ Route::get('/adoption/paginate', function (Request $request) {
 // Adoption Form Page Route
 Route::get('/adoption/form', function () {
     $user = auth()->user();
-    $petOwner = $user ? $user->petOwner : null;
+    $petOwner = $user ? $user->petOwner()->with(['address' => function ($query) { $query->with('barangay'); }])->first() : null;
     $traits = AdoptionTrait::orderBy('name')->get();
     $adoptionPets = Pet::where('source_module', 'adoption_pets')->get();
 
@@ -1184,7 +1184,7 @@ Route::get('/missing-pets', function () {
 // Missing Pets Form Page Route
 Route::get('/missing-pets/form', function () {
     $user = auth()->user();
-    $petOwner = $user ? $user->petOwner : null;
+    $petOwner = $user ? $user->petOwner()->with(['address' => function ($query) { $query->with('barangay'); }])->first() : null;
     $pets = $petOwner ? $petOwner->pets : collect([]);
 
     $petsArray = $pets->map(function ($pet) {
@@ -1225,7 +1225,7 @@ Route::get('/vaccination', function () {
 // Vaccination Form Page Route - Public
 Route::get('/vaccination/form', function () {
     $user = auth()->user();
-    $petOwner = $user ? $user->petOwner : null;
+    $petOwner = $user ? $user->petOwner()->with(['address' => function ($query) { $query->with('barangay'); }])->first() : null;
     $pets = $petOwner ? Pet::where('owner_id', $petOwner->owner_id)->get() : collect([]);
 
     $petsArray = $pets->map(function ($pet) {
@@ -1411,3 +1411,4 @@ Route::post('/bite-rabies-report', [BiteRabiesReportController::class, 'store'])
 Route::get('/bite-rabies-report/success', [BiteRabiesReportController::class, 'success'])->name('bite-rabies-report.success');
 
 require __DIR__.'/auth.php';
+

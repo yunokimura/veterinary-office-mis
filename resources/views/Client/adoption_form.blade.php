@@ -257,7 +257,7 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     House No. / Unit No. <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->blk_lot_ph ?? '') }}" readonly
+                                <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->address->block_lot_phase ?? '') }}" readonly
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
                             </div>
 
@@ -266,7 +266,7 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     Street <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->street ?? '') }}" readonly
+                                <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->address->street ?? '') }}" readonly
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
                             </div>
 
@@ -275,7 +275,7 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     Barangay <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->barangay ?? '') }}" readonly
+                                <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->address->barangay->barangay_name ?? '') }}" readonly
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
                             </div>
 
@@ -1538,3 +1538,4 @@
 
 </body>
 </html>
+

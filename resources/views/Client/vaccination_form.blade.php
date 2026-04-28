@@ -205,32 +205,32 @@
                             </div>
                         </div>
 
-                        <!-- House No. / Unit No. -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                House No. / Unit No. <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->blk_lot_ph ?? '') }}"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                        </div>
+                         <!-- House No. / Unit No. -->
+                         <div>
+                             <label class="block text-sm font-medium mb-1.5">
+                                 House No. / Unit No. <span class="text-red-500">*</span>
+                             </label>
+                             <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->address->block_lot_phase ?? '') }}"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                         </div>
 
                         <!-- Street -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Street <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->street ?? '') }}"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                        </div>
+                         <div>
+                             <label class="block text-sm font-medium mb-1.5">
+                                 Street <span class="text-red-500">*</span>
+                             </label>
+                             <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->address->street ?? '') }}"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                         </div>
 
-                        <!-- Barangay -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Barangay <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->barangay ?? '') }}"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                        </div>
+                         <!-- Barangay -->
+                         <div>
+                             <label class="block text-sm font-medium mb-1.5">
+                                 Barangay <span class="text-red-500">*</span>
+                             </label>
+                             <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->address->barangay->barangay_name ?? '') }}"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                         </div>
                     </div>
                 </div>
 
