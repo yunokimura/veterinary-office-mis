@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('title', 'Rabies Geomap')
-@section('header', '')
-@section('subheader', '')
+@section('header', 'Rabies Case Distribution')
+@section('subheader', 'Dasmariñas City Disease Surveillance')
 
 @php
     $currentYear = date('Y');
@@ -208,13 +208,13 @@
          padding: 1px 7px; background: #fef08a; color: #854d0e;
          border-radius: 10px; font-size: 10px; font-weight: 600;
      }
-     .filter-tag button {
+      .filter-tag button {
          display: flex; align-items: center; justify-content: center;
-         width: 12px; height: 12px; background: rgba(234,179,8,0.25);
+         width: 12px; height: 12px; background: rgba(253,230,138,0.25);
          border: none; border-radius: 50%; color: #854d0e;
          cursor: pointer; font-size: 8px; line-height: 1;
      }
-     .filter-tag button:hover { background: rgba(234,179,8,0.4); }
+     .filter-tag button:hover { background: rgba(253,230,138,0.4); }
 
     .map-ui-layer { pointer-events: auto; }
     .map-ui-layer * { pointer-events: auto; }
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() { map.invalidateSize(); }, 100);
 
      function getColor(cases) {
-         return cases > 20 ? '#dc2626' : cases > 10 ? '#ea580c' : cases > 5 ? '#eab308' : cases > 0 ? '#eab308' : '#cbd5e1';
+         return cases > 20 ? '#dc2626' : cases > 10 ? '#ea580c' : cases > 5 ? '#eab308' : cases > 0 ? '#fde68a' : '#cbd5e1';
      }
     function getBorderColor(cases) { return cases > 0 ? '#1e293b' : '#94a3b8'; }
 
