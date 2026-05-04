@@ -90,7 +90,7 @@
                     </div>
                 </div>
                 <div class="legend-item">
-                    <span class="legend-dot" style="background: linear-gradient(135deg, #60a5fa, #3b82f6);"></span>
+                    <span class="legend-dot" style="background: linear-gradient(135deg, #facc15, #eab308);"></span>
                     <div>
                         <span class="legend-label">Low</span>
                         <span class="legend-sub">1 - 5</span>

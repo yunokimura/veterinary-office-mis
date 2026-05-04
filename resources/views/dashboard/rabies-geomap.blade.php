@@ -20,8 +20,8 @@
 @endphp
 
 @section('content')
-{{-- Full-bleed map container --}}
-<div class="relative w-full" style="height: calc(100vh - 64px);">
+ {{-- Full-bleed map container --}}
+    <div class="relative w-full mx-[-1.5rem] md:mx-0 md:w-full" style="height: calc(100vh - 64px);">
 
     {{-- Map --}}
     <div id="geomap" class="w-full h-full" style="z-index: 1; position: relative !important;" role="application" aria-label="Rabies cases geomap">
@@ -110,7 +110,7 @@
         <div id="filterSummary" class="hidden">
             <div class="backdrop-blur bg-white/90 rounded-lg px-3 py-1.5 shadow-sm border border-slate-200/60 flex items-center gap-1.5">
                 <div id="filterTags" class="flex items-center gap-1.5"></div>
-                <button onclick="clearAllFilters()" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-medium ml-1">Clear</button>
+                 <button onclick="clearAllFilters()" class="text-[10px] text-amber-600 hover:text-amber-800 font-medium ml-1">Clear</button>
             </div>
         </div>
     </div>
@@ -182,7 +182,7 @@
         cursor: pointer; transition: all 0.15s; white-space: nowrap;
     }
     .filter-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
-    .filter-btn.active { background: #eef2ff; border-color: #a5b4fc; color: #4338ca; }
+     .filter-btn.active { background: #fef08a; border-color: #eab308; color: #854d0e; }
 
     .filter-menu {
         position: absolute; top: calc(100% + 4px); left: 0;
@@ -198,18 +198,18 @@
     .filter-menu-item:hover { background: #f1f5f9; }
     .filter-menu-item.active { background: #eef2ff; color: #4338ca; font-weight: 600; }
 
-    .filter-tag {
-        display: inline-flex; align-items: center; gap: 3px;
-        padding: 1px 7px; background: #eef2ff; color: #4338ca;
-        border-radius: 10px; font-size: 10px; font-weight: 600;
-    }
-    .filter-tag button {
-        display: flex; align-items: center; justify-content: center;
-        width: 12px; height: 12px; background: rgba(67,56,202,0.12);
-        border: none; border-radius: 50%; color: #4338ca;
-        cursor: pointer; font-size: 8px; line-height: 1;
-    }
-    .filter-tag button:hover { background: rgba(67,56,202,0.25); }
+     .filter-tag {
+         display: inline-flex; align-items: center; gap: 3px;
+         padding: 1px 7px; background: #fef08a; color: #854d0e;
+         border-radius: 10px; font-size: 10px; font-weight: 600;
+     }
+     .filter-tag button {
+         display: flex; align-items: center; justify-content: center;
+         width: 12px; height: 12px; background: rgba(234,179,8,0.25);
+         border: none; border-radius: 50%; color: #854d0e;
+         cursor: pointer; font-size: 8px; line-height: 1;
+     }
+     .filter-tag button:hover { background: rgba(234,179,8,0.4); }
 
     .map-ui-layer { pointer-events: auto; }
     .map-ui-layer * { pointer-events: auto; }
@@ -246,9 +246,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (fallback) fallback.style.display = 'none';
     setTimeout(function() { map.invalidateSize(); }, 100);
 
-    function getColor(cases) {
-        return cases > 20 ? '#dc2626' : cases > 10 ? '#ea580c' : cases > 5 ? '#eab308' : cases > 0 ? '#3b82f6' : '#cbd5e1';
-    }
+     function getColor(cases) {
+         return cases > 20 ? '#dc2626' : cases > 10 ? '#ea580c' : cases > 5 ? '#eab308' : cases > 0 ? '#eab308' : '#cbd5e1';
+     }
     function getBorderColor(cases) { return cases > 0 ? '#1e293b' : '#94a3b8'; }
 
     function style(feature) {
