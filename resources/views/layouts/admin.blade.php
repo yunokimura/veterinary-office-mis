@@ -83,11 +83,18 @@
             main { margin-left: 0; }
             .sidebar-overlay.active { display: block !important; }
         }
-        .content-wrapper {
-            padding: 1.5rem;
-            background-color: #f8fafc;
-            min-height: 100vh;
-        }
+         .content-wrapper {
+             padding: 1.5rem;
+             background-color: #f8fafc;
+             min-height: 100vh;
+             display: flex;
+             flex-direction: column;
+         }
+         @media (max-width: 767px) {
+             .content-wrapper {
+                 padding-top: calc(1.5rem + 56px);
+             }
+         }
     </style>
 </head>
 

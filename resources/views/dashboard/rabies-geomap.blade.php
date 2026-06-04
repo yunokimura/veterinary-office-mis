@@ -21,7 +21,7 @@
 
 @section('content')
  {{-- Full-bleed map container --}}
-    <div class="relative w-full mx-[-1.5rem] md:mx-0 md:w-full" style="height: calc(100vh - 64px);">
+    <div class="relative w-full flex-1 min-h-0">
 
     {{-- Map --}}
     <div id="geomap" class="w-full h-full" style="z-index: 1; position: relative !important;" role="application" aria-label="Rabies cases geomap">

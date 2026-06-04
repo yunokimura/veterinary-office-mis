@@ -21,7 +21,7 @@
 
 @section('content')
  {{-- Full-bleed map container --}}
-    <div class="relative w-full mx-[-1.5rem] md:mx-0 md:w-full" style="height: calc(100vh - 64px);">
+    <div class="relative w-full flex-1 min-h-0">
 
     {{-- Map --}}
     <div id="geomap" class="w-full h-full" style="z-index: 1; position: relative !important;" role="application" aria-label="Rabies cases geomap">
@@ -34,8 +34,8 @@
     </div>
 
      {{-- Filter Bar (centered, below header) --}}
-     <div class="absolute top-4 left-0 right-0 mx-auto z-[1000] map-ui-layer px-4 md:px-0 md:w-fit md:left-1/2 md:-translate-x-1/2">
-         <div class="flex flex-wrap items-center justify-center gap-3 backdrop-blur-xl bg-white/95 rounded-2xl px-5 py-2.5 shadow-lg border border-slate-200/60">
+      <div class="absolute top-16 left-0 right-0 z-[1000] map-ui-layer px-4 md:px-0">
+         <div class="mx-auto md:mx-0 md:left-1/2 md:-translate-x-1/2 md:absolute md:w-fit flex flex-wrap items-center justify-center gap-3 backdrop-blur-xl bg-white/95 rounded-2xl px-5 py-2.5 shadow-lg border border-slate-200/60">
             <div class="flex items-center gap-2 pr-4 border-r border-slate-200/60">
                 <div class="w-9 h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
                     <i class="bi bi-map text-white text-sm"></i>
