@@ -409,10 +409,17 @@
                     </div>
                 </div>
 
-                <!-- Right: Map Image -->
+                <!-- Right: Interactive Map -->
                 <div class="flex justify-center">
-                    <div class="w-full max-w-lg aspect-video bg-gray-100 rounded-2xl overflow-hidden shadow-lg">
-                        <img src="{{ asset('images/map_location.png') }}" alt="Dasmariñas City Veterinary Office Location" class="w-full h-full object-cover">
+                    <div class="w-full max-w-2xl rounded-2xl shadow-lg overflow-hidden">
+                        <iframe 
+                            src="https://www.google.com/maps?q=Langkaan+2,+Dasmariñas,+4114+Cavite,+Philippines&iwloc=0&output=embed"
+                            class="w-full h-80 md:h-96"
+                            style="border:0;"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Dasmariñas City Veterinary Office Location">
+                        </iframe>
                     </div>
                 </div>
             </div>
