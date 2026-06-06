@@ -413,7 +413,7 @@
                 <div class="flex justify-center">
                     <div class="w-full max-w-2xl rounded-2xl shadow-lg overflow-hidden">
                         <iframe 
-                            src="https://www.google.com/maps?q=Langkaan+2,+Dasmariñas,+4114+Cavite,+Philippines&iwloc=0&output=embed"
+                            src="https://maps.google.com/maps?q=14.2514524,120.948638&z=17&output=embed"
                             class="w-full h-80 md:h-96"
                             style="border:0;"
                             loading="lazy"
