@@ -347,45 +347,7 @@
         </div>
     </section>
 
-    <!-- Mission & Vision Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Mission & Vision</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Guiding principles that drive our commitment to animal welfare and public health</p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Mission Card -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8">
-                    <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
-                    <p class="text-gray-600 text-lg leading-relaxed">
-                        To uphold the principles of One Health by protecting human health, promoting animal welfare, and safeguarding the environment through accessible veterinary services, disease prevention and control, responsible pet ownership advocacy, food safety regulation, and strong community partnerships.
-                    </p>
-                </div>
-                
-                <!-- Vision Card -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8">
-                    <div class="w-16 h-16 bg-secondary/10 rounded-xl flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
-                    <p class="text-gray-600 text-lg leading-relaxed">
-                        A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Where to Find Us -->
+<!-- Where to Find Us -->
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
