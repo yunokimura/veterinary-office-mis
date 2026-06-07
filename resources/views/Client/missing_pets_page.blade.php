@@ -470,7 +470,7 @@
     </div>
 
     <script>
-        let missingPetsData = {!! json_encode($missingPets->map(function($pet) { return [ 'missing_id' => $pet->missing_id, 'name' => $pet->name, 'species' => $pet->species, 'breed' => $pet->breed, 'gender' => $pet->gender, 'age' => $pet->age, 'weight' => $pet->weight, 'color' => $pet->color, 'description' => $pet->description, 'location' => $pet->location, 'last_seen_at' => $pet->last_seen_at, 'photo_img' => $pet->photo_img ? asset($pet->photo_img) : null ]; })) !!};
+        let missingPetsData = {!! json_encode($missingPets->map(function($pet) { return [ 'missing_id' => $pet->missing_id, 'pet_name' => $pet->pet_name, 'species' => $pet->species, 'breed' => $pet->breed, 'gender' => $pet->gender, 'age' => $pet->age, 'weight' => $pet->weight, 'color' => $pet->color, 'description' => $pet->description, 'location' => $pet->location, 'last_seen_at' => $pet->last_seen_at, 'photo_img' => $pet->photo_img ? asset('storage/'.$pet->photo_img) : null ]; })) !!};
         let currentPage = {{ $missingPets->currentPage() }};
         let lastPage = {{ $missingPets->lastPage() }};
         let currentSpecies = 'all';
@@ -718,11 +718,11 @@
                      html += `
                      <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(${pet.missing_id})">
                          <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                              <img src="${pet.photo_img ? pet.photo_img : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image'}" alt="${pet.name}" class="w-full h-full object-cover pet-image">
+                               <img src="${pet.photo_img ? pet.photo_img : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image'}" alt="${pet.pet_name}" class="w-full h-full object-cover pet-image">
                              <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">${pet.status ? pet.status.toUpperCase() : ''}</span>
                          </div>
                          <div class="p-4">
-                             <h3 class="text-lg font-bold text-gray-900 mb-2">${pet.name}</h3>
+                              <h3 class="text-lg font-bold text-gray-900 mb-2">${pet.pet_name}</h3>
                              <div class="space-y-2 text-sm">
                                  <div class="flex justify-between">
                                      <span class="text-gray-500">Age:</span>
@@ -801,7 +801,7 @@
             
             currentModalPetId = petId;
             
-            document.getElementById('modalPetName').textContent = pet.name;
+            document.getElementById('modalPetName').textContent = pet.pet_name;
             document.getElementById('modalPetSpecies').textContent = pet.species;
             document.getElementById('modalPetBreed').textContent = pet.breed || 'Breed not available';
             document.getElementById('modalPetAge').textContent = pet.age || 'Age not available';
@@ -948,7 +948,7 @@
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('userDropdown');
             const button = event.target.closest('button');
-            if (!button && !dropdown.contains(event.target)) {
+            if (!button && dropdown && !dropdown.contains(event.target)) {
                 dropdown.classList.add('hidden');
             }
         });

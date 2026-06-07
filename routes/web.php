@@ -1183,12 +1183,25 @@ Route::get('/missing-pets', function () {
         ->orderBy('last_seen_at', 'desc')
         ->paginate(12);
 
-    // Get active announcements for public (all published, no audience filter)
+    $availableBreeds = MissingPet::where('status', 'missing')
+        ->whereNotNull('breed')
+        ->where('breed', '!=', '')
+        ->distinct()
+        ->orderBy('breed')
+        ->pluck('breed');
+
+    $availableLocations = MissingPet::where('status', 'missing')
+        ->whereNotNull('location')
+        ->where('location', '!=', '')
+        ->distinct()
+        ->orderBy('location')
+        ->pluck('location');
+
     $announcements = Announcement::where('is_active', true)
         ->orderBy('created_at', 'desc')
         ->get();
 
-    return view('Client.missing_pets_page', compact('missingPets', 'announcements'));
+    return view('Client.missing_pets_page', compact('missingPets', 'announcements', 'availableBreeds', 'availableLocations'));
 });
 
 // Missing Pets Form Page Route
