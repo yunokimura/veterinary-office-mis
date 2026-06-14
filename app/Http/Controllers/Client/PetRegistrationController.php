@@ -33,7 +33,8 @@ class PetRegistrationController extends Controller
                 'pet_birthdate' => 'nullable|date',
                 'estimated_age' => 'nullable|string',
                 'pet_weight' => 'nullable|string|max:50',
-                'body_mark_details' => 'nullable|string',
+                'body_mark_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'body_mark_details' => 'required|string|max:1000',
             ]);
 
             // Get the authenticated user
@@ -169,6 +170,26 @@ class PetRegistrationController extends Controller
                 'dislikes' => json_encode($request->input('dislikes', [])),
                 'diet' => json_encode($request->input('diet', [])),
                 'allergy' => json_encode($request->input('allergy', [])),
+            ]);
+
+            // Handle additional view photos
+            $additionalPhotos = [];
+            if ($request->hasFile('additional_photos')) {
+                $uploadPath = public_path('images/pets/'.$pet->pet_id);
+                if (! file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0777, true);
+                }
+                foreach ($request->file('additional_photos') as $view => $file) {
+                    if ($file->isValid()) {
+                        $filename = $view.'_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+                        $file->move($uploadPath, $filename);
+                        $additionalPhotos[$view] = 'images/pets/'.$pet->pet_id.'/'.$filename;
+                    }
+                }
+            }
+
+            $pet->update([
+                'additional_photos' => json_encode($additionalPhotos),
             ]);
 
             Log::info('Pet created successfully with ID: '.$pet->pet_id);

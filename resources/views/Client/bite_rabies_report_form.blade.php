@@ -50,7 +50,7 @@
 
             <!-- Navigation -->
             <nav class="hidden md:flex space-x-8">
-                <a href="{{ url('/') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>
+                <a href="{{ route('public.home') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>
                 <a href="{{ url('/about-us') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">About Us</a>
                 <a href="{{ url('/services') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Services</a>
             </nav>
@@ -509,7 +509,7 @@
                         Submit Report
                     </button>
                     <div>
-                        <a href="{{ url('/') }}" class="inline-block text-gray-600 hover:text-primary transition-colors">
+                        <a href="{{ route('public.home') }}" class="inline-block text-gray-600 hover:text-primary transition-colors">
                             ← Back to Home
                         </a>
                     </div>

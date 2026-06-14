@@ -125,6 +125,7 @@ class Pet extends Model
         'birthdate',
         'body_mark_details',
         'body_mark_image',
+        'additional_photos',
         'is_neutered',
         'is_crossbreed',
         'training',
@@ -149,6 +150,7 @@ class Pet extends Model
         'consolidated_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'additional_photos' => 'array',
     ];
 
     public function owner(): BelongsTo

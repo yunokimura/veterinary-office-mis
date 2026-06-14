@@ -65,7 +65,7 @@
                 
                 <!-- Navigation -->
                 <nav class="hidden md:flex space-x-8">
-                    <a href="{{ url('/') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>
+                    <a href="{{ route('public.home') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>
                     <a href="{{ url('/about-us') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">About Us</a>
                     <a href="{{ url('/services') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Services</a>
                     <a href="{{ url('/missing-pets') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Missing Pets</a>
@@ -323,23 +323,75 @@
 
                 <hr class="border-gray-300 mb-6">
 
-                <h3 class="text-lg font-semibold text-gray-900 mb-6">Additional Information</h3>
-
-                <!-- Unique Body Mark -->
+                <h3 class="text-lg font-semibold text-gray-900 mb-6">Unique Identifying Features</h3>
 
                 <!-- Unique Body Mark -->
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Unique Body Mark</label>
-                    <div class="flex items-center space-x-4">
-                        <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-light" onchange="previewBodyMark(event)">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Unique Body Mark <span class="text-red-500">*</span></label>
+                    <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-primary transition-colors inline-block">
+                        <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-48 h-48 object-cover rounded-lg">
+                        <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)" required>
+                        <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn">×</button>
+                        <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-primary text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                            Click to upload
+                        </button>
                     </div>
                 </div>
 
                 <!-- Body Mark Details -->
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Body Mark Details</label>
-                    <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Describe any unique marks, scars, or distinguishing features..."></textarea>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Body Mark Details <span class="text-red-500">*</span></label>
+                    <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Describe any unique marks, scars, or distinguishing features..." required></textarea>
                 </div>
+
+                <!-- Additional View Photos -->
+                <div class="mb-8">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Additional Photos</label>
+                    <p class="text-xs text-gray-500 mb-4">Upload front, side, and top-down views of your pet</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                        <!-- Front View -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-2">Front View</label>
+                            <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-primary transition-colors">
+                                <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')">
+                                <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn">×</button>
+                                <button type="button" onclick="document.getElementById('frontImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-primary text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                    Click to upload
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Side View -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-2">Side View</label>
+                            <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-primary transition-colors">
+                                <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')">
+                                <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn">×</button>
+                                <button type="button" onclick="document.getElementById('sideImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-primary text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                    Click to upload
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Top-Down View -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-2">Top-Down View</label>
+                            <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-primary transition-colors">
+                                <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')">
+                                <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn">×</button>
+                                <button type="button" onclick="document.getElementById('topImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-primary text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                    Click to upload
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="border-gray-300 mb-6">
 
                 <!-- Pet Attributes based on type -->
                 <div id="petAttributesSection" class="mb-6">
@@ -742,8 +794,21 @@
         function previewBodyMark(event) {
             const file = event.target.files[0];
             if (file) {
-                // Image preview would go here if needed
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('bodyMarkPreview').src = e.target.result;
+                    document.getElementById('bodyMarkRemoveBtn').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
             }
+        }
+
+        // Remove body mark image
+        function removeBodyMark() {
+            const preview = document.getElementById('bodyMarkPreview');
+            preview.src = "{{ asset('images/no-image.png') }}";
+            document.getElementById('bodyMarkImage').value = '';
+            document.getElementById('bodyMarkRemoveBtn').classList.add('hidden');
         }
 
         // Cat attributes data
@@ -978,7 +1043,7 @@
             }
         }
 
-        // Preview uploaded image
+        // Preview uploaded profile image
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -988,6 +1053,31 @@
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        // Preview uploaded additional photo
+        function previewImageForAdditional(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                    const removeBtn = document.getElementById(previewId.replace('Preview', 'RemoveBtn'));
+                    removeBtn.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Remove uploaded photo
+        function removePhoto(view) {
+            const previewId = view + 'Preview';
+            const inputId = view + 'Image';
+            const removeBtnId = view + 'RemoveBtn';
+            
+            document.getElementById(previewId).src = "{{ asset('images/no-image.png') }}";
+            document.getElementById(inputId).value = '';
+            document.getElementById(removeBtnId).classList.add('hidden');
         }
 
         // Toggle user dropdown

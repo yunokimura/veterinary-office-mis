@@ -97,7 +97,7 @@
 
             <!-- Back to Home -->
             <div class="text-center mt-4">
-                <a href="{{ url('/') }}" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                <a href="{{ route('public.home') }}" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">
                     ← Back to Home
                 </a>
             </div>
