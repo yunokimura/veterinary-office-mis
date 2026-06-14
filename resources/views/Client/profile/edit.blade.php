@@ -289,27 +289,27 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Block/Lot/Phase/House No.</label>
-                            <p class="text-gray-900 font-medium">{{ $user->petOwner->blk_lot_ph ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->address->block_lot_phase ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Street Name</label>
-                            <p class="text-gray-900 font-medium">{{ $user->petOwner->street ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->address->street ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Subdivision</label>
-                            <p class="text-gray-900 font-medium">{{ $user->petOwner->subdivision ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->address->subdivision ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Barangay</label>
-                            <p class="text-gray-900 font-medium">{{ $user->petOwner->barangay ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->address->barangay->barangay_name ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">City</label>
-                            <p class="text-gray-900 font-medium">{{ $user->petOwner->city ?? 'Dasmariñas City' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->address->city ?? 'Dasmariñas City' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Province</label>
-                            <p class="text-gray-900 font-medium">{{ $user->petOwner->province ?? 'Cavite' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->address->province ?? 'Cavite' }}</p>
                         </div>
                     </div>
                 </div>
@@ -321,104 +321,104 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Block/Lot/Phase/House No.</label>
-                            <input type="text" name="blk_lot_ph" value="{{ $user->petOwner->blk_lot_ph ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="blk_lot_ph" value="{{ old('blk_lot_ph', $user->petOwner->address->block_lot_phase ?? '') }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Street Name</label>
-                            <input type="text" name="street" value="{{ $user->petOwner->street ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="street" value="{{ old('street', $user->petOwner->address->street ?? '') }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Subdivision</label>
-                            <input type="text" name="subdivision" value="{{ $user->petOwner->subdivision ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="subdivision" value="{{ old('subdivision', $user->petOwner->address->subdivision ?? '') }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
                             <select name="barangay" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white">
                                 <option value="">Select Barangay</option>
-                                <option value="Burol I" {{ ($user->petOwner->barangay ?? '') == 'Burol I' ? 'selected' : '' }}>Burol I</option>
-                                <option value="Burol II" {{ ($user->petOwner->barangay ?? '') == 'Burol II' ? 'selected' : '' }}>Burol II</option>
-                                <option value="Burol III" {{ ($user->petOwner->barangay ?? '') == 'Burol III' ? 'selected' : '' }}>Burol III</option>
-                                <option value="Burol Main" {{ ($user->petOwner->barangay ?? '') == 'Burol Main' ? 'selected' : '' }}>Burol Main</option>
-                                <option value="Datu Esmael (Bago-A-Ingud)" {{ ($user->petOwner->barangay ?? '') == 'Datu Esmael (Bago-A-Ingud)' ? 'selected' : '' }}>Datu Esmael (Bago-A-Ingud)</option>
-                                <option value="Emmanuel Bergaod I" {{ ($user->petOwner->barangay ?? '') == 'Emmanuel Bergaod I' ? 'selected' : '' }}>Emmanuel Bergaod I</option>
-                                <option value="Emmanuel Bergaod II" {{ ($user->petOwner->barangay ?? '') == 'Emmanuel Bergaod II' ? 'selected' : '' }}>Emmanuel Bergaod II</option>
-                                <option value="Fatima I" {{ ($user->petOwner->barangay ?? '') == 'Fatima I' ? 'selected' : '' }}>Fatima I</option>
-                                <option value="Fatima II" {{ ($user->petOwner->barangay ?? '') == 'Fatima II' ? 'selected' : '' }}>Fatima II</option>
-                                <option value="Fatima III" {{ ($user->petOwner->barangay ?? '') == 'Fatima III' ? 'selected' : '' }}>Fatima III</option>
-                                <option value="H-2 (Sta. Veronica)" {{ ($user->petOwner->barangay ?? '') == 'H-2 (Sta. Veronica)' ? 'selected' : '' }}>H-2 (Sta. Veronica)</option>
-                                <option value="Langkaan I (Humayao)" {{ ($user->petOwner->barangay ?? '') == 'Langkaan I (Humayao)' ? 'selected' : '' }}>Langkaan I (Humayao)</option>
-                                <option value="Langkaan II" {{ ($user->petOwner->barangay ?? '') == 'Langkaan II' ? 'selected' : '' }}>Langkaan II</option>
-                                <option value="Luzviminda I" {{ ($user->petOwner->barangay ?? '') == 'Luzviminda I' ? 'selected' : '' }}>Luzviminda I</option>
-                                <option value="Luzviminda II" {{ ($user->petOwner->barangay ?? '') == 'Luzviminda II' ? 'selected' : '' }}>Luzviminda II</option>
-                                <option value="Paliparan I" {{ ($user->petOwner->barangay ?? '') == 'Paliparan I' ? 'selected' : '' }}>Paliparan I</option>
-                                <option value="Paliparan II" {{ ($user->petOwner->barangay ?? '') == 'Paliparan II' ? 'selected' : '' }}>Paliparan II</option>
-                                <option value="Paliparan III" {{ ($user->petOwner->barangay ?? '') == 'Paliparan III' ? 'selected' : '' }}>Paliparan III</option>
-                                <option value="Sabang" {{ ($user->petOwner->barangay ?? '') == 'Sabang' ? 'selected' : '' }}>Sabang</option>
-                                <option value="Saint Peter I" {{ ($user->petOwner->barangay ?? '') == 'Saint Peter I' ? 'selected' : '' }}>Saint Peter I</option>
-                                <option value="Saint Peter II" {{ ($user->petOwner->barangay ?? '') == 'Saint Peter II' ? 'selected' : '' }}>Saint Peter II</option>
-                                <option value="Salawag" {{ ($user->petOwner->barangay ?? '') == 'Salawag' ? 'selected' : '' }}>Salawag</option>
-                                <option value="Salitran I" {{ ($user->petOwner->barangay ?? '') == 'Salitran I' ? 'selected' : '' }}>Salitran I</option>
-                                <option value="Salitran II" {{ ($user->petOwner->barangay ?? '') == 'Salitran II' ? 'selected' : '' }}>Salitran II</option>
-                                <option value="Salitran III" {{ ($user->petOwner->barangay ?? '') == 'Salitran III' ? 'selected' : '' }}>Salitran III</option>
-                                <option value="Salitran IV" {{ ($user->petOwner->barangay ?? '') == 'Salitran IV' ? 'selected' : '' }}>Salitran IV</option>
-                                <option value="Sampaloc I (Pala-Pala)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc I (Pala-Pala)' ? 'selected' : '' }}>Sampaloc I (Pala-Pala)</option>
-                                <option value="Sampaloc II (Bucal/Malinta)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc II (Bucal/Malinta)' ? 'selected' : '' }}>Sampaloc II (Bucal/Malinta)</option>
-                                <option value="Sampaloc III (Piela)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc III (Piela)' ? 'selected' : '' }}>Sampaloc III (Piela)</option>
-                                <option value="Sampaloc IV (Talisayan/Bautista)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc IV (Talisayan/Bautista)' ? 'selected' : '' }}>Sampaloc IV (Talisayan/Bautista)</option>
-                                <option value="Sampaloc V (New Era)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc V (New Era)' ? 'selected' : '' }}>Sampaloc V (New Era)</option>
-                                <option value="San Augustin I" {{ ($user->petOwner->barangay ?? '') == 'San Augustin I' ? 'selected' : '' }}>San Augustin I</option>
-                                <option value="San Augustin II (R. Tirona)" {{ ($user->petOwner->barangay ?? '') == 'San Augustin II (R. Tirona)' ? 'selected' : '' }}>San Augustin II (R. Tirona)</option>
-                                <option value="San Augustin III" {{ ($user->petOwner->barangay ?? '') == 'San Augustin III' ? 'selected' : '' }}>San Augustin III</option>
-                                <option value="San Andres I" {{ ($user->petOwner->barangay ?? '') == 'San Andres I' ? 'selected' : '' }}>San Andres I</option>
-                                <option value="San Andres II" {{ ($user->petOwner->barangay ?? '') == 'San Andres II' ? 'selected' : '' }}>San Andres II</option>
-                                <option value="San Antonio De Padua I" {{ ($user->petOwner->barangay ?? '') == 'San Antonio De Padua I' ? 'selected' : '' }}>San Antonio De Padua I</option>
-                                <option value="San Antonio De Padua II" {{ ($user->petOwner->barangay ?? '') == 'San Antonio De Padua II' ? 'selected' : '' }}>San Antonio De Padua II</option>
-                                <option value="San Dionisio" {{ ($user->petOwner->barangay ?? '') == 'San Dionisio' ? 'selected' : '' }}>San Dionisio</option>
-                                <option value="San Esteban" {{ ($user->petOwner->barangay ?? '') == 'San Esteban' ? 'selected' : '' }}>San Esteban</option>
-                                <option value="San Fransisco I" {{ ($user->petOwner->barangay ?? '') == 'San Fransisco I' ? 'selected' : '' }}>San Fransisco I</option>
-                                <option value="San Fransisco II" {{ ($user->petOwner->barangay ?? '') == 'San Fransisco II' ? 'selected' : '' }}>San Fransisco II</option>
-                                <option value="San Isidro Labrador I" {{ ($user->petOwner->barangay ?? '') == 'San Isidro Labrador I' ? 'selected' : '' }}>San Isidro Labrador I</option>
-                                <option value="San Isidro Labrador II" {{ ($user->petOwner->barangay ?? '') == 'San Isidro Labrador II' ? 'selected' : '' }}>San Isidro Labrador II</option>
-                                <option value="San Jose" {{ ($user->petOwner->barangay ?? '') == 'San Jose' ? 'selected' : '' }}>San Jose</option>
-                                <option value="San Juan" {{ ($user->petOwner->barangay ?? '') == 'San Juan' ? 'selected' : '' }}>San Juan</option>
-                                <option value="San Lorenzo Ruiz I" {{ ($user->petOwner->barangay ?? '') == 'San Lorenzo Ruiz I' ? 'selected' : '' }}>San Lorenzo Ruiz I</option>
-                                <option value="San Lorenzo Ruiz II" {{ ($user->petOwner->barangay ?? '') == 'San Lorenzo Ruiz II' ? 'selected' : '' }}>San Lorenzo Ruiz II</option>
-                                <option value="San Luis I" {{ ($user->petOwner->barangay ?? '') == 'San Luis I' ? 'selected' : '' }}>San Luis I</option>
-                                <option value="San Luis II" {{ ($user->petOwner->barangay ?? '') == 'San Luis II' ? 'selected' : '' }}>San Luis II</option>
-                                <option value="San Manuel I" {{ ($user->petOwner->barangay ?? '') == 'San Manuel I' ? 'selected' : '' }}>San Manuel I</option>
-                                <option value="San Manuel II" {{ ($user->petOwner->barangay ?? '') == 'San Manuel II' ? 'selected' : '' }}>San Manuel II</option>
-                                <option value="San Mateo" {{ ($user->petOwner->barangay ?? '') == 'San Mateo' ? 'selected' : '' }}>San Mateo</option>
-                                <option value="San Miguel I" {{ ($user->petOwner->barangay ?? '') == 'San Miguel I' ? 'selected' : '' }}>San Miguel I</option>
-                                <option value="San Miguel II" {{ ($user->petOwner->barangay ?? '') == 'San Miguel II' ? 'selected' : '' }}>San Miguel II</option>
-                                <option value="San Nicolas I" {{ ($user->petOwner->barangay ?? '') == 'San Nicolas I' ? 'selected' : '' }}>San Nicolas I</option>
-                                <option value="San Nicolas II" {{ ($user->petOwner->barangay ?? '') == 'San Nicolas II' ? 'selected' : '' }}>San Nicolas II</option>
-                                <option value="San Roque" {{ ($user->petOwner->barangay ?? '') == 'San Roque' ? 'selected' : '' }}>San Roque</option>
-                                <option value="San Simon" {{ ($user->petOwner->barangay ?? '') == 'San Simon' ? 'selected' : '' }}>San Simon</option>
-                                <option value="Santa Cristina I" {{ ($user->petOwner->barangay ?? '') == 'Santa Cristina I' ? 'selected' : '' }}>Santa Cristina I</option>
-                                <option value="Santa Cristina II" {{ ($user->petOwner->barangay ?? '') == 'Santa Cristina II' ? 'selected' : '' }}>Santa Cristina II</option>
-                                <option value="Santa Cruz I" {{ ($user->petOwner->barangay ?? '') == 'Santa Cruz I' ? 'selected' : '' }}>Santa Cruz I</option>
-                                <option value="Santa Cruz II" {{ ($user->petOwner->barangay ?? '') == 'Santa Cruz II' ? 'selected' : '' }}>Santa Cruz II</option>
-                                <option value="Santa Fe" {{ ($user->petOwner->barangay ?? '') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
-                                <option value="Santa Lucia" {{ ($user->petOwner->barangay ?? '') == 'Santa Lucia' ? 'selected' : '' }}>Santa Lucia</option>
-                                <option value="Santa Maria" {{ ($user->petOwner->barangay ?? '') == 'Santa Maria' ? 'selected' : '' }}>Santa Maria</option>
-                                <option value="Santo Cristo" {{ ($user->petOwner->barangay ?? '') == 'Santo Cristo' ? 'selected' : '' }}>Santo Cristo</option>
-                                <option value="Santo Niño I" {{ ($user->petOwner->barangay ?? '') == 'Santo Niño I' ? 'selected' : '' }}>Santo Niño I</option>
-                                <option value="Santo Niño II" {{ ($user->petOwner->barangay ?? '') == 'Santo Niño II' ? 'selected' : '' }}>Santo Niño II</option>
-                                <option value="Victoria Reyes" {{ ($user->petOwner->barangay ?? '') == 'Victoria Reyes' ? 'selected' : '' }}>Victoria Reyes</option>
-                                <option value="Zone I" {{ ($user->petOwner->barangay ?? '') == 'Zone I' ? 'selected' : '' }}>Zone I</option>
-                                <option value="Zone I-A" {{ ($user->petOwner->barangay ?? '') == 'Zone I-A' ? 'selected' : '' }}>Zone I-A</option>
-                                <option value="Zone II" {{ ($user->petOwner->barangay ?? '') == 'Zone II' ? 'selected' : '' }}>Zone II</option>
-                                <option value="Zone III" {{ ($user->petOwner->barangay ?? '') == 'Zone III' ? 'selected' : '' }}>Zone III</option>
-                                <option value="Zone IV" {{ ($user->petOwner->barangay ?? '') == 'Zone IV' ? 'selected' : '' }}>Zone IV</option>
+                                <option value="Burol I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Burol I' ? 'selected' : '' }}>Burol I</option>
+                                <option value="Burol II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Burol II' ? 'selected' : '' }}>Burol II</option>
+                                <option value="Burol III" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Burol III' ? 'selected' : '' }}>Burol III</option>
+                                <option value="Burol Main" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Burol Main' ? 'selected' : '' }}>Burol Main</option>
+                                <option value="Datu Esmael (Bago-A-Ingud)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Datu Esmael (Bago-A-Ingud)' ? 'selected' : '' }}>Datu Esmael (Bago-A-Ingud)</option>
+                                <option value="Emmanuel Bergaod I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Emmanuel Bergaod I' ? 'selected' : '' }}>Emmanuel Bergaod I</option>
+                                <option value="Emmanuel Bergaod II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Emmanuel Bergaod II' ? 'selected' : '' }}>Emmanuel Bergaod II</option>
+                                <option value="Fatima I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Fatima I' ? 'selected' : '' }}>Fatima I</option>
+                                <option value="Fatima II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Fatima II' ? 'selected' : '' }}>Fatima II</option>
+                                <option value="Fatima III" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Fatima III' ? 'selected' : '' }}>Fatima III</option>
+                                <option value="H-2 (Sta. Veronica)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'H-2 (Sta. Veronica)' ? 'selected' : '' }}>H-2 (Sta. Veronica)</option>
+                                <option value="Langkaan I (Humayao)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Langkaan I (Humayao)' ? 'selected' : '' }}>Langkaan I (Humayao)</option>
+                                <option value="Langkaan II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Langkaan II' ? 'selected' : '' }}>Langkaan II</option>
+                                <option value="Luzviminda I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Luzviminda I' ? 'selected' : '' }}>Luzviminda I</option>
+                                <option value="Luzviminda II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Luzviminda II' ? 'selected' : '' }}>Luzviminda II</option>
+                                <option value="Paliparan I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Paliparan I' ? 'selected' : '' }}>Paliparan I</option>
+                                <option value="Paliparan II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Paliparan II' ? 'selected' : '' }}>Paliparan II</option>
+                                <option value="Paliparan III" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Paliparan III' ? 'selected' : '' }}>Paliparan III</option>
+                                <option value="Sabang" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Sabang' ? 'selected' : '' }}>Sabang</option>
+                                <option value="Saint Peter I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Saint Peter I' ? 'selected' : '' }}>Saint Peter I</option>
+                                <option value="Saint Peter II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Saint Peter II' ? 'selected' : '' }}>Saint Peter II</option>
+                                <option value="Salawag" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Salawag' ? 'selected' : '' }}>Salawag</option>
+                                <option value="Salitran I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Salitran I' ? 'selected' : '' }}>Salitran I</option>
+                                <option value="Salitran II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Salitran II' ? 'selected' : '' }}>Salitran II</option>
+                                <option value="Salitran III" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Salitran III' ? 'selected' : '' }}>Salitran III</option>
+                                <option value="Salitran IV" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Salitran IV' ? 'selected' : '' }}>Salitran IV</option>
+                                <option value="Sampaloc I (Pala-Pala)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Sampaloc I (Pala-Pala)' ? 'selected' : '' }}>Sampaloc I (Pala-Pala)</option>
+                                <option value="Sampaloc II (Bucal/Malinta)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Sampaloc II (Bucal/Malinta)' ? 'selected' : '' }}>Sampaloc II (Bucal/Malinta)</option>
+                                <option value="Sampaloc III (Piela)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Sampaloc III (Piela)' ? 'selected' : '' }}>Sampaloc III (Piela)</option>
+                                <option value="Sampaloc IV (Talisayan/Bautista)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Sampaloc IV (Talisayan/Bautista)' ? 'selected' : '' }}>Sampaloc IV (Talisayan/Bautista)</option>
+                                <option value="Sampaloc V (New Era)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Sampaloc V (New Era)' ? 'selected' : '' }}>Sampaloc V (New Era)</option>
+                                <option value="San Augustin I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Augustin I' ? 'selected' : '' }}>San Augustin I</option>
+                                <option value="San Augustin II (R. Tirona)" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Augustin II (R. Tirona)' ? 'selected' : '' }}>San Augustin II (R. Tirona)</option>
+                                <option value="San Augustin III" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Augustin III' ? 'selected' : '' }}>San Augustin III</option>
+                                <option value="San Andres I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Andres I' ? 'selected' : '' }}>San Andres I</option>
+                                <option value="San Andres II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Andres II' ? 'selected' : '' }}>San Andres II</option>
+                                <option value="San Antonio De Padua I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Antonio De Padua I' ? 'selected' : '' }}>San Antonio De Padua I</option>
+                                <option value="San Antonio De Padua II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Antonio De Padua II' ? 'selected' : '' }}>San Antonio De Padua II</option>
+                                <option value="San Dionisio" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Dionisio' ? 'selected' : '' }}>San Dionisio</option>
+                                <option value="San Esteban" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Esteban' ? 'selected' : '' }}>San Esteban</option>
+                                <option value="San Fransisco I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Fransisco I' ? 'selected' : '' }}>San Fransisco I</option>
+                                <option value="San Fransisco II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Fransisco II' ? 'selected' : '' }}>San Fransisco II</option>
+                                <option value="San Isidro Labrador I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Isidro Labrador I' ? 'selected' : '' }}>San Isidro Labrador I</option>
+                                <option value="San Isidro Labrador II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Isidro Labrador II' ? 'selected' : '' }}>San Isidro Labrador II</option>
+                                <option value="San Jose" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Jose' ? 'selected' : '' }}>San Jose</option>
+                                <option value="San Juan" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Juan' ? 'selected' : '' }}>San Juan</option>
+                                <option value="San Lorenzo Ruiz I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Lorenzo Ruiz I' ? 'selected' : '' }}>San Lorenzo Ruiz I</option>
+                                <option value="San Lorenzo Ruiz II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Lorenzo Ruiz II' ? 'selected' : '' }}>San Lorenzo Ruiz II</option>
+                                <option value="San Luis I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Luis I' ? 'selected' : '' }}>San Luis I</option>
+                                <option value="San Luis II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Luis II' ? 'selected' : '' }}>San Luis II</option>
+                                <option value="San Manuel I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Manuel I' ? 'selected' : '' }}>San Manuel I</option>
+                                <option value="San Manuel II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Manuel II' ? 'selected' : '' }}>San Manuel II</option>
+                                <option value="San Mateo" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Mateo' ? 'selected' : '' }}>San Mateo</option>
+                                <option value="San Miguel I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Miguel I' ? 'selected' : '' }}>San Miguel I</option>
+                                <option value="San Miguel II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Miguel II' ? 'selected' : '' }}>San Miguel II</option>
+                                <option value="San Nicolas I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Nicolas I' ? 'selected' : '' }}>San Nicolas I</option>
+                                <option value="San Nicolas II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Nicolas II' ? 'selected' : '' }}>San Nicolas II</option>
+                                <option value="San Roque" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Roque' ? 'selected' : '' }}>San Roque</option>
+                                <option value="San Simon" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'San Simon' ? 'selected' : '' }}>San Simon</option>
+                                <option value="Santa Cristina I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santa Cristina I' ? 'selected' : '' }}>Santa Cristina I</option>
+                                <option value="Santa Cristina II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santa Cristina II' ? 'selected' : '' }}>Santa Cristina II</option>
+                                <option value="Santa Cruz I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santa Cruz I' ? 'selected' : '' }}>Santa Cruz I</option>
+                                <option value="Santa Cruz II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santa Cruz II' ? 'selected' : '' }}>Santa Cruz II</option>
+                                <option value="Santa Fe" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
+                                <option value="Santa Lucia" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santa Lucia' ? 'selected' : '' }}>Santa Lucia</option>
+                                <option value="Santa Maria" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santa Maria' ? 'selected' : '' }}>Santa Maria</option>
+                                <option value="Santo Cristo" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santo Cristo' ? 'selected' : '' }}>Santo Cristo</option>
+                                <option value="Santo Niño I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santo Niño I' ? 'selected' : '' }}>Santo Niño I</option>
+                                <option value="Santo Niño II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Santo Niño II' ? 'selected' : '' }}>Santo Niño II</option>
+                                <option value="Victoria Reyes" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Victoria Reyes' ? 'selected' : '' }}>Victoria Reyes</option>
+                                <option value="Zone I" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Zone I' ? 'selected' : '' }}>Zone I</option>
+                                <option value="Zone I-A" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Zone I-A' ? 'selected' : '' }}>Zone I-A</option>
+                                <option value="Zone II" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Zone II' ? 'selected' : '' }}>Zone II</option>
+                                <option value="Zone III" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Zone III' ? 'selected' : '' }}>Zone III</option>
+                                <option value="Zone IV" {{ (old('barangay', $user->petOwner->address->barangay->barangay_name ?? '')) == 'Zone IV' ? 'selected' : '' }}>Zone IV</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                            <input type="text" value="Dasmariñas City" disabled class="w-full px-4 py-2.5 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg">
+                            <input type="text" value="{{ old('city', $user->petOwner->address->city ?? 'Dasmariñas City') }}" disabled class="w-full px-4 py-2.5 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Province</label>
-                            <input type="text" value="Cavite" disabled class="w-full px-4 py-2.5 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg">
+                            <input type="text" value="{{ old('province', $user->petOwner->address->province ?? 'Cavite') }}" disabled class="w-full px-4 py-2.5 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg">
                         </div>
                     </div>
                     <div class="flex items-center gap-4 mt-6">
@@ -468,7 +468,7 @@
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">New Email</label>
-                        <input type="email" name="email" value="{{ old('email') }}" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         @error('email')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
