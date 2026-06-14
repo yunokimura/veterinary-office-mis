@@ -393,6 +393,34 @@
                 
                 <hr class="border-gray-300 mb-6">
 
+                <!-- Vaccination History -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Vaccination History</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Core Vaccines -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Core Vaccines</label>
+                            <div id="coreVaccineOptions" class="space-y-2">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" class="form-checkbox h-5 w-5 text-primary rounded">
+                                    <span class="ml-3 mr-4 text-gray-700">Anti-Rabies</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Optional Vaccines -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Optional Vaccines</label>
+                            <div id="optionalVaccineOptions" class="space-y-2">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-gray-300 mb-6">
+
                 <!-- Pet Attributes based on type -->
                 <div id="petAttributesSection" class="mb-6">
                     <!-- Training -->
@@ -836,6 +864,12 @@
         let selectedDiet = [];
         let dietExpanded = false;
 
+        // Vaccination options by pet type
+        const dogCoreVaccines = ['Anti-Rabies', '5-in-1 / 6-in-1 / 8-in-1'];
+        const dogOptionalVaccines = ['Kennel Cough', 'Other'];
+        const catCoreVaccines = ['Anti-Rabies', 'Tricat / FVRCP'];
+        const catOptionalVaccines = ['FeLV', 'Other'];
+
         // Create pill button
         function createPillButton(name, value, category, maxSelect = null) {
             const id = `${category}_${value.replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -902,6 +936,47 @@
                     }
                 });
             }
+        }
+
+        function createVaccineCheckbox(name, value, checked = false) {
+            return `
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="${name}[]" value="${value}" class="form-checkbox h-5 w-5 text-primary rounded" ${checked ? 'checked' : ''}>
+                    <span class="ml-3 mr-4 text-gray-700">${value}</span>
+                </label>
+            `;
+        }
+
+        function populateVaccinationHistory() {
+            const petType = document.querySelector('input[name="pet_type"]:checked');
+            const type = petType ? petType.value : '';
+            const otherValue = document.querySelector('input[name="vaccination_other"]')?.value || '';
+
+            if (!type) {
+                document.getElementById('coreVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_core', 'Anti-Rabies');
+                document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other') + `
+                    <div class="mt-3">
+                        <input type="text" name="vaccination_other" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Specify other vaccine">
+                    </div>
+                `;
+                return;
+            }
+
+            const coreVaccines = type === 'cat' ? catCoreVaccines : dogCoreVaccines;
+            const optionalVaccines = type === 'cat' ? catOptionalVaccines : dogOptionalVaccines;
+
+            document.getElementById('coreVaccineOptions').innerHTML = coreVaccines.map(vaccine => createVaccineCheckbox('vaccination_core', vaccine)).join('');
+            document.getElementById('optionalVaccineOptions').innerHTML = optionalVaccines.map(vaccine => {
+                if (vaccine === 'Other') {
+                    return createVaccineCheckbox('vaccination_optional', vaccine) + `
+                        <div class="mt-3">
+                            <input type="text" name="vaccination_other" value="${otherValue}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Specify other vaccine">
+                        </div>
+                    `;
+                }
+
+                return createVaccineCheckbox('vaccination_optional', vaccine);
+            }).join('');
         }
 
         // Populate pet attributes based on type
@@ -1002,9 +1077,12 @@
         document.querySelectorAll('input[name="pet_type"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 updateBreedOptions();
+                populateVaccinationHistory();
                 populatePetAttributes();
             });
         });
+
+        populateVaccinationHistory();
 
         // Toggle birthdate section
         function toggleBirthdate() {
