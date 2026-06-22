@@ -42,6 +42,19 @@
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(6, 109, 51, 0.15);
         }
+        .service-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(6, 109, 51, 0.25);
+        }
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .service-icon {
+            transition: transform 0.3s ease;
+        }
         .missing-pet-card {
             cursor: pointer;
         }
@@ -50,6 +63,16 @@
         }
         .pet-image {
             transition: transform 0.3s ease;
+        }
+        .btn-primary-hover {
+            transition: all 0.2s ease;
+        }
+        .btn-primary-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(6, 109, 51, 0.2);
+        }
+        .btn-primary-hover:active {
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -164,8 +187,97 @@
         </div>
     </section>
 
-             <!-- Announcement / Campaign Section -->
+    <!-- Quick Services Section -->
     <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Quick Services</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Access our most commonly used services with just a few clicks. We're here to help you and your pets.</p>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Register Pet Card -->
+                <div class="service-card bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col">
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 service-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Register Pet</h3>
+                        <p class="text-gray-600 text-sm mb-6 flex-1">Register your pet with the city to ensure proper identification and access to services.</p>
+                        <a href="{{ url('/pet-registration') }}" class="btn-primary-hover inline-flex items-center justify-center w-full bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                            Register Now
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Neuter/Spay Card -->
+                <div class="service-card bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col">
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 service-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Neuter/Spay</h3>
+                        <p class="text-gray-600 text-sm mb-6 flex-1">Safe and affordable spay and neuter services to help control pet population and improve your pet's health.</p>
+                        <a href="{{ url('/kapon') }}" class="btn-primary-hover inline-flex items-center justify-center w-full bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                            Learn More
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Anti-Rabies Vaccination Card -->
+                <div class="service-card bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col">
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 service-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Anti-Rabies Vaccination</h3>
+                        <p class="text-gray-600 text-sm mb-6 flex-1">Protect your pets with comprehensive anti-rabies vaccination services. Required annually for pet registration.</p>
+                        <a href="{{ url('/vaccination') }}" class="btn-primary-hover inline-flex items-center justify-center w-full bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                            Learn More
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Missing Pets Card -->
+                <div class="service-card bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col">
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center mb-4 service-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Missing Pets</h3>
+                        <p class="text-gray-600 text-sm mb-6 flex-1">Report a missing pet or browse our database to help reunite lost pets with their owners.</p>
+                        <a href="{{ url('/missing-pets') }}" class="btn-primary-hover inline-flex items-center justify-center w-full bg-red-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                            Report Missing Pet
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Updates & Programs Section -->
+    <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
                 Latest Updates & Programs
@@ -180,16 +292,6 @@
                     @endforeach
                 </div>
                 
-                <!-- View All Button -->
-                <div class="text-center mt-10">
-                    <a href="{{ route('announcements.public.index') }}"
-                       class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors shadow-lg">
-                        View All Announcements
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
-                    </a>
-                </div>
             @else
                 <!-- Fallback: Static content if no announcements -->
                 <div class="flex justify-center">
@@ -214,66 +316,6 @@
                     </div>
                 </div>
             @endif
-        </div>
-    </section>
-
-    <!-- Missing Pets Section -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <div class="flex items-center justify-center mb-4">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mr-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Missing Pets</h2>
-                </div>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Help us reunite these furry friends with their owners. If you have any information, please contact us immediately. <span class="text-red-500 font-medium">(Click on a pet to view full details)</span></p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-                @forelse($missingPets as $pet)
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->missing_id }})">
-                    <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                         <img src="{{ $pet->photo_img ? asset('storage/'.$pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->status) }}</span>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Age:</span>
-                                <span class="text-gray-700 font-medium">{{ $pet->age }} years</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Weight:</span>
-                                <span class="text-gray-700 font-medium">{{ $pet->weight }}</span>
-                            </div>
-                            <div class="border-t pt-2 mt-2">
-                                <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                                <p class="text-gray-700 font-medium text-xs">{{ $pet->last_seen_at->format('M d, Y - h:i A') }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 text-xs mb-1">Location:</p>
-                                <p class="text-gray-700 font-medium text-xs">{{ $pet->location }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @empty
-                <p class="col-span-5 text-center text-gray-500">No missing pets found.</p>
-                @endforelse
-            </div>
-
-            <div class="text-center mt-10">
-                <a href="{{ url('/missing-pets') }}" class="inline-flex items-center bg-red-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-600 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    View All Missing Pets
-                </a>
-            </div>
         </div>
     </section>
 
@@ -347,7 +389,67 @@
         </div>
     </section>
 
-<!-- Where to Find Us -->
+    <!-- Missing Pets Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Missing Pets</h2>
+                </div>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Help us reunite these furry friends with their owners. If you have any information, please contact us immediately. <span class="text-red-500 font-medium">(Click on a pet to view full details)</span></p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+                @forelse($missingPets as $pet)
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->missing_id }})">
+                    <div class="aspect-square bg-gray-200 relative overflow-hidden">
+                         <img src="{{ $pet->photo_img ? asset('storage/'.$pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
+                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->status) }}</span>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Age:</span>
+                                <span class="text-gray-700 font-medium">{{ $pet->age }} years</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Weight:</span>
+                                <span class="text-gray-700 font-medium">{{ $pet->weight }}</span>
+                            </div>
+                            <div class="border-t pt-2 mt-2">
+                                <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
+                                <p class="text-gray-700 font-medium text-xs">{{ $pet->last_seen_at->format('M d, Y - h:i A') }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-xs mb-1">Location:</p>
+                                <p class="text-gray-700 font-medium text-xs">{{ $pet->location }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <p class="col-span-5 text-center text-gray-500">No missing pets found.</p>
+                @endforelse
+            </div>
+
+            <div class="text-center mt-10">
+                <a href="{{ url('/missing-pets') }}" class="inline-flex items-center bg-red-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    View All Missing Pets
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Where to Find Us -->
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
