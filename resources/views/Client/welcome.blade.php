@@ -178,6 +178,57 @@
         .campaign-card:hover .category-icon {
             transform: rotate(10deg) scale(1.1);
         }
+        
+        /* Featured Campaign Card Enhancements */
+        .featured-campaign-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .featured-campaign-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px -12px rgba(6, 109, 51, 0.3);
+        }
+        
+        .featured-image {
+            transition: transform 0.6s ease;
+        }
+        
+        .featured-campaign-card:hover .featured-image {
+            transform: scale(1.05);
+        }
+        
+        .featured-campaign-card .group:hover .group-hover\:bg-primary\/20 {
+            background-color: rgba(6, 109, 51, 0.2);
+        }
+        
+        /* Animated gradient border for featured card */
+        @keyframes gradient-shift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        
+        .featured-campaign-card > div:first-child {
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        /* Featured badge glow effect */
+        .featured-badge {
+            animation: badge-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes badge-glow {
+            0%, 100% {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                box-shadow: 0 10px 15px -3px rgba(234, 179, 8, 0.3);
+            }
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50">
