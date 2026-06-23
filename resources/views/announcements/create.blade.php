@@ -57,7 +57,7 @@
                 @enderror
             </div>
 
-            <!-- Category & Status Row -->
+            <!-- Category & Barangay Row -->
             <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Category -->
                 <div>
@@ -78,22 +78,21 @@
                     @enderror
                 </div>
 
-                <!-- Status -->
+                <!-- Barangay -->
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="bi bi-toggle-on me-1 text-green-600"></i>Status <span class="text-red-500">*</span>
+                    <label for="barangay_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="bi bi-geo-alt me-1 text-green-600"></i>Barangay
                     </label>
-                    <select class="w-full px-4 py-3 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 @error('status') border-red-500 @enderror"
-                            id="status"
-                            name="status"
-                            required
+                    <select name="barangay_id"
+                            id="barangay_id"
+                            class="w-full px-4 py-3 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 @error('barangay_id') border-red-500 @enderror"
                             style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
-                        <option value="">Select status</option>
-                        <option value="Draft" {{ old('status', 'Draft') == 'Draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="Published" {{ old('status') == 'Published' ? 'selected' : '' }}>Published</option>
-                        <option value="Archived" {{ old('status') == 'Archived' ? 'selected' : '' }}>Archived</option>
+                        <option value="">Select barangay</option>
+                        @foreach($barangays as $barangay)
+                            <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>{{ $barangay->barangay_name }}</option>
+                        @endforeach
                     </select>
-                    @error('status')
+                    @error('barangay_id')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -149,28 +148,8 @@
                 </div>
             </div>
 
-            <!-- Barangay & Contact Row -->
+            <!-- Contact Number -->
             <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Barangay -->
-                <div>
-                    <label for="barangay_id" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="bi bi-geo-alt me-1 text-green-600"></i>Barangay
-                    </label>
-                    <select name="barangay_id"
-                            id="barangay_id"
-                            class="w-full px-4 py-3 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 @error('barangay_id') border-red-500 @enderror"
-                            style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
-                        <option value="">Select barangay</option>
-                        @foreach($barangays as $barangay)
-                            <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>{{ $barangay->barangay_name }}</option>
-                        @endforeach
-                    </select>
-                    @error('barangay_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Contact Number -->
                 <div>
                     <label for="contact_number" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="bi bi-telephone me-1 text-green-600"></i>Contact Number
@@ -231,7 +210,7 @@
             <!-- Photo Upload -->
             <div class="px-6 mt-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="bi bi-image me-1 text-green-600"></i>Photo (Optional)
+                    <i class="bi bi-image me-1 text-green-600"></i>Photo
                 </label>
                 <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-green-400 transition">
                     <input type="file"
@@ -300,14 +279,38 @@
 
             <!-- Submit Button -->
             <div class="px-6 py-6 mt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:justify-end gap-3">
-                <a href="{{ route($rolePrefix . '.announcements.index') }}" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center">
+                <button type="button" onclick="checkFormChanges()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center">
                     <i class="bi bi-x-circle me-2"></i>Cancel
-                </a>
+                </button>
                 <button type="submit" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition shadow-sm">
                     <i class="bi bi-check-circle me-2"></i>Create Announcement
                 </button>
             </div>
+
+            <!-- Hidden status field for draft saving -->
+            <input type="hidden" name="status" id="status" value="Published">
         </form>
+    </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div id="cancelModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center h-full w-full z-50">
+    <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+                <i class="bi bi-exclamation-triangle text-yellow-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900">Save this post as a draft?</h3>
+            <p class="text-sm text-gray-500 mt-2">If you discard now, you'll lost this post</p>
+            <div class="mt-6 flex gap-3 justify-center">
+                <button onclick="discardChanges()" class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition">
+                    Delete Draft
+                </button>
+                <button onclick="saveAsDraft()" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+                    Save as a draft
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -383,6 +386,44 @@
              contactInput.value = contactInput.value.replace(/\s/g, '');
          }
      });
+
+     // Check if form has changes
+     function checkFormChanges() {
+         const form = document.getElementById('announcementForm');
+         const formData = new FormData(form);
+         let hasChanges = false;
+
+         // Check if any field has a value
+         for (let [key, value] of formData.entries()) {
+             if (value && value.trim() !== '') {
+                 hasChanges = true;
+                 break;
+             }
+         }
+
+         // Also check file inputs
+         const fileInputs = form.querySelectorAll('input[type="file"]');
+         fileInputs.forEach(input => {
+             if (input.files && input.files.length > 0) {
+                 hasChanges = true;
+             }
+         });
+
+         if (hasChanges) {
+             document.getElementById('cancelModal').classList.remove('hidden');
+         } else {
+             window.location.href = "{{ route($rolePrefix . '.announcements.index') }}";
+         }
+     }
+
+     function discardChanges() {
+         window.location.href = "{{ route($rolePrefix . '.announcements.index') }}";
+     }
+
+     function saveAsDraft() {
+         document.getElementById('status').value = 'Draft';
+         document.getElementById('announcementForm').submit();
+     }
  </script>
 @endpush
 @endsection
