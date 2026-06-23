@@ -74,6 +74,110 @@
         .btn-primary-hover:active {
             transform: translateY(0);
         }
+        
+        /* Campaign Card Enhancements */
+        .campaign-card {
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .campaign-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #066D33 0%, #07A13F 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        
+        .campaign-card.campaign-category::before {
+            background: linear-gradient(90deg, #066D33 0%, #07A13F 100%);
+        }
+        
+        .campaign-card.program-category::before {
+            background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+        }
+        
+        .campaign-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .campaign-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(6, 109, 51, 0.25);
+        }
+        
+        .campaign-card .card-image {
+            transition: transform 0.5s ease;
+        }
+        
+        .campaign-card:hover .card-image {
+            transform: scale(1.08);
+        }
+        
+        .campaign-card .image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .campaign-card:hover .image-overlay {
+            opacity: 1;
+        }
+        
+        .badge-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        .event-detail-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border-left: 3px solid #066D33;
+            transition: all 0.3s ease;
+        }
+        
+        .event-detail-card:hover {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-left-color: #07A13F;
+            transform: translateX(4px);
+        }
+        
+        .content-fade {
+            position: relative;
+        }
+        
+        .content-fade::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(180deg, transparent 0%, white 100%);
+            pointer-events: none;
+        }
+        
+        .category-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .campaign-card:hover .category-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50">
@@ -641,6 +745,15 @@
         </div>
     </div>
 
+    <script>
+        // Campaign Card Hover Sound Effect (Optional - can be removed)
+        // function playHoverSound() {
+        //     const audio = new Audio('{{ asset('sounds/hover.mp3') }}');
+        //     audio.volume = 0.1;
+        //     audio.play();
+        // }
+    </script>
+    
     <script>
         function showLoginModal() {
             document.getElementById('loginModal').classList.remove('hidden');
