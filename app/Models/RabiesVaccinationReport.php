@@ -74,6 +74,7 @@ class RabiesVaccinationReport extends Model
 
     protected $fillable = [
         'user_id',
+        'barangay_id',
         'clinic_name',
         'patient_name',
         'patient_contact',
@@ -108,6 +109,11 @@ class RabiesVaccinationReport extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function barangay()
+    {
+        return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
     }
 
     public function vaccinationReport(): BelongsTo

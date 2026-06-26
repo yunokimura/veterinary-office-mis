@@ -55,6 +55,9 @@ class CityVetController extends Controller
         // Get all barangays for filter dropdown
         $barangays = Barangay::pluck('barangay_name', 'barangay_id');
 
+        // Analytics Data
+        $analytics = $this->getAnalyticsData($year);
+
         return view('dashboard.city-vet', compact(
             'user',
             'stats',
@@ -65,7 +68,8 @@ class CityVetController extends Controller
             'barangays',
             'year',
             'speciesYear',
-            'monthlyYear'
+            'monthlyYear',
+            'analytics'
         ));
     }
 
@@ -346,5 +350,67 @@ class CityVetController extends Controller
             ->groupBy('animal_type')
             ->pluck('count', 'animal_type')
             ->toArray();
+    }
+
+    /**
+     * Get analytics data for dashboard.
+     */
+    private function getAnalyticsData(int $year): array
+    {
+        // Monthly Bite Case Trend
+        $currentYearCases = BiteRabiesReport::whereYear('incident_date', $year)->count();
+        $previousYear = $year - 1;
+        $previousYearCases = BiteRabiesReport::whereYear('incident_date', $previousYear)->count();
+        $monthlyTrend = $previousYearCases > 0 ? round((($currentYearCases - $previousYearCases) / $previousYearCases) * 100, 1) : 0;
+
+        // Vaccination Coverage by Barangay (using bite_rabies_reports for barangay data)
+        $vaccinationByBarangay = BiteRabiesReport::whereYear('incident_date', $year)
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', '')
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->orderByDesc('count')
+            ->get();
+        
+        $vaccinationStats = [
+            'highest' => $vaccinationByBarangay->first(),
+            'lowest' => $vaccinationByBarangay->last(),
+            'average' => $vaccinationByBarangay->avg('count') ?? 0,
+        ];
+
+        // Adoption Performance
+        $adoptionStats = [
+            'pending' => \App\Models\AdoptionApplication::where('status', 'Pending')->count(),
+            'completed_this_month' => \App\Models\AdoptionApplication::where('status', 'Completed')
+                ->whereMonth('updated_at', date('m'))
+                ->whereYear('updated_at', $year)
+                ->count(),
+        ];
+
+        // Missing Pet Recovery
+        $missingPetStats = [
+            'active' => \App\Models\MissingPetsReport::where('status', 'Active')->count(),
+            'resolved' => \App\Models\MissingPetsReport::where('status', 'Resolved')->count(),
+        ];
+        $totalMissing = $missingPetStats['active'] + $missingPetStats['resolved'];
+        $missingPetStats['recovery_rate'] = $totalMissing > 0 ? round(($missingPetStats['resolved'] / $totalMissing) * 100, 1) : 0;
+
+        // Meat Establishment Monitoring
+        $meatEstablishmentStats = [
+            'active' => \App\Models\MeatEstablishment::where('status', 'Active')->count(),
+            'expired' => \App\Models\MeatEstablishment::where('status', 'Expired')->count(),
+            'pending_inspection' => \App\Models\MeatEstablishment::where('status', 'Pending Inspection')->count(),
+            'due_for_renewal' => \App\Models\MeatEstablishment::where('permit_expiry_date', '<=', date('Y-m-d', strtotime('+30 days')))
+                ->where('status', 'Active')
+                ->count(),
+        ];
+
+        return [
+            'monthly_trend' => $monthlyTrend,
+            'vaccination_coverage' => $vaccinationStats,
+            'adoption_performance' => $adoptionStats,
+            'missing_pet_recovery' => $missingPetStats,
+            'meat_establishment_monitoring' => $meatEstablishmentStats,
+        ];
     }
 }

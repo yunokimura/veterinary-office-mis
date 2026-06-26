@@ -151,4 +151,584 @@
     </div>
 </div>
 
+<!-- Analytics Section -->
+<div class="mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Analytics Overview</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- Monthly Bite Case Trend -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-gray-500">Monthly Bite Case Trend</p>
+                <i class="bi bi-graph-up text-gray-400"></i>
+            </div>
+            <p class="text-2xl font-bold text-gray-800 mb-1">
+                {{ $analytics['monthly_trend'] ?? 0 }}%
+            </p>
+            <p class="text-xs text-gray-500">
+                @if(($analytics['monthly_trend'] ?? 0) > 0)
+                    <span class="text-red-600">↑</span> vs last year
+                @elseif(($analytics['monthly_trend'] ?? 0) < 0)
+                    <span class="text-green-600">↓</span> vs last year
+                @else
+                    <span class="text-gray-600">→</span> vs last year
+                @endif
+            </p>
+        </div>
+
+        <!-- Bite Cases by Barangay -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-gray-500">Bite Cases by Barangay</p>
+                <i class="bi bi-geo-alt text-gray-400"></i>
+            </div>
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Highest:</span>
+                    <span class="font-semibold text-gray-800">{{ $analytics['vaccination_coverage']['highest']->count ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Lowest:</span>
+                    <span class="font-semibold text-gray-800">{{ $analytics['vaccination_coverage']['lowest']->count ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Average:</span>
+                    <span class="font-semibold text-gray-800">{{ round($analytics['vaccination_coverage']['average'] ?? 0, 1) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Adoption Performance -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-gray-500">Adoption Performance</p>
+                <i class="bi bi-heart text-gray-400"></i>
+            </div>
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Pending:</span>
+                    <span class="font-semibold text-orange-600">{{ $analytics['adoption_performance']['pending'] ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Completed:</span>
+                    <span class="font-semibold text-green-600">{{ $analytics['adoption_performance']['completed_this_month'] ?? 0 }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Missing Pet Recovery -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-gray-500">Missing Pet Recovery</p>
+                <i class="bi bi-search text-gray-400"></i>
+            </div>
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Active:</span>
+                    <span class="font-semibold text-orange-600">{{ $analytics['missing_pet_recovery']['active'] ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Resolved:</span>
+                    <span class="font-semibold text-green-600">{{ $analytics['missing_pet_recovery']['resolved'] ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Recovery Rate:</span>
+                    <span class="font-semibold text-blue-600">{{ $analytics['missing_pet_recovery']['recovery_rate'] ?? 0 }}%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meat Establishment Monitoring -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-gray-500">Meat Establishment</p>
+                <i class="bi bi-shop text-gray-400"></i>
+            </div>
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Active:</span>
+                    <span class="font-semibold text-green-600">{{ $analytics['meat_establishment_monitoring']['active'] ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Expired:</span>
+                    <span class="font-semibold text-red-600">{{ $analytics['meat_establishment_monitoring']['expired'] ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Pending:</span>
+                    <span class="font-semibold text-orange-600">{{ $analytics['meat_establishment_monitoring']['pending_inspection'] ?? 0 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
+    <!-- Confirmed Bite Cases by Month -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Confirmed Bite Cases by Month</h3>
+            <select onchange="window.location.href='?chart_month='+this.value" 
+                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+                <option value="">All Months</option>
+                @for($m = 1; $m <= 12; $m++)
+                    <option value="{{ $m }}" {{ ($chartMonth ?? '') == $m ? 'selected' : '' }}>
+                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+        <div class="h-64">
+            <canvas id="biteCasesByMonthChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Adoption Reports by Month -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Adoption Reports by Month</h3>
+            <select onchange="window.location.href='?adoption_month='+this.value" 
+                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+                <option value="">All Months</option>
+                @for($m = 1; $m <= 12; $m++)
+                    <option value="{{ $m }}" {{ ($adoptionMonth ?? '') == $m ? 'selected' : '' }}>
+                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+        <div class="h-64">
+            <canvas id="adoptionReportsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Missing Pet Reports by Month -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Missing Pet Reports by Month</h3>
+            <select onchange="window.location.href='?missing_month='+this.value" 
+                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+                <option value="">All Months</option>
+                @for($m = 1; $m <= 12; $m++)
+                    <option value="{{ $m }}" {{ ($missingMonth ?? '') == $m ? 'selected' : '' }}>
+                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+        <div class="h-64">
+            <canvas id="missingPetReportsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Anti-Rabies Vaccinations per Barangay -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Anti-Rabies Vaccinations per Barangay</h3>
+            <select onchange="window.location.href='?vaccination_barangay='+this.value" 
+                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+                <option value="">All Barangays</option>
+                @foreach($barangays as $id => $name)
+                    <option value="{{ $id }}" {{ ($vaccinationBarangay ?? '') == $id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="h-64">
+            <canvas id="vaccinationsByBarangayChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Confirmed Bite Cases per Barangay -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Confirmed Bite Cases per Barangay</h3>
+            <select onchange="window.location.href='?bite_barangay='+this.value" 
+                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+                <option value="">All Barangays</option>
+                @foreach($barangays as $id => $name)
+                    <option value="{{ $id }}" {{ ($biteBarangay ?? '') == $id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="h-64">
+            <canvas id="biteCasesByBarangayChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Bite Cases vs Vaccinations per Barangay -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Bite Cases vs Vaccinations per Barangay</h3>
+            <select onchange="window.location.href='?compare_barangay='+this.value" 
+                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+                <option value="">All Barangays</option>
+                @foreach($barangays as $id => $name)
+                    <option value="{{ $id }}" {{ ($compareBarangay ?? '') == $id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="h-64">
+            <canvas id="biteVsVaccinationChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Operational Details Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
+    <!-- Recent Confirmed Bite Cases -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <h3 class="text-base font-semibold text-gray-800 mb-4">Recent Confirmed Bite Cases</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Barangay</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Animal Type</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Bite Category</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse($recentCases ?? [] as $case)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-3 py-2 text-gray-900">{{ \Carbon\Carbon::parse($case->incident_date)->format('M d, Y') }}</td>
+                        <td class="px-3 py-2 text-gray-600">{{ $case->barangay->barangay_name ?? 'N/A' }}</td>
+                        <td class="px-3 py-2 text-gray-600">{{ ucfirst($case->animal_type) }}</td>
+                        <td class="px-3 py-2 text-gray-600">{{ $case->bite_category ?? 'N/A' }}</td>
+                        <td class="px-3 py-2">
+                            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                {{ $case->status }}
+                            </span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-3 py-4 text-center text-gray-500">No recent cases</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Top 5 Barangays with Highest Confirmed Bite Cases -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <h3 class="text-base font-semibold text-gray-800 mb-4">Top 5 Barangays with Highest Confirmed Bite Cases</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rank</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Barangay</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cases</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @php
+                        $topBarangays = \App\Models\BiteRabiesReport::where('status', 'Confirmed')
+                            ->whereYear('incident_date', date('Y'))
+                            ->with('barangay')
+                            ->selectRaw('barangay_id, COUNT(*) as count')
+                            ->groupBy('barangay_id')
+                            ->orderByDesc('count')
+                            ->limit(5)
+                            ->get();
+                    @endphp
+                    @forelse($topBarangays as $index => $barangay)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-3 py-2 text-gray-900 font-medium">#{{ $index + 1 }}</td>
+                        <td class="px-3 py-2 text-gray-600">{{ $barangay->barangay->barangay_name ?? 'Unknown' }}</td>
+                        <td class="px-3 py-2 text-gray-900 font-semibold">{{ $barangay->count }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="3" class="px-3 py-4 text-center text-gray-500">No data available</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Lowest Vaccination Coverage -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <h3 class="text-base font-semibold text-gray-800 mb-4">Lowest Vaccination Coverage</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Barangay</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Vaccinations</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @php
+                        $lowestVaccination = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', date('Y'))
+                            ->join('vaccination_reports', 'rabies_vaccination_reports.vaccination_report_id', '=', 'vaccination_reports.id')
+                            ->join('addresses', 'vaccination_reports.address_id', '=', 'addresses.id')
+                            ->selectRaw('addresses.barangay_id, COUNT(*) as count')
+                            ->groupBy('addresses.barangay_id')
+                            ->orderBy('count')
+                            ->limit(5)
+                            ->get();
+                    @endphp
+                    @forelse($lowestVaccination as $vaccination)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-3 py-2 text-gray-600">
+                            {{ \App\Models\Barangay::find($vaccination->barangay_id)->barangay_name ?? 'Unknown' }}
+                        </td>
+                        <td class="px-3 py-2 text-gray-900 font-semibold">{{ $vaccination->count }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="2" class="px-3 py-4 text-center text-gray-500">No data available</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Meat Establishments -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <h3 class="text-base font-semibold text-gray-800 mb-4">Meat Establishments</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Establishment</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Late Inspection</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @php
+                        $establishments = \App\Models\MeatEstablishment::latest()->take(5)->get();
+                    @endphp
+                    @forelse($establishments as $establishment)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-3 py-2 text-gray-900 font-medium">{{ $establishment->establishment_name }}</td>
+                        <td class="px-3 py-2">
+                            <span class="px-2 py-1 text-xs rounded-full 
+                                @if($establishment->status == 'Active') bg-green-100 text-green-800
+                                @elseif($establishment->status == 'Expired') bg-red-100 text-red-800
+                                @else bg-yellow-100 text-yellow-800
+                                @endif">
+                                {{ $establishment->status }}
+                            </span>
+                        </td>
+                        <td class="px-3 py-2 text-gray-600">
+                            @if($establishment->last_inspection_date && \Carbon\Carbon::parse($establishment->last_inspection_date)->lt(now()->subMonths(3)))
+                                <span class="text-red-600 font-medium">Yes</span>
+                            @else
+                                <span class="text-green-600">No</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="3" class="px-3 py-4 text-center text-gray-500">No establishments found</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Chart data from PHP
+    const monthlyBiteCases = @json($monthlyCases ?? []);
+    const monthLabels = Array.from({length: 12}, (_, i) => {
+        const date = new Date({{ $monthlyYear ?? date('Y') }}, i, 1);
+        return date.toLocaleString('default', { month: 'short' });
+    });
+    const biteData = monthLabels.map((_, i) => monthlyBiteCases[i + 1] || 0);
+
+    // Confirmed Bite Cases by Month Chart
+    const biteCtx = document.getElementById('biteCasesByMonthChart').getContext('2d');
+    new Chart(biteCtx, {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [{
+                label: 'Confirmed Bite Cases',
+                data: biteData,
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#ef4444',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Adoption Reports by Month Chart
+    const adoptionCtx = document.getElementById('adoptionReportsChart').getContext('2d');
+    new Chart(adoptionCtx, {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [{
+                label: 'Adoption Reports',
+                data: biteData, // Placeholder - replace with actual adoption data
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#22c55e',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Missing Pet Reports by Month Chart
+    const missingCtx = document.getElementById('missingPetReportsChart').getContext('2d');
+    new Chart(missingCtx, {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [{
+                label: 'Missing Pet Reports',
+                data: biteData, // Placeholder - replace with actual missing pet data
+                borderColor: '#f97316',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#f97316',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Vaccinations per Barangay Chart (Horizontal Bar)
+    const vaccCtx = document.getElementById('vaccinationsByBarangayChart').getContext('2d');
+    new Chart(vaccCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Vaccinations',
+                data: [],
+                backgroundColor: '#3b82f6',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Bite Cases per Barangay Chart (Horizontal Bar)
+    const biteBarangayCtx = document.getElementById('biteCasesByBarangayChart').getContext('2d');
+    new Chart(biteBarangayCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Bite Cases',
+                data: [],
+                backgroundColor: '#ef4444',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Bite Cases vs Vaccinations per Barangay (Clustered Bar)
+    const compareCtx = document.getElementById('biteVsVaccinationChart').getContext('2d');
+    new Chart(compareCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Bite Cases',
+                    data: [],
+                    backgroundColor: '#ef4444',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Vaccinations',
+                    data: [],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: true, position: 'top' } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+});
+</script>
+@endpush
