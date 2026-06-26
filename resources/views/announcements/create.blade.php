@@ -19,12 +19,12 @@
 
     <!-- Success Message -->
     @if(session('success'))
-        <div class="m-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
+        <div class="m-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between" id="successMessage">
             <div class="flex items-center gap-2">
                 <i class="bi bi-check-circle text-green-600"></i>
                 <span class="text-green-800">{{ session('success') }}</span>
             </div>
-            <button onclick="this.parentElement.remove()" class="text-green-600 hover:text-green-800">
+            <button onclick="dismissSuccessMessage()" class="text-green-600 hover:text-green-800">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
@@ -285,7 +285,7 @@
                 <i class="bi bi-check-circle text-green-600 text-4xl"></i>
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">Success!</h3>
-            <p class="text-sm text-gray-500 mt-2">Announcement has been posted successfully.</p>
+            <p class="text-sm text-gray-500 mt-2" id="successModalMessage">{{ session('success') }}</p>
             <div class="mt-6">
                 <button onclick="closeSuccessModal()" class="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
                     OK
@@ -318,6 +318,24 @@
 
 @push('scripts')
 <script>
+    // Auto-dismiss success message after 15 seconds
+    @if(session('success'))
+        setTimeout(function() {
+            dismissSuccessMessage();
+        }, 15000); // 15 seconds
+    @endif
+
+    function dismissSuccessMessage() {
+        const successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            successMessage.style.transition = 'opacity 0.5s ease-out';
+            successMessage.style.opacity = '0';
+            setTimeout(function() {
+                successMessage.remove();
+            }, 500);
+        }
+    }
+
     // Check if current user is super admin
     const isSuperAdmin = @json(auth()->user()?->isSuperAdmin() ?? false);
 
