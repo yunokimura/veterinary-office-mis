@@ -126,6 +126,7 @@ Route::get('/', function () {
 
     // Get active announcements for public
     $announcements = Announcement::where('is_active', true)
+        ->where('status', 'Published')
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -141,6 +142,7 @@ Route::get('/home', function () {
 
     // Get active announcements for public
     $announcements = Announcement::where('is_active', true)
+        ->where('status', 'Published')
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -743,6 +745,7 @@ Route::get('/client', function () {
         ->get();
 
     $announcements = Announcement::where('is_active', true)
+        ->where('status', 'Published')
         ->orderBy('created_at', 'desc')
         ->get();
 
