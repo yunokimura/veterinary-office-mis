@@ -25,11 +25,11 @@ class CityVetController extends Controller
         $monthlyYear = $request->monthly_year ?? $year;
 
         $stats = [
-            'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
-            'open_cases' => BiteRabiesReport::where('status', 'Pending Review')->whereYear('incident_date', $year)->count(),
-            'confirmed_cases' => BiteRabiesReport::where('animal_status', 'Stray')->whereYear('incident_date', $year)->count(),
-            'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
-            'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
+            'confirmed_bite_cases' => BiteRabiesReport::where('status', 'Confirmed')->whereYear('incident_date', $year)->count(),
+            'anti_rabies_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
+            'adoption_reports' => \App\Models\AdoptionApplication::whereYear('created_at', $year)->count(),
+            'missing_pet_reports' => \App\Models\MissingPetsReport::whereYear('created_at', $year)->count(),
+            'registered_meat_establishments' => \App\Models\MeatEstablishment::count(),
         ];
 
         // Get recent cases
