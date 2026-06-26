@@ -23,6 +23,19 @@
     $archivedCount = Announcement::where('status', 'Archived')->count();
 @endphp
 
+<!-- Success Message -->
+@if(session('success'))
+    <div class="m-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <i class="bi bi-check-circle text-green-600"></i>
+            <span class="text-green-800">{{ session('success') }}</span>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-green-600 hover:text-green-800">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+@endif
+
 <!-- Filter & Search Bar -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
     <form method="GET" action="{{ route($rolePrefix . '.announcements.index') }}" class="space-y-4">
@@ -414,6 +427,24 @@
     </div>
 </div>
 
+<!-- Success Popup Modal -->
+<div id="successModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center h-full w-full z-50">
+    <div class="relative p-8 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                <i class="bi bi-check-circle text-green-600 text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Success!</h3>
+            <p class="text-sm text-gray-500 mt-2">Announcement has been posted successfully.</p>
+            <div class="mt-6">
+                <button onclick="closeSuccessModal()" class="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Confirmation Modal -->
 <div id="confirmModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
@@ -589,6 +620,15 @@ function closeConfirmModal() {
     document.body.style.overflow = 'auto';
 }
 
+function closeSuccessModal() {
+    const successModal = document.getElementById('successModal');
+    if (successModal) {
+        successModal.classList.add('hidden');
+    }
+    // Stay on the current page (announcements index)
+    // No redirect needed since we're already on the index page
+}
+
 // Close modals on escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -609,5 +649,20 @@ document.getElementById('confirmModal').addEventListener('click', (e) => {
         closeConfirmModal();
     }
 });
+
+// Check if current user is super admin
+const isSuperAdmin = @json(auth()->user()?->isSuperAdmin() ?? false);
+
+// Show success modal only for super admin if there's a success message
+@if(session('success'))
+    setTimeout(function() {
+        if (isSuperAdmin) {
+            const successModal = document.getElementById('successModal');
+            if (successModal) {
+                successModal.classList.remove('hidden');
+            }
+        }
+    }, 100);
+@endif
 </script>
 @endsection
