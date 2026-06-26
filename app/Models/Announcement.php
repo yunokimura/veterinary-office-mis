@@ -122,4 +122,13 @@ class Announcement extends Model
     {
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
     }
+
+    public function getPhotoUrlAttribute(): ?string
+    {
+        if (!$this->photo_path) {
+            return null;
+        }
+        
+        return asset('storage/' . $this->photo_path);
+    }
 }

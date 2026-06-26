@@ -293,10 +293,12 @@
 
                     <!-- Meta Info -->
                     <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-4">
-                        <span class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 rounded-lg">
-                            <i class="bi bi-person mr-1.5 text-blue-500"></i>
-                            {{ $announcement->createdBy->name ?? 'Unknown' }}
-                        </span>
+                        @if($announcement->organized_by)
+                            <span class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 rounded-lg">
+                                <i class="bi bi-person mr-1.5 text-blue-500"></i>
+                                {{ $announcement->organized_by }}
+                            </span>
+                        @endif
                         <span class="inline-flex items-center px-2.5 py-1.5 bg-green-50 rounded-lg">
                             <i class="bi bi-calendar mr-1.5 text-green-500"></i>
                             {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
@@ -804,10 +806,12 @@ function updateAnnouncementsGrid(announcements) {
 
                     <!-- Meta Info -->
                     <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-4">
-                        <span class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 rounded-lg">
-                            <i class="bi bi-person mr-1.5 text-blue-500"></i>
-                            ${announcement.createdBy?.name ?? 'Unknown'}
-                        </span>
+                        ${announcement.organized_by ? `
+                            <span class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 rounded-lg">
+                                <i class="bi bi-person mr-1.5 text-blue-500"></i>
+                                ${announcement.organized_by}
+                            </span>
+                        ` : ''}
                         <span class="inline-flex items-center px-2.5 py-1.5 bg-green-50 rounded-lg">
                             <i class="bi bi-calendar mr-1.5 text-green-500"></i>
                             ${new Date(announcement.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
