@@ -157,7 +157,7 @@ class AnnouncementController extends Controller
 
         NotificationService::announcementCreated($announcement->id);
 
-        return redirect()->route('announcements.index')
+        return redirect()->route($this->getAdminRedirectRoute())
             ->with('success', 'Announcement created successfully.');
     }
 
@@ -218,7 +218,7 @@ class AnnouncementController extends Controller
 
         $announcement->update($data);
 
-        return redirect()->route('announcements.show', $announcement)
+        return redirect()->route($this->getAdminRedirectRoute())
             ->with('success', 'Announcement updated successfully.');
     }
 
@@ -233,7 +233,7 @@ class AnnouncementController extends Controller
 
         $announcement->delete();
 
-        return redirect()->route('announcements.index')
+        return redirect()->route($this->getAdminRedirectRoute())
             ->with('success', 'Announcement deleted successfully.');
     }
 

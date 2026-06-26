@@ -99,7 +99,7 @@
             </div>
 
              <!-- Event Details Row (conditional) -->
-            <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 event-fields @if(old('category') != 'event') hidden @endif">
+             <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 event-fields @if(old('category') != 'event') hidden @endif">
                 <!-- Event Date -->
                 <div>
                     <label for="event_date" class="block text-sm font-medium text-gray-700 mb-2">
@@ -129,27 +129,28 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
 
-                <!-- Location -->
+            <!-- Organized By & Contact Number Row -->
+            <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Organized By -->
                 <div>
-                    <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="bi bi-geo-alt me-1 text-green-600"></i>Location <span class="text-red-500">*</span>
+                    <label for="organized_by" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="bi bi-person-badge me-1 text-green-600"></i>Organized By <span class="text-red-500">*</span>
                     </label>
                     <input type="text"
-                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('location') border-red-500 @enderror"
-                           id="location"
-                           name="location"
-                           value="{{ old('location') }}"
-                           placeholder="Enter event location"
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('organized_by') border-red-500 @enderror"
+                           id="organized_by"
+                           name="organized_by"
+                           value="{{ old('organized_by') }}"
+                           placeholder="Enter organizer name"
                            required>
-                    @error('location')
+                    @error('organized_by')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-            </div>
 
-            <!-- Contact Number -->
-            <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Contact Number -->
                 <div>
                     <label for="contact_number" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="bi bi-telephone me-1 text-green-600"></i>Contact Number
@@ -186,23 +187,6 @@
                           placeholder="Enter full description"
                           required>{{ old('content') }}</textarea>
                 @error('content')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Organized By -->
-            <div class="px-6 mt-6">
-                <label for="organized_by" class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="bi bi-person-badge me-1 text-green-600"></i>Organized By <span class="text-red-500">*</span>
-                </label>
-                <input type="text"
-                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('organized_by') border-red-500 @enderror"
-                       id="organized_by"
-                       name="organized_by"
-                       value="{{ old('organized_by') }}"
-                       placeholder="Enter organizer name"
-                       required>
-                @error('organized_by')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -247,7 +231,7 @@
             <div class="px-6 mt-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     <i class="bi bi-paperclip me-1 text-green-600"></i>Attachment (Optional - PDF only)
-                </label>
+                </label>    
                 <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-green-400 transition">
                     <input type="file"
                            class="hidden"
@@ -293,6 +277,24 @@
     </div>
 </div>
 
+<!-- Success Popup Modal -->
+<div id="successModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center h-full w-full z-50">
+    <div class="relative p-8 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                <i class="bi bi-check-circle text-green-600 text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Success!</h3>
+            <p class="text-sm text-gray-500 mt-2">Announcement has been posted successfully.</p>
+            <div class="mt-6">
+                <button onclick="closeSuccessModal()" class="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Cancel Confirmation Modal -->
 <div id="cancelModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center h-full w-full z-50">
     <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -316,6 +318,9 @@
 
 @push('scripts')
 <script>
+    // Check if current user is super admin
+    const isSuperAdmin = @json(auth()->user()?->isSuperAdmin() ?? false);
+
     // Category change handler - toggle event fields
     document.getElementById('category').addEventListener('change', function() {
         const eventFields = document.querySelector('.event-fields');
@@ -323,12 +328,10 @@
             eventFields.classList.remove('hidden');
             // Make event fields required
             document.getElementById('event_date').setAttribute('required', 'required');
-            document.getElementById('location').setAttribute('required', 'required');
         } else {
             eventFields.classList.add('hidden');
             // Remove required attributes
             document.getElementById('event_date').removeAttribute('required');
-            document.getElementById('location').removeAttribute('required');
         }
     });
 
@@ -376,8 +379,32 @@
      // Initialize on page load
      document.addEventListener('DOMContentLoaded', function() {
          // Trigger category change to set initial state
-         document.getElementById('category').dispatchEvent(new Event('change'));
+         const categoryElement = document.getElementById('category');
+         if (categoryElement) {
+             categoryElement.dispatchEvent(new Event('change'));
+         }
+         
+         // Show success modal only for super admin if there's a success message
+         @if(session('success'))
+             setTimeout(function() {
+                 if (isSuperAdmin) {
+                     const successModal = document.getElementById('successModal');
+                     if (successModal) {
+                         successModal.classList.remove('hidden');
+                     }
+                 }
+             }, 100);
+         @endif
      });
+     
+     function closeSuccessModal() {
+         const successModal = document.getElementById('successModal');
+         if (successModal) {
+             successModal.classList.add('hidden');
+         }
+         // Redirect to the announcements index page
+         window.location.href = "{{ route($rolePrefix . '.announcements.index') }}";
+     }
 
      // Strip spaces from contact_number before form submission
      document.getElementById('announcementForm').addEventListener('submit', function() {
@@ -387,34 +414,44 @@
          }
      });
 
-     // Check if form has changes
-     function checkFormChanges() {
-         const form = document.getElementById('announcementForm');
-         const formData = new FormData(form);
-         let hasChanges = false;
+      // Check if form has changes
+      function checkFormChanges() {
+          // Check only user-editable fields by ID (completely bypasses hidden fields)
+          const title = document.getElementById('title');
+          const category = document.getElementById('category');
+          const barangay = document.getElementById('barangay_id');
+          const eventDate = document.getElementById('event_date');
+          const eventTime = document.getElementById('event_time');
+          const contactNumber = document.getElementById('contact_number');
+          const content = document.getElementById('content');
+          const organizedBy = document.getElementById('organized_by');
+          
+          const fields = [title, category, barangay, eventDate, eventTime, contactNumber, content, organizedBy];
+          let hasChanges = false;
+          
+          for (let field of fields) {
+              if (field && field.value && field.value.trim() !== '') {
+                  hasChanges = true;
+                  break;
+              }
+          }
 
-         // Check if any field has a value
-         for (let [key, value] of formData.entries()) {
-             if (value && value.trim() !== '') {
-                 hasChanges = true;
-                 break;
-             }
-         }
+          // Also check file inputs
+          if (!hasChanges) {
+              const photoInput = document.getElementById('photo_path');
+              const attachmentInput = document.getElementById('attachment_path');
+              if ((photoInput && photoInput.files && photoInput.files.length > 0) ||
+                  (attachmentInput && attachmentInput.files && attachmentInput.files.length > 0)) {
+                  hasChanges = true;
+              }
+          }
 
-         // Also check file inputs
-         const fileInputs = form.querySelectorAll('input[type="file"]');
-         fileInputs.forEach(input => {
-             if (input.files && input.files.length > 0) {
-                 hasChanges = true;
-             }
-         });
-
-         if (hasChanges) {
-             document.getElementById('cancelModal').classList.remove('hidden');
-         } else {
-             window.location.href = "{{ route($rolePrefix . '.announcements.index') }}";
-         }
-     }
+          if (hasChanges) {
+              document.getElementById('cancelModal').classList.remove('hidden');
+          } else {
+              window.location.href = "{{ route($rolePrefix . '.announcements.index') }}";
+          }
+      }
 
      function discardChanges() {
          window.location.href = "{{ route($rolePrefix . '.announcements.index') }}";
