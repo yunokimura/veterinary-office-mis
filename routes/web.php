@@ -227,6 +227,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
 
     // Announcements
     Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/announcements/filter', [AnnouncementController::class, 'filter'])->name('announcements.filter');
     Route::get('/announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
     Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
     Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
@@ -277,6 +278,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
 
     // Announcements
     Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/announcements/filter', [AnnouncementController::class, 'filter'])->name('announcements.filter');
     Route::get('/announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
     Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
     Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');

@@ -247,4 +247,50 @@ class AnnouncementController extends Controller
 
         return view($view, compact('announcement'));
     }
+
+    public function filter(Request $request)
+    {
+        $query = Announcement::with('createdBy');
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%'.$request->search.'%');
+        }
+
+        $sort = $request->get('sort', 'newest');
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'title_asc':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'title_desc':
+                $query->orderBy('title', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $announcements = $query->paginate(15);
+
+        return response()->json([
+            'announcements' => $announcements->items(),
+            'pagination' => [
+                'current_page' => $announcements->currentPage(),
+                'last_page' => $announcements->lastPage(),
+                'per_page' => $announcements->perPage(),
+                'total' => $announcements->total(),
+                'from' => $announcements->firstItem(),
+                'to' => $announcements->lastItem(),
+            ]
+        ]);
+    }
 }

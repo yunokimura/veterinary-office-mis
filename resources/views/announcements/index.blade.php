@@ -14,14 +14,6 @@
 @section('subheader', 'Manage system announcements')
 
 @section('content')
-@php
-    use App\Models\Announcement;
-
-    $totalCount = Announcement::count();
-    $publishedCount = Announcement::where('status', 'Published')->count();
-    $draftCount = Announcement::where('status', 'Draft')->count();
-    $archivedCount = Announcement::where('status', 'Archived')->count();
-@endphp
 
 <!-- Success Message -->
 @if(session('success'))
@@ -35,6 +27,65 @@
         </button>
     </div>
 @endif
+
+<!-- Stats Cards -->
+@php
+    use App\Models\Announcement;
+
+    $totalCount = Announcement::count();
+    $publishedCount = Announcement::where('status', 'Published')->count();
+    $draftCount = Announcement::where('status', 'Draft')->count();
+    $archivedCount = Announcement::where('status', 'Archived')->count();
+@endphp
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Total</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $totalCount }}</p>
+            </div>
+            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-megaphone text-blue-600 text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Published</p>
+                <p class="text-2xl font-bold text-green-600 mt-1">{{ $publishedCount }}</p>
+            </div>
+            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-check-circle text-green-600 text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Drafts</p>
+                <p class="text-2xl font-bold text-yellow-500 mt-1">{{ $draftCount }}</p>
+            </div>
+            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-pencil text-yellow-600 text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Archived</p>
+                <p class="text-2xl font-bold text-gray-500 mt-1">{{ $archivedCount }}</p>
+            </div>
+            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-archive text-gray-600 text-xl"></i>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Filter & Search Bar -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
@@ -150,57 +201,6 @@
             </div>
         </div>
     @endif
-</div>
-
-<!-- Stats Cards -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs font-medium text-gray-500">Total</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $totalCount }}</p>
-            </div>
-            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-megaphone text-blue-600 text-xl"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs font-medium text-gray-500">Published</p>
-                <p class="text-2xl font-bold text-green-600 mt-1">{{ $publishedCount }}</p>
-            </div>
-            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-check-circle text-green-600 text-xl"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs font-medium text-gray-500">Drafts</p>
-                <p class="text-2xl font-bold text-yellow-500 mt-1">{{ $draftCount }}</p>
-            </div>
-            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-pencil text-yellow-600 text-xl"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs font-medium text-gray-500">Archived</p>
-                <p class="text-2xl font-bold text-gray-500 mt-1">{{ $archivedCount }}</p>
-            </div>
-            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-archive text-gray-600 text-xl"></i>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- Bulk Actions Toolbar (Hidden by default) -->
@@ -684,5 +684,314 @@ const isSuperAdmin = @json(auth()->user()?->isSuperAdmin() ?? false);
         }
     }, 100);
 @endif
+
+// Real-time Filtering
+let searchTimeout;
+const filterUrl = '{{ route($rolePrefix . '.announcements.filter') }}';
+
+function applyFilters(page = 1) {
+    const search = document.querySelector('input[name="search"]').value;
+    const category = document.querySelector('select[name="category"]').value;
+    const status = document.querySelector('select[name="status"]').value;
+    const sort = document.querySelector('select[name="sort"]').value;
+
+    const params = new URLSearchParams({
+        search: search,
+        category: category,
+        status: status,
+        sort: sort,
+        page: page
+    });
+
+    // Show loading state
+    const grid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2');
+    if (grid) {
+        grid.style.opacity = '0.5';
+        grid.style.pointerEvents = 'none';
+    }
+
+    fetch(`${filterUrl}?${params.toString()}`)
+        .then(response => response.json())
+        .then(data => {
+            updateAnnouncementsGrid(data.announcements);
+            updatePagination(data.pagination);
+            
+            // Restore grid state
+            if (grid) {
+                grid.style.opacity = '1';
+                grid.style.pointerEvents = 'auto';
+            }
+
+            // Update URL without reload
+            const newUrl = new URL(window.location);
+            if (search) newUrl.searchParams.set('search', search);
+            else newUrl.searchParams.delete('search');
+            if (category) newUrl.searchParams.set('category', category);
+            else newUrl.searchParams.delete('category');
+            if (status) newUrl.searchParams.set('status', status);
+            else newUrl.searchParams.delete('status');
+            if (sort && sort !== 'newest') newUrl.searchParams.set('sort', sort);
+            else newUrl.searchParams.delete('sort');
+            window.history.pushState({}, '', newUrl);
+        })
+        .catch(error => {
+            console.error('Error filtering announcements:', error);
+            if (grid) {
+                grid.style.opacity = '1';
+                grid.style.pointerEvents = 'auto';
+            }
+        });
+}
+
+function updateAnnouncementsGrid(announcements) {
+    const grid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2');
+    const emptyState = document.querySelector('.bg-gradient-to-br.from-gray-50');
+    
+    if (announcements.length === 0) {
+        // Show empty state
+        if (grid) grid.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+    }
+
+    // Hide empty state
+    if (emptyState) emptyState.style.display = 'none';
+    
+    // Update grid
+    if (grid) {
+        grid.style.display = 'grid';
+        grid.innerHTML = announcements.map(announcement => `
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group" data-id="${announcement.id}">
+                <!-- Card Header with Image -->
+                <div class="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                    ${announcement.photo_path ? 
+                        `<img src="${announcement.photo_url}" alt="${announcement.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">` :
+                        `<div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                <i class="bi bi-image text-3xl text-gray-400"></i>
+                            </div>
+                        </div>`
+                    }
+                    
+                    <!-- Status Badge -->
+                    <div class="absolute top-3 right-3">
+                        ${getStatusBadge(announcement.status)}
+                    </div>
+
+                    <!-- Checkbox for Bulk Actions -->
+                    <div class="absolute top-3 left-3">
+                        <input 
+                            type="checkbox" 
+                            class="announcement-checkbox w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
+                            value="${announcement.id}"
+                            onchange="updateBulkActions()"
+                        >
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-6">
+                    <!-- Category Badge -->
+                    <div class="mb-2">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                            <i class="bi bi-tag mr-1"></i>
+                            ${announcement.category.charAt(0).toUpperCase() + announcement.category.slice(1)}
+                        </span>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors line-clamp-2">${announcement.title}</h3>
+                    <p class="text-gray-600 mb-4 line-clamp-3 text-sm">${announcement.content}</p>
+
+                    <!-- Meta Info -->
+                    <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-4">
+                        <span class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 rounded-lg">
+                            <i class="bi bi-person mr-1.5 text-blue-500"></i>
+                            ${announcement.createdBy?.name ?? 'Unknown'}
+                        </span>
+                        <span class="inline-flex items-center px-2.5 py-1.5 bg-green-50 rounded-lg">
+                            <i class="bi bi-calendar mr-1.5 text-green-500"></i>
+                            ${new Date(announcement.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                        ${announcement.updated_at != announcement.created_at ? `
+                            <span class="inline-flex items-center px-2.5 py-1.5 bg-gray-50 rounded-lg">
+                                <i class="bi bi-pencil mr-1.5 text-gray-500"></i>
+                                Updated ${timeAgo(announcement.updated_at)}
+                            </span>
+                        ` : ''}
+                    </div>
+
+                    <!-- Quick Status Toggle -->
+                    <div class="mb-4">
+                        <label class="text-xs font-medium text-gray-600 mb-1.5 block">Quick Status Change:</label>
+                        <div class="relative">
+                            <select 
+                                onchange="quickStatusChange(${announcement.id}, this.value)" 
+                                class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-600 focus:border-green-600 appearance-none"
+                            >
+                                <option value="">-- Select Status --</option>
+                                <option value="Published" ${announcement.status === 'Published' ? 'selected' : ''}>Published</option>
+                                <option value="Draft" ${announcement.status === 'Draft' ? 'selected' : ''}>Draft</option>
+                                <option value="Archived" ${announcement.status === 'Archived' ? 'selected' : ''}>Archived</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="bi bi-chevron-down text-gray-400 text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                        <button 
+                            onclick="previewAnnouncement(${announcement.id})" 
+                            class="flex items-center gap-1.5 px-3 py-2 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg transition text-sm"
+                            title="Preview"
+                        >
+                            <i class="bi bi-eye"></i>
+                            <span class="font-medium">Preview</span>
+                        </button>
+                        <a 
+                            href="{{ route($rolePrefix . '.announcements.edit', ':id') }}".replace(':id', ${announcement.id}) 
+                            class="flex items-center gap-1.5 px-3 py-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition text-sm"
+                            title="Edit"
+                        >
+                            <i class="bi bi-pencil"></i>
+                            <span class="font-medium">Edit</span>
+                        </a>
+                        <button 
+                            onclick="duplicateAnnouncement(${announcement.id})" 
+                            class="flex items-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition text-sm"
+                            title="Duplicate"
+                        >
+                            <i class="bi bi-copy"></i>
+                            <span class="font-medium">Duplicate</span>
+                        </button>
+                        <form action="{{ route($rolePrefix . '.announcements.destroy', ':id') }}".replace(':id', ${announcement.id}) method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this announcement? This action cannot be undone.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="flex items-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition text-sm" title="Delete">
+                                <i class="bi bi-trash"></i>
+                                <span class="font-medium">Delete</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+function getStatusBadge(status) {
+    const colors = {
+        'Published': 'bg-green-500',
+        'Draft': 'bg-yellow-500',
+        'Archived': 'bg-gray-500'
+    };
+    return `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white shadow-lg ${colors[status] || 'bg-gray-500'}">
+        ${status}
+    </span>`;
+}
+
+function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    
+    const intervals = {
+        'year': 31536000,
+        'month': 2592000,
+        'week': 604800,
+        'day': 86400,
+        'hour': 3600,
+        'minute': 60
+    };
+    
+    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / secondsInUnit);
+        if (interval >= 1) {
+            return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+        }
+    }
+    return 'Just now';
+}
+
+function updatePagination(pagination) {
+    const paginationContainer = document.querySelector('.mt-8.flex.flex-col.sm\\:flex-row');
+    if (!paginationContainer) return;
+
+    const showingText = paginationContainer.querySelector('.text-sm.text-gray-600');
+    const linksContainer = paginationContainer.querySelector('.flex.gap-2');
+
+    if (showingText) {
+        showingText.innerHTML = `Showing <span class="font-semibold">${pagination.from || 0}</span> to <span class="font-semibold">${pagination.to || 0}</span> of <span class="font-semibold">${pagination.total}</span> announcements`;
+    }
+
+    if (linksContainer && pagination.last_page > 1) {
+        let paginationHTML = '';
+        
+        // Previous button
+        if (pagination.current_page > 1) {
+            paginationHTML += `<button onclick="applyFilters(${pagination.current_page - 1})" class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">
+                <i class="bi bi-chevron-left"></i> Previous
+            </button>`;
+        }
+        
+        // Page numbers
+        for (let i = 1; i <= pagination.last_page; i++) {
+            if (i === pagination.current_page) {
+                paginationHTML += `<button class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm">${i}</button>`;
+            } else {
+                paginationHTML += `<button onclick="applyFilters(${i})" class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">${i}</button>`;
+            }
+        }
+        
+        // Next button
+        if (pagination.current_page < pagination.last_page) {
+            paginationHTML += `<button onclick="applyFilters(${pagination.current_page + 1})" class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">
+                Next <i class="bi bi-chevron-right"></i>
+            </button>`;
+        }
+        
+        linksContainer.innerHTML = paginationHTML;
+    }
+}
+
+// Event Listeners for Real-time Filtering
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[name="search"]');
+    const categorySelect = document.querySelector('select[name="category"]');
+    const statusSelect = document.querySelector('select[name="status"]');
+    const sortSelect = document.querySelector('select[name="sort"]');
+
+    // Search input with debounce
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                applyFilters(1);
+            }, 500); // 500ms debounce
+        });
+    }
+
+    // Category filter
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            applyFilters(1);
+        });
+    }
+
+    // Status filter
+    if (statusSelect) {
+        statusSelect.addEventListener('change', function() {
+            applyFilters(1);
+        });
+    }
+
+    // Sort filter
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            applyFilters(1);
+        });
+    }
+});
 </script>
 @endsection
