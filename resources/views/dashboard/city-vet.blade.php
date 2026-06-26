@@ -49,13 +49,13 @@
 
 <!-- KPI Cards Grid -->
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
-    <!-- Confirmed Bite Cases (Highest Priority) -->
+    <!-- Confirmed Rabies Cases (Highest Priority) -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border-l-4 border-red-500 hover:shadow-md transition h-full flex flex-col justify-between">
         <div>
             <div class="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-lg flex items-center justify-center mb-3">
                 <i class="bi bi-exclamation-triangle text-red-600 text-lg md:text-xl"></i>
             </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Confirmed Bite Cases</p>
+            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Confirmed Rabies Cases</p>
         </div>
         <div>
             <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $stats['confirmed_bite_cases'] ?? 0 }}</p>
@@ -178,7 +178,7 @@
         <!-- Bite Cases by Barangay -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
             <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-gray-500">Bite Cases by Barangay</p>
+                <p class="text-xs font-medium text-gray-500">Rabies Cases by Barangay</p>
                 <i class="bi bi-geo-alt text-gray-400"></i>
             </div>
             <div class="space-y-1">
@@ -263,10 +263,10 @@
 
 <!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
-    <!-- Confirmed Bite Cases by Month -->
+    <!-- Confirmed Rabies Cases by Month -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Confirmed Bite Cases by Month</h3>
+            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases by Month</h3>
             <select onchange="window.location.href='?chart_month='+this.value" 
                     class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
                 <option value="">All Months</option>
@@ -339,10 +339,10 @@
         </div>
     </div>
 
-    <!-- Confirmed Bite Cases per Barangay -->
+    <!-- Confirmed Rabies Cases per Barangay -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Confirmed Bite Cases per Barangay</h3>
+            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases per Barangay</h3>
             <select onchange="window.location.href='?bite_barangay='+this.value" 
                     class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
                 <option value="">All Barangays</option>
@@ -358,10 +358,10 @@
         </div>
     </div>
 
-    <!-- Bite Cases vs Vaccinations per Barangay -->
+    <!-- Rabies Cases vs Vaccinations per Barangay -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Bite Cases vs Vaccinations per Barangay</h3>
+            <h3 class="text-base font-semibold text-gray-800">Rabies Cases vs Vaccinations per Barangay</h3>
             <select onchange="window.location.href='?compare_barangay='+this.value" 
                     class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
                 <option value="">All Barangays</option>
@@ -380,9 +380,9 @@
 
 <!-- Operational Details Section -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
-    <!-- Recent Confirmed Bite Cases -->
+    <!-- Recent Confirmed Rabies Cases -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <h3 class="text-base font-semibold text-gray-800 mb-4">Recent Confirmed Bite Cases</h3>
+        <h3 class="text-base font-semibold text-gray-800 mb-4">Recent Confirmed Rabies Cases</h3>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
@@ -417,9 +417,9 @@
         </div>
     </div>
 
-    <!-- Top 5 Barangays with Highest Confirmed Bite Cases -->
+    <!-- Top 5 Barangays with Highest Confirmed Rabies Cases -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <h3 class="text-base font-semibold text-gray-800 mb-4">Top 5 Barangays with Highest Confirmed Bite Cases</h3>
+        <h3 class="text-base font-semibold text-gray-800 mb-4">Top 5 Barangays with Highest Confirmed Rabies Cases</h3>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
@@ -554,15 +554,20 @@ document.addEventListener('DOMContentLoaded', function() {
         return date.toLocaleString('default', { month: 'short' });
     });
     const biteData = monthLabels.map((_, i) => monthlyBiteCases[i + 1] || 0);
+    
+    // Barangay data for bar charts
+    const vaccinationsByBarangay = @json($vaccinationsByBarangay ?? []);
+    const biteCasesByBarangay = @json($biteCasesByBarangay ?? []);
+    const barangays = @json($barangays ?? []);
 
-    // Confirmed Bite Cases by Month Chart
+    // Confirmed Rabies Cases by Month Chart
     const biteCtx = document.getElementById('biteCasesByMonthChart').getContext('2d');
     new Chart(biteCtx, {
         type: 'line',
         data: {
             labels: monthLabels,
             datasets: [{
-                label: 'Confirmed Bite Cases',
+                label: 'Confirmed Rabies Cases',
                 data: biteData,
                 borderColor: '#ef4444',
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -650,13 +655,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Vaccinations per Barangay Chart (Horizontal Bar)
     const vaccCtx = document.getElementById('vaccinationsByBarangayChart').getContext('2d');
+    const vaccLabels = vaccinationsByBarangay.map(item => barangays[item.barangay_id] || 'Unknown');
+    const vaccData = vaccinationsByBarangay.map(item => item.count);
     new Chart(vaccCtx, {
         type: 'bar',
         data: {
-            labels: [],
+            labels: vaccLabels,
             datasets: [{
                 label: 'Vaccinations',
-                data: [],
+                data: vaccData,
                 backgroundColor: '#3b82f6',
                 borderRadius: 4
             }]
@@ -675,13 +682,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Bite Cases per Barangay Chart (Horizontal Bar)
     const biteBarangayCtx = document.getElementById('biteCasesByBarangayChart').getContext('2d');
+    const biteBarangayLabels = biteCasesByBarangay.map(item => barangays[item.barangay_id] || 'Unknown');
+    const biteBarangayData = biteCasesByBarangay.map(item => item.count);
     new Chart(biteBarangayCtx, {
         type: 'bar',
         data: {
-            labels: [],
+            labels: biteBarangayLabels,
             datasets: [{
                 label: 'Bite Cases',
-                data: [],
+                data: biteBarangayData,
                 backgroundColor: '#ef4444',
                 borderRadius: 4
             }]
@@ -700,20 +709,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Bite Cases vs Vaccinations per Barangay (Clustered Bar)
     const compareCtx = document.getElementById('biteVsVaccinationChart').getContext('2d');
+    
+    // Get all unique barangays from both datasets
+    const allBarangayIds = [...new Set([
+        ...vaccinationsByBarangay.map(item => item.barangay_id),
+        ...biteCasesByBarangay.map(item => item.barangay_id)
+    ])].slice(0, 10); // Limit to top 10
+    
+    const compareLabels = allBarangayIds.map(id => barangays[id] || 'Unknown');
+    const compareBiteData = allBarangayIds.map(id => {
+        const found = biteCasesByBarangay.find(item => item.barangay_id == id);
+        return found ? found.count : 0;
+    });
+    const compareVaccData = allBarangayIds.map(id => {
+        const found = vaccinationsByBarangay.find(item => item.barangay_id == id);
+        return found ? found.count : 0;
+    });
+    
     new Chart(compareCtx, {
         type: 'bar',
         data: {
-            labels: [],
+            labels: compareLabels,
             datasets: [
                 {
                     label: 'Bite Cases',
-                    data: [],
+                    data: compareBiteData,
                     backgroundColor: '#ef4444',
                     borderRadius: 4
                 },
                 {
                     label: 'Vaccinations',
-                    data: [],
+                    data: compareVaccData,
                     backgroundColor: '#3b82f6',
                     borderRadius: 4
                 }

@@ -49,6 +49,40 @@ class CityVetController extends Controller
             ->pluck('count', 'animal_type')
             ->toArray();
 
+        // Get adoption reports by month
+        $adoptionReportsByMonth = \App\Models\AdoptionApplication::whereYear('created_at', $monthlyYear)
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Get missing pet reports by month
+        $missingPetReportsByMonth = \App\Models\MissingPetsReport::whereYear('created_at', $monthlyYear)
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Get vaccinations by barangay
+        $vaccinationsByBarangay = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', $year)
+            ->join('vaccination_reports', 'rabies_vaccination_reports.vaccination_report_id', '=', 'vaccination_reports.id')
+            ->join('addresses', 'vaccination_reports.address_id', '=', 'addresses.id')
+            ->selectRaw('addresses.barangay_id, COUNT(*) as count')
+            ->groupBy('addresses.barangay_id')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
+        // Get bite cases by barangay
+        $biteCasesByBarangay = BiteRabiesReport::whereYear('incident_date', $year)
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', '')
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
         // Get heatmap data
         $heatmapData = $this->getHeatmapData($year);
 
@@ -69,7 +103,11 @@ class CityVetController extends Controller
             'year',
             'speciesYear',
             'monthlyYear',
-            'analytics'
+            'analytics',
+            'adoptionReportsByMonth',
+            'missingPetReportsByMonth',
+            'vaccinationsByBarangay',
+            'biteCasesByBarangay'
         ));
     }
 
