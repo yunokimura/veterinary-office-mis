@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Animal Bite Incident Reports')
+@section('title', 'Confirmed Rabies Reports Management')
 
-@section('header', 'Animal Bite Incident Reports')
-@section('subheader', 'Manage submitted animal bite incident reports')
+@section('header', 'Confirmed Rabies Reports Management')
+@section('subheader', 'View and manage all confirmed rabies cases')
 
 @php
 $rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'assistant-vet');
@@ -20,13 +20,13 @@ $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
             <ol class="list-none p-0 flex items-center space-x-2">
                 <li><a href="{{ route($rolePrefix . '.dashboard') }}" class="hover:text-green-600 transition">Dashboard</a></li>
                 <li><i class="bi bi-chevron-right text-xs"></i></li>
-                <li class="text-gray-800">Animal Bite Reports</li>
+                <li class="text-gray-800">Confirmed Rabies Reports</li>
             </ol>
         </nav>
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Animal Bite Incident Reports</h1>
-                <p class="text-gray-500 mt-1">View and manage all animal bite incident reports submitted by citizens and facilities</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Confirmed Rabies Reports Management</h1>
+                <p class="text-gray-500 mt-1">View and manage all confirmed rabies cases</p>
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route($rolePrefix . '.dashboard') }}" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition">
@@ -37,25 +37,61 @@ $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
     </div>
 
     <!-- Stats Cards - Interactive -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <a href="{{ route($rabiesReportsRoute) }}"
            class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md hover:scale-[1.03] transition-all duration-200 cursor-pointer group">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs md:text-sm text-gray-500">Total Reports</p>
+                    <p class="text-xs md:text-sm text-gray-500">Total Confirmed Cases</p>
                     <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['total'] }}</p>
                 </div>
-                <div class="w-10 md:w-12 h-10 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <i class="bi bi-file-text text-blue-600 text-lg md:text-xl"></i>
+                <div class="w-10 md:w-12 h-10 md:h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <i class="bi bi-virus text-red-600 text-lg md:text-xl"></i>
                 </div>
             </div>
         </a>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm text-gray-500">Dog Cases</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['dog_cases'] }}</p>
+                </div>
+                <div class="w-10 md:w-12 h-10 md:h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-briefcase text-orange-600 text-lg md:text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm text-gray-500">Cat Cases</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['cat_cases'] }}</p>
+                </div>
+                <div class="w-10 md:w-12 h-10 md:h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-briefcase text-purple-600 text-lg md:text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm text-gray-500">Other Cases</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['other_cases'] }}</p>
+                </div>
+                <div class="w-10 md:w-12 h-10 md:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-briefcase text-gray-600 text-lg md:text-xl"></i>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
         <form method="GET" action="{{ route($rabiesReportsRoute) }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Search Bar -->
                 <div class="lg:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
@@ -79,16 +115,6 @@ $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
                     <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
                     <input type="date" name="date_to" value="{{ request('date_to') }}"
                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
-
-                <!-- Source -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Source</label>
-                    <select name="source" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                        <option value="">All Sources</option>
-                        <option value="clinic" {{ request('source') === 'clinic' ? 'selected' : '' }}>Clinic</option>
-                        <option value="hospital" {{ request('source') === 'hospital' ? 'selected' : '' }}>Hospital</option>
-                    </select>
                 </div>
             </div>
 
@@ -115,7 +141,7 @@ $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Patient Name</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Incident Date</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animal</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animal Type</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
@@ -166,15 +192,11 @@ $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
         @else
             <!-- Enhanced Empty State -->
             <div class="p-12 text-center">
-                <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="bi bi-virus text-green-400 text-4xl"></i>
+                <div class="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="bi bi-virus text-red-400 text-4xl"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-2">No Rabies Bite Reports Found</h3>
-                <p class="text-gray-500 mb-6 max-w-md mx-auto">Start by creating a new rabies bite report to begin tracking incidents.</p>
-                <a href="{{ route('bite-rabies-report.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
-                    <i class="bi bi-plus-lg"></i>
-                    Create New Report
-                </a>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">No Confirmed Rabies Reports Found</h3>
+                <p class="text-gray-500 mb-6 max-w-md mx-auto">There are currently no confirmed rabies cases in the system.</p>
             </div>
         @endif
     </div>

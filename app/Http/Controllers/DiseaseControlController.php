@@ -270,29 +270,29 @@ class DiseaseControlController extends Controller
     // ==============================
 
     /**
-     * List rabies bite reports for assistant_vet.
+     * List confirmed rabies reports for city_vet.
      *
-     * Module: Rabies Bite Incident Reports
-     * Role: assistant_vet
+     * Module: Confirmed Rabies Reports Management
+     * Role: city_vet
      */
     public function indexRabiesReports(Request $request)
     {
         $user = Auth::user();
 
-        $query = BiteRabiesReport::with(['patientBarangay']);
+        $query = BiteRabiesReport::with(['patientBarangay'])
+            ->where('rabies_confirmed', true);
 
         // Filter by source (report_source)
         if ($request->has('source') && $request->source) {
             $query->where('report_source', $request->source);
         }
 
-        // Get counts
+        // Get counts for confirmed rabies cases only
         $stats = [
-            'total' => BiteRabiesReport::count(),
-            'pending' => BiteRabiesReport::where('status', 'Pending Review')->count(),
-            'under_review' => BiteRabiesReport::where('status', 'Under Review')->count(),
-            'resolved' => BiteRabiesReport::where('status', 'Resolved')->count(),
-            'closed' => BiteRabiesReport::where('status', 'Closed')->count(),
+            'total' => BiteRabiesReport::where('rabies_confirmed', true)->count(),
+            'dog_cases' => BiteRabiesReport::where('rabies_confirmed', true)->where('animal_type', 'Dog')->count(),
+            'cat_cases' => BiteRabiesReport::where('rabies_confirmed', true)->where('animal_type', 'Cat')->count(),
+            'other_cases' => BiteRabiesReport::where('rabies_confirmed', true)->where('animal_type', 'Other')->count(),
         ];
 
         $reports = $query->latest()->paginate(10);

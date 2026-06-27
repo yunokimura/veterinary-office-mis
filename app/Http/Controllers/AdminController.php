@@ -139,28 +139,88 @@ class AdminController extends Controller
     }
 
     /**
-     * List all animal bite reports (from Barangay).
+     * List all confirmed rabies reports.
      */
     public function indexBiteReports(Request $request)
     {
         $user = Auth::user();
 
-        // Get counts
+        // Get counts for confirmed rabies cases only
         $stats = [
-            'total' => BiteRabiesReport::count(),
-            'pending' => BiteRabiesReport::where('status', 'Pending Review')->count(),
-            'under_review' => BiteRabiesReport::where('status', 'Under Review')->count(),
-            'resolved' => BiteRabiesReport::where('status', 'Resolved')->count(),
+            'total' => BiteRabiesReport::where('rabies_confirmed', true)->count(),
+            'dog_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['dog'])->count(),
+            'cat_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['cat'])->count(),
+            'other_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['other'])->count(),
         ];
 
-        $query = BiteRabiesReport::query();
+        $query = BiteRabiesReport::where('rabies_confirmed', true)
+            ->with(['barangay']);
 
-        if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
+        // Apply date filters
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('incident_date', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('incident_date', '<=', $request->date_to);
+        }
+
+        // Apply quick filter
+        if ($request->has('quick_filter') && $request->quick_filter) {
+            $today = \Carbon\Carbon::now()->startOfDay();
+            switch ($request->quick_filter) {
+                case 'today':
+                    $query->whereDate('incident_date', $today);
+                    break;
+                case 'week':
+                    $query->where('incident_date', '>=', \Carbon\Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('incident_date', '>=', \Carbon\Carbon::now()->startOfMonth());
+                    break;
+            }
         }
 
         $reports = $query->latest()->paginate(10);
         return view('dashboard.bite-reports', compact('user', 'reports', 'stats'));
+    }
+
+    /**
+     * Show bite report details (JSON for modal).
+     */
+    public function showBiteReportJson(BiteRabiesReport $report)
+    {
+        $report->load(['barangay', 'patientBarangay', 'reportedBy']);
+        
+        return response()->json([
+            'success' => true,
+            'report' => [
+                'id' => $report->id,
+                'report_number' => $report->report_number,
+                'status' => $report->status,
+                'patient_name' => trim(($report->patient_first_name ?? '') . ' ' . ($report->patient_middle_name ?? '') . ' ' . ($report->patient_last_name ?? '') . ' ' . ($report->patient_suffix ?? '')),
+                'age' => $report->age,
+                'gender' => $report->gender,
+                'patient_address' => $report->patient_address,
+                'patient_contact' => $report->patient_contact,
+                'barangay' => $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A'),
+                'incident_date' => \Carbon\Carbon::parse($report->incident_date)->format('M d, Y'),
+                'exact_location' => $report->exact_location,
+                'exposure_type' => $report->exposure_type,
+                'bite_site' => $report->bite_site,
+                'category' => $report->category,
+                'animal_type' => ucfirst($report->animal_type),
+                'animal_status' => ucfirst($report->animal_status),
+                'vaccination_status' => $report->vaccination_status,
+                'animal_owner_name' => $report->animal_owner_name,
+                'animal_owner_contact' => $report->animal_owner_contact,
+                'reporting_facility' => $report->reporting_facility,
+                'wound_management' => is_array($report->wound_management) ? implode(', ', $report->wound_management) : 'None',
+                'post_exposure_prophylaxis' => $report->post_exposure_prophylaxis,
+                'notes' => $report->notes,
+                'rabies_confirmed' => $report->rabies_confirmed ? 'Yes' : 'No',
+                'created_at' => $report->created_at->format('M d, Y h:i A'),
+            ]
+        ]);
     }
 
     /**
