@@ -100,7 +100,6 @@ class RabiesVaccinationReport extends Model
 
     protected $casts = [
         'vaccination_date' => 'date',
-        'vaccination_time' => 'time',
         'next_vaccination_date' => 'date',
         'pet_age' => 'integer',
         'weight' => 'decimal:2',

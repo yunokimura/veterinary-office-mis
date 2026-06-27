@@ -236,11 +236,76 @@ class AdminController extends Controller
     /**
      * List all rabies vaccination reports (from Clinic).
      */
-    public function indexVaccinationReports()
+    public function indexVaccinationReports(Request $request)
     {
         $user = Auth::user();
-        $reports = RabiesVaccinationReport::latest()->paginate(10);
+        
+        $query = RabiesVaccinationReport::latest();
+
+        // Apply date filters
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('vaccination_date', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('vaccination_date', '<=', $request->date_to);
+        }
+
+        // Apply quick filter
+        if ($request->has('quick_filter') && $request->quick_filter) {
+            $today = \Carbon\Carbon::now()->startOfDay();
+            switch ($request->quick_filter) {
+                case 'today':
+                    $query->whereDate('vaccination_date', $today);
+                    break;
+                case 'week':
+                    $query->where('vaccination_date', '>=', \Carbon\Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('vaccination_date', '>=', \Carbon\Carbon::now()->startOfMonth());
+                    break;
+            }
+        }
+
+        $reports = $query->paginate(10);
         return view('dashboard.vaccination-reports', compact('user', 'reports'));
+    }
+
+    /**
+     * Show rabies vaccination report details (JSON for modal).
+     */
+    public function showVaccinationReportJson(RabiesVaccinationReport $report)
+    {
+        $report->load(['user', 'barangay']);
+        
+        return response()->json([
+            'success' => true,
+            'report' => [
+                'id' => $report->id,
+                'report_number' => 'RV-' . str_pad($report->id, 5, '0', STR_PAD_LEFT),
+                'clinic_name' => $report->clinic_name,
+                'patient_name' => $report->patient_name,
+                'patient_contact' => $report->patient_contact,
+                'patient_address' => $report->patient_address,
+                'pet_name' => $report->pet_name,
+                'pet_species' => ucfirst($report->pet_species),
+                'pet_breed' => $report->pet_breed,
+                'pet_age' => $report->pet_age,
+                'pet_gender' => ucfirst($report->pet_gender),
+                'pet_color' => $report->pet_color,
+                'vaccine_brand' => $report->vaccine_brand,
+                'vaccine_batch_number' => $report->vaccine_batch_number,
+                'vaccination_date' => \Carbon\Carbon::parse($report->vaccination_date)->format('M d, Y'),
+                'vaccination_time' => $report->vaccination_time,
+                'next_vaccination_date' => $report->next_vaccination_date ? \Carbon\Carbon::parse($report->next_vaccination_date)->format('M d, Y') : 'N/A',
+                'weight' => $report->weight,
+                'vaccination_type' => ucfirst($report->vaccination_type),
+                'observations' => $report->observations,
+                'status' => $report->status,
+                'notes' => $report->notes,
+                'barangay' => optional($report->barangay)->barangay_name ?? 'N/A',
+                'created_at' => $report->created_at->format('M d, Y h:i A'),
+            ]
+        ]);
     }
 
     /**
