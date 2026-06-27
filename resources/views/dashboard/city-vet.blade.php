@@ -181,20 +181,20 @@
                 <p class="text-xs font-medium text-gray-500">Rabies Cases by Barangay</p>
                 <i class="bi bi-geo-alt text-gray-400"></i>
             </div>
-            <div class="space-y-1">
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Highest:</span>
-                    <span class="font-semibold text-gray-800">{{ $analytics['vaccination_coverage']['highest']->count ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Lowest:</span>
-                    <span class="font-semibold text-gray-800">{{ $analytics['vaccination_coverage']['lowest']->count ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Average:</span>
-                    <span class="font-semibold text-gray-800">{{ round($analytics['vaccination_coverage']['average'] ?? 0, 1) }}</span>
-                </div>
+        <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+                <span class="text-gray-600">Highest:</span>
+                <span class="font-semibold text-gray-800">{{ $analytics['bite_cases_by_barangay']['highest']->count ?? 0 }}</span>
             </div>
+            <div class="flex justify-between text-xs">
+                <span class="text-gray-600">Lowest:</span>
+                <span class="font-semibold text-gray-800">{{ $analytics['bite_cases_by_barangay']['lowest']->count ?? 0 }}</span>
+            </div>
+            <div class="flex justify-between text-xs">
+                <span class="text-gray-600">Average:</span>
+                <span class="font-semibold text-gray-800">{{ round($analytics['bite_cases_by_barangay']['average'] ?? 0, 1) }}</span>
+            </div>
+        </div>
         </div>
 
         <!-- Adoption Performance -->
@@ -391,7 +391,6 @@
                         <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Barangay</th>
                         <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Animal Type</th>
                         <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Bite Category</th>
-                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
@@ -400,12 +399,7 @@
                         <td class="px-3 py-2 text-gray-900">{{ \Carbon\Carbon::parse($case->incident_date)->format('M d, Y') }}</td>
                         <td class="px-3 py-2 text-gray-600">{{ $case->barangay->barangay_name ?? 'N/A' }}</td>
                         <td class="px-3 py-2 text-gray-600">{{ ucfirst($case->animal_type) }}</td>
-                        <td class="px-3 py-2 text-gray-600">{{ $case->bite_category ?? 'N/A' }}</td>
-                        <td class="px-3 py-2">
-                            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                                {{ $case->status }}
-                            </span>
-                        </td>
+                        <td class="px-3 py-2 text-gray-600">{{ $case->category ?? 'N/A' }}</td>
                     </tr>
                     @empty
                     <tr>
@@ -430,17 +424,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @php
-                        $topBarangays = \App\Models\BiteRabiesReport::where('status', 'Confirmed')
-                            ->whereYear('incident_date', date('Y'))
-                            ->with('barangay')
-                            ->selectRaw('barangay_id, COUNT(*) as count')
-                            ->groupBy('barangay_id')
-                            ->orderByDesc('count')
-                            ->limit(5)
-                            ->get();
-                    @endphp
-                    @forelse($topBarangays as $index => $barangay)
+                    @forelse($topBarangays ?? [] as $index => $barangay)
                     <tr class="hover:bg-gray-50">
                         <td class="px-3 py-2 text-gray-900 font-medium">#{{ $index + 1 }}</td>
                         <td class="px-3 py-2 text-gray-600">{{ $barangay->barangay->barangay_name ?? 'Unknown' }}</td>
@@ -468,17 +452,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @php
-                        $lowestVaccination = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', date('Y'))
-                            ->join('vaccination_reports', 'rabies_vaccination_reports.vaccination_report_id', '=', 'vaccination_reports.id')
-                            ->join('addresses', 'vaccination_reports.address_id', '=', 'addresses.id')
-                            ->selectRaw('addresses.barangay_id, COUNT(*) as count')
-                            ->groupBy('addresses.barangay_id')
-                            ->orderBy('count')
-                            ->limit(5)
-                            ->get();
-                    @endphp
-                    @forelse($lowestVaccination as $vaccination)
+                    @forelse($lowestVaccination ?? [] as $vaccination)
                     <tr class="hover:bg-gray-50">
                         <td class="px-3 py-2 text-gray-600">
                             {{ \App\Models\Barangay::find($vaccination->barangay_id)->barangay_name ?? 'Unknown' }}
@@ -508,10 +482,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @php
-                        $establishments = \App\Models\MeatEstablishment::latest()->take(5)->get();
-                    @endphp
-                    @forelse($establishments as $establishment)
+                    @forelse($establishments ?? [] as $establishment)
                     <tr class="hover:bg-gray-50">
                         <td class="px-3 py-2 text-gray-900 font-medium">{{ $establishment->establishment_name }}</td>
                         <td class="px-3 py-2">
@@ -549,11 +520,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Chart data from PHP
     const monthlyBiteCases = @json($monthlyCases ?? []);
+    const adoptionReportsByMonth = @json($adoptionReportsByMonth ?? []);
+    const missingPetReportsByMonth = @json($missingPetReportsByMonth ?? []);
     const monthLabels = Array.from({length: 12}, (_, i) => {
         const date = new Date({{ $monthlyYear ?? date('Y') }}, i, 1);
         return date.toLocaleString('default', { month: 'short' });
     });
     const biteData = monthLabels.map((_, i) => monthlyBiteCases[i + 1] || 0);
+    const adoptionData = monthLabels.map((_, i) => adoptionReportsByMonth[i + 1] || 0);
+    const missingData = monthLabels.map((_, i) => missingPetReportsByMonth[i + 1] || 0);
     
     // Barangay data for bar charts
     const vaccinationsByBarangay = @json($vaccinationsByBarangay ?? []);
@@ -599,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: monthLabels,
             datasets: [{
                 label: 'Adoption Reports',
-                data: biteData, // Placeholder - replace with actual adoption data
+                data: adoptionData,
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
                 fill: true,
@@ -630,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: monthLabels,
             datasets: [{
                 label: 'Missing Pet Reports',
-                data: biteData, // Placeholder - replace with actual missing pet data
+                data: missingData,
                 borderColor: '#f97316',
                 backgroundColor: 'rgba(249, 115, 22, 0.1)',
                 fill: true,

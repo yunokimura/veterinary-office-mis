@@ -25,18 +25,47 @@ class CityVetController extends Controller
         $monthlyYear = $request->monthly_year ?? $year;
 
         $stats = [
-            'confirmed_bite_cases' => BiteRabiesReport::where('status', 'Confirmed')->whereYear('incident_date', $year)->count(),
+            'confirmed_bite_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereYear('incident_date', $year)->count(),
             'anti_rabies_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
             'adoption_reports' => \App\Models\AdoptionApplication::whereYear('created_at', $year)->count(),
             'missing_pet_reports' => \App\Models\MissingPetsReport::whereYear('created_at', $year)->count(),
             'registered_meat_establishments' => \App\Models\MeatEstablishment::count(),
         ];
 
-        // Get recent cases
-        $recentCases = BiteRabiesReport::with('barangay')->latest()->take(5)->get();
+        // Get recent confirmed rabies cases only from current year
+        $recentCases = BiteRabiesReport::where('rabies_confirmed', true)
+            ->whereYear('incident_date', date('Y'))
+            ->with('barangay')
+            ->latest()
+            ->take(5)
+            ->get();
 
-        // Get monthly trends for the selected year
-        $monthlyCases = BiteRabiesReport::whereYear('incident_date', $monthlyYear)
+        // Get top 5 barangays with highest confirmed rabies cases
+        $topBarangays = BiteRabiesReport::where('rabies_confirmed', true)
+            ->whereYear('incident_date', $year)
+            ->with('barangay')
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->orderByDesc('count')
+            ->limit(5)
+            ->get();
+
+        // Get lowest vaccination coverage by barangay
+        $lowestVaccination = RabiesVaccinationReport::whereYear('vaccination_date', $year)
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', 0)
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->orderBy('count')
+            ->limit(5)
+            ->get();
+
+        // Get recent meat establishments
+        $establishments = \App\Models\MeatEstablishment::latest()->take(5)->get();
+
+        // Get monthly trends for confirmed rabies cases only
+        $monthlyCases = BiteRabiesReport::where('rabies_confirmed', true)
+            ->whereYear('incident_date', $monthlyYear)
             ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
             ->groupBy('month')
             ->pluck('count', 'month')
@@ -65,10 +94,10 @@ class CityVetController extends Controller
 
         // Get vaccinations by barangay
         $vaccinationsByBarangay = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', $year)
-            ->join('vaccination_reports', 'rabies_vaccination_reports.vaccination_report_id', '=', 'vaccination_reports.id')
-            ->join('addresses', 'vaccination_reports.address_id', '=', 'addresses.id')
-            ->selectRaw('addresses.barangay_id, COUNT(*) as count')
-            ->groupBy('addresses.barangay_id')
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', 0)
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
             ->orderByDesc('count')
             ->limit(10)
             ->get();
@@ -107,7 +136,10 @@ class CityVetController extends Controller
             'adoptionReportsByMonth',
             'missingPetReportsByMonth',
             'vaccinationsByBarangay',
-            'biteCasesByBarangay'
+            'biteCasesByBarangay',
+            'topBarangays',
+            'lowestVaccination',
+            'establishments'
         ));
     }
 
@@ -401,8 +433,8 @@ class CityVetController extends Controller
         $previousYearCases = BiteRabiesReport::whereYear('incident_date', $previousYear)->count();
         $monthlyTrend = $previousYearCases > 0 ? round((($currentYearCases - $previousYearCases) / $previousYearCases) * 100, 1) : 0;
 
-        // Vaccination Coverage by Barangay (using bite_rabies_reports for barangay data)
-        $vaccinationByBarangay = BiteRabiesReport::whereYear('incident_date', $year)
+        // Bite Cases by Barangay (for analytics)
+        $biteCasesByBarangayAnalytics = BiteRabiesReport::whereYear('incident_date', $year)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', '')
             ->selectRaw('barangay_id, COUNT(*) as count')
@@ -410,10 +442,10 @@ class CityVetController extends Controller
             ->orderByDesc('count')
             ->get();
         
-        $vaccinationStats = [
-            'highest' => $vaccinationByBarangay->first(),
-            'lowest' => $vaccinationByBarangay->last(),
-            'average' => $vaccinationByBarangay->avg('count') ?? 0,
+        $biteCasesStats = [
+            'highest' => $biteCasesByBarangayAnalytics->first(),
+            'lowest' => $biteCasesByBarangayAnalytics->last(),
+            'average' => $biteCasesByBarangayAnalytics->avg('count') ?? 0,
         ];
 
         // Adoption Performance
@@ -445,7 +477,7 @@ class CityVetController extends Controller
 
         return [
             'monthly_trend' => $monthlyTrend,
-            'vaccination_coverage' => $vaccinationStats,
+            'bite_cases_by_barangay' => $biteCasesStats,
             'adoption_performance' => $adoptionStats,
             'missing_pet_recovery' => $missingPetStats,
             'meat_establishment_monitoring' => $meatEstablishmentStats,
