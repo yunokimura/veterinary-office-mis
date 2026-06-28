@@ -59,7 +59,7 @@
         </div>
         <div>
             <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $stats['confirmed_bite_cases'] ?? 0 }}</p>
-            <p class="text-xs text-red-600 font-medium">Highest Priority</p>
+            <p class="text-xs text-red-600 font-medium">This Year</p>
         </div>
     </div>
 

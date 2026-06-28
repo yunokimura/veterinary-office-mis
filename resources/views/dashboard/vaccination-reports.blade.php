@@ -34,7 +34,7 @@ $rolePrefix = 'admin';
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <!-- Total Reports -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
             <div class="flex items-start justify-between gap-3">
@@ -44,6 +44,18 @@ $rolePrefix = 'admin';
                 </div>
                 <div class="w-10 h-10 md:w-11 md:h-11 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="bi bi-file-earmark-text text-blue-600 text-lg md:text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Total Vaccinations (Completed) -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs md:text-sm text-gray-500 mb-1">Total Vaccinations</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ \App\Models\RabiesVaccinationReport::count() }}</p>
+                </div>
+                <div class="w-10 h-10 md:w-11 md:h-11 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-eyedropper text-amber-600 text-lg md:text-xl"></i>
                 </div>
             </div>
         </div>
