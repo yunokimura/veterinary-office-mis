@@ -25,52 +25,52 @@ $rolePrefix = 'city-vet';
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <!-- Total Reports -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
+            <div class="flex items-center justify-between gap-4">
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Total Reports</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['total'] ?? 0 }}</p>
+                    <p class="text-sm text-gray-500 mb-1">Total Reports</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ $stats['total'] ?? 0 }}</p>
                 </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-file-earmark-text text-blue-600 text-lg md:text-xl"></i>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-file-earmark-text text-blue-600 text-xl"></i>
                 </div>
             </div>
         </div>
         <!-- Active Cases -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
+            <div class="flex items-center justify-between gap-4">
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Active Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['active'] ?? 0 }}</p>
+                    <p class="text-sm text-gray-500 mb-1">Active Cases</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ $stats['active'] ?? 0 }}</p>
                 </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-exclamation-circle text-yellow-600 text-lg md:text-xl"></i>
+                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-exclamation-circle text-yellow-600 text-xl"></i>
                 </div>
             </div>
         </div>
         <!-- Resolved Cases -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
+            <div class="flex items-center justify-between gap-4">
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Resolved Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['resolved'] ?? 0 }}</p>
+                    <p class="text-sm text-gray-500 mb-1">Resolved Cases</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ $stats['resolved'] ?? 0 }}</p>
                 </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-check-circle text-green-600 text-lg md:text-xl"></i>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-check-circle text-green-600 text-xl"></i>
                 </div>
             </div>
         </div>
         <!-- This Month -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
+            <div class="flex items-center justify-between gap-4">
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">This Month</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['this_month'] ?? 0 }}</p>
+                    <p class="text-sm text-gray-500 mb-1">This Month</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ $stats['this_month'] ?? 0 }}</p>
                 </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-calendar-month text-purple-600 text-lg md:text-xl"></i>
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-calendar-month text-purple-600 text-xl"></i>
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@ $rolePrefix = 'city-vet';
                         @foreach($reports as $report)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">
-                                <span class="font-medium text-gray-800">MP-{{ str_pad($report->id, 5, '0', STR_PAD_LEFT) }}</span>
+                                <span class="font-medium text-gray-800">MP-{{ str_pad($report->report_id, 5, '0', STR_PAD_LEFT) }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
@@ -157,7 +157,7 @@ $rolePrefix = 'city-vet';
                                 <p class="text-gray-600">{{ \Carbon\Carbon::parse($report->last_seen_at)->format('M d, Y') }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ $report->location ?? 'N/A' }}</p>
+                                <p class="text-gray-800">{{ $report->location_description ?? 'N/A' }}</p>
                             </td>
                             <td class="px-6 py-4">
                                 @if($report->status == 'Active')
@@ -167,7 +167,7 @@ $rolePrefix = 'city-vet';
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <button onclick="openReportModal({{ $report->id }})"
+                                <button onclick="openReportModal({{ $report->report_id }})"
                                         class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
                                     <i class="bi bi-eye"></i>View
                                 </button>

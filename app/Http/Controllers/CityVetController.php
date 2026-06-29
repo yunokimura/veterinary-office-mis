@@ -429,7 +429,7 @@ class CityVetController extends Controller
     {
         $user = Auth::user();
 
-        $query = \App\Models\MissingPet::with(['reportedBy', 'pet']);
+        $query = \App\Models\MissingPetsReport::with(['pet', 'user']);
 
         // Apply status filter
         if ($request->has('status') && $request->status) {
@@ -464,10 +464,10 @@ class CityVetController extends Controller
 
         // Get statistics
         $stats = [
-            'total' => \App\Models\MissingPet::count(),
-            'active' => \App\Models\MissingPet::where('status', 'Active')->count(),
-            'resolved' => \App\Models\MissingPet::where('status', 'Resolved')->count(),
-            'this_month' => \App\Models\MissingPet::whereMonth('last_seen_at', date('m'))
+            'total' => \App\Models\MissingPetsReport::count(),
+            'active' => \App\Models\MissingPetsReport::where('status', 'Active')->count(),
+            'resolved' => \App\Models\MissingPetsReport::where('status', 'Resolved')->count(),
+            'this_month' => \App\Models\MissingPetsReport::whereMonth('last_seen_at', date('m'))
                 ->whereYear('last_seen_at', date('Y'))
                 ->count(),
         ];
@@ -478,15 +478,15 @@ class CityVetController extends Controller
     /**
      * Show missing pet report details (JSON for modal).
      */
-    public function showMissingPetReportJson(\App\Models\MissingPet $missingPet)
+    public function showMissingPetReportJson(\App\Models\MissingPetsReport $missingPet)
     {
-        $missingPet->load(['reportedBy', 'pet', 'pet.owner']);
+        $missingPet->load(['pet', 'user']);
 
         return response()->json([
             'success' => true,
             'report' => [
-                'id' => $missingPet->id,
-                'report_number' => 'MP-' . str_pad($missingPet->id, 5, '0', STR_PAD_LEFT),
+                'id' => $missingPet->report_id,
+                'report_number' => 'MP-' . str_pad($missingPet->report_id, 5, '0', STR_PAD_LEFT),
                 'status' => $missingPet->status,
                 'pet_name' => $missingPet->pet->pet_name ?? 'N/A',
                 'species' => ucfirst($missingPet->pet->species ?? 'N/A'),
@@ -494,14 +494,14 @@ class CityVetController extends Controller
                 'color' => $missingPet->pet->color ?? 'N/A',
                 'gender' => ucfirst($missingPet->pet->gender ?? 'N/A'),
                 'last_seen_at' => \Carbon\Carbon::parse($missingPet->last_seen_at)->format('M d, Y'),
-                'last_seen_time' => $missingPet->last_seen_time ?? 'N/A',
-                'location' => $missingPet->location,
-                'barangay' => $missingPet->barangay ?? 'N/A',
-                'description' => $missingPet->description,
-                'reporter_name' => $missingPet->reporter_name,
-                'reporter_contact' => $missingPet->reporter_contact,
-                'reporter_email' => $missingPet->reporter_email ?? 'N/A',
-                'reported_by' => optional($missingPet->reportedBy)->name ?? 'N/A',
+                'last_seen_time' => \Carbon\Carbon::parse($missingPet->last_seen_at)->format('h:i A'),
+                'location' => $missingPet->location_description,
+                'barangay' => $missingPet->location_barangay,
+                'description' => $missingPet->body_marks,
+                'reporter_name' => $missingPet->user->name ?? 'N/A',
+                'reporter_contact' => $missingPet->emergency_contact ?? 'N/A',
+                'reporter_email' => $missingPet->user->email ?? 'N/A',
+                'reported_by' => optional($missingPet->user)->name ?? 'N/A',
                 'created_at' => $missingPet->created_at->format('M d, Y h:i A'),
                 'updated_at' => $missingPet->updated_at->format('M d, Y h:i A'),
             ]
@@ -511,10 +511,10 @@ class CityVetController extends Controller
     /**
      * Show missing pet report details.
      */
-    public function showMissingPetReport(\App\Models\MissingPet $missingPet)
+    public function showMissingPetReport(\App\Models\MissingPetsReport $missingPet)
     {
         $user = Auth::user();
-        $missingPet->load(['reportedBy', 'pet', 'pet.owner']);
+        $missingPet->load(['pet', 'user']);
         return view('dashboard.missing-pet-reports.show', compact('missingPet', 'user'));
     }
 
