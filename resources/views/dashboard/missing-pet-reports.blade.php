@@ -85,8 +85,9 @@ $rolePrefix = 'city-vet';
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <select name="status" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" onchange="this.form.submit()">
                         <option value="">All Status</option>
-                        <option value="Active" {{ request('status') === 'Active' ? 'selected' : '' }}>Active</option>
-                        <option value="Resolved" {{ request('status') === 'Resolved' ? 'selected' : '' }}>Resolved</option>
+                        <option value="missing" {{ request('status') === 'missing' ? 'selected' : '' }}>Active</option>
+                        <option value="found" {{ request('status') === 'found' ? 'selected' : '' }}>Found</option>
+                        <option value="reunited" {{ request('status') === 'reunited' ? 'selected' : '' }}>Reunited</option>
                     </select>
                 </div>
 
@@ -128,6 +129,7 @@ $rolePrefix = 'city-vet';
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Pet Name</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Species</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Last Seen</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Location</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
@@ -146,24 +148,31 @@ $rolePrefix = 'city-vet';
                                     </div>
                                     <div>
                                         <p class="font-medium text-gray-800">{{ $report->pet->pet_name ?? 'Unknown' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $report->pet->breed ?? 'N/A' }}</p>
+                                        <p class="text-sm text-gray-500">{{ $report->pet->breed ?? 'Unknown' }}</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ ucfirst($report->pet->species ?? 'N/A') }}</p>
+                                <p class="text-gray-800">{{ ucfirst($report->pet->species ?? 'Unknown') }}</p>
                             </td>
                             <td class="px-6 py-4">
                                 <p class="text-gray-600">{{ \Carbon\Carbon::parse($report->last_seen_at)->format('M d, Y') }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ $report->location_description ?? 'N/A' }}</p>
+                                <p class="text-gray-800">{{ $report->location_barangay ?? 'Unknown' }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                @if($report->status == 'Active')
+                                <p class="text-gray-800">{{ $report->location_description ?? 'Unknown' }}</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                @if($report->status == 'missing')
                                     <span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Active</span>
+                                @elseif($report->status == 'found')
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Found</span>
+                                @elseif($report->status == 'reunited')
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Reunited</span>
                                 @else
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Resolved</span>
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">{{ ucfirst($report->status) }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">

@@ -465,8 +465,8 @@ class CityVetController extends Controller
         // Get statistics
         $stats = [
             'total' => \App\Models\MissingPetsReport::count(),
-            'active' => \App\Models\MissingPetsReport::where('status', 'Active')->count(),
-            'resolved' => \App\Models\MissingPetsReport::where('status', 'Resolved')->count(),
+            'active' => \App\Models\MissingPetsReport::where('status', 'missing')->count(),
+            'resolved' => \App\Models\MissingPetsReport::whereIn('status', ['found', 'reunited'])->count(),
             'this_month' => \App\Models\MissingPetsReport::whereMonth('last_seen_at', date('m'))
                 ->whereYear('last_seen_at', date('Y'))
                 ->count(),
@@ -525,7 +525,7 @@ class CityVetController extends Controller
     {
         $user = Auth::user();
 
-        $query = \App\Models\AdoptionApplication::with(['user', 'adoptionPet']);
+        $query = \App\Models\AdoptionApplication::with(['user', 'pet']);
 
         // Apply status filter
         if ($request->has('status') && $request->status) {
@@ -561,10 +561,10 @@ class CityVetController extends Controller
         // Get statistics
         $stats = [
             'total' => \App\Models\AdoptionApplication::count(),
-            'pending' => \App\Models\AdoptionApplication::where('status', 'Pending')->count(),
-            'approved' => \App\Models\AdoptionApplication::where('status', 'Approved')->count(),
-            'completed' => \App\Models\AdoptionApplication::where('status', 'Completed')->count(),
-            'rejected' => \App\Models\AdoptionApplication::where('status', 'Rejected')->count(),
+            'pending' => \App\Models\AdoptionApplication::where('status', 'pending')->count(),
+            'approved' => \App\Models\AdoptionApplication::where('status', 'approved')->count(),
+            'completed' => \App\Models\AdoptionApplication::where('status', 'completed')->count(),
+            'rejected' => \App\Models\AdoptionApplication::where('status', 'rejected')->count(),
             'this_month' => \App\Models\AdoptionApplication::whereMonth('created_at', date('m'))
                 ->whereYear('created_at', date('Y'))
                 ->count(),
@@ -578,7 +578,7 @@ class CityVetController extends Controller
      */
     public function showAdoptionReportJson(\App\Models\AdoptionApplication $adoption)
     {
-        $adoption->load(['user', 'adoptionPet']);
+        $adoption->load(['user', 'pet']);
 
         return response()->json([
             'success' => true,
@@ -589,10 +589,10 @@ class CityVetController extends Controller
                 'applicant_name' => $adoption->user->name ?? 'N/A',
                 'applicant_email' => $adoption->user->email ?? 'N/A',
                 'applicant_contact' => $adoption->user->contact_number ?? 'N/A',
-                'pet_name' => $adoption->adoptionPet->pet_name ?? 'N/A',
-                'pet_species' => ucfirst($adoption->adoptionPet->species ?? 'N/A'),
-                'pet_breed' => $adoption->adoptionPet->breed ?? 'N/A',
-                'pet_gender' => ucfirst($adoption->adoptionPet->gender ?? 'N/A'),
+                'pet_name' => $adoption->pet->pet_name ?? 'N/A',
+                'pet_species' => ucfirst($adoption->pet->species ?? 'N/A'),
+                'pet_breed' => $adoption->pet->breed ?? 'N/A',
+                'pet_gender' => ucfirst($adoption->pet->gender ?? 'N/A'),
                 'reason' => $adoption->reason,
                 'has_other_pets' => $adoption->has_other_pets ? 'Yes' : 'No',
                 'other_pets_details' => $adoption->other_pets_details ?? 'N/A',
@@ -612,7 +612,7 @@ class CityVetController extends Controller
     public function showAdoptionReport(\App\Models\AdoptionApplication $adoption)
     {
         $user = Auth::user();
-        $adoption->load(['user', 'adoptionPet']);
+        $adoption->load(['user', 'pet']);
         return view('dashboard.adoption-reports.show', compact('adoption', 'user'));
     }
 
@@ -644,8 +644,8 @@ class CityVetController extends Controller
 
         // Adoption Performance
         $adoptionStats = [
-            'pending' => \App\Models\AdoptionApplication::where('status', 'Pending')->count(),
-            'completed_this_month' => \App\Models\AdoptionApplication::where('status', 'Completed')
+            'pending' => \App\Models\AdoptionApplication::where('status', 'pending')->count(),
+            'completed_this_month' => \App\Models\AdoptionApplication::where('status', 'completed')
                 ->whereMonth('updated_at', date('m'))
                 ->whereYear('updated_at', $year)
                 ->count(),
@@ -653,8 +653,8 @@ class CityVetController extends Controller
 
         // Missing Pet Recovery
         $missingPetStats = [
-            'active' => \App\Models\MissingPetsReport::where('status', 'Active')->count(),
-            'resolved' => \App\Models\MissingPetsReport::where('status', 'Resolved')->count(),
+            'active' => \App\Models\MissingPetsReport::where('status', 'missing')->count(),
+            'resolved' => \App\Models\MissingPetsReport::whereIn('status', ['found', 'reunited'])->count(),
         ];
         $totalMissing = $missingPetStats['active'] + $missingPetStats['resolved'];
         $missingPetStats['recovery_rate'] = $totalMissing > 0 ? round(($missingPetStats['resolved'] / $totalMissing) * 100, 1) : 0;

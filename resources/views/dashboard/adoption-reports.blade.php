@@ -85,10 +85,10 @@ $rolePrefix = 'city-vet';
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <select name="status" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" onchange="this.form.submit()">
                         <option value="">All Status</option>
-                        <option value="Pending" {{ request('status') === 'Pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="Approved" {{ request('status') === 'Approved' ? 'selected' : '' }}>Approved</option>
-                        <option value="Completed" {{ request('status') === 'Completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="Rejected" {{ request('status') === 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
                     </select>
                 </div>
 
@@ -153,20 +153,22 @@ $rolePrefix = 'city-vet';
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="font-medium text-gray-800">{{ $report->adoptionPet->pet_name ?? 'N/A' }}</p>
+                                <p class="font-medium text-gray-800">{{ $report->pet->pet_name ?? 'N/A' }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ ucfirst($report->adoptionPet->species ?? 'N/A') }}</p>
+                                <p class="text-gray-800">{{ ucfirst($report->pet->species ?? 'N/A') }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                @if($report->status == 'Pending')
+                                @if($report->status == 'pending')
                                     <span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                                @elseif($report->status == 'Approved')
+                                @elseif($report->status == 'approved')
                                     <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Approved</span>
-                                @elseif($report->status == 'Completed')
+                                @elseif($report->status == 'completed')
                                     <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Completed</span>
-                                @else
+                                @elseif($report->status == 'rejected')
                                     <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Rejected</span>
+                                @else
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">{{ ucfirst($report->status) }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
