@@ -117,7 +117,7 @@
             <a href="{{ route('admin.bite-reports.index') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin.bite-reports.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-exclamation-triangle text-lg w-6"></i>
-                <span>Animal Bite Reports</span>
+                <span>Confirmed Rabies Reports</span>
             </a>
 
             <a href="{{ route('admin.vaccination-reports.index') }}"

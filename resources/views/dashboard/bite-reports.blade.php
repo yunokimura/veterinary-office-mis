@@ -13,23 +13,13 @@ $rolePrefix = 'admin';
 @section('content')
 <div class="max-w-7xl mx-auto">
     <!-- Page Header -->
-    <div class="mb-6">
-        <nav class="text-sm text-gray-500 mb-2">
-            <ol class="list-none p-0 flex items-center space-x-2">
-                <li><a href="{{ route($rolePrefix . '.dashboard') }}" class="hover:text-green-600 transition">Dashboard</a></li>
-                <li><i class="bi bi-chevron-right text-xs"></i></li>
-                <li class="text-gray-800">Confirmed Rabies Reports</li>
-            </ol>
-        </nav>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Confirmed Rabies Reports Management</h1>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Confirmed Rabies Reports</h1>
                 <p class="text-gray-500 mt-1">View and manage all confirmed rabies cases</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route($rolePrefix . '.dashboard') }}" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition">
-                    <i class="bi bi-arrow-left mr-1"></i>Back
-                </a>
             </div>
         </div>
     </div>
@@ -45,6 +35,19 @@ $rolePrefix = 'admin';
                 </div>
                 <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="bi bi-virus text-red-600 text-lg md:text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Confirmed Rabies Cases This Year -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs md:text-sm text-gray-500 mb-1">Confirmed Rabies Cases</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['confirmed_this_year'] ?? 0 }}</p>
+                    <p class="text-xs text-gray-400 mt-1">This Year</p>
+                </div>
+                <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-calendar-check text-red-600 text-lg md:text-xl"></i>
                 </div>
             </div>
         </div>
@@ -69,18 +72,6 @@ $rolePrefix = 'admin';
                 </div>
                 <div class="w-10 h-10 md:w-11 md:h-11 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="bi bi-briefcase text-purple-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <!-- Other Cases -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Other Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['other_cases'] ?? 0 }}</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-briefcase text-gray-600 text-lg md:text-xl"></i>
                 </div>
             </div>
         </div>

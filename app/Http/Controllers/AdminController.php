@@ -151,6 +151,7 @@ class AdminController extends Controller
             'dog_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['dog'])->count(),
             'cat_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['cat'])->count(),
             'other_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['other'])->count(),
+            'confirmed_this_year' => BiteRabiesReport::where('rabies_confirmed', true)->whereYear('incident_date', date('Y'))->count(),
         ];
 
         $query = BiteRabiesReport::where('rabies_confirmed', true)

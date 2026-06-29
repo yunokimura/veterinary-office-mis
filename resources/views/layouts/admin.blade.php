@@ -190,7 +190,7 @@
             <div class="sidebar-section-label">Reports</div>
 
             <a href="{{ route('admin.bite-reports.index') }}" class="nav-item {{ request()->routeIs('admin.bite-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-exclamation-triangle"></i><span>Animal Bite Reports</span>
+                <i class="bi bi-exclamation-triangle"></i><span>Confirmed Rabies Reports</span>
             </a>
             <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('admin.vaccination-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-shield-check"></i><span>Anti-Rabies Vaccination</span>
