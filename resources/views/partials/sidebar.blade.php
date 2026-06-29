@@ -100,6 +100,7 @@
             ADMIN MENU
            ========================= --}}
         @if($isAdmin)
+            <!-- DEBUG: isAdmin={{ $isAdmin ? 'true' : 'false' }}, role={{ $role }} -->
             <div class="pt-4 pb-2">
                 <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Operations</p>
             </div>
@@ -132,11 +133,30 @@
                 <span>Meat Inspection</span>
             </a>
 
+
+            @if(Route::has('admin.missing-pet-reports.index'))
+            <a href="{{ route('admin.missing-pet-reports.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin.missing-pet-reports.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-search text-lg w-6"></i>
+                <span>Missing Pet Reports</span>
+            </a>
+            @endif
+
+            @if(Route::has('admin.adoption-reports.index'))
+            <a href="{{ route('admin.adoption-reports.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin.adoption-reports.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-heart-fill text-lg w-6"></i>
+                <span>Adoption Reports</span>
+            </a>
+            @endif
+
             <a href="{{ route('admin.all-reports') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin.all-reports') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-file-earmark-bar-graph text-lg w-6"></i>
                 <span>All Reports</span>
             </a>
+
+            
 
         {{-- =========================
             CITY VET MENU (Admin/Operations)

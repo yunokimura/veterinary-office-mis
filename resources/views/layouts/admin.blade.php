@@ -77,6 +77,31 @@
             padding: 12px 16px 6px;
         }
 
+        /* Custom Scrollbar Styling */
+        nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        nav::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Firefox scrollbar */
+        nav {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+        }
+
         @media (max-width: 767px) {
             .sidebar { transform: translateX(-220px); }
             .sidebar.open { transform: translateX(0); }
@@ -186,7 +211,13 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('city_vet'))
             <div class="sidebar-divider"></div>
-            <!-- Dashboard already available under Main section -->
+            <div class="sidebar-section-label">Rabies Control</div>
+
+            <a href="{{ route('city-vet.rabies-geomap') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-geomap') ? 'active-nav' : '' }}">
+                <i class="bi bi-map"></i><span>Rabies Geomap</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Reports</div>
 
             <a href="{{ route('admin.bite-reports.index') }}" class="nav-item {{ request()->routeIs('admin.bite-reports.*') ? 'active-nav' : '' }}">
@@ -195,43 +226,17 @@
             <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('admin.vaccination-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-shield-check"></i><span>Anti-Rabies Vaccination</span>
             </a>
+            <a href="{{ route('admin.missing-pet-reports.index') }}" class="nav-item {{ request()->routeIs('admin.missing-pet-reports.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-search"></i><span>Missing Pet Reports</span>
+            </a>
+            <a href="{{ route('admin.adoption-reports.index') }}" class="nav-item {{ request()->routeIs('admin.adoption-reports.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-heart-fill"></i><span>Adoption Reports</span>
+            </a>
             <a href="{{ route('admin.meat-inspection-reports.index') }}" class="nav-item {{ request()->routeIs('admin.meat-inspection-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-clipboard-check"></i><span>Meat Inspection</span>
             </a>
             <a href="{{ route('admin.all-reports') }}" class="nav-item {{ request()->routeIs('admin.all-reports') ? 'active-nav' : '' }}">
                 <i class="bi bi-file-earmark-bar-graph"></i><span>All Reports</span>
-            </a>
-
-            @elseif(auth()->check() && auth()->user()->hasRole('city_vet'))
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Rabies Control</div>
-
-            <a href="{{ route('city-vet.rabies-geomap') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-geomap') ? 'active-nav' : '' }}">
-                <i class="bi bi-map"></i><span>Rabies Geomap</span>
-            </a>
-            <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-virus"></i><span>Bite & Rabies Reports</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Anti-Rabies Vaccination</div>
-
-            <a href="{{ route('city-vet.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.vaccination-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-shield-check"></i><span>Vaccination Reports</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Management</div>
-
-            <a href="{{ route('city-vet.impounds.index') }}" class="nav-item {{ request()->routeIs('city-vet.impounds.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-archive"></i><span>Impound Records</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Reports</div>
-
-            <a href="{{ route('city-vet.all-reports') }}" class="nav-item {{ request()->routeIs('city-vet.all-reports') ? 'active-nav' : '' }}">
-                <i class="bi bi-file-earmark-bar-graph"></i><span>Analytics & Reports</span>
             </a>
 
             @elseif(auth()->check() && auth()->user()->hasRole('admin_staff'))

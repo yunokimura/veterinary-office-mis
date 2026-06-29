@@ -423,6 +423,200 @@ class CityVetController extends Controller
     }
 
     /**
+     * List all missing pet reports.
+     */
+    public function indexMissingPetReports(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = \App\Models\MissingPet::with(['reportedBy', 'pet']);
+
+        // Apply status filter
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Apply date filters
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('last_seen_at', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('last_seen_at', '<=', $request->date_to);
+        }
+
+        // Apply quick filter
+        if ($request->has('quick_filter') && $request->quick_filter) {
+            $today = \Carbon\Carbon::now()->startOfDay();
+            switch ($request->quick_filter) {
+                case 'today':
+                    $query->whereDate('last_seen_at', $today);
+                    break;
+                case 'week':
+                    $query->where('last_seen_at', '>=', \Carbon\Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('last_seen_at', '>=', \Carbon\Carbon::now()->startOfMonth());
+                    break;
+            }
+        }
+
+        $reports = $query->latest()->paginate(10);
+
+        // Get statistics
+        $stats = [
+            'total' => \App\Models\MissingPet::count(),
+            'active' => \App\Models\MissingPet::where('status', 'Active')->count(),
+            'resolved' => \App\Models\MissingPet::where('status', 'Resolved')->count(),
+            'this_month' => \App\Models\MissingPet::whereMonth('last_seen_at', date('m'))
+                ->whereYear('last_seen_at', date('Y'))
+                ->count(),
+        ];
+
+        return view('dashboard.missing-pet-reports', compact('user', 'reports', 'stats'));
+    }
+
+    /**
+     * Show missing pet report details (JSON for modal).
+     */
+    public function showMissingPetReportJson(\App\Models\MissingPet $missingPet)
+    {
+        $missingPet->load(['reportedBy', 'pet', 'pet.owner']);
+
+        return response()->json([
+            'success' => true,
+            'report' => [
+                'id' => $missingPet->id,
+                'report_number' => 'MP-' . str_pad($missingPet->id, 5, '0', STR_PAD_LEFT),
+                'status' => $missingPet->status,
+                'pet_name' => $missingPet->pet->pet_name ?? 'N/A',
+                'species' => ucfirst($missingPet->pet->species ?? 'N/A'),
+                'breed' => $missingPet->pet->breed ?? 'N/A',
+                'color' => $missingPet->pet->color ?? 'N/A',
+                'gender' => ucfirst($missingPet->pet->gender ?? 'N/A'),
+                'last_seen_at' => \Carbon\Carbon::parse($missingPet->last_seen_at)->format('M d, Y'),
+                'last_seen_time' => $missingPet->last_seen_time ?? 'N/A',
+                'location' => $missingPet->location,
+                'barangay' => $missingPet->barangay ?? 'N/A',
+                'description' => $missingPet->description,
+                'reporter_name' => $missingPet->reporter_name,
+                'reporter_contact' => $missingPet->reporter_contact,
+                'reporter_email' => $missingPet->reporter_email ?? 'N/A',
+                'reported_by' => optional($missingPet->reportedBy)->name ?? 'N/A',
+                'created_at' => $missingPet->created_at->format('M d, Y h:i A'),
+                'updated_at' => $missingPet->updated_at->format('M d, Y h:i A'),
+            ]
+        ]);
+    }
+
+    /**
+     * Show missing pet report details.
+     */
+    public function showMissingPetReport(\App\Models\MissingPet $missingPet)
+    {
+        $user = Auth::user();
+        $missingPet->load(['reportedBy', 'pet', 'pet.owner']);
+        return view('dashboard.missing-pet-reports.show', compact('missingPet', 'user'));
+    }
+
+    /**
+     * List all adoption reports.
+     */
+    public function indexAdoptionReports(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = \App\Models\AdoptionApplication::with(['user', 'adoptionPet']);
+
+        // Apply status filter
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Apply date filters
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // Apply quick filter
+        if ($request->has('quick_filter') && $request->quick_filter) {
+            $today = \Carbon\Carbon::now()->startOfDay();
+            switch ($request->quick_filter) {
+                case 'today':
+                    $query->whereDate('created_at', $today);
+                    break;
+                case 'week':
+                    $query->where('created_at', '>=', \Carbon\Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('created_at', '>=', \Carbon\Carbon::now()->startOfMonth());
+                    break;
+            }
+        }
+
+        $reports = $query->latest()->paginate(10);
+
+        // Get statistics
+        $stats = [
+            'total' => \App\Models\AdoptionApplication::count(),
+            'pending' => \App\Models\AdoptionApplication::where('status', 'Pending')->count(),
+            'approved' => \App\Models\AdoptionApplication::where('status', 'Approved')->count(),
+            'completed' => \App\Models\AdoptionApplication::where('status', 'Completed')->count(),
+            'rejected' => \App\Models\AdoptionApplication::where('status', 'Rejected')->count(),
+            'this_month' => \App\Models\AdoptionApplication::whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))
+                ->count(),
+        ];
+
+        return view('dashboard.adoption-reports', compact('user', 'reports', 'stats'));
+    }
+
+    /**
+     * Show adoption report details (JSON for modal).
+     */
+    public function showAdoptionReportJson(\App\Models\AdoptionApplication $adoption)
+    {
+        $adoption->load(['user', 'adoptionPet']);
+
+        return response()->json([
+            'success' => true,
+            'report' => [
+                'id' => $adoption->id,
+                'report_number' => 'AD-' . str_pad($adoption->id, 5, '0', STR_PAD_LEFT),
+                'status' => $adoption->status,
+                'applicant_name' => $adoption->user->name ?? 'N/A',
+                'applicant_email' => $adoption->user->email ?? 'N/A',
+                'applicant_contact' => $adoption->user->contact_number ?? 'N/A',
+                'pet_name' => $adoption->adoptionPet->pet_name ?? 'N/A',
+                'pet_species' => ucfirst($adoption->adoptionPet->species ?? 'N/A'),
+                'pet_breed' => $adoption->adoptionPet->breed ?? 'N/A',
+                'pet_gender' => ucfirst($adoption->adoptionPet->gender ?? 'N/A'),
+                'reason' => $adoption->reason,
+                'has_other_pets' => $adoption->has_other_pets ? 'Yes' : 'No',
+                'other_pets_details' => $adoption->other_pets_details ?? 'N/A',
+                'home_type' => ucfirst($adoption->home_type ?? 'N/A'),
+                'yard_has_fence' => $adoption->yard_has_fence ? 'Yes' : 'No',
+                'adoption_date' => $adoption->adoption_date ? \Carbon\Carbon::parse($adoption->adoption_date)->format('M d, Y') : 'N/A',
+                'notes' => $adoption->notes ?? 'N/A',
+                'created_at' => $adoption->created_at->format('M d, Y h:i A'),
+                'updated_at' => $adoption->updated_at->format('M d, Y h:i A'),
+            ]
+        ]);
+    }
+
+    /**
+     * Show adoption report details.
+     */
+    public function showAdoptionReport(\App\Models\AdoptionApplication $adoption)
+    {
+        $user = Auth::user();
+        $adoption->load(['user', 'adoptionPet']);
+        return view('dashboard.adoption-reports.show', compact('adoption', 'user'));
+    }
+
+    /**
      * Get analytics data for dashboard.
      */
     private function getAnalyticsData(int $year): array

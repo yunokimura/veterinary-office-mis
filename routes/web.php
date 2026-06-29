@@ -278,6 +278,16 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
     Route::get('/meat-inspection-reports/{report}', [AdminController::class, 'showMeatInspectionReport'])->name('meat-inspection-reports.show');
     Route::get('/meat-inspection-reports/{establishment}/json', [AdminController::class, 'showMeatEstablishmentJson'])->name('meat-inspection-reports.show-json');
 
+    // Missing Pet Reports
+    Route::get('/missing-pet-reports', [CityVetController::class, 'indexMissingPetReports'])->name('missing-pet-reports.index');
+    Route::get('/missing-pet-reports/{missingPet}', [CityVetController::class, 'showMissingPetReport'])->name('missing-pet-reports.show');
+    Route::get('/missing-pet-reports/{missingPet}/json', [CityVetController::class, 'showMissingPetReportJson'])->name('missing-pet-reports.show-json');
+
+    // Adoption Reports
+    Route::get('/adoption-reports', [CityVetController::class, 'indexAdoptionReports'])->name('adoption-reports.index');
+    Route::get('/adoption-reports/{adoption}', [CityVetController::class, 'showAdoptionReport'])->name('adoption-reports.show');
+    Route::get('/adoption-reports/{adoption}/json', [CityVetController::class, 'showAdoptionReportJson'])->name('adoption-reports.show-json');
+
     // System Logs
     Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     Route::get('/system-logs/{log}', [SystemLogController::class, 'show'])->name('system-logs.show');
@@ -399,6 +409,16 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     // Rabies Geomap (Geospatial Mapping)
     Route::get('/rabies-geomap', [CityVetController::class, 'geomap'])->name('rabies-geomap');
     Route::get('/rabies-geomap/data', [CityVetController::class, 'geomapData'])->name('rabies-geomap.data');
+
+    // Missing Pet Reports
+    Route::get('/missing-pet-reports', [CityVetController::class, 'indexMissingPetReports'])->name('missing-pet-reports.index');
+    Route::get('/missing-pet-reports/{missingPet}', [CityVetController::class, 'showMissingPetReport'])->name('missing-pet-reports.show');
+    Route::get('/missing-pet-reports/{missingPet}/json', [CityVetController::class, 'showMissingPetReportJson'])->name('missing-pet-reports.show-json');
+
+    // Adoption Reports
+    Route::get('/adoption-reports', [CityVetController::class, 'indexAdoptionReports'])->name('adoption-reports.index');
+    Route::get('/adoption-reports/{adoption}', [CityVetController::class, 'showAdoptionReport'])->name('adoption-reports.show');
+    Route::get('/adoption-reports/{adoption}/json', [CityVetController::class, 'showAdoptionReportJson'])->name('adoption-reports.show-json');
 });
 
 // ==============================
