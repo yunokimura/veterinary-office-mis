@@ -222,6 +222,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
     // Meat Inspection Reports
     Route::get('/meat-inspection-reports', [AdminController::class, 'indexMeatInspectionReports'])->name('meat-inspection-reports.index');
     Route::get('/meat-inspection-reports/{report}', [AdminController::class, 'showMeatInspectionReport'])->name('meat-inspection-reports.show');
+    Route::get('/meat-inspection-reports/{establishment}/json', [AdminController::class, 'showMeatEstablishmentJson'])->name('meat-inspection-reports.show-json');
 
     // System Logs
     Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
@@ -275,6 +276,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
     // Meat Inspection Reports
     Route::get('/meat-inspection-reports', [AdminController::class, 'indexMeatInspectionReports'])->name('meat-inspection-reports.index');
     Route::get('/meat-inspection-reports/{report}', [AdminController::class, 'showMeatInspectionReport'])->name('meat-inspection-reports.show');
+    Route::get('/meat-inspection-reports/{establishment}/json', [AdminController::class, 'showMeatEstablishmentJson'])->name('meat-inspection-reports.show-json');
 
     // System Logs
     Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');

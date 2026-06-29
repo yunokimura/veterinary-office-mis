@@ -27,17 +27,14 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
 @section('content')
 <div class="max-w-7xl mx-auto">
     <!-- Page Header -->
-     <div class="bg-white rounded-2xl shadow-lg mb-6 p-6 border border-gray-100">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Meat Inspection Reports</h1>
-                <p class="text-gray-600 mt-1">Manage and track all meat inspection records</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Meat Inspection Reports</h1>
+                <p class="text-gray-500 mt-1">Manage and track all meat inspection records</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route($dashboardRoute) }}" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition backdrop-blur-sm">
-                    <i class="bi bi-arrow-left mr-1"></i>Back
-                </a>
-                <a href="{{ route('meat-inspection.reports.create') }}" class="px-5 py-2.5 bg-white text-red-600 hover:bg-red-50 rounded-lg transition font-semibold shadow-md flex items-center gap-2">
+                <a href="{{ route('meat-inspection.reports.create') }}" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition shadow-md flex items-center gap-2">
                     <i class="bi bi-plus-lg"></i>New Report
                 </a>
             </div>
@@ -45,101 +42,55 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Total Inspections</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ $reports->count() }}</p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <!-- Total Establishments -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs md:text-sm text-gray-500 mb-1">Total Establishments</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->count() }}</p>
                 </div>
-                <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-clipboard-check text-red-600 text-2xl"></i>
+                <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-shop text-red-600 text-lg md:text-xl"></i>
                 </div>
-            </div>
-            <div class="mt-3 flex items-center text-sm text-gray-500">
-                <i class="bi bi-graph-up mr-1"></i>
-                <span>All time</span>
             </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Compliant</p>
-                    <p class="text-3xl font-bold text-green-600 mt-1">{{ $reports->where('compliance_status', 'compliant')->count() }}</p>
+        <!-- Active -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs md:text-sm text-gray-500 mb-1">Active</p>
+                    <p class="text-xl md:text-2xl font-bold text-green-600">{{ $establishments->where('status', 'Active')->count() }}</p>
                 </div>
-                <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-check-circle text-green-600 text-2xl"></i>
+                <div class="w-10 h-10 md:w-11 md:h-11 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-check-circle text-green-600 text-lg md:text-xl"></i>
                 </div>
-            </div>
-            <div class="mt-3 flex items-center text-sm text-green-600">
-                <i class="bi bi-arrow-up mr-1"></i>
-                <span>Passed inspections</span>
             </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Non-Compliant</p>
-                    <p class="text-3xl font-bold text-red-600 mt-1">{{ $reports->where('compliance_status', 'non_compliant')->count() }}</p>
+        <!-- Expired -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs md:text-sm text-gray-500 mb-1">Expired</p>
+                    <p class="text-xl md:text-2xl font-bold text-red-600">{{ $establishments->where('status', 'Expired')->count() }}</p>
                 </div>
-                <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-x-circle text-red-600 text-2xl"></i>
+                <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-x-circle text-red-600 text-lg md:text-xl"></i>
                 </div>
-            </div>
-            <div class="mt-3 flex items-center text-sm text-red-600">
-                <i class="bi bi-exclamation-triangle mr-1"></i>
-                <span>Condemned items</span>
             </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">This Month</p>
-                    @php
-                    $count = $reports->filter(function ($item) {
-                        return $item->created_at->month == now()->month &&
-                               $item->created_at->year == now()->year;
-                    })->count();
-                    @endphp
-                    <p class="text-3xl font-bold text-purple-600 mt-1">{{ $count }}</p>
+        <!-- Pending Inspection -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs md:text-sm text-gray-500 mb-1">Pending Inspection</p>
+                    <p class="text-xl md:text-2xl font-bold text-yellow-600">{{ $establishments->where('status', 'Pending Inspection')->count() }}</p>
                 </div>
-                <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-calendar3 text-purple-600 text-2xl"></i>
+                <div class="w-10 h-10 md:w-11 md:h-11 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-clock text-yellow-600 text-lg md:text-xl"></i>
                 </div>
-            </div>
-            <div class="mt-3 flex items-center text-sm text-gray-500">
-                <i class="bi bi-calendar mr-1"></i>
-                <span>{{ now()->format('F Y') }}</span>
             </div>
         </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <a href="{{ route('meat-inspection.meat-shop.create') }}" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-200 group">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition">
-                    <i class="bi bi-clipboard-check text-orange-600 text-2xl"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">New Action</p>
-                    <p class="text-xl font-bold text-gray-800 mt-1">Shop Compliance</p>
-                    <p class="text-sm text-gray-500">Inspect meat shops for compliance</p>
-                </div>
-            </div>
-        </a>
-        <a href="{{ route('meat-inspection.establishments.create') }}" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-200 group">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition">
-                    <i class="bi bi-shop-window text-blue-600 text-2xl"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Register</p>
-                    <p class="text-xl font-bold text-gray-800 mt-1">New Establishment</p>
-                    <p class="text-sm text-gray-500">Add new meat shop or slaughterhouse</p>
-                </div>
-            </div>
-        </a>
     </div>
 
     <!-- Reports Table -->
@@ -153,84 +104,247 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
                 View All <i class="bi bi-arrow-right"></i>
             </a>
         </div>
-        @if($reports->count() > 0)
+        @if($establishments->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Report ID</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Establishment</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Meat Type</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantity</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Compliance</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Establishment Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Owner</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @foreach($reports as $report)
-                        <tr class="hover:bg-gray-50 transition-colors duration-150">
-                            <td class="px-6 py-4">
-                                <span class="font-bold text-gray-800">MI-{{ str_pad($report->id, 5, '0', STR_PAD_LEFT) }}</span>
-                            </td>
+                        @foreach($establishments as $establishment)
+                        <tr>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
                                         <i class="bi bi-shop text-orange-600"></i>
                                     </div>
                                     <div>
-                                        <p class="font-medium text-gray-800">{{ $report->establishment_name ?? 'Unknown' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $report->establishment_address ?? 'N/A' }}</p>
+                                        <p class="font-medium text-gray-800">{{ $establishment->establishment_name }}</p>
+                                        <p class="text-sm text-gray-500">{{ $establishment->address_text }}</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
-                                    {{ $report->meat_type ?? 'N/A' }}
+                                    {{ str_replace('_', ' ', $establishment->establishment_type ?? 'N/A') }}
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="font-medium text-gray-800">{{ $report->quantity ?? 0 }}</span>
-                                <span class="text-gray-500 text-sm">kg</span>
+                                <span class="font-medium text-gray-800">{{ $establishment->owner_name ?? 'N/A' }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-gray-700">{{ $establishment->barangay->barangay_name ?? 'N/A' }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 @php
                                     $statusColors = [
-                                        'compliant' => 'bg-green-100 text-green-700 border-green-200',
-                                        'non_compliant' => 'bg-red-100 text-red-700 border-red-200',
-                                        'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
+                                        'Active' => 'bg-green-100 text-green-700 border-green-200',
+                                        'Expired' => 'bg-red-100 text-red-700 border-red-200',
+                                        'Pending Inspection' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
                                     ];
                                 @endphp
-                                <span class="px-3 py-1 rounded-full text-xs font-medium border {{ $statusColors[$report->compliance_status] ?? 'bg-gray-100 text-gray-700 border-gray-200' }}">
-                                    {{ ucfirst(str_replace('_', ' ', $report->compliance_status ?? 'Unknown')) }}
+                                <span class="px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap {{ $statusColors[$establishment->status] ?? 'bg-gray-100 text-gray-700 border-gray-200' }}">
+                                    {{ $establishment->status ?? 'Unknown' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="{{ route($meatInspectionRoutePrefix . '.show', $report) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition font-medium">
-                                    <i class="bi bi-eye"></i>
-                                    View
-                                </a>
+                                <button onclick="openEstablishmentModal({{ $establishment->establishment_id }})"
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
+                                    <i class="bi bi-eye"></i>View
+                                </button>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">
-                {{ $reports->links() }}
+            <div class="px-6 py-4 border-t border-gray-100">
+                {{ $establishments->links() }}
             </div>
         @else
-            <div class="p-16 text-center">
-                <div class="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="bi bi-clipboard-check text-red-400 text-4xl"></i>
+            <div class="p-12 text-center">
+                <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="bi bi-shop text-red-400 text-3xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-3">No Meat Inspection Reports Found</h3>
-                <p class="text-gray-500 mb-8 max-w-md mx-auto">There are currently no recorded meat inspection reports. Start by creating a new report to begin monitoring.</p>
-                <a href="{{ route('meat-inspection.reports.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
-                    <i class="bi bi-plus-lg"></i>
-                    Create Meat Inspection Report
-                </a>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">No Meat Establishments Found</h3>
+                <p class="text-gray-500 mb-6">No establishments registered yet.</p>
             </div>
         @endif
     </div>
 </div>
+
+<!-- Establishment Details Modal -->
+<div id="establishmentModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-lg bg-white max-h-[80vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+            <h3 class="text-xl font-bold text-gray-800">Establishment Details</h3>
+            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                <i class="bi bi-x-lg text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div id="modalContent" class="mt-4">
+            <!-- Content will be loaded dynamically -->
+            <div class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-red-600"></div>
+                <p class="mt-4 text-gray-600">Loading establishment details...</p>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 mt-4">
+            <button onclick="closeModal()" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openEstablishmentModal(establishmentId) {
+    const modal = document.getElementById('establishmentModal');
+    const modalContent = document.getElementById('modalContent');
+    
+    // Show modal with loading state
+    modal.classList.remove('hidden');
+    modalContent.innerHTML = `
+        <div class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-red-600"></div>
+            <p class="mt-4 text-gray-600">Loading establishment details...</p>
+        </div>
+    `;
+
+    // Fetch establishment data
+    fetch(`{{ route('admin.meat-inspection-reports.show-json', ':id') }}`.replace(':id', establishmentId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayEstablishmentDetails(data.establishment);
+            } else {
+                modalContent.innerHTML = '<p class="text-red-600 text-center py-8">Error loading establishment details.</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            modalContent.innerHTML = '<p class="text-red-600 text-center py-8">Error loading establishment details.</p>';
+        });
+}
+
+function displayEstablishmentDetails(establishment) {
+    const modalContent = document.getElementById('modalContent');
+    
+    modalContent.innerHTML = `
+        <div class="space-y-6">
+            <!-- Establishment Info -->
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">Establishment Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-600">Establishment Name</p>
+                        <p class="font-medium text-gray-800">${establishment.establishment_name}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Type</p>
+                        <p class="font-medium text-gray-800">${establishment.establishment_type}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Status</p>
+                        <p class="font-medium text-gray-800">${establishment.status}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Permit Number</p>
+                        <p class="font-medium text-gray-800">${establishment.permit_no || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Inspection Date</p>
+                        <p class="font-medium text-gray-800">${establishment.inspection_date}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Permit Expiry Date</p>
+                        <p class="font-medium text-gray-800">${establishment.permit_expiry_date}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owner Information -->
+            <div class="bg-blue-50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">Owner Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-600">Owner Name</p>
+                        <p class="font-medium text-gray-800">${establishment.owner_name || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Contact Person</p>
+                        <p class="font-medium text-gray-800">${establishment.contact_person || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Contact Number</p>
+                        <p class="font-medium text-gray-800">${establishment.contact_number || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Email</p>
+                        <p class="font-medium text-gray-800">${establishment.email || 'N/A'}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Information -->
+            <div class="bg-green-50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">Location Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <p class="text-sm text-gray-600">Address</p>
+                        <p class="font-medium text-gray-800">${establishment.address_text || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Landmark</p>
+                        <p class="font-medium text-gray-800">${establishment.landmark || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Barangay</p>
+                        <p class="font-medium text-gray-800">${establishment.barangay}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registration Information -->
+            <div class="bg-purple-50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">Registration Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-600">Registered By</p>
+                        <p class="font-medium text-gray-800">${establishment.registered_by}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Created At</p>
+                        <p class="font-medium text-gray-800">${establishment.created_at}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function closeModal() {
+    document.getElementById('establishmentModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('establishmentModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+</script>
 @endsection
