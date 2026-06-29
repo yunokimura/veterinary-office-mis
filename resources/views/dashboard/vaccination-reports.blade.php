@@ -12,23 +12,13 @@ $rolePrefix = 'admin';
 @section('content')
 <div class="max-w-7xl mx-auto">
     <!-- Page Header -->
-    <div class="mb-6">
-        <nav class="text-sm text-gray-500 mb-2">
-            <ol class="list-none p-0 flex items-center space-x-2">
-                <li><a href="{{ route($rolePrefix . '.dashboard') }}" class="hover:text-green-600 transition">Dashboard</a></li>
-                <li><i class="bi bi-chevron-right text-xs"></i></li>
-                <li class="text-gray-800">Vaccination Reports</li>
-            </ol>
-        </nav>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Rabies Vaccination Reports</h1>
                 <p class="text-gray-500 mt-1">View and manage all anti-rabies vaccination reports</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route($rolePrefix . '.dashboard') }}" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition">
-                    <i class="bi bi-arrow-left mr-1"></i>Back
-                </a>
             </div>
         </div>
     </div>
