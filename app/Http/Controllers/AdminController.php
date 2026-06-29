@@ -13,6 +13,9 @@ use App\Models\User;
 use App\Models\Announcement;
 use App\Models\StrayReport;
 use App\Models\SystemLog;
+use App\Models\MissingPet;
+use App\Models\MissingPetsReport;
+use App\Models\AdoptionApplication;
 
 class AdminController extends Controller
 {
@@ -99,6 +102,27 @@ class AdminController extends Controller
         $biteReports = BiteRabiesReport::latest()->get();
         $vaccinationReports = RabiesVaccinationReport::latest()->get();
         $inspectionReports = MeatInspectionReport::latest()->get();
+        $meatEstablishments = MeatEstablishment::with('barangay')->latest()->get();
+
+        // Missing Pet Reports (from both tables)
+        $missingPetReports = MissingPet::latest()->get();
+        $missingPetsReportRecords = MissingPetsReport::with(['pet', 'user'])->latest()->get();
+        $missingPetStats = [
+            'total' => MissingPet::count() + MissingPetsReport::count(),
+            'pending' => MissingPet::where('status', 'pending')->count() + MissingPetsReport::where('status', 'pending')->count(),
+            'approved' => MissingPet::where('status', 'approved')->count(),
+            'resolved' => MissingPetsReport::where('status', 'resolved')->count(),
+        ];
+
+        // Adoption Reports
+        $adoptionReports = AdoptionApplication::with(['user', 'pet'])->latest()->get();
+        $adoptionStats = [
+            'total' => AdoptionApplication::count(),
+            'pending' => AdoptionApplication::where('status', 'pending')->count(),
+            'approved' => AdoptionApplication::where('status', 'approved')->count(),
+            'completed' => AdoptionApplication::where('status', 'completed')->count(),
+            'rejected' => AdoptionApplication::where('status', 'rejected')->count(),
+        ];
 
         // Additional data for super_admin view
         $recentAnnouncements = Announcement::latest()->take(5)->get();
@@ -119,7 +143,13 @@ class AdminController extends Controller
                 'recentUsers',
                 'biteReports',
                 'vaccinationReports',
-                'inspectionReports'
+                'inspectionReports',
+                'meatEstablishments',
+                'missingPetReports',
+                'missingPetStats',
+                'missingPetsReportRecords',
+                'adoptionReports',
+                'adoptionStats'
             ));
         }
 
@@ -135,7 +165,13 @@ class AdminController extends Controller
             'recentActivity',
             'biteReports',
             'vaccinationReports',
-            'inspectionReports'
+            'inspectionReports',
+            'meatEstablishments',
+            'missingPetReports',
+            'missingPetStats',
+            'missingPetsReportRecords',
+            'adoptionReports',
+            'adoptionStats'
         ));
     }
 
