@@ -643,12 +643,16 @@ class CityVetController extends Controller
         ];
 
         // Adoption Performance
+        $totalAdoptions = \App\Models\AdoptionApplication::count();
+        $approvedCount = \App\Models\AdoptionApplication::where('status', 'approved')->count();
         $adoptionStats = [
             'pending' => \App\Models\AdoptionApplication::where('status', 'pending')->count(),
+            'approved' => $approvedCount,
             'completed_this_month' => \App\Models\AdoptionApplication::where('status', 'completed')
                 ->whereMonth('updated_at', date('m'))
                 ->whereYear('updated_at', $year)
                 ->count(),
+            'adoption_rate' => $totalAdoptions > 0 ? round(($approvedCount / $totalAdoptions) * 100, 1) : 0,
         ];
 
         // Missing Pet Recovery

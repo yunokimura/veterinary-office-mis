@@ -209,8 +209,12 @@
                     <span class="font-semibold text-orange-600">{{ $analytics['adoption_performance']['pending'] ?? 0 }}</span>
                 </div>
                 <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Completed:</span>
-                    <span class="font-semibold text-green-600">{{ $analytics['adoption_performance']['completed_this_month'] ?? 0 }}</span>
+                    <span class="text-gray-600">Approved:</span>
+                    <span class="font-semibold text-green-600">{{ $analytics['adoption_performance']['approved'] ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Adoption Rate:</span>
+                    <span class="font-semibold text-blue-600">{{ $analytics['adoption_performance']['adoption_rate'] ?? 0 }}%</span>
                 </div>
             </div>
         </div>
@@ -249,12 +253,12 @@
                     <span class="font-semibold text-green-600">{{ $analytics['meat_establishment_monitoring']['active'] ?? 0 }}</span>
                 </div>
                 <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Expired:</span>
-                    <span class="font-semibold text-red-600">{{ $analytics['meat_establishment_monitoring']['expired'] ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
                     <span class="text-gray-600">Pending:</span>
                     <span class="font-semibold text-orange-600">{{ $analytics['meat_establishment_monitoring']['pending_inspection'] ?? 0 }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-600">Expired:</span>
+                    <span class="font-semibold text-red-600">{{ $analytics['meat_establishment_monitoring']['expired'] ?? 0 }}</span>
                 </div>
             </div>
         </div>
