@@ -186,6 +186,7 @@ class CityVetController extends Controller
         // Get cases grouped by barangay from bite_rabies_reports
         // Use barangay_id (where the bite incident occurred)
         $byBarangay = BiteRabiesReport::whereYear('incident_date', $year)
+            ->where('rabies_confirmed', true)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', '')
             ->selectRaw('barangay_id, COUNT(*) as count')
@@ -225,6 +226,7 @@ class CityVetController extends Controller
     private function getCaseTypeBreakdown(int $year): array
     {
         return BiteRabiesReport::whereYear('incident_date', $year)
+            ->where('rabies_confirmed', true)
             ->selectRaw('animal_type, COUNT(*) as count')
             ->groupBy('animal_type')
             ->pluck('count', 'animal_type')
@@ -242,6 +244,7 @@ class CityVetController extends Controller
         $data = [];
         foreach ($months as $monthName => $monthNum) {
             $count = BiteRabiesReport::whereYear('incident_date', $year)
+                ->where('rabies_confirmed', true)
                 ->whereMonth('incident_date', $monthNum)
                 ->count();
             $data[$monthName] = $count;
@@ -255,8 +258,12 @@ class CityVetController extends Controller
      */
     private function getYearComparison(int $currentYear, int $previousYear): array
     {
-        $current = BiteRabiesReport::whereYear('incident_date', $currentYear)->count();
-        $previous = BiteRabiesReport::whereYear('incident_date', $previousYear)->count();
+        $current = BiteRabiesReport::whereYear('incident_date', $currentYear)
+            ->where('rabies_confirmed', true)
+            ->count();
+        $previous = BiteRabiesReport::whereYear('incident_date', $previousYear)
+            ->where('rabies_confirmed', true)
+            ->count();
 
         $change = $previous > 0 ? round((($current - $previous) / $previous) * 100, 1) : 0;
 
@@ -274,6 +281,7 @@ class CityVetController extends Controller
     private function getHotspots(int $year): array
     {
         return BiteRabiesReport::whereYear('incident_date', $year)
+            ->where('rabies_confirmed', true)
             ->with('barangay')
             ->selectRaw('barangay_id, COUNT(*) as count')
             ->groupBy('barangay_id')
@@ -344,6 +352,7 @@ class CityVetController extends Controller
     private function getFilteredHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
     {
         $query = BiteRabiesReport::whereYear('incident_date', $year)
+            ->where('rabies_confirmed', true)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', '');
 
@@ -398,7 +407,8 @@ class CityVetController extends Controller
      */
     private function getFilteredCaseTypeBreakdown(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
     {
-        $query = BiteRabiesReport::whereYear('incident_date', $year);
+        $query = BiteRabiesReport::whereYear('incident_date', $year)
+            ->where('rabies_confirmed', true);
 
         if ($dateFrom) {
             $query->where('incident_date', '>=', $dateFrom);
