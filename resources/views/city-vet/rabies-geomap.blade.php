@@ -57,14 +57,14 @@
 
         {{-- Floating: Filter Button (top-right, below stats) --}}
         <div class="geomap-filter-controls" x-data="{ filterOpen: false }">
-            <button @click="filterOpen = !filterOpen" @click.away="filterOpen = false" class="filter-toggle-btn">
+            <button @click="filterOpen = !filterOpen" class="filter-toggle-btn">
                 <i class="bi bi-funnel text-[10px]"></i>
                 <span>Filters</span>
                 <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
             </button>
 
             {{-- Filter Panel --}}
-            <div x-show="filterOpen" x-transition class="filter-panel">
+            <div x-show="filterOpen" x-transition @click.away="filterOpen = false" class="filter-panel">
                 {{-- Year Filter --}}
                 <div class="filter-section">
                     <label class="filter-label">Year</label>
@@ -101,9 +101,14 @@
                 <div class="filter-section">
                     <label class="filter-label">Date Range</label>
                     <div class="filter-date-range">
-                        <input type="date" id="filterDateFrom" class="filter-date-input" placeholder="From">
-                        <span class="filter-date-separator">to</span>
-                        <input type="date" id="filterDateTo" class="filter-date-input" placeholder="To">
+                        <div class="filter-date-field">
+                            <label class="filter-date-label">From</label>
+                            <input type="date" id="filterDateFrom" class="filter-date-input">
+                        </div>
+                        <div class="filter-date-field">
+                            <label class="filter-date-label">To</label>
+                            <input type="date" id="filterDateTo" class="filter-date-input">
+                        </div>
                     </div>
                 </div>
 
@@ -116,7 +121,7 @@
         </div>
 
         {{-- Floating: Legend (bottom-right) --}}
-        <x-map-legend :time-filter="'Yearly'" />
+        {{-- <x-map-legend :time-filter="'Yearly'" /> --}}
 
         {{-- Loading Overlay --}}
         <div id="mapLoading" class="geomap-loading-overlay" style="display: none;">
@@ -360,12 +365,25 @@
 
     .filter-date-range {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: 6px;
     }
 
+    .filter-date-field {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .filter-date-label {
+        font-size: 9px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
     .filter-date-input {
-        flex: 1;
         padding: 4px 6px;
         font-size: 10px;
         font-weight: 500;
@@ -384,12 +402,6 @@
     .filter-date-input:focus {
         border-color: #6366f1;
         box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
-    }
-
-    .filter-date-separator {
-        font-size: 10px;
-        color: #94a3b8;
-        font-weight: 500;
     }
 
     .filter-actions {
