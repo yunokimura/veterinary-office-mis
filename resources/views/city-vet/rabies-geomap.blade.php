@@ -112,11 +112,6 @@
                     </div>
                 </div>
 
-                <div class="filter-actions">
-                    <button id="resetViewBtn" class="filter-reset-btn">
-                        <i class="bi bi-arrows-fullscreen text-[10px]"></i> Reset View
-                    </button>
-                </div>
             </div>
         </div>
 
