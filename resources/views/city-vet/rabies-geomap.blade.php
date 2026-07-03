@@ -112,6 +112,12 @@
                     </div>
                 </div>
 
+                <div class="filter-actions">
+                    <button id="clearFilterBtn" class="filter-clear-btn">
+                        <i class="bi bi-x-circle text-[10px]"></i> Clear Filter
+                    </button>
+                </div>
+
             </div>
         </div>
 
@@ -405,7 +411,7 @@
         border-top: 1px solid #f1f5f9;
     }
 
-    .filter-reset-btn {
+    .filter-clear-btn {
         width: 100%;
         display: inline-flex;
         align-items: center;
@@ -414,17 +420,17 @@
         padding: 6px 12px;
         font-size: 11px;
         font-weight: 500;
-        color: #475569;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        color: #dc2626;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
         border-radius: 6px;
         cursor: pointer;
         transition: all 0.15s;
         font-family: 'Inter', system-ui, sans-serif;
     }
-    .filter-reset-btn:hover {
-        background: #f1f5f9;
-        border-color: #cbd5e1;
+    .filter-clear-btn:hover {
+        background: #fee2e2;
+        border-color: #fca5a5;
     }
 
     @media (max-width: 768px) {
@@ -623,6 +629,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('filterDateTo')?.addEventListener('change', function() {
         filters.date_to = this.value || null;
+        fetchFilteredData();
+    });
+
+    // Clear filter functionality
+    document.getElementById('clearFilterBtn')?.addEventListener('click', function() {
+        // Reset filters to default values
+        filters.month = null;
+        filters.week = null;
+        filters.date_from = null;
+        filters.date_to = null;
+
+        // Reset dropdowns to default
+        document.getElementById('filterMonth').value = '';
+        document.getElementById('filterWeek').value = '';
+        document.getElementById('filterDateFrom').value = '';
+        document.getElementById('filterDateTo').value = '';
+
+        // Refresh map with unfiltered data
         fetchFilteredData();
     });
 
