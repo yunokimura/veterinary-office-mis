@@ -55,6 +55,68 @@
             </div>
         </div>
 
+        {{-- Floating: Filter Button (top-right, below stats) --}}
+        <div class="geomap-filter-controls" x-data="{ filterOpen: false }">
+            <button @click="filterOpen = !filterOpen" @click.away="filterOpen = false" class="filter-toggle-btn">
+                <i class="bi bi-funnel text-[10px]"></i>
+                <span>Filters</span>
+                <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
+            </button>
+
+            {{-- Filter Panel --}}
+            <div x-show="filterOpen" x-transition class="filter-panel">
+                {{-- Year Filter --}}
+                <div class="filter-section">
+                    <label class="filter-label">Year</label>
+                    <select id="filterYear" onchange="setFilter('year', parseInt(this.value))" class="filter-select">
+                        @foreach($years as $y)
+                        <option value="{{ $y }}" {{ $y == $selectedYear ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Month Filter --}}
+                <div class="filter-section">
+                    <label class="filter-label">Month</label>
+                    <select id="filterMonth" onchange="setFilter('month', this.value ? parseInt(this.value) : null)" class="filter-select">
+                        <option value="">All Months</option>
+                        @foreach($months as $num => $name)
+                        <option value="{{ $num }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Week Filter --}}
+                <div class="filter-section">
+                    <label class="filter-label">Week</label>
+                    <select id="filterWeek" onchange="setFilter('week', this.value ? parseInt(this.value) : null)" class="filter-select">
+                        <option value="">All Weeks</option>
+                        @for($w = 1; $w <= 53; $w++)
+                        <option value="{{ $w }}">Week {{ $w }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                {{-- Date Range Filter --}}
+                <div class="filter-section">
+                    <label class="filter-label">Date Range</label>
+                    <div class="filter-date-range">
+                        <input type="date" id="filterDateFrom" class="filter-date-input" placeholder="From">
+                        <span class="filter-date-separator">to</span>
+                        <input type="date" id="filterDateTo" class="filter-date-input" placeholder="To">
+                    </div>
+                </div>
+
+                <div class="filter-actions">
+                    <button id="resetViewBtn" class="filter-reset-btn">
+                        <i class="bi bi-arrows-fullscreen text-[10px]"></i> Reset View
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Floating: Legend (bottom-right) --}}
+        <x-map-legend :time-filter="'Yearly'" />
 
         {{-- Loading Overlay --}}
         <div id="mapLoading" class="geomap-loading-overlay" style="display: none;">
@@ -198,114 +260,6 @@
         gap: 0.75rem;
     }
 
-    /* Top-right container for filter + legend stacking */
-    .geomap-top-right {
-        position: absolute;
-        top: 0;
-        right: 1rem;
-        z-index: 1000;
-        width: 220px;
-        pointer-events: none;
-    }
-
-    /* Legend holder — positioned below filter button */
-    .geomap-legend-holder {
-        position: absolute;
-        top: 5.75rem;
-        right: 0;
-        width: 160px;
-    }
-
-    /* Floating filter (below stats) */
-    .geomap-filter {
-        position: absolute;
-        top: 4.25rem;
-        right: 0;
-        z-index: 1001;
-        pointer-events: none;
-        width: 220px;
-    }
-
-    .filter-toggle {
-        position: absolute;
-        right: 0;
-        top: 0;
-        display: flex; align-items: center; gap: 5px;
-        padding: 6px 12px; background: rgba(255,255,255,0.95);
-        backdrop-filter: blur(8px);
-        border: 1px solid #e2e8f0;
-        border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        cursor: pointer; color: #475569; transition: all 0.15s;
-        pointer-events: auto;
-        font-family: 'Inter', system-ui, sans-serif;
-    }
-    .filter-toggle:hover { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-
-    .filter-card {
-        position: absolute;
-        right: 0;
-        top: 0;
-        background: rgba(255,255,255,0.97);
-        backdrop-filter: blur(12px);
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        padding: 12px;
-        width: 220px;
-        pointer-events: auto;
-        font-family: 'Inter', system-ui, sans-serif;
-    }
-
-    .filter-header {
-        display: flex; align-items: center; justify-content: space-between;
-        margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9;
-    }
-
-    .filter-close {
-        display: flex; align-items: center; justify-content: center;
-        width: 22px; height: 22px; background: #f1f5f9; border: none;
-        border-radius: 6px; color: #94a3b8; cursor: pointer; transition: all 0.15s;
-    }
-    .filter-close:hover { background: #e2e8f0; color: #475569; }
-
-    .filter-body {
-        display: flex; flex-direction: column; gap: 8px;
-    }
-
-    .filter-field {
-        display: flex; flex-direction: column; gap: 3px;
-    }
-
-    .filter-label {
-        font-size: 10px; font-weight: 600; color: #64748b;
-        text-transform: uppercase; letter-spacing: 0.04em;
-    }
-
-    .filter-select {
-        width: 100%;
-        padding: 5px 8px;
-        font-size: 12px;
-        font-weight: 500;
-        color: #334155;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        outline: none;
-        cursor: pointer;
-        transition: border-color 0.15s;
-        font-family: 'Inter', system-ui, sans-serif;
-    }
-    .filter-select:hover { border-color: #cbd5e1; }
-    .filter-select:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.15); }
-
-    @media (max-width: 768px) {
-        .geomap-filter {
-            top: 3.75rem;
-            right: 0.5rem;
-        }
-        .filter-card { width: 160px; padding: 10px; }
-        .filter-toggle span { display: none; }
-    }
 
     @keyframes spin {
         to { transform: rotate(360deg); }
@@ -321,6 +275,151 @@
         50% { opacity: 0.5; }
     }
 
+    /* Filter Controls */
+    .geomap-filter-controls {
+        position: absolute;
+        top: 4.5rem;
+        right: 1rem;
+        z-index: 1000;
+    }
+
+    .filter-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(8px);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        cursor: pointer;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 500;
+        transition: all 0.15s;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    .filter-toggle-btn:hover {
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .filter-panel {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(12px);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        padding: 12px;
+        width: 220px;
+        z-index: 1005;
+    }
+
+    .filter-section {
+        margin-bottom: 12px;
+    }
+    .filter-section:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .filter-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+    }
+
+    .filter-select {
+        width: 100%;
+        padding: 5px 8px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.15s;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    .filter-select:hover {
+        border-color: #cbd5e1;
+    }
+    .filter-select:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+    }
+
+    .filter-date-range {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .filter-date-input {
+        flex: 1;
+        padding: 4px 6px;
+        font-size: 10px;
+        font-weight: 500;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.15s;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    .filter-date-input:hover {
+        border-color: #cbd5e1;
+    }
+    .filter-date-input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+    }
+
+    .filter-date-separator {
+        font-size: 10px;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    .filter-actions {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .filter-reset-btn {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px 12px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #475569;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    .filter-reset-btn:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+
     @media (max-width: 768px) {
         .leaflet-control-zoom {
             display: none;
@@ -332,6 +431,21 @@
         .geomap-stats {
             top: 0.5rem;
             right: 0.5rem;
+        }
+        .geomap-filter-controls {
+            top: 3.75rem;
+            right: 0.5rem;
+        }
+        .filter-panel {
+            width: 180px;
+            padding: 10px;
+        }
+        .filter-toggle-btn {
+            padding: 5px 10px;
+            font-size: 10px;
+        }
+        .filter-toggle-btn span {
+            display: none;
         }
     }
 </style>
@@ -481,38 +595,37 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(r) { return r.json(); })
         .then(function(geojson) {
             geojsonData = geojson;
-            loadCaseData();
+            fetchFilteredData();
         })
         .catch(function(err) {
             console.error('GeoJSON Error:', err);
             document.getElementById('mapError').classList.remove('hidden');
         });
 
-    // Global function called by filter select onchange
-    window.applyMapFilter = function() {
-        filters.year = parseInt(document.getElementById('filterYear').value);
-        filters.month = document.getElementById('filterMonth').value || null;
-        filters.week = document.getElementById('filterWeek').value || null;
-        filters.date_from = document.getElementById('filterDateFrom').value || null;
-        filters.date_to = document.getElementById('filterDateTo').value || null;
-        loadCaseData();
+    // Filter functionality
+    window.setFilter = function(type, value) {
+        filters[type] = value;
+        fetchFilteredData();
     };
 
-    function loadCaseData() {
+    // Date picker handlers
+    document.getElementById('filterDateFrom')?.addEventListener('change', function() {
+        filters.date_from = this.value || null;
+        fetchFilteredData();
+    });
+
+    document.getElementById('filterDateTo')?.addEventListener('change', function() {
+        filters.date_to = this.value || null;
+        fetchFilteredData();
+    });
+
+    function fetchFilteredData() {
         var params = new URLSearchParams();
         params.append('year', filters.year);
-        if (filters.month) {
-            params.append('month', filters.month);
-        }
-        if (filters.week) {
-            params.append('week', filters.week);
-        }
-        if (filters.date_from) {
-            params.append('date_from', filters.date_from);
-        }
-        if (filters.date_to) {
-            params.append('date_to', filters.date_to);
-        }
+        if (filters.month) params.append('month', filters.month);
+        if (filters.week) params.append('week', filters.week);
+        if (filters.date_from) params.append('date_from', filters.date_from);
+        if (filters.date_to) params.append('date_to', filters.date_to);
 
         var baseUrl = window.location.pathname.replace(/\/$/, '');
         fetch(baseUrl + '/data?' + params.toString())
