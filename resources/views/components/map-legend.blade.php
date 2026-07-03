@@ -15,7 +15,7 @@
 <div 
     id="mapLegend" 
     x-data="{ 
-        isOpen: true,
+        isOpen: false,
         timeFilter: '{{ $timeFilter }}',
         toggle() { this.isOpen = !this.isOpen; },
         updateTimeFilter(filter) { this.timeFilter = filter; }
@@ -138,13 +138,17 @@
 <style>
     .map-legend-wrap {
         position: absolute;
-        bottom: 20px;
-        right: 20px;
+        top: 8rem;
+        right: 1rem;
         z-index: 1000;
         font-family: 'Inter', system-ui, sans-serif;
+        width: 160px;
     }
 
     .legend-toggle {
+        position: absolute;
+        right: 0;
+        top: 0;
         display: flex; align-items: center; gap: 5px;
         padding: 6px 12px; background: rgba(255,255,255,0.95);
         backdrop-filter: blur(8px);
@@ -155,6 +159,9 @@
     .legend-toggle:hover { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
     .legend-card {
+        position: absolute;
+        right: 0;
+        top: 0;
         background: rgba(255,255,255,0.97);
         backdrop-filter: blur(12px);
         border: 1px solid #e2e8f0;
@@ -211,7 +218,7 @@
 
     @media (max-width: 768px) {
         .map-legend-wrap {
-            bottom: 12px; right: 12px; left: auto;
+            top: 7.5rem; right: 0.5rem;
         }
         .legend-card { width: 140px; padding: 10px; }
         .legend-toggle { padding: 5px 10px; }

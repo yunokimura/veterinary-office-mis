@@ -55,8 +55,6 @@
             </div>
         </div>
 
-        {{-- Floating: Legend (bottom-right) --}}
-        <x-map-legend :time-filter="'Yearly'" />
 
         {{-- Loading Overlay --}}
         <div id="mapLoading" class="geomap-loading-overlay" style="display: none;">
@@ -90,11 +88,19 @@
        Leaflet always has a definite container
        ======================================== */
 
+    /* Scoped override: only when .geomap-wrapper exists inside .content-wrapper */
+    .content-wrapper:has(.geomap-wrapper) {
+        height: calc(100vh - 64px) !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        padding: 0.5rem !important;
+    }
+
     .geomap-wrapper {
         position: relative;
         width: auto;
         flex: 1;
-        margin: -1.5rem;
+        margin: -0.5rem;
         height: calc(100vh - 4rem);
         min-height: 400px;
         overflow: hidden;
@@ -190,6 +196,115 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
+    }
+
+    /* Top-right container for filter + legend stacking */
+    .geomap-top-right {
+        position: absolute;
+        top: 0;
+        right: 1rem;
+        z-index: 1000;
+        width: 220px;
+        pointer-events: none;
+    }
+
+    /* Legend holder — positioned below filter button */
+    .geomap-legend-holder {
+        position: absolute;
+        top: 5.75rem;
+        right: 0;
+        width: 160px;
+    }
+
+    /* Floating filter (below stats) */
+    .geomap-filter {
+        position: absolute;
+        top: 4.25rem;
+        right: 0;
+        z-index: 1001;
+        pointer-events: none;
+        width: 220px;
+    }
+
+    .filter-toggle {
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: flex; align-items: center; gap: 5px;
+        padding: 6px 12px; background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(8px);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        cursor: pointer; color: #475569; transition: all 0.15s;
+        pointer-events: auto;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    .filter-toggle:hover { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+
+    .filter-card {
+        position: absolute;
+        right: 0;
+        top: 0;
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(12px);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        padding: 12px;
+        width: 220px;
+        pointer-events: auto;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    .filter-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9;
+    }
+
+    .filter-close {
+        display: flex; align-items: center; justify-content: center;
+        width: 22px; height: 22px; background: #f1f5f9; border: none;
+        border-radius: 6px; color: #94a3b8; cursor: pointer; transition: all 0.15s;
+    }
+    .filter-close:hover { background: #e2e8f0; color: #475569; }
+
+    .filter-body {
+        display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .filter-field {
+        display: flex; flex-direction: column; gap: 3px;
+    }
+
+    .filter-label {
+        font-size: 10px; font-weight: 600; color: #64748b;
+        text-transform: uppercase; letter-spacing: 0.04em;
+    }
+
+    .filter-select {
+        width: 100%;
+        padding: 5px 8px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.15s;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    .filter-select:hover { border-color: #cbd5e1; }
+    .filter-select:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.15); }
+
+    @media (max-width: 768px) {
+        .geomap-filter {
+            top: 3.75rem;
+            right: 0.5rem;
+        }
+        .filter-card { width: 160px; padding: 10px; }
+        .filter-toggle span { display: none; }
     }
 
     @keyframes spin {
@@ -373,9 +488,31 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('mapError').classList.remove('hidden');
         });
 
+    // Global function called by filter select onchange
+    window.applyMapFilter = function() {
+        filters.year = parseInt(document.getElementById('filterYear').value);
+        filters.month = document.getElementById('filterMonth').value || null;
+        filters.week = document.getElementById('filterWeek').value || null;
+        filters.date_from = document.getElementById('filterDateFrom').value || null;
+        filters.date_to = document.getElementById('filterDateTo').value || null;
+        loadCaseData();
+    };
+
     function loadCaseData() {
         var params = new URLSearchParams();
         params.append('year', filters.year);
+        if (filters.month) {
+            params.append('month', filters.month);
+        }
+        if (filters.week) {
+            params.append('week', filters.week);
+        }
+        if (filters.date_from) {
+            params.append('date_from', filters.date_from);
+        }
+        if (filters.date_to) {
+            params.append('date_to', filters.date_to);
+        }
 
         var baseUrl = window.location.pathname.replace(/\/$/, '');
         fetch(baseUrl + '/data?' + params.toString())
