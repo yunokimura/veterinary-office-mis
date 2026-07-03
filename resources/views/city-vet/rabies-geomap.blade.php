@@ -59,7 +59,7 @@
         <div class="geomap-filter-controls" x-data="{ filterOpen: false }">
             <button @click="filterOpen = !filterOpen" class="filter-toggle-btn">
                 <i class="bi bi-funnel text-[10px]"></i>
-                <span>Filters</span>
+                <span>Filter and Legends</span>
                 <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
             </button>
 
@@ -118,11 +118,35 @@
                     </button>
                 </div>
 
+                {{-- Simple Legend --}}
+                <div class="simple-legend">
+                    <p class="simple-legend-title">Legend</p>
+                    <div class="simple-legend-items">
+                        <div class="simple-legend-item">
+                            <span class="simple-legend-dot" style="background: #dc2626;"></span>
+                            <span class="simple-legend-text">Critical (20+)</span>
+                        </div>
+                        <div class="simple-legend-item">
+                            <span class="simple-legend-dot" style="background: #ea580c;"></span>
+                            <span class="simple-legend-text">High (11-19)</span>
+                        </div>
+                        <div class="simple-legend-item">
+                            <span class="simple-legend-dot" style="background: #eab308;"></span>
+                            <span class="simple-legend-text">Moderate (6-10)</span>
+                        </div>
+                        <div class="simple-legend-item">
+                            <span class="simple-legend-dot" style="background: #fde68a;"></span>
+                            <span class="simple-legend-text">Low (1-5)</span>
+                        </div>
+                        <div class="simple-legend-item">
+                            <span class="simple-legend-dot" style="background: #cbd5e1;"></span>
+                            <span class="simple-legend-text">No Cases</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-
-        {{-- Floating: Legend (bottom-right) --}}
-        {{-- <x-map-legend :time-filter="'Yearly'" /> --}}
 
         {{-- Loading Overlay --}}
         <div id="mapLoading" class="geomap-loading-overlay" style="display: none;">
@@ -321,7 +345,9 @@
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         padding: 12px;
-        width: 220px;
+        width: 240px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
         z-index: 1005;
     }
 
@@ -431,6 +457,48 @@
     .filter-clear-btn:hover {
         background: #fee2e2;
         border-color: #fca5a5;
+    }
+
+    /* Simple Legend */
+    .simple-legend {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .simple-legend-title {
+        font-size: 10px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+    }
+
+    .simple-legend-items {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .simple-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .simple-legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        flex-shrink: 0;
+        box-shadow: inset 0 -1px 2px rgba(0,0,0,0.15);
+    }
+
+    .simple-legend-text {
+        font-size: 10px;
+        font-weight: 500;
+        color: #475569;
     }
 
     @media (max-width: 768px) {
