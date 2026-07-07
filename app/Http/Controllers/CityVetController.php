@@ -155,6 +155,9 @@ class CityVetController extends Controller
         // Get heatmap data
         $heatmapData = $this->getHeatmapData($year);
 
+        // Get vaccination heatmap data
+        $vaccinationHeatmapData = $this->getVaccinationHeatmapData($year);
+
         // Get case type breakdown
         $caseTypeBreakdown = $this->getCaseTypeBreakdown($year);
 
@@ -170,6 +173,7 @@ class CityVetController extends Controller
         return view('city-vet.rabies-geomap', compact(
             'user',
             'heatmapData',
+            'vaccinationHeatmapData',
             'year',
             'caseTypeBreakdown',
             'monthlyTimeline',
@@ -216,6 +220,47 @@ class CityVetController extends Controller
                 'count' => $count,
                 'intensity' => round($count / $maxCount, 2),
                 'incident_type' => 'rabies',
+            ];
+        })->toArray();
+    }
+
+    /**
+     * Get heatmap data for anti-rabies vaccinations.
+     */
+    private function getVaccinationHeatmapData(int $year): array
+    {
+        // Get vaccinations grouped by barangay
+        $byBarangay = RabiesVaccinationReport::whereYear('vaccination_date', $year)
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', 0)
+            ->where('barangay_id', '!=', '')
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->get();
+
+        // Get ALL barangays with coordinates
+        $barangays = Barangay::whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get(['barangay_id', 'barangay_name', 'latitude', 'longitude']);
+
+        $maxCount = $byBarangay->max('count') ?: 1;
+
+        return $barangays->map(function ($barangay) use ($byBarangay, $maxCount) {
+            $vaccCount = $byBarangay->firstWhere('barangay_id', $barangay->barangay_id);
+            $count = $vaccCount ? (int) $vaccCount->count : 0;
+
+            return [
+                'id' => 'vaccination-'.$barangay->barangay_id,
+                'barangay_id' => $barangay->barangay_id,
+                'barangay' => $barangay->barangay_name,
+                'name' => $barangay->barangay_name,
+                'latitude' => (float) $barangay->latitude,
+                'longitude' => (float) $barangay->longitude,
+                'lat' => (float) $barangay->latitude,
+                'lng' => (float) $barangay->longitude,
+                'count' => $count,
+                'intensity' => round($count / $maxCount, 2),
+                'incident_type' => 'vaccination',
             ];
         })->toArray();
     }
@@ -308,15 +353,22 @@ class CityVetController extends Controller
         $week = $request->week ? (int) $request->week : null;
         $dateFrom = $request->date_from ?: null;
         $dateTo = $request->date_to ?: null;
+        $type = $request->type ?? 'rabies';
 
         // Debug: Check if data exists
         $totalInDb = BiteRabiesReport::whereYear('incident_date', $year)->count();
         $withBarangay = BiteRabiesReport::whereYear('incident_date', $year)
             ->whereNotNull('barangay_id')->count();
 
-        $heatmapData = $this->getFilteredHeatmapData($year, $month, $week, $dateFrom, $dateTo);
-        $caseTypeBreakdown = $this->getFilteredCaseTypeBreakdown($year, $month, $week, $dateFrom, $dateTo);
-        $totalCases = collect($heatmapData)->sum('count');
+        if ($type === 'vaccination') {
+            $heatmapData = $this->getFilteredVaccinationHeatmapData($year, $month, $week, $dateFrom, $dateTo);
+            $caseTypeBreakdown = [];
+            $totalCases = collect($heatmapData)->sum('count');
+        } else {
+            $heatmapData = $this->getFilteredHeatmapData($year, $month, $week, $dateFrom, $dateTo);
+            $caseTypeBreakdown = $this->getFilteredCaseTypeBreakdown($year, $month, $week, $dateFrom, $dateTo);
+            $totalCases = collect($heatmapData)->sum('count');
+        }
 
         $filterLabel = $year;
         if ($dateFrom && $dateTo) {
@@ -339,6 +391,7 @@ class CityVetController extends Controller
             'week' => $week,
             'date_from' => $dateFrom,
             'date_to' => $dateTo,
+            'type' => $type,
             'debug' => [
                 'total_in_db' => $totalInDb,
                 'with_barangay' => $withBarangay,
@@ -398,6 +451,62 @@ class CityVetController extends Controller
                 'count' => $count,
                 'intensity' => round($count / $maxCount, 2),
                 'incident_type' => 'rabies',
+            ];
+        })->toArray();
+    }
+
+    /**
+     * Get filtered vaccination heatmap data by year, month, and/or week.
+     */
+    private function getFilteredVaccinationHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
+    {
+        $query = RabiesVaccinationReport::whereYear('vaccination_date', $year)
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', 0)
+            ->where('barangay_id', '!=', '');
+
+        if ($dateFrom) {
+            $query->where('vaccination_date', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $query->where('vaccination_date', '<=', $dateTo);
+        }
+
+        if ($month) {
+            $query->whereMonth('vaccination_date', $month);
+        }
+
+        if ($week) {
+            $query->whereRaw('WEEK(vaccination_date, 1) = ?', [$week]);
+        }
+
+        $byBarangay = $query
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->get();
+
+        $barangays = Barangay::whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get(['barangay_id', 'barangay_name', 'latitude', 'longitude']);
+
+        $maxCount = $byBarangay->max('count') ?: 1;
+
+        return $barangays->map(function ($barangay) use ($byBarangay, $maxCount) {
+            $vaccCount = $byBarangay->firstWhere('barangay_id', $barangay->barangay_id);
+            $count = $vaccCount ? (int) $vaccCount->count : 0;
+
+            return [
+                'id' => 'vaccination-'.$barangay->barangay_id,
+                'barangay_id' => $barangay->barangay_id,
+                'barangay' => $barangay->barangay_name,
+                'name' => $barangay->barangay_name,
+                'latitude' => (float) $barangay->latitude,
+                'longitude' => (float) $barangay->longitude,
+                'lat' => (float) $barangay->latitude,
+                'lng' => (float) $barangay->longitude,
+                'count' => $count,
+                'intensity' => round($count / $maxCount, 2),
+                'incident_type' => 'vaccination',
             ];
         })->toArray();
     }
