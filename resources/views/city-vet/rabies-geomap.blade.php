@@ -17,13 +17,6 @@
     $totalCases = collect($heatmapData)->sum('count');
     $activeBarangays = collect($heatmapData)->where('count', '>', 0)->count();
     $criticalCount = collect($heatmapData)->where('count', '>', 20)->count();
-
-    $totalVaccinations = collect($vaccinationHeatmapData ?? [])->sum('count');
-    $vaccinatedBarangays = collect($vaccinationHeatmapData ?? [])->where('count', '>', 0)->count();
-    
-    // Pass vaccination data to JavaScript
-    $vaccinationHeatmapDataJson = json_encode($vaccinationHeatmapData ?? []);
-    $heatmapDataJson = json_encode($heatmapData);
 @endphp
 
 @section('content')
@@ -43,38 +36,26 @@
         <div class="geomap-stats">
             <div class="geomap-stats-inner">
                 <div class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                    <span class="text-[10px] text-slate-400 font-medium">Total</span>
+                    <div class="w-2 h-2 rounded-full bg-red-500" id="statTotalIcon"></div>
+                    <span class="text-[10px] text-slate-400 font-medium" id="statTotalLabel">Total Cases</span>
                     <span class="text-sm font-bold text-slate-800" id="statTotalCases">{{ $totalCases }}</span>
                 </div>
                 <div class="w-px h-4 bg-slate-200"></div>
                 <div class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 rounded-full bg-amber-500"></div>
-                    <span class="text-[10px] text-slate-400 font-medium">Affected</span>
+                    <div class="w-2 h-2 rounded-full bg-amber-500" id="statAffectedIcon"></div>
+                    <span class="text-[10px] text-slate-400 font-medium" id="statAffectedLabel">Affected</span>
                     <span class="text-sm font-bold text-amber-600" id="statAffected">{{ $activeBarangays }}</span>
                 </div>
                 <div class="w-px h-4 bg-slate-200"></div>
                 <div class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 rounded-full bg-rose-500"></div>
-                    <span class="text-[10px] text-slate-400 font-medium">Critical</span>
+                    <div class="w-2 h-2 rounded-full bg-rose-500" id="statCriticalIcon"></div>
+                    <span class="text-[10px] text-slate-400 font-medium" id="statCriticalLabel">Critical</span>
                     <span class="text-sm font-bold text-rose-600" id="statCritical">{{ $criticalCount }}</span>
                 </div>
             </div>
         </div>
 
-        {{-- Floating: Layer Toggle (top-right, below stats) --}}
-        <div class="geomap-layer-toggle">
-            <button id="layerRabies" @click="switchLayer('rabies')" class="layer-toggle-btn active">
-                <span class="layer-icon">🦠</span>
-                <span class="layer-text">Rabies Cases</span>
-            </button>
-            <button id="layerVaccination" @click="switchLayer('vaccination')" class="layer-toggle-btn">
-                <span class="layer-icon">💉</span>
-                <span class="layer-text">Vaccination</span>
-            </button>
-        </div>
-
-        {{-- Floating: Filter Button (top-right, below layer toggle) --}}
+        {{-- Floating: Filter Button (top-right, below stats) --}}
         <div class="geomap-filter-controls" x-data="{ filterOpen: false }">
             <button @click="filterOpen = !filterOpen" class="filter-toggle-btn">
                 <i class="bi bi-funnel text-[10px]"></i>
@@ -84,7 +65,6 @@
 
             {{-- Filter Panel --}}
             <div x-show="filterOpen" x-transition @click.away="filterOpen = false" class="filter-panel">
-                
                 {{-- Year Filter --}}
                 <div class="filter-section">
                     <label class="filter-label">Year</label>
@@ -325,65 +305,61 @@
         50% { opacity: 0.5; }
     }
 
-    /* Layer Toggle (top-left, below zoom controls) */
-    .geomap-layer-toggle {
-        position: absolute;
-        top: 6.5rem;
-        left: 7rem;
-        z-index: 1002;
-        display: flex;
-        gap: 6px;
+    /* Layer Toggle Control (Leaflet custom control) */
+    .layer-toggle-control {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin-left: 12px !important;
+        margin-top: 12px !important;
+        display: flex !important;
+        flex-direction: column;
+        gap: 8px;
     }
 
-    .geomap-layer-toggle .layer-toggle-btn {
-        flex: 1;
+    .layer-toggle-control .layer-toggle-btn {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 4px;
-        padding: 6px 10px;
+        gap: 6px;
+        padding: 7px 12px;
         background: rgba(255,255,255,0.95);
         backdrop-filter: blur(8px);
-        border: 1px solid #e2e8f0;
+        border: 1.5px solid #e2e8f0;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         cursor: pointer;
-        transition: all 0.15s;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 500;
+        transition: all 0.2s;
         font-family: 'Inter', system-ui, sans-serif;
         white-space: nowrap;
-        min-width: 100px;
+        width: 100%;
+        justify-content: flex-start;
     }
 
-    .geomap-layer-toggle .layer-toggle-btn:hover {
+    .layer-toggle-control .layer-toggle-btn:hover {
         background: #fff;
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        border-color: #cbd5e1;
     }
 
-    .geomap-layer-toggle .layer-toggle-btn.active {
-        background: #6366f1;
-        border-color: #6366f1;
-        color: white;
+    .layer-toggle-control .layer-toggle-btn.active {
+        background: #4f46e5;
+        color: #fff;
+        border-color: #4f46e5;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
     }
 
-    .geomap-layer-toggle .layer-toggle-btn.active .layer-text {
-        color: white;
-    }
-
-    .geomap-layer-toggle .layer-icon {
+    .layer-toggle-control .layer-toggle-btn i {
         font-size: 12px;
-    }
-
-    .geomap-layer-toggle .layer-text {
-        font-size: 10px;
-        font-weight: 600;
-        color: #475569;
-        white-space: nowrap;
     }
 
     /* Filter Controls */
     .geomap-filter-controls {
         position: absolute;
-        top: 7.8rem;
+        top: 4.5rem;
         right: 1rem;
         z-index: 1000;
     }
@@ -534,7 +510,6 @@
         border-color: #fca5a5;
     }
 
-
     /* Simple Legend */
     .simple-legend {
         margin-top: 12px;
@@ -589,13 +564,8 @@
             top: 0.5rem;
             right: 0.5rem;
         }
-        .geomap-layer-toggle {
-            top: 6rem;
-            left: 6.5rem;
-        }
-
         .geomap-filter-controls {
-            top: 7rem;
+            top: 3.75rem;
             right: 0.5rem;
         }
         .filter-panel {
@@ -619,16 +589,12 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var filters = { year: {{ $selectedYear }}, month: null, week: null };
-    var currentLayer = 'rabies';
+    var currentLayer = 'rabies'; // 'rabies' or 'vaccination'
     var map, barangayLayer, outsideMaskLayer, cityBounds, geojsonData;
-    
-    // Store both datasets
-    var rabiesData = {!! $heatmapDataJson !!};
-    var vaccinationData = {!! $vaccinationHeatmapDataJson !!};
 
     // --- Initialize Map ---
     map = L.map('geomap', {
-        zoomControl: true,
+        zoomControl: false, // Disable default zoom control
         minZoom: 12,
         maxZoom: 18,
         zoomSnap: 0.5,
@@ -639,6 +605,27 @@ document.addEventListener('DOMContentLoaded', function() {
         attribution: '&copy; OpenStreetMap',
         maxZoom: 19
     }).addTo(map);
+
+    // --- Layer Toggle Control (added first, so it appears at top) ---
+    var layerControl = L.control({ position: 'topleft' });
+    layerControl.onAdd = function() {
+        var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom layer-toggle-control');
+        div.innerHTML = `
+            <button id="btnRabiesLayer" class="layer-toggle-btn active" onclick="switchLayer('rabies')">
+                <i class="bi bi-virus"></i>
+                <span>Rabies Cases</span>
+            </button>
+            <button id="btnVaccinationLayer" class="layer-toggle-btn" onclick="switchLayer('vaccination')">
+                <i class="bi bi-shield-check"></i>
+                <span>Vaccination</span>
+            </button>
+        `;
+        return div;
+    };
+    layerControl.addTo(map);
+
+    // --- Zoom Control (added second, appears below layer control) ---
+    L.control.zoom({ position: 'topleft' }).addTo(map);
 
     // Hide the loading placeholder
     var loadingEl = document.querySelector('.geomap-loading');
@@ -651,19 +638,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Color helpers ---
     function getColor(cases) {
-        return cases > 20 ? '#dc2626'
-             : cases > 10 ? '#ea580c'
-             : cases > 5  ? '#eab308'
-             : cases > 0  ? '#fde68a'
-                          : '#cbd5e1';
-    }
-    
-    function getVaccinationColor(count) {
-        return count > 20 ? '#059669'
-             : count > 10 ? '#10b981'
-             : count > 5  ? '#34d399'
-             : count > 0  ? '#a7f3d0'
-                          : '#cbd5e1';
+        if (currentLayer === 'vaccination') {
+            // Green gradient for vaccination coverage
+            return cases > 20 ? '#166534'
+                 : cases > 10 ? '#15803d'
+                 : cases > 5  ? '#22c55e'
+                 : cases > 0  ? '#86efac'
+                              : '#cbd5e1';
+        } else {
+            // Red/Orange/Yellow gradient for rabies cases
+            return cases > 20 ? '#dc2626'
+                 : cases > 10 ? '#ea580c'
+                 : cases > 5  ? '#eab308'
+                 : cases > 0  ? '#fde68a'
+                              : '#cbd5e1';
+        }
     }
     
     function getBorderColor(cases) {
@@ -672,9 +661,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function style(feature) {
         var c = feature.properties.cases || 0;
-        var colorFn = currentLayer === 'vaccination' ? getVaccinationColor : getColor;
         return {
-            fillColor: colorFn(c),
+            fillColor: getColor(c),
             weight: c > 0 ? 2.5 : 1.5,
             color: getBorderColor(c),
             fillOpacity: c > 0 ? 0.8 : 0.45,
@@ -700,16 +688,26 @@ document.addEventListener('DOMContentLoaded', function() {
     function onEachFeature(feature, layer) {
         var name = feature.properties.name || 'Unknown';
         var cases = feature.properties.cases || 0;
-        var colorFn = currentLayer === 'vaccination' ? getVaccinationColor : getColor;
-        var displayColor = colorFn(cases);
-        var status = currentLayer === 'vaccination' 
-            ? (cases > 20 ? 'High Coverage' : cases > 10 ? 'Moderate' : cases > 5 ? 'Low' : cases > 0 ? 'Minimal' : 'No Data')
-            : (cases > 20 ? 'Critical' : cases > 10 ? 'High' : cases > 5 ? 'Moderate' : cases > 0 ? 'Low' : 'No Cases');
+        var status, label;
+        
+        if (currentLayer === 'vaccination') {
+            if (cases > 20) { status = 'High Coverage'; label = 'Excellent'; }
+            else if (cases > 10) { status = 'Moderate Coverage'; label = 'Good'; }
+            else if (cases > 5) { status = 'Low Coverage'; label = 'Fair'; }
+            else if (cases > 0) { status = 'Minimal'; label = 'Low'; }
+            else { status = 'No Data'; label = 'None'; }
+        } else {
+            if (cases > 20) { status = 'Critical'; label = 'Critical'; }
+            else if (cases > 10) { status = 'High'; label = 'High'; }
+            else if (cases > 5) { status = 'Moderate'; label = 'Moderate'; }
+            else if (cases > 0) { status = 'Low'; label = 'Low'; }
+            else { status = 'No Cases'; label = 'None'; }
+        }
 
         layer.bindTooltip(
             '<div style="font-family:Inter,system-ui;min-width:110px;">' +
             '<div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:2px;">' + name + '</div>' +
-            '<div style="font-size:20px;font-weight:700;color:' + displayColor + ';">' + cases + '</div>' +
+            '<div style="font-size:20px;font-weight:700;color:' + getColor(cases) + ';">' + cases + '</div>' +
             '<div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-top:1px;">' + status + '</div>' +
             '</div>',
             { direction: 'center', className: '', offset: [0, 0], pane: 'popupPane' }
@@ -779,6 +777,78 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('mapError').classList.remove('hidden');
         });
 
+    // --- Layer Switching ---
+    window.switchLayer = function(layerType) {
+        currentLayer = layerType;
+        
+        // Update button states
+        document.getElementById('btnRabiesLayer').classList.toggle('active', layerType === 'rabies');
+        document.getElementById('btnVaccinationLayer').classList.toggle('active', layerType === 'vaccination');
+        
+        // Update legend
+        updateLegend();
+        
+        // Update stats labels
+        updateStatsLabels();
+        
+        // Fetch new data for the selected layer
+        fetchFilteredData();
+    };
+
+    function updateLegend() {
+        var legendItems = document.querySelectorAll('.simple-legend-item');
+        if (currentLayer === 'vaccination') {
+            // Vaccination legend (green gradient)
+            legendItems[0].querySelector('.simple-legend-dot').style.background = '#166534';
+            legendItems[0].querySelector('.simple-legend-text').textContent = 'Excellent (20+)';
+            legendItems[1].querySelector('.simple-legend-dot').style.background = '#15803d';
+            legendItems[1].querySelector('.simple-legend-text').textContent = 'Good (11-19)';
+            legendItems[2].querySelector('.simple-legend-dot').style.background = '#22c55e';
+            legendItems[2].querySelector('.simple-legend-text').textContent = 'Fair (6-10)';
+            legendItems[3].querySelector('.simple-legend-dot').style.background = '#86efac';
+            legendItems[3].querySelector('.simple-legend-text').textContent = 'Low (1-5)';
+            legendItems[4].querySelector('.simple-legend-dot').style.background = '#cbd5e1';
+            legendItems[4].querySelector('.simple-legend-text').textContent = 'No Vaccinations';
+        } else {
+            // Rabies cases legend (red/orange/yellow gradient)
+            legendItems[0].querySelector('.simple-legend-dot').style.background = '#dc2626';
+            legendItems[0].querySelector('.simple-legend-text').textContent = 'Critical (20+)';
+            legendItems[1].querySelector('.simple-legend-dot').style.background = '#ea580c';
+            legendItems[1].querySelector('.simple-legend-text').textContent = 'High (11-19)';
+            legendItems[2].querySelector('.simple-legend-dot').style.background = '#eab308';
+            legendItems[2].querySelector('.simple-legend-text').textContent = 'Moderate (6-10)';
+            legendItems[3].querySelector('.simple-legend-dot').style.background = '#fde68a';
+            legendItems[3].querySelector('.simple-legend-text').textContent = 'Low (1-5)';
+            legendItems[4].querySelector('.simple-legend-dot').style.background = '#cbd5e1';
+            legendItems[4].querySelector('.simple-legend-text').textContent = 'No Cases';
+        }
+    }
+
+    function updateStatsLabels() {
+        var totalLabel = document.getElementById('statTotalLabel');
+        var totalIcon = document.getElementById('statTotalIcon');
+        var affectedLabel = document.getElementById('statAffectedLabel');
+        var affectedIcon = document.getElementById('statAffectedIcon');
+        var criticalLabel = document.getElementById('statCriticalLabel');
+        var criticalIcon = document.getElementById('statCriticalIcon');
+
+        if (currentLayer === 'vaccination') {
+            totalLabel.textContent = 'Total Vaccinations';
+            totalIcon.className = 'w-2 h-2 rounded-full bg-green-600';
+            affectedLabel.textContent = 'Coverage Areas';
+            affectedIcon.className = 'w-2 h-2 rounded-full bg-emerald-500';
+            criticalLabel.textContent = 'High Coverage';
+            criticalIcon.className = 'w-2 h-2 rounded-full bg-emerald-700';
+        } else {
+            totalLabel.textContent = 'Total Cases';
+            totalIcon.className = 'w-2 h-2 rounded-full bg-red-500';
+            affectedLabel.textContent = 'Affected';
+            affectedIcon.className = 'w-2 h-2 rounded-full bg-amber-500';
+            criticalLabel.textContent = 'Critical';
+            criticalIcon.className = 'w-2 h-2 rounded-full bg-rose-500';
+        }
+    }
+
     // Filter functionality
     window.setFilter = function(type, value) {
         filters[type] = value;
@@ -817,6 +887,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function fetchFilteredData() {
         var params = new URLSearchParams();
         params.append('year', filters.year);
+        params.append('type', currentLayer); // Add layer type parameter
         if (filters.month) params.append('month', filters.month);
         if (filters.week) params.append('week', filters.week);
         if (filters.date_from) params.append('date_from', filters.date_from);
@@ -870,77 +941,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateStats(data) {
-        var total = 0, affected = 0, critical = 0;
+        var total = 0, affected = 0, highCount = 0;
         data.heatmapData.forEach(function(item) {
             total += item.count;
             if (item.count > 0) affected++;
-            if (item.count > 20) critical++;
-        });
-        document.getElementById('statTotalCases').textContent = total;
-        document.getElementById('statAffected').textContent = affected;
-        document.getElementById('statCritical').textContent = critical;
-    }
-
-    // --- Layer Switching ---
-    window.switchLayer = function(layerType) {
-        currentLayer = layerType;
-        
-        // Update button states
-        document.getElementById('layerRabies').classList.toggle('active', layerType === 'rabies');
-        document.getElementById('layerVaccination').classList.toggle('active', layerType === 'vaccination');
-        
-        // Update legend
-        updateLegend(layerType);
-        
-        // Update stats
-        updateStatsForLayer(layerType);
-        
-        // Refresh map with appropriate data
-        var data = layerType === 'vaccination' ? vaccinationData : rabiesData;
-        updateMap(data);
-    };
-
-    function updateLegend(layerType) {
-        var legendItems = document.querySelectorAll('.simple-legend-item');
-        var legends = layerType === 'vaccination' ? [
-            { color: '#059669', text: 'High Coverage (20+)' },
-            { color: '#10b981', text: 'Moderate (11-19)' },
-            { color: '#34d399', text: 'Low (6-10)' },
-            { color: '#a7f3d0', text: 'Minimal (1-5)' },
-            { color: '#cbd5e1', text: 'No Data' }
-        ] : [
-            { color: '#dc2626', text: 'Critical (20+)' },
-            { color: '#ea580c', text: 'High (11-19)' },
-            { color: '#eab308', text: 'Moderate (6-10)' },
-            { color: '#fde68a', text: 'Low (1-5)' },
-            { color: '#cbd5e1', text: 'No Cases' }
-        ];
-        
-        legendItems.forEach(function(item, index) {
-            if (legends[index]) {
-                item.querySelector('.simple-legend-dot').style.background = legends[index].color;
-                item.querySelector('.simple-legend-text').textContent = legends[index].text;
+            if (currentLayer === 'vaccination') {
+                if (item.count > 10) highCount++; // High coverage areas
+            } else {
+                if (item.count > 20) highCount++; // Critical areas
             }
         });
-    }
-
-    function updateStatsForLayer(layerType) {
-        var data = layerType === 'vaccination' ? vaccinationData : rabiesData;
-        var total = 0, affected = 0, critical = 0;
-        
-        data.forEach(function(item) {
-            total += item.count;
-            if (item.count > 0) affected++;
-            if (item.count > 20) critical++;
-        });
-        
         document.getElementById('statTotalCases').textContent = total;
         document.getElementById('statAffected').textContent = affected;
-        document.getElementById('statCritical').textContent = critical;
+        document.getElementById('statCritical').textContent = highCount;
     }
 
-    // --- Reset view button (in map zoom controls area) ---
-    // We'll add it to the map's zoom control position
+    // --- Reset view button (added last, appears at bottom) ---
     var resetControl = L.control({ position: 'topleft' });
     resetControl.onAdd = function() {
         var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');

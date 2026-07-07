@@ -155,9 +155,6 @@ class CityVetController extends Controller
         // Get heatmap data
         $heatmapData = $this->getHeatmapData($year);
 
-        // Get vaccination heatmap data
-        $vaccinationHeatmapData = $this->getVaccinationHeatmapData($year);
-
         // Get case type breakdown
         $caseTypeBreakdown = $this->getCaseTypeBreakdown($year);
 
@@ -173,7 +170,6 @@ class CityVetController extends Controller
         return view('city-vet.rabies-geomap', compact(
             'user',
             'heatmapData',
-            'vaccinationHeatmapData',
             'year',
             'caseTypeBreakdown',
             'monthlyTimeline',
@@ -353,13 +349,14 @@ class CityVetController extends Controller
         $week = $request->week ? (int) $request->week : null;
         $dateFrom = $request->date_from ?: null;
         $dateTo = $request->date_to ?: null;
-        $type = $request->type ?? 'rabies';
+        $type = $request->type ?? 'rabies'; // 'rabies' or 'vaccination'
 
         // Debug: Check if data exists
         $totalInDb = BiteRabiesReport::whereYear('incident_date', $year)->count();
         $withBarangay = BiteRabiesReport::whereYear('incident_date', $year)
             ->whereNotNull('barangay_id')->count();
 
+        // Get data based on type
         if ($type === 'vaccination') {
             $heatmapData = $this->getFilteredVaccinationHeatmapData($year, $month, $week, $dateFrom, $dateTo);
             $caseTypeBreakdown = [];
