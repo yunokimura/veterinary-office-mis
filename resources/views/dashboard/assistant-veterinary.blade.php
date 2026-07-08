@@ -18,18 +18,13 @@
 @endphp
 
 <!-- Welcome Banner -->
-<div class="bg-gradient-to-r from-green-600 to-teal-700 rounded-xl p-6 mb-8 text-white">
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold mb-2">{{ $greeting }}, {{ auth()->user()->name ?? 'Assistant Veterinarian' }}!</h2>
-            <p class="text-green-100">Monitor and manage Spay/Neuter (Kapon) appointments</p>
-        </div>
-        <div class="hidden md:block">
-            <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
-                <i class="bi bi-bug text-4xl"></i>
-            </div>
-        </div>
-    </div>
+<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
+    <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
+        {{ $greeting }}, {{ auth()->user()->name ?? 'Assistant Veterinarian' }}!
+    </h2>
+    <p class="text-sm md:text-base text-gray-600">
+        Monitor and manage Spay/Neuter (Kapon) appointments
+    </p>
 </div>
 
 <!-- ==============================

@@ -1,21 +1,21 @@
 @extends('layouts.admin')
 
-@section('title', 'Spay/Neuter Dashboard')
+@section('title', 'Spay/Neuter Appointments')
 
 @section('content')
 <div class="w-full">
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 class="text-xl md:text-2xl font-bold text-gray-800">Spay/Neuter Dashboard</h1>
+        <h1 class="text-xl md:text-2xl font-bold text-gray-800">Spay/Neuter Appointments</h1>
         <a href="{{ route('spay-neuter.reports.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            <i class="bi bi-plus-lg"></i> New Report
+            <i class="bi bi-plus-lg"></i> New Appointment
         </a>
     </div>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-3 gap-4 mb-6">
         <div class="bg-blue-600 text-white rounded-xl shadow-sm p-6">
-            <h5 class="text-blue-100 text-sm font-medium mb-2">Total Reports</h5>
+            <h5 class="text-blue-100 text-sm font-medium mb-2">Total Appointments</h5>
             <h2 class="text-3xl md:text-4xl font-bold">{{ $totalReports }}</h2>
         </div>
         <div class="bg-green-500 text-white rounded-xl shadow-sm p-6">
@@ -36,10 +36,10 @@
         <div class="p-6">
             <div class="flex flex-wrap gap-3">
                 <a href="{{ route('spay-neuter.reports.index') }}" class="inline-flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">
-                    <i class="bi bi-list"></i> All Reports
+                    <i class="bi bi-list"></i> All Appointments
                 </a>
                 <a href="{{ route('spay-neuter.reports.create') }}" class="inline-flex items-center gap-2 px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition">
-                    <i class="bi bi-plus-lg"></i> New Report
+                    <i class="bi bi-plus-lg"></i> New Appointment
                 </a>
                 <a href="{{ route('spay-neuter.reports.index') }}?status=completed" class="inline-flex items-center gap-2 px-4 py-2 border border-green-500 text-green-600 rounded-lg hover:bg-green-50 transition">
                     <i class="bi bi-check-circle"></i> Completed
@@ -51,10 +51,10 @@
         </div>
     </div>
 
-    <!-- Recent Reports -->
+    <!-- Recent Appointments -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100">
-            <h5 class="font-semibold text-gray-800">Recent Reports</h5>
+            <h5 class="font-semibold text-gray-800">Recent Appointments</h5>
         </div>
         <div class="overflow-x-auto">
             @if($reports->count() > 0)
@@ -107,7 +107,7 @@
             @else
             <div class="p-8 text-center text-gray-500">
                 <i class="bi bi-inbox text-4xl mb-3 block"></i>
-                <p>No spay/neuter reports yet.</p>
+                <p>No spay/neuter appointments yet.</p>
             </div>
             @endif
         </div>

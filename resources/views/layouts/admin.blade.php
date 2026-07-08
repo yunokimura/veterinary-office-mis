@@ -290,7 +290,7 @@
             <div class="sidebar-section-label">Kapon (Spay/Neuter)</div>
 
             <a href="{{ route('spay-neuter.reports.index') }}" class="nav-item {{ request()->routeIs('spay-neuter.reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-heart"></i><span>Spay/Neuter Records</span>
+                <i class="bi bi-heart"></i><span>Kapon Appointments</span>
             </a>
 
             @elseif(auth()->check() && auth()->user()->hasRole('admin_asst'))

@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', isset($report) ? 'Edit Spay/Neuter Report' : 'New Spay/Neuter Report')
+@section('title', isset($report) ? 'Edit Spay/Neuter Appointment' : 'New Spay/Neuter Appointment')
 
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            {{ isset($report) ? 'Edit Spay/Neuter Report' : 'New Spay/Neuter Report' }}
+            {{ isset($report) ? 'Edit Spay/Neuter Appointment' : 'New Spay/Neuter Appointment' }}
         </h1>
         <a href="{{ route('spay-neuter.reports.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to List
@@ -138,7 +138,7 @@
                 <div class="d-flex justify-end gap-2">
                     <a href="{{ route('spay-neuter.reports.index') }}" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> {{ isset($report) ? 'Update Report' : 'Submit Report' }}
+                        <i class="fas fa-save"></i> {{ isset($report) ? 'Update Appointment' : 'Submit Appointment' }}
                     </button>
                 </div>
             </form>

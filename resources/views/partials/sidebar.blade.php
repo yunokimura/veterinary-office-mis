@@ -245,7 +245,7 @@
             <a href="{{ route('spay-neuter.reports.index') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('spay-neuter.reports.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-heart text-lg w-6"></i>
-                <span>Spay/Neuter</span>
+                <span>Kapon Appointments</span>
             </a>
 
         {{-- =========================

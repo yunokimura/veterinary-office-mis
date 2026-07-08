@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Spay/Neuter Report Details')
-@section('header', 'Spay/Neuter Report')
-@section('subheader', $report->pet_name ?? 'Report Details')
+@section('title', 'Spay/Neuter Appointment Details')
+@section('header', 'Spay/Neuter Appointment')
+@section('subheader', $report->pet_name ?? 'Appointment Details')
 
 @section('content')
 <div class="max-w-4xl mx-auto">
@@ -10,14 +10,14 @@
     <div class="mb-6">
         <a href="{{ route('spay-neuter.reports.index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
             <i class="bi bi-arrow-left"></i>
-            <span>Back to Reports</span>
+            <span>Back to Appointments</span>
         </a>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <div>
-                <h3 class="font-semibold text-gray-800">Spay/Neuter Report Details</h3>
+                <h3 class="font-semibold text-gray-800">Spay/Neuter Appointment Details</h3>
                 <p class="text-sm text-gray-500">{{ $report->procedure_date->format('F d, Y') }}</p>
             </div>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
