@@ -19,6 +19,7 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
@@ -218,6 +219,13 @@
             </a>
 
             <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Appointments</div>
+
+            <a href="{{ route('admin.vaccination-appointments.index') }}" class="nav-item {{ request()->routeIs('admin.vaccination-appointments.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-calendar-check"></i><span>Anti-Rabies Vaccination Appointment</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Reports</div>
 
             <a href="{{ route('admin.bite-reports.index') }}" class="nav-item {{ request()->routeIs('admin.bite-reports.*') ? 'active-nav' : '' }}">
@@ -279,19 +287,10 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('assistant_vet'))
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Clinical</div>
+            <div class="sidebar-section-label">Kapon (Spay/Neuter)</div>
 
-            <a href="{{ route('rabies-cases.index') }}" class="nav-item {{ request()->routeIs('rabies-cases.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-exclamation-triangle"></i><span>Rabies Cases</span>
-            </a>
-            <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-file-medical"></i><span>Bite Reports</span>
-            </a>
-            <a href="{{ route('assistant-vet.vaccinations.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.vaccinations.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-shield-check"></i><span>Anti-Rabies Vaccination</span>
-            </a>
             <a href="{{ route('spay-neuter.reports.index') }}" class="nav-item {{ request()->routeIs('spay-neuter.reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-heart"></i><span>Spay/Neuter</span>
+                <i class="bi bi-heart"></i><span>Spay/Neuter Records</span>
             </a>
 
             @elseif(auth()->check() && auth()->user()->hasRole('admin_asst'))
@@ -473,6 +472,7 @@
             }
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
 </body>
 </html>

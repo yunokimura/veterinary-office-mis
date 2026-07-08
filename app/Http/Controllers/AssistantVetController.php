@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SpayNeuterReport;
-use App\Models\Vaccination;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +11,7 @@ class AssistantVetController extends Controller
 {
     /**
      * Show assistant veterinarian dashboard.
-     * Focuses on Spay/Neuter Appointments and Anti-Rabies Vaccination Appointments.
+     * Focuses on Spay/Neuter (Kapon) Appointments only.
      */
     public function dashboard(Request $request)
     {
@@ -20,9 +19,9 @@ class AssistantVetController extends Controller
         $year = $request->year ?? date('Y');
 
         // ==============================
-        // SPAY/NEUTER STATS
+        // SPAY/NEUTER (KAPON) STATS
         // ==============================
-        $spayNeuterStats = [
+        $kaponStats = [
             'total' => SpayNeuterReport::whereYear('created_at', $year)->count(),
             'pending' => SpayNeuterReport::where('status', 'pending')->whereYear('created_at', $year)->count(),
             'scheduled' => SpayNeuterReport::where('status', 'scheduled')->whereYear('created_at', $year)->count(),
@@ -33,51 +32,20 @@ class AssistantVetController extends Controller
             'this_month' => SpayNeuterReport::whereYear('scheduled_at', now()->year)->whereMonth('scheduled_at', now()->month)->count(),
         ];
 
-        // Spay/Neuter by procedure type
-        $spayNeuterByType = [
+        // Kapon by procedure type
+        $kaponByType = [
             'spay' => SpayNeuterReport::where('procedure_type', 'spay')->whereYear('created_at', $year)->count(),
             'neuter' => SpayNeuterReport::where('procedure_type', 'neuter')->whereYear('created_at', $year)->count(),
         ];
 
-        // Recent spay/neuter reports
-        $recentSpayNeuter = SpayNeuterReport::with(['pet', 'owner', 'barangay'])
+        // Recent kapon reports
+        $recentKapon = SpayNeuterReport::with(['pet', 'owner', 'barangay'])
             ->latest()
             ->take(5)
             ->get();
 
-        // ==============================
-        // ANTI-RABIES VACCINATION STATS
-        // ==============================
-        $vaccinationStats = [
-            'total' => Vaccination::whereYear('created_at', $year)->count(),
-            'today' => Vaccination::whereDate('vaccination_date', today())->count(),
-            'this_week' => Vaccination::whereBetween('vaccination_date', [now()->startOfWeek(), now()->endOfWeek()])->count(),
-            'this_month' => Vaccination::whereYear('vaccination_date', now()->year)->whereMonth('vaccination_date', now()->month)->count(),
-        ];
-
-        // Vaccinations by vaccine type
-        $vaccinationsByType = Vaccination::whereYear('created_at', $year)
-            ->selectRaw('vaccine_type, COUNT(*) as count')
-            ->groupBy('vaccine_type')
-            ->pluck('count', 'vaccine_type')
-            ->toArray();
-
-        // Recent vaccinations
-        $recentVaccinations = Vaccination::with(['pet', 'vaccinatedBy'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // ==============================
-        // MONTHLY TRENDS
-        // ==============================
-        $monthlySpayNeuter = SpayNeuterReport::whereYear('created_at', $year)
-            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
-            ->groupBy('month')
-            ->pluck('count', 'month')
-            ->toArray();
-
-        $monthlyVaccinations = Vaccination::whereYear('created_at', $year)
+        // Monthly trend
+        $monthlyKapon = SpayNeuterReport::whereYear('created_at', $year)
             ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
             ->groupBy('month')
             ->pluck('count', 'month')
@@ -86,14 +54,10 @@ class AssistantVetController extends Controller
         return view('dashboard.assistant-veterinary', compact(
             'user',
             'year',
-            'spayNeuterStats',
-            'spayNeuterByType',
-            'recentSpayNeuter',
-            'vaccinationStats',
-            'vaccinationsByType',
-            'recentVaccinations',
-            'monthlySpayNeuter',
-            'monthlyVaccinations'
+            'kaponStats',
+            'kaponByType',
+            'recentKapon',
+            'monthlyKapon'
         ));
     }
 }

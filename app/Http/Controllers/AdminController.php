@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\BiteRabiesReport;
 use App\Models\RabiesVaccinationReport;
 use App\Models\MeatInspectionReport;
+use App\Models\VaccinationReport;
 use App\Models\MeatEstablishment;
 use App\Models\ImpoundRecord;
 use App\Models\User;
@@ -269,6 +270,103 @@ class AdminController extends Controller
         $user = Auth::user();
         $report->load(['patientBarangay', 'user']);
         return view('dashboard.bite-reports.show', compact('report', 'user'));
+    }
+
+    /**
+     * List anti-rabies vaccination appointments.
+     */
+    public function indexVaccinationAppointments(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = VaccinationReport::with(['owner', 'user', 'address']);
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->whereDate('scheduled_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('scheduled_at', '<=', $request->date_to);
+        }
+
+        // Search by owner name
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('owner', function($q) use ($search) {
+                $q->where('first_name', 'like', '%' . $search . '%')
+                  ->orWhere('last_name', 'like', '%' . $search . '%');
+            });
+        }
+
+        $appointments = $query->orderBy('scheduled_at', 'desc')->paginate(15);
+
+        // Statistics
+        $stats = [
+            'total' => VaccinationReport::count(),
+            'pending' => VaccinationReport::where('status', 'pending')->count(),
+            'approved' => VaccinationReport::where('status', 'approved')->count(),
+            'completed' => VaccinationReport::where('status', 'completed')->count(),
+            'cancelled' => VaccinationReport::where('status', 'cancelled')->count(),
+            'today' => VaccinationReport::whereDate('scheduled_at', now()->toDateString())->count(),
+            'this_week' => VaccinationReport::whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+        ];
+
+        return view('dashboard.vaccination-appointments', compact('user', 'appointments', 'stats'));
+    }
+
+    /**
+     * Show vaccination appointment details (JSON for modal).
+     */
+    public function showVaccinationAppointmentJson(VaccinationReport $appointment)
+    {
+        $appointment->load(['owner', 'user', 'address.barangay']);
+
+        $selectedPets = $appointment->selected_pets ?? [];
+
+        return response()->json([
+            'success' => true,
+            'appointment' => [
+                'id' => $appointment->id,
+                'status' => ucfirst($appointment->status),
+                'scheduled_at' => \Carbon\Carbon::parse($appointment->scheduled_at)->format('M d, Y h:i A'),
+                'last_anti_rabies_date' => $appointment->last_anti_rabies_date ? \Carbon\Carbon::parse($appointment->last_anti_rabies_date)->format('M d, Y') : 'N/A',
+                'recent_surgery' => $appointment->recent_surgery ? 'Yes' : 'No',
+                'created_at' => $appointment->created_at->format('M d, Y h:i A'),
+                'owner_name' => $appointment->owner_name,
+                'owner_contact' => $appointment->owner->contact_number ?? 'N/A',
+                'owner_email' => $appointment->owner->email ?? 'N/A',
+                'address' => $appointment->address ? trim(($appointment->address->block_lot_phase ?? '').' '.($appointment->address->street ?? '').', '.($appointment->address->barangay->barangay_name ?? 'N/A').', '.($appointment->address->city ?? '')) : 'N/A',
+                'submitted_by' => $appointment->user->name ?? 'N/A',
+                'selected_pets' => $selectedPets,
+                'metadata' => $appointment->metadata,
+            ]
+        ]);
+    }
+
+    /**
+     * Update vaccination appointment status.
+     */
+    public function updateVaccinationAppointmentStatus(Request $request, VaccinationReport $appointment)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,approved,completed,cancelled,no_show',
+        ]);
+
+        $appointment->update(['status' => $request->status]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Appointment status updated successfully.',
+            'appointment' => [
+                'id' => $appointment->id,
+                'status' => ucfirst($appointment->status),
+            ]
+        ]);
     }
 
     /**

@@ -274,6 +274,11 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
     Route::get('/vaccination-reports/{report}/json', [AdminController::class, 'showVaccinationReportJson'])->name('vaccination-reports.show-json');
     Route::get('/vaccination-reports/{report}', [AdminController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
 
+    // Anti-Rabies Vaccination Appointments
+    Route::get('/vaccination-appointments', [AdminController::class, 'indexVaccinationAppointments'])->name('vaccination-appointments.index');
+    Route::get('/vaccination-appointments/{appointment}/json', [AdminController::class, 'showVaccinationAppointmentJson'])->name('vaccination-appointments.show-json');
+    Route::put('/vaccination-appointments/{appointment}/status', [AdminController::class, 'updateVaccinationAppointmentStatus'])->name('vaccination-appointments.update-status');
+
     // Meat Inspection Reports
     Route::get('/meat-inspection-reports', [AdminController::class, 'indexMeatInspectionReports'])->name('meat-inspection-reports.index');
     Route::get('/meat-inspection-reports/{report}', [AdminController::class, 'showMeatInspectionReport'])->name('meat-inspection-reports.show');
