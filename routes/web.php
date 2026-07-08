@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\AssistantVetController;
 use App\Http\Controllers\CityVetController;
 use App\Http\Controllers\Client\AdoptionFormController;
 use App\Http\Controllers\Client\OtpController;
@@ -547,7 +548,7 @@ Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('ad
 // Access: Shares access with city_vet (merged modules)
 // ==============================
 Route::middleware(['auth', 'role:assistant_vet'])->prefix('assistant-vet')->name('assistant-vet.')->group(function () {
-    Route::get('/dashboard', [CityVetController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [AssistantVetController::class, 'dashboard'])->name('dashboard');
 
     // Vaccination Records (shared with admin_staff)
     Route::get('/vaccinations', [RecordsController::class, 'vaccinations'])->name('vaccinations.index');
