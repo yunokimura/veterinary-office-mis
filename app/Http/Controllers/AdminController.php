@@ -99,15 +99,16 @@ class AdminController extends Controller
         // Recent activity (bite reports)
         $recentActivity = BiteRabiesReport::latest()->take(5)->get();
 
-        // Get reports for export/generation
-        $biteReports = BiteRabiesReport::latest()->get();
-        $vaccinationReports = RabiesVaccinationReport::latest()->get();
-        $inspectionReports = MeatInspectionReport::latest()->get();
-        $meatEstablishments = MeatEstablishment::with('barangay')->latest()->get();
+        // Get reports for export/generation - paginated 10 per page
+        $biteReports = BiteRabiesReport::latest()->paginate(10);
+        $vaccinationReports = RabiesVaccinationReport::latest()->paginate(10);
+        $inspectionReports = MeatInspectionReport::latest()->paginate(10);
+        $totalMeatEstablishments = MeatEstablishment::count();
+        $meatEstablishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
 
-        // Missing Pet Reports (from both tables)
-        $missingPetReports = MissingPet::latest()->get();
-        $missingPetsReportRecords = MissingPetsReport::with(['pet', 'user'])->latest()->get();
+        // Missing Pet Reports (from both tables) - paginated 10 per page
+        $missingPetReports = MissingPet::latest()->paginate(10);
+        $missingPetsReportRecords = MissingPetsReport::with(['pet', 'user'])->latest()->paginate(10);
         $missingPetStats = [
             'total' => MissingPet::count() + MissingPetsReport::count(),
             'pending' => MissingPet::where('status', 'pending')->count() + MissingPetsReport::where('status', 'pending')->count(),
@@ -115,8 +116,8 @@ class AdminController extends Controller
             'resolved' => MissingPetsReport::where('status', 'resolved')->count(),
         ];
 
-        // Adoption Reports
-        $adoptionReports = AdoptionApplication::with(['user', 'pet'])->latest()->get();
+        // Adoption Reports - paginated 10 per page
+        $adoptionReports = AdoptionApplication::with(['user', 'pet'])->latest()->paginate(10);
         $adoptionStats = [
             'total' => AdoptionApplication::count(),
             'pending' => AdoptionApplication::where('status', 'pending')->count(),
@@ -146,6 +147,7 @@ class AdminController extends Controller
                 'vaccinationReports',
                 'inspectionReports',
                 'meatEstablishments',
+                'totalMeatEstablishments',
                 'missingPetReports',
                 'missingPetStats',
                 'missingPetsReportRecords',
@@ -168,6 +170,7 @@ class AdminController extends Controller
             'vaccinationReports',
             'inspectionReports',
             'meatEstablishments',
+            'totalMeatEstablishments',
             'missingPetReports',
             'missingPetStats',
             'missingPetsReportRecords',

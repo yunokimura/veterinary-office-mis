@@ -41,7 +41,7 @@
         <div class="bg-yellow-500 text-dark rounded-xl shadow-sm p-6">
             <div class="text-center">
                 <i class="bi bi-search text-4xl md:text-5xl mb-3 block"></i>
-                <h4 class="text-3xl md:text-4xl font-bold mb-1">{{ $meatEstablishments->count() }}</h4>
+                <h4 class="text-3xl md:text-4xl font-bold mb-1">{{ $totalMeatEstablishments }}</h4>
                 <small class="text-yellow-700">Meat Establishments</small>
                 <div class="mt-3">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-yellow-600">
@@ -136,22 +136,22 @@
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ ucfirst($report->animal_type) }}</td>
                                 <td class="px-4 py-3">
                                     @if($report->category == 'I')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Category I</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">Category I</span>
                                     @elseif($report->category == 'II')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Category II</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 whitespace-nowrap">Category II</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Category III</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 whitespace-nowrap">Category III</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
                                     @if($report->status == 'Pending Review')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending Review</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 whitespace-nowrap">Pending Review</span>
                                     @elseif($report->status == 'Under Investigation')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Under Investigation</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap">Under Investigation</span>
                                     @elseif($report->status == 'Cleared')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Cleared</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">Cleared</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Confirmed Rabies</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 whitespace-nowrap">Confirmed Rabies</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
@@ -170,6 +170,9 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+                <div class="px-6 py-3 border-t border-gray-100">
+                    {{ $biteReports->links() }}
                 </div>
             </div>
         </div>
@@ -232,6 +235,9 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="px-6 py-3 border-t border-gray-100">
+                    {{ $vaccinationReports->links() }}
+                </div>
             </div>
         </div>
 
@@ -243,7 +249,7 @@
                         <i class="bi bi-search me-2"></i>Meat Inspection / Establishments
                     </h5>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-yellow-600">
-                        {{ $meatEstablishments->count() }} Registered
+                        {{ $totalMeatEstablishments }} Registered
                     </span>
                 </div>
                 <div class="p-6 overflow-x-auto">
@@ -269,13 +275,13 @@
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $est->barangay->barangay_name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">
                                     @if($est->status == 'active' || $est->status == 'approved')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Active</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">Active</span>
                                     @elseif($est->status == 'pending')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 whitespace-nowrap">Pending</span>
                                     @elseif($est->status == 'suspended')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Suspended</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 whitespace-nowrap">Suspended</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ ucfirst($est->status) }}</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 whitespace-nowrap">{{ ucfirst(str_replace('_', ' ', $est->status)) }}</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
@@ -294,6 +300,9 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+                <div class="px-6 py-3 border-t border-gray-100">
+                    {{ $meatEstablishments->links() }}
                 </div>
             </div>
         </div>
@@ -390,6 +399,16 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="px-6 py-3 border-t border-gray-100">
+                    <div class="mb-2">
+                        <small class="text-gray-500">Bulletin Missing Pets</small>
+                        {{ $missingPetReports->links() }}
+                    </div>
+                    <div>
+                        <small class="text-gray-500">Report-based Missing Pets</small>
+                        {{ $missingPetsReportRecords->links() }}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -467,6 +486,9 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+                <div class="px-6 py-3 border-t border-gray-100">
+                    {{ $adoptionReports->links() }}
                 </div>
             </div>
         </div>
