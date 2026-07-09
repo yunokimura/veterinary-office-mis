@@ -206,17 +206,19 @@ class RabiesCaseController extends Controller
         // Define access levels
         // City Veterinarian: Full operational access
         // Veterinarian III: View-only access
-        $allowedRoles = ['city_vet', 'veterinarian'];
+        // Assistant Veterinarian: View-only access
+        $allowedRoles = ['city_vet', 'veterinarian', 'assistant_vet'];
 
         // Check if user has access using Spatie
         $hasAccess = $user->hasAnyRole($allowedRoles);
 
         if (!$hasAccess) {
-            abort(403, 'Access denied. Only City Veterinarian and Veterinarian III can access the rabies geomap.');
+            abort(403, 'Access denied. Only City Veterinarian, Veterinarian III, and Assistant Veterinarian can access the rabies geomap.');
         }
 
         // Determine access level based on role
         $isCityVet = $user->hasRole('city_vet');
+        $isAssistantVet = $user->hasRole('assistant_vet');
         $accessLevel = $isCityVet ? 'full_operational' : 'view_only';
 
         // Get parameters from request
@@ -393,7 +395,7 @@ class RabiesCaseController extends Controller
         $user = Auth::user();
 
         // Define access levels
-        $allowedRoles = ['city_vet', 'veterinarian'];
+        $allowedRoles = ['city_vet', 'veterinarian', 'assistant_vet'];
 
         // Check if user has access using Spatie
         $hasAccess = $user->hasAnyRole($allowedRoles);
@@ -401,7 +403,7 @@ class RabiesCaseController extends Controller
         if (!$hasAccess) {
             return response()->json([
                 'success' => false,
-                'message' => 'Access denied. Only City Veterinarian and Veterinarian III can access the rabies heatmap.',
+                'message' => 'Access denied. Only City Veterinarian, Veterinarian III, and Assistant Veterinarian can access the rabies heatmap.',
             ], 403);
         }
 
@@ -410,6 +412,7 @@ class RabiesCaseController extends Controller
         // Veterinarian gets view-only access
         $isCityVet = $user->hasRole('city_vet');
         $isVeterinarian = $user->hasRole('veterinarian');
+        $isAssistantVet = $user->hasRole('assistant_vet');
 
         // Validate request - apply stricter validation for Veterinarian (view-only)
         if ($isVeterinarian && !$isCityVet) {
@@ -566,6 +569,95 @@ class RabiesCaseController extends Controller
                     ? 'Full access: Can filter by barangay, date, case severity for operational decision-making'
                     : 'View-only access: For system monitoring and troubleshooting only',
             ]
+        ]);
+    }
+
+    /**
+     * API endpoint for filtered geomap data (AJAX).
+     * Used by the geomap view to fetch heatmap data dynamically.
+     */
+    public function geomapData(Request $request)
+    {
+        $user = Auth::user();
+
+        // Check access
+        $allowedRoles = ['city_vet', 'assistant_vet', 'veterinarian'];
+        $hasAccess = $user->hasAnyRole($allowedRoles);
+
+        if (!$hasAccess) {
+            return response()->json(['heatmapData' => [], 'totalCases' => 0, 'filterLabel' => 'Access Denied'], 403);
+        }
+
+        $year = (int) ($request->year ?? date('Y'));
+        $month = $request->month ? (int) $request->month : null;
+        $week = $request->week ? (int) $request->week : null;
+        $dateFrom = $request->date_from ?: null;
+        $dateTo = $request->date_to ?: null;
+
+        // Get filtered data
+        $query = RabiesCase::whereYear('incident_date', $year)
+            ->whereNotNull('barangay_id')
+            ->whereHas('barangay', function($q) {
+                $q->where('city', 'dasmarinas');
+            });
+
+        if ($month) {
+            $query->whereMonth('incident_date', $month);
+        }
+
+        if ($dateFrom) {
+            $query->where('incident_date', '>=', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $query->where('incident_date', '<=', $dateTo);
+        }
+
+        $byBarangay = $query->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->get();
+
+        $barangays = Barangay::where('city', 'dasmarinas')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get();
+
+        $maxCount = $byBarangay->max('count') ?: 1;
+
+        $heatmapData = $barangays->map(function ($barangay) use ($byBarangay, $maxCount) {
+            $caseCount = $byBarangay->firstWhere('barangay_id', $barangay->barangay_id);
+            $count = $caseCount ? (int) $caseCount->count : 0;
+
+            return [
+                'id' => 'rabies-' . $barangay->barangay_id,
+                'barangay_id' => $barangay->barangay_id,
+                'barangay' => $barangay->barangay_name,
+                'name' => $barangay->barangay_name,
+                'latitude' => (float) $barangay->latitude,
+                'longitude' => (float) $barangay->longitude,
+                'lat' => (float) $barangay->latitude,
+                'lng' => (float) $barangay->longitude,
+                'count' => $count,
+                'intensity' => round($count / $maxCount, 2),
+                'incident_type' => 'rabies',
+            ];
+        })->values()->toArray();
+
+        $totalCases = collect($heatmapData)->sum('count');
+
+        $filterLabel = (string) $year;
+
+        return response()->json([
+            'heatmapData' => $heatmapData,
+            'caseTypeBreakdown' => [],
+            'totalCases' => $totalCases,
+            'filterLabel' => $filterLabel,
+            'year' => $year,
+            'month' => $month,
+            'week' => $week,
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'type' => 'rabies',
         ]);
     }
 

@@ -726,6 +726,8 @@ Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet'])->prefix('
 // ==============================
 Route::middleware(['auth', 'role:city_vet|assistant_vet'])->prefix('rabies')->name('rabies.')->group(function () {
     Route::get('/heatmap', [RabiesCaseController::class, 'heatmap'])->name('heatmap');
+    Route::get('/geomap', [CityVetController::class, 'geomap'])->name('geomap');
+    Route::get('/geomap/data', [CityVetController::class, 'geomapData'])->name('geomap.data');
 });
 
 // ==============================

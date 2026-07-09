@@ -392,6 +392,36 @@
                 <span>Vaccination Records</span>
             </a>
 
+        {{-- =========================
+            ASSISTANT VET MENU
+           ========================= --}}
+        @elseif($isAssistantVet)
+            <div class="pt-4 pb-2">
+                <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Dashboard</p>
+            </div>
+
+            <a href="{{ route('assistant-vet.dashboard') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('assistant-vet.dashboard') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-speedometer2 text-lg w-6"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="pt-4 pb-2">
+                <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Disease Control</p>
+            </div>
+
+            <a href="{{ route('rabies.geomap') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('rabies.geomap') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-map text-lg w-6"></i>
+                <span>Rabies Control</span>
+            </a>
+
+            <a href="{{ route('spay-neuter.reports.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('spay-neuter.reports.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-heart text-lg w-6"></i>
+                <span>Kapon Appointments</span>
+            </a>
+
         @else
             {{-- Other roles get basic menu - dashboard and logout only --}}
         @endif

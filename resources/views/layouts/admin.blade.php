@@ -287,7 +287,11 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('assistant_vet'))
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Kapon (Spay/Neuter)</div>
+            <div class="sidebar-section-label">Disease Control</div>
+
+            <a href="{{ route('rabies.geomap') }}" class="nav-item {{ request()->routeIs('rabies.geomap') ? 'active-nav' : '' }}">
+                <i class="bi bi-map"></i><span>Rabies Control</span>
+            </a>
 
             <a href="{{ route('spay-neuter.reports.index') }}" class="nav-item {{ request()->routeIs('spay-neuter.reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-heart"></i><span>Kapon Appointments</span>
