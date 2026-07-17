@@ -287,11 +287,13 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('assistant_vet'))
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Disease Control</div>
+            <div class="sidebar-section-label">Rabies & Anti-Rabies Control</div>
 
             <a href="{{ route('rabies.geomap') }}" class="nav-item {{ request()->routeIs('rabies.geomap') ? 'active-nav' : '' }}">
-                <i class="bi bi-map"></i><span>Rabies Control</span>
+                <i class="bi bi-map"></i><span>Rabies & Anti-Rabies Heatmap</span>
             </a>
+
+            <div class="sidebar-section-label">Spay & Neuter</div>
 
             <a href="{{ route('spay-neuter.reports.index') }}" class="nav-item {{ request()->routeIs('spay-neuter.reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-heart"></i><span>Kapon Appointments</span>
@@ -307,11 +309,11 @@
             <a href="{{ route('admin-asst.adoption-applications.index') }}" class="nav-item {{ request()->routeIs('admin-asst.adoption-applications.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-heart-fill"></i><span>Adoption Applications</span>
             </a>
-            <a href="{{ route('admin-asst.adoption-pets.index') }}" class="nav-item {{ request()->routeIs('admin-asst.adoption-pets.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-paw"></i><span>Adoption Pets</span>
-            </a>
             <a href="{{ route('admin-asst.missing-pets.index') }}" class="nav-item {{ request()->routeIs('admin-asst.missing-pets.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-search"></i><span>Missing Pets</span>
+            </a>
+            <a href="{{ route('admin-asst.owners.index') }}" class="nav-item {{ request()->routeIs('admin-asst.owners.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-people"></i><span>Pet Owners</span>
             </a>
 
             @elseif(auth()->check() && auth()->user()->hasRole('meat_inspector'))

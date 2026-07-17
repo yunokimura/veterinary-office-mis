@@ -452,14 +452,6 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
     Route::post('/adoption-applications/{application}/complete', [AdoptionApplicationController::class, 'complete'])->name('adoption-applications.complete');
     Route::post('/adoption-applications/{application}/pending', [AdoptionApplicationController::class, 'pending'])->name('adoption-applications.pending');
 
-    // Appointments
-    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
-    Route::get('/appointments/{submission}', [AppointmentController::class, 'show'])->name('appointments.show');
-    Route::post('/appointments/{submission}/approve', [AppointmentController::class, 'approve'])->name('appointments.approve');
-    Route::post('/appointments/{submission}/reject', [AppointmentController::class, 'reject'])->name('appointments.reject');
-    Route::post('/appointments/{submission}/complete', [AppointmentController::class, 'complete'])->name('appointments.complete');
-    Route::post('/appointments/{submission}/reset', [AppointmentController::class, 'reset'])->name('appointments.reset');
-
     // Missing Pets
     Route::get('/missing-pets', [MissingPetController::class, 'index'])->name('missing-pets.index');
     Route::get('/missing-pets/create', [MissingPetController::class, 'create'])->name('missing-pets.create');
@@ -470,23 +462,9 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
     Route::post('/missing-pets/{missingPet}/found', [MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
     Route::post('/missing-pets/{missingPet}/approve', [MissingPetController::class, 'approve'])->name('missing-pets.approve');
 
-    // Impound Records
-    Route::get('/impounds', [ImpoundController::class, 'index'])->name('impounds.index');
-    Route::get('/impounds/{impound}', [ImpoundController::class, 'show'])->name('impounds.show');
-    Route::put('/impounds/{impound}', [ImpoundController::class, 'updateDisposition'])->name('impounds.update');
-
-    // Inventory
-    Route::get('/inventory', [App\Http\Controllers\AdminAsst\InventoryController::class, 'index'])->name('inventory.index');
-    Route::get('/inventory/create', [App\Http\Controllers\AdminAsst\InventoryController::class, 'create'])->name('inventory.create');
-    Route::post('/inventory', [App\Http\Controllers\AdminAsst\InventoryController::class, 'store'])->name('inventory.store');
-    Route::get('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'show'])->name('inventory.show');
-    Route::get('/inventory/{inventory}/edit', [App\Http\Controllers\AdminAsst\InventoryController::class, 'edit'])->name('inventory.edit');
-    Route::put('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'update'])->name('inventory.update');
-    Route::delete('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'destroy'])->name('inventory.destroy');
-    Route::get('/inventory/low-stock', [App\Http\Controllers\AdminAsst\InventoryController::class, 'lowStock'])->name('inventory.low-stock');
-
-    // Adoption Pets (available for adoption)
-    Route::get('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'index'])->name('adoption-pets.index');
+    // Pet Owners
+    Route::get('/owners', [RecordsController::class, 'owners'])->name('owners.index');
+    Route::get('/owners/{owner}', [RecordsController::class, 'showOwner'])->name('owners.show');
 });
 
 // ==============================

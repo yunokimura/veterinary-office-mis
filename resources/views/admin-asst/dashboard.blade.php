@@ -1,342 +1,205 @@
 @extends('layouts.admin')
 
 @section('title', 'Admin Assistant Dashboard')
+@section('header', 'Admin Assistant Dashboard')
+@section('subheader', 'Gatekeeper operations and records management')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Assistant Dashboard</h2>
-        <span class="text-muted">Welcome back! {{ auth()->user()->name }}</span>
-    </div>
+@php
+    $hour = date('H');
+    if ($hour >= 5 && $hour < 12) {
+        $greeting = 'Good morning';
+    } elseif ($hour >= 12 && $hour < 18) {
+        $greeting = 'Good afternoon';
+    } else {
+        $greeting = 'Good evening';
+    }
+@endphp
 
-    <!-- Statistics Cards Row 1 -->
-    <div class="row g-3 mb-4">
-        <!-- Pet Registration Stats -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Total Pets</h6>
-                            <h3 class="mb-0">{{ $totalPets }}</h3>
-                        </div>
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary">
-                            <i class="fas fa-paw fa-2x"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <span class="badge bg-success">{{ $totalPets }}</span>
-                        <small class="text-muted">Total Pets</small>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ route('admin-asst.pet-registrations.index') }}" class="text-primary text-decoration-none small">
-                        View All <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
+<!-- Welcome Banner -->
+<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
+    <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
+        {{ $greeting }}, {{ auth()->user()->name ?? 'Admin Assistant' }}!
+    </h2>
+    <p class="text-sm md:text-base text-gray-600">
+        Manage pet registrations, adoptions, missing pets, and pet owners.
+    </p>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border border-gray-100 flex flex-col">
+        <div class="flex items-center justify-between gap-3 md:gap-4">
+            <div class="flex-1 min-w-0">
+                <p class="text-[10px] md:text-[11px] font-medium text-gray-500 whitespace-nowrap">Registered Pets</p>
+                <p class="text-xl md:text-3xl font-bold text-emerald-600 mt-1">{{ $totalPets }}</p>
             </div>
-        </div>
-
-        <!-- Appointment Stats -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Service Requests</h6>
-                            <h3 class="mb-0">{{ $pendingAppointments }}</h3>
-                        </div>
-                        <div class="icon-circle bg-success bg-opacity-10 text-success">
-                            <i class="fas fa-calendar-check fa-2x"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <span class="badge bg-info">{{ $todayAppointments }}</span>
-                        <small class="text-muted">Submitted Today</small>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ route('admin-asst.appointments.index') }}" class="text-success text-decoration-none small">
-                        Manage Requests <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Inventory Stats -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Inventory Items</h6>
-                            <h3 class="mb-0">{{ $totalInventoryItems }}</h3>
-                        </div>
-                        <div class="icon-circle bg-warning bg-opacity-10 text-warning">
-                            <i class="fas fa-boxes fa-2x"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <span class="badge bg-danger">{{ $lowStockItems }}</span>
-                        <small class="text-muted">Low Stock</small>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ route('admin-asst.inventory.low-stock') }}" class="text-warning text-decoration-none small">
-                        View Alerts <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
+            <div class="w-7 h-7 md:w-14 md:h-14 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-paw text-emerald-600 text-sm md:text-2xl"></i>
             </div>
         </div>
     </div>
 
-    <!-- Statistics Cards Row 2 -->
-    <div class="row g-3 mb-4">
-        <!-- Adoption Stats -->
-        <div class="col-xl-4 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Adoption Requests</h6>
-                            <h3 class="mb-0">{{ $totalAdoptions }}</h3>
-                        </div>
-                        <div class="icon-circle bg-info bg-opacity-10 text-info">
-                            <i class="fas fa-heart fa-2x"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <span class="badge bg-warning">{{ $pendingAdoptions }}</span>
-                        <small class="text-muted">Pending Review</small>
-                        <span class="badge bg-success ms-2">{{ $approvedAdoptions }}</span>
-                        <small class="text-muted">Approved</small>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ route('admin-asst.adoption-pets.index') }}" class="text-info text-decoration-none small">
-                        Manage Adoptions <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border border-gray-100 flex flex-col">
+        <div class="flex items-center justify-between gap-3 md:gap-4">
+            <div class="flex-1 min-w-0">
+                <p class="text-[10px] md:text-[11px] font-medium text-gray-500 whitespace-nowrap">Missing Pets</p>
+                <p class="text-xl md:text-3xl font-bold text-orange-600 mt-1">{{ $totalMissingPets }}</p>
             </div>
-        </div>
-
-        <!-- Impound Stats -->
-        <div class="col-xl-4 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Impounded Animals</h6>
-                            <h3 class="mb-0">{{ $totalImpounds }}</h3>
-                        </div>
-                        <div class="icon-circle bg-secondary bg-opacity-10 text-secondary">
-                            <i class="fas fa-shelter fa-2x"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <span class="badge bg-info">{{ $availableForAdoption }}</span>
-                        <small class="text-muted">Available for Adoption</small>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ route('admin-asst.impounds.index') }}" class="text-secondary text-decoration-none small">
-                        View Impounds <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Expiring Items -->
-        <div class="col-xl-4 col-md-12">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Expiring Items (30 days)</h6>
-                            <h3 class="mb-0">{{ $expiringItems }}</h3>
-                        </div>
-                        <div class="icon-circle bg-dark bg-opacity-10 text-dark">
-                            <i class="fas fa-clock fa-2x"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <small class="text-muted">Items expiring soon - review and use accordingly</small>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ route('admin-asst.inventory.index') }}" class="text-dark text-decoration-none small">
-                        Check Inventory <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
+            <div class="w-7 h-7 md:w-14 md:h-14 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-search text-orange-600 text-sm md:text-2xl"></i>
             </div>
         </div>
     </div>
 
-    <!-- Recent Activity Section -->
-    <div class="row g-4">
-        <!-- Recent Pet Registrations -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0"><i class="fas fa-paw me-2 text-primary"></i>Recent Pet Registrations</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Pet Name</th>
-                                    <th>Species</th>
-                                    <th>Owner</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentPetRegistrations as $pet)
-                                <tr>
-                                    <td>{{ $pet->pet_name }}</td>
-                                    <td><span class="badge bg-secondary">{{ ucfirst($pet->species) }}</span></td>
-                                    <td>{{ $pet->userOwner ? $pet->userOwner->name : 'N/A' }}</td>
-                                    <td>
-                                        <span class="badge bg-success">Registered</span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">No recent registrations</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border border-gray-100 flex flex-col">
+        <div class="flex items-center justify-between gap-3 md:gap-4">
+            <div class="flex-1 min-w-0">
+                <p class="text-[10px] md:text-[11px] font-medium text-gray-500 whitespace-nowrap">Adoption Applications</p>
+                <p class="text-xl md:text-3xl font-bold text-pink-600 mt-1">{{ $totalAdoptions }}</p>
             </div>
-        </div>
-
-        <!-- Recent Adoption Requests -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0"><i class="fas fa-heart me-2 text-info"></i>Recent Adoption Requests</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Pet Name</th>
-                                    <th>Species</th>
-                                    <th>Added</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentAdoptions as $adoption)
-                                <tr>
-                                    <td>{{ $adoption->pet_name }}</td>
-                                    <td>{{ $adoption->species }}</td>
-                                    <td>{{ $adoption->created_at ? $adoption->created_at->format('M d, Y') : 'N/A' }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $adoption->is_approved ? 'success' : 'warning' }}">
-                                            {{ $adoption->is_approved ? 'Approved' : 'Pending' }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">No pets available for adoption</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Service Submissions -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0"><i class="fas fa-file-alt me-2 text-success"></i>Recent Service Submissions</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Citizen</th>
-                                    <th>Form Type</th>
-                                    <th>Submitted</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentSubmissions as $submission)
-                                <tr>
-                                    <td>{{ $submission->citizen_name }}</td>
-                                    <td>{{ $submission->form ? $submission->form->title : 'N/A' }}</td>
-                                    <td>{{ $submission->submitted_at ? $submission->submitted_at->format('M d, Y') : 'N/A' }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $submission->status == 'pending' ? 'warning' : ($submission->status == 'approved' ? 'success' : ($submission->status == 'rejected' ? 'danger' : 'secondary')) }}">
-                                            {{ ucfirst($submission->status) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">No recent submissions</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="w-7 h-7 md:w-14 md:h-14 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-heart text-pink-600 text-sm md:text-2xl"></i>
             </div>
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm bg-primary bg-opacity-5">
-                <div class="card-body">
-                    <h5 class="mb-3"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <a href="{{ route('admin-asst.pet-registrations.create') }}" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-plus-circle me-2"></i>Register New Pet
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="{{ route('admin-asst.inventory.create') }}" class="btn btn-outline-warning w-100">
-                                <i class="fas fa-box-open me-2"></i>Add Inventory Item
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="{{ route('admin-asst.appointments.index') }}" class="btn btn-outline-success w-100">
-                                <i class="fas fa-clipboard-check me-2"></i>Review Requests
-                            </a>
-                        </div>
-                    </div>
-                </div>
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border border-gray-100 flex flex-col">
+        <div class="flex items-center justify-between gap-3 md:gap-4">
+            <div class="flex-1 min-w-0">
+                <p class="text-[10px] md:text-[11px] font-medium text-gray-500 whitespace-nowrap">Pet Owners</p>
+                <p class="text-xl md:text-3xl font-bold text-blue-600 mt-1">{{ $totalOwners }}</p>
+            </div>
+            <div class="w-7 h-7 md:w-14 md:h-14 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-people text-blue-600 text-sm md:text-2xl"></i>
             </div>
         </div>
     </div>
 </div>
-@endsection
 
-@push('styles')
-<style>
-    .icon-circle {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style>
-@endpush
+<!-- Quick Actions -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="{{ route('admin-asst.pet-registrations.create') }}"
+           class="flex flex-col items-center p-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-plus-circle text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Register Pet</span>
+        </a>
+
+        <a href="{{ route('admin-asst.missing-pets.create') }}"
+           class="flex flex-col items-center p-4 bg-orange-50 hover:bg-orange-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-search text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Report Missing Pet</span>
+        </a>
+
+        <a href="{{ route('admin-asst.adoption-applications.index') }}"
+           class="flex flex-col items-center p-4 bg-pink-50 hover:bg-pink-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-pink-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-heart text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Review Adoptions</span>
+        </a>
+
+        <a href="{{ route('admin-asst.owners.index') }}"
+           class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-people text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">View Pet Owners</span>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Pet Registrations -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800">Recent Pet Registrations</h3>
+        </div>
+        <div class="divide-y divide-gray-100">
+            @forelse($recentPetRegistrations as $pet)
+                <a href="{{ route('admin-asst.pet-registrations.show', $pet->pet_id) }}" class="block p-4 hover:bg-gray-50 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                            <i class="bi bi-paw text-emerald-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">{{ $pet->pet_name }}</p>
+                            <p class="text-xs text-gray-500">{{ ucfirst($pet->species) }} - {{ $pet->owner ? $pet->owner->first_name . ' ' . $pet->owner->last_name : 'No owner' }}</p>
+                        </div>
+                    </div>
+                </a>
+            @empty
+                <div class="p-8 text-center text-gray-500">
+                    <i class="bi bi-inbox text-3xl mb-2 block"></i>
+                    <p class="text-sm">No recent registrations</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    <!-- Recent Missing Pets -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800">Recent Missing Pets</h3>
+        </div>
+        <div class="divide-y divide-gray-100">
+            @forelse($recentMissingPets as $missing)
+                <a href="{{ route('admin-asst.missing-pets.show', $missing) }}" class="block p-4 hover:bg-gray-50 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                            <i class="bi bi-search text-orange-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">{{ $missing->pet ? $missing->pet->pet_name : 'N/A' }}</p>
+                            <p class="text-xs text-gray-500">
+                                <span class="badge bg-{{ $missing->status == 'missing' ? 'danger' : 'success' }}">{{ ucfirst($missing->status) }}</span>
+                                <span class="ms-2">{{ $missing->created_at ? $missing->created_at->format('M d, Y') : 'N/A' }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            @empty
+                <div class="p-8 text-center text-gray-500">
+                    <i class="bi bi-inbox text-3xl mb-2 block"></i>
+                    <p class="text-sm">No missing pet reports</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    <!-- Recent Pet Owners -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800">Recent Pet Owners</h3>
+        </div>
+        <div class="divide-y divide-gray-100">
+            @forelse($recentOwners as $owner)
+                <a href="{{ route('admin-asst.owners.show', $owner) }}" class="block p-4 hover:bg-gray-50 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="bi bi-people text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">{{ $owner->user ? $owner->user->name : 'N/A' }}</p>
+                            <p class="text-xs text-gray-500">{{ $owner->contact_number ?? 'No contact' }} - {{ $owner->created_at ? $owner->created_at->format('M d, Y') : 'N/A' }}</p>
+                        </div>
+                    </div>
+                </a>
+            @empty
+                <div class="p-8 text-center text-gray-500">
+                    <i class="bi bi-inbox text-3xl mb-2 block"></i>
+                    <p class="text-sm">No pet owners registered</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+</div>
+@endsection

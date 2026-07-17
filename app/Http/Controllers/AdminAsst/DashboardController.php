@@ -4,41 +4,36 @@ namespace App\Http\Controllers\AdminAsst;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdoptionApplication;
-use App\Models\FormSubmission;
-use App\Models\ImpoundRecord;
-use App\Models\InventoryControl;
+use App\Models\MissingPetsReport;
 use App\Models\Pet;
+use App\Models\PetOwner;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Pets Module
         $totalPets = Pet::count();
+        $recentPetRegistrations = Pet::with('owner')->latest()->take(5)->get();
 
-        $pendingAppointments = FormSubmission::where('status', 'pending')->count();
-        $todayAppointments = FormSubmission::whereDate('submitted_at', now()->toDateString())->count();
+        // Missing Pets Module
+        $totalMissingPets = MissingPetsReport::count();
+        $activeMissingPets = MissingPetsReport::where('status', 'missing')->count();
+        $foundMissingPets = MissingPetsReport::whereIn('status', ['found', 'reunited'])->count();
+        $recentMissingPets = MissingPetsReport::with('pet')->latest()->take(5)->get();
 
-        $totalInventoryItems = InventoryControl::count();
-        $lowStockItems = InventoryControl::whereRaw('quantity <= minimum_stock')->count();
-        $expiringItems = InventoryControl::whereNotNull('expiry_date')
-            ->where('expiry_date', '<=', now()->addDays(30))
-            ->where('expiry_date', '>=', now())
-            ->count();
-
-        // Total adoption listings: count of pets listed for adoption (source_module = 'adoption_pets')
+        // Adoption Module
         $totalAdoptions = Pet::where('source_module', 'adoption_pets')->count();
         $pendingAdoptions = AdoptionApplication::where('status', 'pending')->count();
         $approvedAdoptions = AdoptionApplication::where('status', 'approved')->count();
+        $recentAdoptions = Pet::where('source_module', 'adoption_pets')->with('owner')->latest()->take(5)->get();
 
-        $totalImpounds = ImpoundRecord::count();
-        $availableForAdoption = ImpoundRecord::where('current_disposition', 'impounded')->count();
+        // Pet Owners Module
+        $totalOwners = PetOwner::count();
+        $recentOwners = PetOwner::with('user')->latest()->take(5)->get();
 
-        $recentPetRegistrations = Pet::latest()->take(5)->get();
-        // Recent adoption listings: pets recently added for adoption
-        $recentAdoptions = Pet::where('source_module', 'adoption_pets')->latest()->take(5)->get();
-        $recentSubmissions = FormSubmission::with('form')->latest()->take(5)->get();
-
+        // Monthly registrations for chart
         $monthlyRegistrations = Pet::select(
             DB::raw('MONTH(created_at) as month'),
             DB::raw('COUNT(*) as count')
@@ -50,19 +45,17 @@ class DashboardController extends Controller
 
         return view('admin-asst.dashboard', compact(
             'totalPets',
-            'pendingAppointments',
-            'todayAppointments',
-            'totalInventoryItems',
-            'lowStockItems',
-            'expiringItems',
+            'recentPetRegistrations',
+            'totalMissingPets',
+            'activeMissingPets',
+            'foundMissingPets',
+            'recentMissingPets',
             'totalAdoptions',
             'pendingAdoptions',
             'approvedAdoptions',
-            'totalImpounds',
-            'availableForAdoption',
-            'recentPetRegistrations',
             'recentAdoptions',
-            'recentSubmissions',
+            'totalOwners',
+            'recentOwners',
             'monthlyRegistrations'
         ));
     }
