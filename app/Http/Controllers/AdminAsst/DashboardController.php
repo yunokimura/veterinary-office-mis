@@ -13,25 +13,57 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Pets Module
-        $totalPets = Pet::count();
+        // Pets Module - Operational Metrics
+        $newPetRegistrationsToday = Pet::whereDate('created_at', today())->count();
+        $newPetRegistrationsYesterday = Pet::whereDate('created_at', today()->subDay())->count();
+        $newPetRegistrationsTrend = $this->calculateTrend($newPetRegistrationsToday, $newPetRegistrationsYesterday);
+        
+        $newPetRegistrationsThisWeek = Pet::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        $newPetRegistrationsLastWeek = Pet::whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count();
+        $newPetRegistrationsWeekTrend = $this->calculateTrend($newPetRegistrationsThisWeek, $newPetRegistrationsLastWeek);
+        
         $recentPetRegistrations = Pet::with('owner')->latest()->take(5)->get();
 
-        // Missing Pets Module
-        $totalMissingPets = MissingPetsReport::count();
+        // Missing Pets Module - Operational Metrics
         $activeMissingPets = MissingPetsReport::where('status', 'missing')->count();
+        $activeMissingPetsLastWeek = MissingPetsReport::where('status', 'missing')
+            ->whereDate('created_at', '<=', now()->subWeek())
+            ->count();
+        $activeMissingPetsTrend = $this->calculateTrend($activeMissingPets, $activeMissingPetsLastWeek);
+        
+        $totalMissingPets = MissingPetsReport::count();
         $foundMissingPets = MissingPetsReport::whereIn('status', ['found', 'reunited'])->count();
         $recentMissingPets = MissingPetsReport::with('pet')->latest()->take(5)->get();
 
-        // Adoption Module
-        $totalAdoptions = Pet::where('source_module', 'adoption_pets')->count();
+        // Adoption Module - Operational Metrics
         $pendingAdoptions = AdoptionApplication::where('status', 'pending')->count();
+        $pendingAdoptionsLastWeek = AdoptionApplication::where('status', 'pending')
+            ->whereDate('created_at', '<=', now()->subWeek())
+            ->count();
+        $pendingAdoptionsTrend = $this->calculateTrend($pendingAdoptions, $pendingAdoptionsLastWeek);
+        
+        $totalAdoptions = Pet::where('source_module', 'adoption_pets')->count();
         $approvedAdoptions = AdoptionApplication::where('status', 'approved')->count();
         $recentAdoptions = Pet::where('source_module', 'adoption_pets')->with('owner')->latest()->take(5)->get();
 
-        // Pet Owners Module
+        // Pet Owners Module - Operational Metrics
+        $newPetOwnersThisWeek = PetOwner::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        $newPetOwnersLastWeek = PetOwner::whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count();
+        $newPetOwnersTrend = $this->calculateTrend($newPetOwnersThisWeek, $newPetOwnersLastWeek);
+        
         $totalOwners = PetOwner::count();
         $recentOwners = PetOwner::with('user')->latest()->take(5)->get();
+
+        // Urgent Tasks Summary
+        $pendingAdoptionReviews = AdoptionApplication::where('status', 'pending')->count();
+        $missingPetReportsWaitingVerification = MissingPetsReport::where('status', 'missing')->count();
+        $newPetRegistrationsCount = Pet::whereDate('created_at', today())->count();
+        $ownersMissingContactInfo = PetOwner::where(function($query) {
+            $query->whereNull('phone_number')
+                  ->orWhere('phone_number', '')
+                  ->orWhereNull('alternate_phone_number')
+                  ->orWhere('alternate_phone_number', '');
+        })->count();
 
         // Monthly registrations for chart
         $monthlyRegistrations = Pet::select(
@@ -43,20 +75,97 @@ class DashboardController extends Controller
             ->pluck('count', 'month')
             ->toArray();
 
+        // Analytics Data
+        // Pet Registration Trend (last 7 and 30 days)
+        $petRegistrationTrend7Days = Pet::select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('COUNT(*) as count')
+        )
+            ->where('created_at', '>=', now()->subDays(7))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->pluck('count', 'date')
+            ->toArray();
+
+        $petRegistrationTrend30Days = Pet::select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('COUNT(*) as count')
+        )
+            ->where('created_at', '>=', now()->subDays(30))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->pluck('count', 'date')
+            ->toArray();
+
+        // Adoption Status Distribution
+        $adoptionStatusDistribution = AdoptionApplication::select(
+            'status',
+            DB::raw('COUNT(*) as count')
+        )
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        // Missing Pet Status Breakdown
+        $missingPetStatusBreakdown = MissingPetsReport::select(
+            'status',
+            DB::raw('COUNT(*) as count')
+        )
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
         return view('admin-asst.dashboard', compact(
-            'totalPets',
+            'newPetRegistrationsToday',
+            'newPetRegistrationsYesterday',
+            'newPetRegistrationsTrend',
+            'newPetRegistrationsThisWeek',
+            'newPetRegistrationsLastWeek',
+            'newPetRegistrationsWeekTrend',
             'recentPetRegistrations',
             'totalMissingPets',
             'activeMissingPets',
+            'activeMissingPetsLastWeek',
+            'activeMissingPetsTrend',
             'foundMissingPets',
             'recentMissingPets',
             'totalAdoptions',
             'pendingAdoptions',
+            'pendingAdoptionsLastWeek',
+            'pendingAdoptionsTrend',
             'approvedAdoptions',
             'recentAdoptions',
+            'newPetOwnersThisWeek',
+            'newPetOwnersLastWeek',
+            'newPetOwnersTrend',
             'totalOwners',
             'recentOwners',
-            'monthlyRegistrations'
+            'monthlyRegistrations',
+            'petRegistrationTrend7Days',
+            'petRegistrationTrend30Days',
+            'adoptionStatusDistribution',
+            'missingPetStatusBreakdown',
+            'pendingAdoptionReviews',
+            'missingPetReportsWaitingVerification',
+            'newPetRegistrationsCount',
+            'ownersMissingContactInfo'
         ));
+    }
+
+    private function calculateTrend($current, $previous)
+    {
+        if ($previous == 0) {
+            return $current > 0 ? 'up' : 'neutral';
+        }
+        
+        $change = (($current - $previous) / $previous) * 100;
+        
+        if ($change > 0) {
+            return 'up';
+        } elseif ($change < 0) {
+            return 'down';
+        }
+        
+        return 'neutral';
     }
 }
