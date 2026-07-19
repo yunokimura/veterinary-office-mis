@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AdminAsst;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdoptionApplication;
+use App\Models\FormSubmission;
 use App\Models\MissingPetsReport;
 use App\Models\Pet;
 use App\Models\PetOwner;
@@ -64,6 +65,34 @@ class DashboardController extends Controller
                   ->orWhereNull('alternate_phone_number')
                   ->orWhere('alternate_phone_number', '');
         })->count();
+
+        // Additional Operational Metrics
+        $pendingAppointments = FormSubmission::where('status', 'pending')->count();
+        $todayAppointments = FormSubmission::whereDate('submitted_at', today())->count();
+        $missingPetReportsPending = MissingPetsReport::where('status', 'pending')->count();
+        $adoptionPetsAvailable = Pet::where('source_module', 'adoption_pets')
+            ->where('pet_status', '!=', 'adopted')
+            ->count();
+
+        // Recent Items Requiring Action
+        $recentPendingAdoptions = AdoptionApplication::with(['owner', 'user'])
+            ->where('status', 'pending')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $recentMissingPetsPending = MissingPetsReport::with('pet')
+            ->where('status', 'pending')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $recentAppointments = FormSubmission::with('form')
+            ->where('status', 'pending')
+            ->whereDate('submitted_at', today())
+            ->latest()
+            ->take(3)
+            ->get();
 
         // Monthly registrations for chart
         $monthlyRegistrations = Pet::select(
@@ -148,7 +177,14 @@ class DashboardController extends Controller
             'pendingAdoptionReviews',
             'missingPetReportsWaitingVerification',
             'newPetRegistrationsCount',
-            'ownersMissingContactInfo'
+            'ownersMissingContactInfo',
+            'pendingAppointments',
+            'todayAppointments',
+            'missingPetReportsPending',
+            'adoptionPetsAvailable',
+            'recentPendingAdoptions',
+            'recentMissingPetsPending',
+            'recentAppointments'
         ));
     }
 

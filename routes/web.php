@@ -465,6 +465,14 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
     // Pet Owners
     Route::get('/owners', [RecordsController::class, 'owners'])->name('owners.index');
     Route::get('/owners/{owner}', [RecordsController::class, 'showOwner'])->name('owners.show');
+
+    // Appointments/Service Requests
+    Route::get('/appointments', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'index'])->name('appointments.index');
+    Route::get('/appointments/{appointment}', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'show'])->name('appointments.show');
+    Route::post('/appointments/{appointment}/approve', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'approve'])->name('appointments.approve');
+    Route::post('/appointments/{appointment}/reject', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'reject'])->name('appointments.reject');
+    Route::post('/appointments/{appointment}/complete', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'complete'])->name('appointments.complete');
+    Route::post('/appointments/{appointment}/reset', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'reset'])->name('appointments.reset');
 });
 
 // ==============================

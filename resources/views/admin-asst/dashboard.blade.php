@@ -233,6 +233,40 @@
                 <p class="text-xs text-red-600 font-medium group-hover:underline">Update Records →</p>
             </div>
         </a>
+
+        <!-- Pending Appointments -->
+        <a href="{{ route('admin-asst.appointments.index') }}" 
+           class="bg-white rounded-lg shadow-sm border-l-4 border-purple-500 p-4 hover:shadow-md transition group flex flex-col h-full">
+            <div class="flex items-start justify-between mb-3">
+                <div class="flex-1">
+                    <p class="text-xs font-medium text-gray-500">Pending Appointments</p>
+                </div>
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+                    <i class="bi bi-calendar-check text-purple-600"></i>
+                </div>
+            </div>
+            <div class="mt-auto">
+                <p class="text-3xl font-bold text-gray-800 mb-2">{{ $pendingAppointments }}</p>
+                <p class="text-xs text-purple-600 font-medium group-hover:underline">Review Appointments →</p>
+            </div>
+        </a>
+
+        <!-- Missing Pet Reports Pending Approval -->
+        <a href="{{ route('admin-asst.missing-pets.index') }}" 
+           class="bg-white rounded-lg shadow-sm border-l-4 border-indigo-500 p-4 hover:shadow-md transition group flex flex-col h-full">
+            <div class="flex items-start justify-between mb-3">
+                <div class="flex-1">
+                    <p class="text-xs font-medium text-gray-500">Missing Pet Reports Pending Approval</p>
+                </div>
+                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+                    <i class="bi bi-clipboard-check text-indigo-600"></i>
+                </div>
+            </div>
+            <div class="mt-auto">
+                <p class="text-3xl font-bold text-gray-800 mb-2">{{ $missingPetReportsPending }}</p>
+                <p class="text-xs text-indigo-600 font-medium group-hover:underline">Review Reports →</p>
+            </div>
+        </a>
     </div>
 
     <div class="mt-4 pt-3 border-t border-amber-200">
@@ -240,6 +274,130 @@
             <i class="bi bi-info-circle me-1"></i>
             Click on any task above to navigate directly to the relevant section for immediate action.
         </p>
+    </div>
+</div>
+
+<!-- Recent Items Requiring Action -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Items Requiring Action</h3>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Recent Pending Adoption Applications -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+            <div class="px-4 py-3 bg-pink-50 border-b border-gray-200">
+                <h4 class="text-sm font-semibold text-gray-700">Pending Adoption Reviews</h4>
+            </div>
+            <div class="divide-y divide-gray-100">
+                @forelse($recentPendingAdoptions as $application)
+                    <a href="{{ route('admin-asst.adoption-applications.show', $application) }}" 
+                       class="block p-3 hover:bg-gray-50 transition">
+                        <div class="flex items-start gap-2">
+                            <div class="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="bi bi-heart text-pink-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-800 truncate">
+                                    {{ $application->owner ? $application->owner->first_name . ' ' . $application->owner->last_name : 'N/A' }}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    {{ $application->created_at ? $application->created_at->diffForHumans() : 'N/A' }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="p-4 text-center text-gray-500">
+                        <p class="text-xs">No pending adoptions</p>
+                    </div>
+                @endforelse
+            </div>
+            @if($pendingAdoptionReviews > 0)
+                <div class="px-4 py-2 bg-gray-50 border-t border-gray-200">
+                    <a href="{{ route('admin-asst.adoption-applications.index') }}" 
+                       class="text-xs text-pink-600 font-medium hover:underline">
+                        View all {{ $pendingAdoptionReviews }} pending reviews →
+                    </a>
+                </div>
+            @endif
+        </div>
+
+        <!-- Recent Missing Pet Reports Pending -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+            <div class="px-4 py-3 bg-orange-50 border-b border-gray-200">
+                <h4 class="text-sm font-semibold text-gray-700">Missing Pet Reports Pending Verification</h4>
+            </div>
+            <div class="divide-y divide-gray-100">
+                @forelse($recentMissingPetsPending as $report)
+                    <a href="{{ route('admin-asst.missing-pets.show', $report) }}" 
+                       class="block p-3 hover:bg-gray-50 transition">
+                        <div class="flex items-start gap-2">
+                            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="bi bi-search text-orange-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-800 truncate">
+                                    {{ $report->pet ? $report->pet->pet_name : 'N/A' }}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    {{ $report->created_at ? $report->created_at->diffForHumans() : 'N/A' }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="p-4 text-center text-gray-500">
+                        <p class="text-xs">No pending reports</p>
+                    </div>
+                @endforelse
+            </div>
+            @if($missingPetReportsPending > 0)
+                <div class="px-4 py-2 bg-gray-50 border-t border-gray-200">
+                    <a href="{{ route('admin-asst.missing-pets.index') }}" 
+                       class="text-xs text-orange-600 font-medium hover:underline">
+                        View all {{ $missingPetReportsPending }} pending reports →
+                    </a>
+                </div>
+            @endif
+        </div>
+
+        <!-- Recent Appointments Today -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+            <div class="px-4 py-3 bg-purple-50 border-b border-gray-200">
+                <h4 class="text-sm font-semibold text-gray-700">Today's Appointments</h4>
+            </div>
+            <div class="divide-y divide-gray-100">
+                @forelse($recentAppointments as $appointment)
+                    <a href="{{ route('admin-asst.appointments.show', $appointment) }}" 
+                       class="block p-3 hover:bg-gray-50 transition">
+                        <div class="flex items-start gap-2">
+                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="bi bi-calendar-event text-purple-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-800 truncate">
+                                    {{ $appointment->form ? $appointment->form->title : 'Service Request' }}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    {{ $appointment->citizen_name ?? 'N/A' }} - {{ $appointment->submitted_at ? $appointment->submitted_at->format('M d, Y') : 'N/A' }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="p-4 text-center text-gray-500">
+                        <p class="text-xs">No appointments today</p>
+                    </div>
+                @endforelse
+            </div>
+            @if($todayAppointments > 0)
+                <div class="px-4 py-2 bg-gray-50 border-t border-gray-200">
+                    <a href="{{ route('admin-asst.appointments.index') }}" 
+                       class="text-xs text-purple-600 font-medium hover:underline">
+                        View all {{ $todayAppointments }} appointments →
+                    </a>
+                </div>
+            @endif
+        </div>
     </div>
 </div>
 
@@ -480,32 +638,6 @@
         </div>
     </div>
 
-    <!-- Recent Pet Owners -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-5 py-4 border-b border-gray-100">
-            <h3 class="font-semibold text-gray-800">Recent Pet Owners</h3>
-        </div>
-        <div class="divide-y divide-gray-100">
-            @forelse($recentOwners as $owner)
-                <a href="{{ route('admin-asst.owners.show', $owner) }}" class="block p-4 hover:bg-gray-50 transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="bi bi-people text-blue-600"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-800">{{ $owner->user ? $owner->user->name : 'N/A' }}</p>
-                            <p class="text-xs text-gray-500">{{ $owner->contact_number ?? 'No contact' }} - {{ $owner->created_at ? $owner->created_at->format('M d, Y') : 'N/A' }}</p>
-                        </div>
-                    </div>
-                </a>
-            @empty
-                <div class="p-8 text-center text-gray-500">
-                    <i class="bi bi-inbox text-3xl mb-2 block"></i>
-                    <p class="text-sm">No pet owners registered</p>
-                </div>
-            @endforelse
-        </div>
-    </div>
 </div>
 
 <script>
