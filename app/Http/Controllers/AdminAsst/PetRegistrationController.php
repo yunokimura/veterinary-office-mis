@@ -17,7 +17,7 @@ class PetRegistrationController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Pet::query()->with('owner');
+        $query = Pet::query()->with(['owner', 'userOwner']);
 
         // Filter by species
         if ($request->filled('species')) {
@@ -46,11 +46,15 @@ class PetRegistrationController extends Controller
         $barangays = Barangay::orderBy('barangay_name')->get();
 
         $totalCount = Pet::count();
+        $registeredCount = Pet::where('pet_status', 'registered')->count();
+        $pendingCount = Pet::where('pet_status', 'pending')->count();
 
         return view('admin-asst.pet-registrations.index', compact(
             'pets',
             'barangays',
-            'totalCount'
+            'totalCount',
+            'registeredCount',
+            'pendingCount'
         ));
     }
 

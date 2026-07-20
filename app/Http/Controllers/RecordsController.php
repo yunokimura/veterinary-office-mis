@@ -222,10 +222,17 @@ class RecordsController extends Controller
             })
             ->with('petOwner')
             ->withCount('pets')
-            ->orderBy('first_name')
+            ->join('pet_owners', 'users.id', '=', 'pet_owners.user_id')
+            ->orderBy('pet_owners.first_name', 'asc')
+            ->select('users.*')
             ->paginate(15);
 
-        return view('records-staff.owners.index', compact('owners', 'search'));
+        // Get statistics
+        $totalOwners = User::role('pet_owner')->count();
+        $ownersWithPets = User::role('pet_owner')->has('pets')->count();
+        $ownersWithoutPets = $totalOwners - $ownersWithPets;
+
+        return view('records.owners.index', compact('owners', 'search', 'totalOwners', 'ownersWithPets', 'ownersWithoutPets'));
     }
 
     /**
@@ -235,7 +242,7 @@ class RecordsController extends Controller
     {
         $petOwner = $owner->petOwner;
 
-        return view('records-staff.owners.show', compact('owner', 'petOwner'));
+        return view('records.owners.show', compact('owner', 'petOwner'));
     }
 
     /**
@@ -357,12 +364,12 @@ class RecordsController extends Controller
 
         // Search owners
         $owners = User::where('role', 'pet_owner')
-            ->where(function ($query) use ($search) {
+            ->whereHas('petOwner', function ($query) use ($search) {
                 $query->where('first_name', 'like', "%{$search}%")
                     ->orWhere('middle_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('contact_number', 'like', "%{$search}%");
+                    ->orWhere('phone_number', 'like', "%{$search}%");
             })
             ->withCount('pets')
             ->take(10)
