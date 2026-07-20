@@ -320,11 +320,14 @@
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Meat Inspection</div>
 
+            <a href="{{ route('meat-inspection.establishments-overview') }}" class="nav-item {{ request()->routeIs('meat-inspection.establishments-overview') ? 'active-nav' : '' }}">
+                <i class="bi bi-shop-window"></i><span>Establishments Overview</span>
+            </a>
             <a href="{{ route('meat-inspection.meat-shop.index') }}" class="nav-item {{ request()->routeIs('meat-inspection.meat-shop.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-shop"></i><span>Shop Inspections</span>
             </a>
             <a href="{{ route('meat-inspection.establishments.index') }}" class="nav-item {{ request()->routeIs('meat-inspection.establishments.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-shop-window"></i><span>Register Shop</span>
+                <i class="bi bi-plus-circle"></i><span>Register Shop</span>
             </a>
 
             @elseif(auth()->check() && auth()->user()->hasRole('livestock_inspector'))

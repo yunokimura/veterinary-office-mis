@@ -563,6 +563,10 @@ Route::middleware(['auth', 'role:assistant_vet'])->prefix('assistant-vet')->name
 // ==============================
 Route::middleware(['auth', 'role:meat_inspector'])->prefix('meat-inspection')->name('meat-inspection.')->group(function () {
     Route::get('/dashboard', [MeatInspectionController::class, 'dashboard'])->name('dashboard');
+    Route::get('/establishments-overview', [MeatInspectionController::class, 'establishmentsOverview'])->name('establishments-overview');
+
+    // Meat Establishment JSON (for modal)
+    Route::get('/establishments/{establishment}/json', [MeatInspectionController::class, 'showMeatEstablishmentJson'])->name('establishments.show-json');
 
     // Meat Inspection Reports
     Route::get('/reports', [MeatInspectionController::class, 'indexReports'])->name('reports.index');

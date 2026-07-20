@@ -18,8 +18,17 @@ class MeatInspectionController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        $reports = MeatInspectionReport::where('inspector_user_id', $user->id)->latest()->take(5)->get();
-        return view('dashboard.meat-inspection', compact('reports'));
+        $establishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
+        return view('dashboard.meat-inspection', compact('user', 'establishments'));
+    }
+
+    /**
+     * Show meat establishments overview.
+     */
+    public function establishmentsOverview()
+    {
+        $establishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
+        return view('dashboard.meat-inspection', compact('establishments'));
     }
 
     /**
@@ -169,6 +178,36 @@ class MeatInspectionController extends Controller
         $shop = MeatEstablishment::find($request->meat_shop_id);
         return response()->json([
             'address' => $shop ? $shop->address_text : ''
+        ]);
+    }
+
+    /**
+     * Show meat establishment details (JSON for modal).
+     */
+    public function showMeatEstablishmentJson(MeatEstablishment $establishment)
+    {
+        $establishment->load('barangay', 'user');
+        
+        return response()->json([
+            'success' => true,
+            'establishment' => [
+                'id' => $establishment->establishment_id,
+                'establishment_name' => $establishment->establishment_name,
+                'establishment_type' => ucfirst(str_replace('_', ' ', $establishment->establishment_type)),
+                'owner_name' => $establishment->owner_name,
+                'contact_person' => $establishment->contact_person,
+                'contact_number' => $establishment->contact_number,
+                'email' => $establishment->email,
+                'address_text' => $establishment->address_text,
+                'landmark' => $establishment->landmark,
+                'permit_no' => $establishment->permit_no,
+                'inspection_date' => $establishment->inspection_date ? \Carbon\Carbon::parse($establishment->inspection_date)->format('M d, Y') : 'N/A',
+                'status' => $establishment->status,
+                'permit_expiry_date' => $establishment->permit_expiry_date ? \Carbon\Carbon::parse($establishment->permit_expiry_date)->format('M d, Y') : 'N/A',
+                'barangay' => optional($establishment->barangay)->barangay_name ?? 'N/A',
+                'registered_by' => optional($establishment->user)->name ?? 'N/A',
+                'created_at' => $establishment->created_at->format('M d, Y h:i A'),
+            ]
         ]);
     }
 

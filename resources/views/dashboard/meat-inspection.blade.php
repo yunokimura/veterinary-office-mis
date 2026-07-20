@@ -25,159 +25,208 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
 @endphp
 
 @section('content')
-<div class="max-w-7xl mx-auto">
-    <!-- Page Header -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Meat Inspection Reports</h1>
-                <p class="text-gray-500 mt-1">Manage and track all meat inspection records</p>
+@php
+    $hour = date('H');
+    if ($hour >= 5 && $hour < 12) {
+        $greeting = 'Good morning';
+    } elseif ($hour >= 12 && $hour < 18) {
+        $greeting = 'Good afternoon';
+    } else {
+        $greeting = 'Good evening';
+    }
+@endphp
+
+<!-- Welcome Banner -->
+<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
+    <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
+        {{ $greeting }}, {{ auth()->user()->name ?? 'Meat Inspector' }}!
+    </h2>
+    <p class="text-sm md:text-base text-gray-600">
+        Monitor and manage meat establishments and inspection records.
+    </p>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+    <!-- Total Establishments -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-red-500 hover:shadow-md transition h-full flex flex-col justify-between">
+        <div>
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-lg flex items-center justify-center mb-3">
+                <i class="bi bi-shop text-red-600 text-lg md:text-xl"></i>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="{{ route('meat-inspection.reports.create') }}" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition shadow-md flex items-center gap-2">
-                    <i class="bi bi-plus-lg"></i>New Report
-                </a>
-            </div>
+            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Total Establishments</p>
+        </div>
+        <div>
+            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $establishments->count() }}</p>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <!-- Total Establishments -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Total Establishments</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->count() }}</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-shop text-red-600 text-lg md:text-xl"></i>
-                </div>
+    <!-- Active -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-green-500 hover:shadow-md transition h-full flex flex-col justify-between">
+        <div>
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+                <i class="bi bi-check-circle text-green-600 text-lg md:text-xl"></i>
             </div>
+            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Active</p>
         </div>
-        <!-- Active -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Active</p>
-                    <p class="text-xl md:text-2xl font-bold text-green-600">{{ $establishments->where('status', 'Active')->count() }}</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-check-circle text-green-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <!-- Expired -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Expired</p>
-                    <p class="text-xl md:text-2xl font-bold text-red-600">{{ $establishments->where('status', 'Expired')->count() }}</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-x-circle text-red-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <!-- Pending Inspection -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Pending Inspection</p>
-                    <p class="text-xl md:text-2xl font-bold text-yellow-600">{{ $establishments->where('status', 'Pending Inspection')->count() }}</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-clock text-yellow-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
+        <div>
+            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $establishments->where('status', 'Active')->count() }}</p>
         </div>
     </div>
 
-    <!-- Reports Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <i class="bi bi-list-ul text-red-600"></i>
-                Recent Inspection Records
-            </h3>
-            <a href="{{ route('meat-inspection.reports.index') }}" class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
-                View All <i class="bi bi-arrow-right"></i>
+    <!-- Expired -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-red-600 hover:shadow-md transition h-full flex flex-col justify-between">
+        <div>
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-lg flex items-center justify-center mb-3">
+                <i class="bi bi-x-circle text-red-600 text-lg md:text-xl"></i>
+            </div>
+            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Expired</p>
+        </div>
+        <div>
+            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $establishments->where('status', 'Expired')->count() }}</p>
+        </div>
+    </div>
+
+    <!-- Pending Inspection -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-yellow-500 hover:shadow-md transition h-full flex flex-col justify-between">
+        <div>
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-3">
+                <i class="bi bi-clock text-yellow-600 text-lg md:text-xl"></i>
+            </div>
+            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Pending Inspection</p>
+        </div>
+        <div>
+            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $establishments->where('status', 'Pending Inspection')->count() }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="{{ route('meat-inspection.reports.create') }}"
+           class="flex flex-col items-center p-4 bg-red-50 hover:bg-red-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-plus-circle text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">New Report</span>
+        </a>
+
+        <a href="{{ route('meat-inspection.meat-shop.index') }}"
+           class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-shop text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Shop Inspections</span>
+        </a>
+
+        <a href="{{ route('meat-inspection.establishments.index') }}"
+           class="flex flex-col items-center p-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-plus-circle text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Register Shop</span>
+        </a>
+
+        <a href="{{ route('meat-inspection.reports.index') }}"
+           class="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-list-ul text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">View All Reports</span>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Establishments Table -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <i class="bi bi-shop-window text-red-600"></i>
+            Recent Establishments
+        </h3>
+        <a href="{{ route('meat-inspection.establishments-overview') }}" class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
+            View All <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+    @if($establishments->count() > 0)
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Establishment Name</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Owner</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($establishments as $establishment)
+                    <tr>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="bi bi-shop text-orange-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">{{ $establishment->establishment_name }}</p>
+                                    <p class="text-sm text-gray-500">{{ $establishment->address_text }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
+                                {{ str_replace('_', ' ', $establishment->establishment_type ?? 'N/A') }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-medium text-gray-800">{{ $establishment->owner_name ?? 'N/A' }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-gray-700">{{ $establishment->barangay->barangay_name ?? 'N/A' }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            @php
+                                $statusColors = [
+                                    'Active' => 'bg-green-100 text-green-700 border-green-200',
+                                    'Expired' => 'bg-red-100 text-red-700 border-red-200',
+                                    'Pending Inspection' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
+                                ];
+                            @endphp
+                            <span class="px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap {{ $statusColors[$establishment->status] ?? 'bg-gray-100 text-gray-700 border-gray-200' }}">
+                                {{ $establishment->status ?? 'Unknown' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="openEstablishmentModal({{ $establishment->establishment_id }})"
+                                    class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
+                                <i class="bi bi-eye"></i>View
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-100">
+            {{ $establishments->links() }}
+        </div>
+    @else
+        <div class="p-12 text-center">
+            <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-shop text-red-400 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">No Meat Establishments Found</h3>
+            <p class="text-gray-500 mb-6">No establishments registered yet.</p>
+            <a href="{{ route('meat-inspection.establishments.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition shadow-md">
+                <i class="bi bi-plus-lg"></i>Register First Establishment
             </a>
         </div>
-        @if($establishments->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-100">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Establishment Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Owner</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($establishments as $establishment)
-                        <tr>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i class="bi bi-shop text-orange-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-800">{{ $establishment->establishment_name }}</p>
-                                        <p class="text-sm text-gray-500">{{ $establishment->address_text }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
-                                    {{ str_replace('_', ' ', $establishment->establishment_type ?? 'N/A') }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="font-medium text-gray-800">{{ $establishment->owner_name ?? 'N/A' }}</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="text-gray-700">{{ $establishment->barangay->barangay_name ?? 'N/A' }}</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                @php
-                                    $statusColors = [
-                                        'Active' => 'bg-green-100 text-green-700 border-green-200',
-                                        'Expired' => 'bg-red-100 text-red-700 border-red-200',
-                                        'Pending Inspection' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
-                                    ];
-                                @endphp
-                                <span class="px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap {{ $statusColors[$establishment->status] ?? 'bg-gray-100 text-gray-700 border-gray-200' }}">
-                                    {{ $establishment->status ?? 'Unknown' }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <button onclick="openEstablishmentModal({{ $establishment->establishment_id }})"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
-                                    <i class="bi bi-eye"></i>View
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100">
-                {{ $establishments->links() }}
-            </div>
-        @else
-            <div class="p-12 text-center">
-                <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="bi bi-shop text-red-400 text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">No Meat Establishments Found</h3>
-                <p class="text-gray-500 mb-6">No establishments registered yet.</p>
-            </div>
-        @endif
-    </div>
+    @endif
 </div>
 
 <!-- Establishment Details Modal -->
@@ -224,7 +273,7 @@ function openEstablishmentModal(establishmentId) {
     `;
 
     // Fetch establishment data
-    fetch(`{{ route('admin.meat-inspection-reports.show-json', ':id') }}`.replace(':id', establishmentId))
+    fetch(`{{ route('meat-inspection.establishments.show-json', ':id') }}`.replace(':id', establishmentId))
         .then(response => response.json())
         .then(data => {
             if (data.success) {
