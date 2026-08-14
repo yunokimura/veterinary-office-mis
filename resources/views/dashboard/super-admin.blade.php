@@ -134,42 +134,6 @@
             <span class="text-sm font-medium text-gray-700">Announcement</span>
         </a>
 
-        <!-- System Settings -->
-        <a href="{{ route('super-admin.settings') }}"
-           class="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-gear text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Settings</span>
-        </a>
-
-        <!-- Export Reports -->
-        <a href="{{ route('super-admin.export') }}"
-           class="flex flex-col items-center p-4 bg-orange-50 hover:bg-orange-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-download text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Export Data</span>
-        </a>
-
-        <!-- View All Reports -->
-        <a href="{{ route('super-admin.all-reports') }}"
-           class="flex flex-col items-center p-4 bg-cyan-50 hover:bg-cyan-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-cyan-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-file-earmark-text text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">All Reports</span>
-        </a>
-
-        <!-- Activity Logs -->
-        <a href="{{ route('super-admin.activity-logs') }}"
-           class="flex flex-col items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-gray-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-activity text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Activity Logs</span>
-        </a>
-
         <!-- System Logs -->
         <a href="{{ route('super-admin.system-logs.index') }}"
            class="flex flex-col items-center p-4 bg-red-50 hover:bg-red-100 rounded-xl transition group">
@@ -177,15 +141,6 @@
                 <i class="bi bi-journal-text text-white text-xl"></i>
             </div>
             <span class="text-sm font-medium text-gray-700">System Logs</span>
-        </a>
-
-        <!-- Bite Reports -->
-        <a href="{{ route('super-admin.bite-reports.index') }}"
-           class="flex flex-col items-center p-4 bg-pink-50 hover:bg-pink-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-pink-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-exclamation-triangle text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Bite Reports</span>
         </a>
     </div>
 </div>
