@@ -123,7 +123,6 @@ class MigrateProfilesAndAddresses extends Command
                     'last_name' => $user->last_name,
                     'suffix' => null,
                     'role_type' => $primaryRole,
-                    'barangay_id' => $user->barangay_id,
                     'contact_number' => $user->contact_number,
                     'date_of_birth' => null,
                 ]);
@@ -236,7 +235,7 @@ class MigrateProfilesAndAddresses extends Command
 
         $created = 0;
         foreach ($admins as $admin) {
-            if ($admin->user->address || $admin->barangay_id) {
+            if ($admin->user->address) {
                 try {
                     Address::create([
                         'addressable_type' => 'admin',
@@ -244,7 +243,7 @@ class MigrateProfilesAndAddresses extends Command
                         'block_lot_phase' => $admin->user->address,
                         'street' => null,
                         'subdivision' => null,
-                        'barangay_id' => $admin->barangay_id,
+                        'barangay_id' => null,
                         'city' => null,
                         'province' => null,
                         'postal_code' => null,

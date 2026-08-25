@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Admin;
 use App\Models\Facility;
+use App\Models\Organization;
 use App\Models\PetOwner;
 use App\Models\SystemLog;
 use App\Models\User;
@@ -114,8 +116,14 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string',
-            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'contact_number' => 'nullable|string|max:20',
+            'alternate_phone_number' => 'nullable|string|max:20',
+            'address_block_lot_phase' => 'nullable|string|max:255',
+            'address_street' => 'nullable|string|max:255',
+            'address_subdivision' => 'nullable|string|max:255',
+            'address_barangay_id' => 'nullable|exists:barangays,barangay_id',
+            'address_city' => 'nullable|string|max:255',
+            'address_province' => 'nullable|string|max:255',
         ]);
 
         // Check if user can assign the requested role
@@ -145,28 +153,52 @@ class UserController extends Controller
 
         if (in_array($validated['role'], $adminRoles)) {
             // Create admin profile
-            Admin::create([
+            $admin = Admin::create([
                 'user_id' => $user->id,
                 'first_name' => $validated['first_name'],
                 'middle_name' => $validated['middle_name'] ?? null,
                 'last_name' => $validated['last_name'],
                 'suffix' => $validated['suffix'] ?? null,
                 'role_type' => $validated['role'],
-                'barangay_id' => $validated['barangay_id'] ?? null,
                 'facility_id' => $validated['facility_id'] ?? null,
                 'contact_number' => $validated['contact_number'] ?? null,
                 'date_of_birth' => null,
             ]);
+
+            // Create address for admin
+            $admin->address()->create([
+                'block_lot_phase' => $validated['address_block_lot_phase'] ?? null,
+                'street' => $validated['address_street'] ?? null,
+                'subdivision' => $validated['address_subdivision'] ?? null,
+                'barangay_id' => $validated['address_barangay_id'] ?? null,
+                'city' => $validated['address_city'] ?? null,
+                'province' => $validated['address_province'] ?? null,
+                'postal_code' => null,
+                'is_primary' => true,
+            ]);
         } elseif ($validated['role'] === 'pet_owner') {
             // Create pet owner profile
-            PetOwner::create([
+            $petOwner = PetOwner::create([
                 'user_id' => $user->id,
                 'first_name' => $validated['first_name'],
                 'middle_name' => $validated['middle_name'] ?? null,
                 'last_name' => $validated['last_name'],
                 'suffix' => $validated['suffix'] ?? null,
                 'phone_number' => $validated['contact_number'] ?? null,
+                'alternate_phone_number' => $validated['alternate_phone_number'] ?? null,
                 'date_of_birth' => null,
+            ]);
+
+            // Create address for pet owner
+            $petOwner->address()->create([
+                'block_lot_phase' => $validated['address_block_lot_phase'] ?? null,
+                'street' => $validated['address_street'] ?? null,
+                'subdivision' => $validated['address_subdivision'] ?? null,
+                'barangay_id' => $validated['address_barangay_id'] ?? null,
+                'city' => $validated['address_city'] ?? null,
+                'province' => $validated['address_province'] ?? null,
+                'postal_code' => null,
+                'is_primary' => true,
             ]);
         }
 
@@ -245,8 +277,15 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|string',
-            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'contact_number' => 'nullable|string|max:20',
+            'alternate_phone_number' => 'nullable|string|max:20',
+            'dob' => 'nullable|date',
+            'address_block_lot_phase' => 'nullable|string|max:255',
+            'address_street' => 'nullable|string|max:255',
+            'address_subdivision' => 'nullable|string|max:255',
+            'address_barangay_id' => 'nullable|exists:barangays,barangay_id',
+            'address_city' => 'nullable|string|max:255',
+            'address_province' => 'nullable|string|max:255',
         ]);
 
         // ============================================
@@ -329,10 +368,9 @@ class UserController extends Controller
                     'last_name' => $validated['last_name'],
                     'suffix' => $validated['suffix'] ?? null,
                     'role_type' => $validated['role'],
-                    'barangay_id' => $validated['barangay_id'] ?? null,
                     'facility_id' => $validated['facility_id'] ?? null,
                     'contact_number' => $validated['contact_number'] ?? null,
-                    'date_of_birth' => null,
+                    'date_of_birth' => $validated['dob'] ?? null,
                 ]);
             } elseif ($validated['role'] === 'pet_owner') {
                 PetOwner::create([
@@ -342,7 +380,8 @@ class UserController extends Controller
                     'last_name' => $validated['last_name'],
                     'suffix' => $validated['suffix'] ?? null,
                     'phone_number' => $validated['contact_number'] ?? null,
-                    'date_of_birth' => null,
+                    'alternate_phone_number' => $validated['alternate_phone_number'] ?? null,
+                    'date_of_birth' => $validated['dob'] ?? null,
                 ]);
             }
         } else {
@@ -355,9 +394,9 @@ class UserController extends Controller
                     'middle_name' => $validated['middle_name'] ?? null,
                     'last_name' => $validated['last_name'],
                     'suffix' => $validated['suffix'] ?? null,
-                    'barangay_id' => $validated['barangay_id'] ?? null,
                     'facility_id' => $validated['facility_id'] ?? null,
                     'contact_number' => $validated['contact_number'] ?? null,
+                    'date_of_birth' => $validated['dob'] ?? null,
                 ]);
             } elseif ($validated['role'] === 'pet_owner' && $user->petOwnerProfile) {
                 $user->petOwnerProfile->update([
@@ -366,8 +405,38 @@ class UserController extends Controller
                     'last_name' => $validated['last_name'],
                     'suffix' => $validated['suffix'] ?? null,
                     'phone_number' => $validated['contact_number'] ?? null,
+                    'alternate_phone_number' => $validated['alternate_phone_number'] ?? null,
+                    'date_of_birth' => $validated['dob'] ?? null,
                 ]);
             }
+        }
+
+        // Upsert address on the current profile
+        $addressData = [
+            'block_lot_phase' => $validated['address_block_lot_phase'] ?? null,
+            'street' => $validated['address_street'] ?? null,
+            'subdivision' => $validated['address_subdivision'] ?? null,
+            'barangay_id' => $validated['address_barangay_id'] ?? null,
+            'city' => $validated['address_city'] ?? null,
+            'province' => $validated['address_province'] ?? null,
+        ];
+
+        if ($user->adminProfile) {
+            $user->adminProfile->address()->updateOrCreate(
+                ['addressable_type' => Admin::class, 'addressable_id' => $user->adminProfile->id],
+                $addressData
+            );
+        } elseif ($user->petOwnerProfile) {
+            $address = $user->petOwnerProfile->address()->updateOrCreate(
+                ['addressable_type' => PetOwner::class, 'addressable_id' => $user->petOwnerProfile->owner_id],
+                $addressData
+            );
+            $user->petOwnerProfile->update(['address_id' => $address->id]);
+        } elseif ($user->organizationProfile) {
+            $user->organizationProfile->address()->updateOrCreate(
+                ['addressable_type' => Organization::class, 'addressable_id' => $user->organizationProfile->id],
+                $addressData
+            );
         }
 
         SystemLog::create([

@@ -2,7 +2,7 @@
 
 @section('title', 'Admin Assistant Dashboard')
 @section('header', 'Admin Assistant Dashboard')
-@section('subheader', 'Gatekeeper operations and records management')
+@section('subheader', 'Admin Assistant operations and records management')
 
 @section('content')
 @php

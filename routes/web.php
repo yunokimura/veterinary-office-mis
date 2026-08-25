@@ -340,7 +340,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     Route::patch('/bite-rabies-reports/{rabiesReport}/check', [DiseaseControlController::class, 'acceptRabiesReport'])->name('rabies-bite-reports.check');
 
     // ========== ADMIN ASST MODULES (merged into assistant_vet) ==========
-    // Pet Registrations (Portal Gatekeeper)
+    // Pet Registrations (Portal Admin Assistant)
     Route::get('/pet-registrations', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'index'])->name('pet-registrations.index');
     Route::get('/pet-registrations/create', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'create'])->name('pet-registrations.create');
     Route::post('/pet-registrations', [App\Http\Controllers\AdminAsst\PetRegistrationController::class, 'store'])->name('pet-registrations.store');
@@ -428,8 +428,8 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
 });
 
 // ==============================
-// ADMIN ASSISTANT (GATEKEEPER) PORTAL
-// Role: Admin Assistant (Gatekeeper)
+// ADMIN ASSISTANT PORTAL
+// Role: Admin Assistant
 // Access: Pet registrations, adoption, missing pets
 // ==============================
 Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admin-asst.')->group(function () {

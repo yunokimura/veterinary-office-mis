@@ -301,7 +301,7 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('admin_asst'))
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Gatekeeper</div>
+            <div class="sidebar-section-label">Admin Assistant</div>
 
             <a href="{{ route('admin-asst.pet-registrations.index') }}" class="nav-item {{ request()->routeIs('admin-asst.pet-registrations.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-paw"></i><span>Pet Registrations</span>

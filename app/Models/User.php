@@ -304,7 +304,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
 
     public const ROLE_ADMIN_STAFF = 'admin_staff';         // Administrative Assistant IV (Book Binder 4)
 
-    public const ROLE_ADMIN_ASST = 'admin_asst';           // Administrative Assistant (Gatekeeper)
+    public const ROLE_ADMIN_ASST = 'admin_asst';           // Administrative Assistant
 
     public const ROLE_ASSISTANT_VET = 'assistant_vet';     // Assistant Veterinarian (Vet 3)
 
@@ -437,7 +437,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
             self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV',
-            self::ROLE_ADMIN_ASST => 'Admin Assistant (Gatekeeper)',
+            self::ROLE_ADMIN_ASST => 'Admin Assistant',
             self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
             self::ROLE_CLINIC => 'External Vet Clinic',
             self::ROLE_HOSPITAL => 'External Vet Hospital',
@@ -458,7 +458,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
             self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV (Book Binder 4)',
-            self::ROLE_ADMIN_ASST => 'Admin Assistant (Gatekeeper)',
+            self::ROLE_ADMIN_ASST => 'Admin Assistant',
             self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
             self::ROLE_CLINIC => 'External Vet Clinic',
             self::ROLE_HOSPITAL => 'External Vet Hospital',
@@ -477,7 +477,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             self::ROLE_SUPER_ADMIN => 10,       // IT Personnel - Highest
             self::ROLE_CITY_VET => 8,           // Admin/Office Head
             self::ROLE_ADMIN_STAFF => 6,         // Administrative Assistant IV
-            self::ROLE_ADMIN_ASST => 5,         // Admin Assistant (Gatekeeper)
+            self::ROLE_ADMIN_ASST => 5,         // Admin Assistant
             self::ROLE_ASSISTANT_VET => 5,      // Assistant Veterinarian
             self::ROLE_CLINIC => 4,              // External Vet Clinic
             self::ROLE_HOSPITAL => 4,              // External Vet Hospital

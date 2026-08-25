@@ -66,21 +66,112 @@
 
             <!-- Phone -->
             <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" 
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('phone') border-red-500 @enderror"
+                <label for="contact_number" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <input type="text" name="contact_number" id="contact_number" value="{{ old('contact_number', $user->contact_number) }}" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('contact_number') border-red-500 @enderror"
                     placeholder="Enter phone number">
-                @error('phone')
+                @error('contact_number')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
+            <!-- Alternate Phone (Pet Owner only) -->
+            @if($user->hasRole('pet_owner'))
+            <div>
+                <label for="alternate_phone_number" class="block text-sm font-medium text-gray-700 mb-2">Alternate Phone Number</label>
+                <input type="text" name="alternate_phone_number" id="alternate_phone_number" value="{{ old('alternate_phone_number', $user->petOwner?->alternate_phone_number) }}" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('alternate_phone_number') border-red-500 @enderror"
+                    placeholder="Enter alternate phone number">
+                @error('alternate_phone_number')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+            @endif
+
             <!-- Date of Birth -->
             <div>
                 <label for="dob" class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                <input type="date" name="dob" id="dob" value="{{ old('dob', $user->dob) }}" 
+                <input type="date" name="dob" id="dob" value="{{ old('dob', $user->adminProfile?->date_of_birth ?? $user->petOwnerProfile?->date_of_birth ?? $user->date_of_birth) }}" 
                     class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('dob') border-red-500 @enderror">
                 @error('dob')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        <!-- Address Subsection -->
+        <h5 class="text-sm font-medium text-gray-600 mt-6 mb-3 flex items-center gap-2">
+            <i class="bi bi-geo-alt text-blue-600"></i> Address
+        </h5>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fields-container">
+            <!-- Block/Lot/Phase -->
+            <div>
+                <label for="address_block_lot_phase" class="block text-sm font-medium text-gray-700 mb-2">Block/Lot/Phase</label>
+                <input type="text" name="address_block_lot_phase" id="address_block_lot_phase" value="{{ old('address_block_lot_phase', $user->adminProfile?->address?->block_lot_phase ?? $user->petOwnerProfile?->address?->block_lot_phase ?? $user->organizationProfile?->address?->block_lot_phase) }}" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('address_block_lot_phase') border-red-500 @enderror"
+                    placeholder="e.g., Block 5 Lot 12 Phase 1">
+                @error('address_block_lot_phase')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Street -->
+            <div>
+                <label for="address_street" class="block text-sm font-medium text-gray-700 mb-2">Street</label>
+                <input type="text" name="address_street" id="address_street" value="{{ old('address_street', $user->adminProfile?->address?->street ?? $user->petOwnerProfile?->address?->street ?? $user->organizationProfile?->address?->street) }}" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('address_street') border-red-500 @enderror"
+                    placeholder="Enter street name">
+                @error('address_street')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Subdivision -->
+            <div>
+                <label for="address_subdivision" class="block text-sm font-medium text-gray-700 mb-2">Subdivision</label>
+                <input type="text" name="address_subdivision" id="address_subdivision" value="{{ old('address_subdivision', $user->adminProfile?->address?->subdivision ?? $user->petOwnerProfile?->address?->subdivision ?? $user->organizationProfile?->address?->subdivision) }}" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('address_subdivision') border-red-500 @enderror"
+                    placeholder="Enter subdivision (optional)">
+                @error('address_subdivision')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Barangay -->
+            <div>
+                <label for="address_barangay_id" class="block text-sm font-medium text-gray-700 mb-2">Barangay</label>
+                <select name="address_barangay_id" id="address_barangay_id" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('address_barangay_id') border-red-500 @enderror">
+                    <option value="">Select barangay</option>
+                    @foreach(\App\Models\Barangay::orderBy('barangay_name')->get() as $barangay)
+                        <option value="{{ $barangay->barangay_id }}" {{ old('address_barangay_id', $user->adminProfile?->address?->barangay_id ?? $user->petOwnerProfile?->address?->barangay_id ?? $user->organizationProfile?->address?->barangay_id) == $barangay->barangay_id ? 'selected' : '' }}>
+                            {{ $barangay->barangay_name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('address_barangay_id')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- City -->
+            <div>
+                <label for="address_city" class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                <input type="text" name="address_city" id="address_city" value="{{ old('address_city', $user->adminProfile?->address?->city ?? $user->petOwnerProfile?->address?->city ?? $user->organizationProfile?->address?->city) }}" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('address_city') border-red-500 @enderror"
+                    placeholder="Enter city">
+                @error('address_city')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Province -->
+            <div>
+                <label for="address_province" class="block text-sm font-medium text-gray-700 mb-2">Province</label>
+                <input type="text" name="address_province" id="address_province" value="{{ old('address_province', $user->adminProfile?->address?->province ?? $user->petOwnerProfile?->address?->province ?? $user->organizationProfile?->address?->province) }}" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('address_province') border-red-500 @enderror"
+                    placeholder="Enter province">
+                @error('address_province')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -90,27 +181,18 @@
     <!-- Password Update (Optional) -->
     <div class="mb-8" id="section-password" data-section="password">
         <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
-            <i class="bi bi-key text-blue-600"></i> Change Password (Optional)
-            <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
+            <i class="bi bi-key text-blue-600"></i> Password
         </h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fields-container">
-            <!-- New Password -->
+            <!-- Password -->
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
                 <input type="password" name="password" id="password" 
                     class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('password') border-red-500 @enderror"
-                    placeholder="Leave blank to keep current password">
+                    placeholder="••••••••">
                 @error('password')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
-            </div>
-
-            <!-- Confirm Password -->
-            <div>
-                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-                <input type="password" name="password_confirmation" id="password_confirmation" 
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    placeholder="Confirm new password">
             </div>
         </div>
     </div>
@@ -119,7 +201,9 @@
     <div class="mb-8" id="section-role" data-section="role">
         <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
             <i class="bi bi-shield text-blue-600"></i> Role & Permissions
-            <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
+            @if(!$user->hasRole('pet_owner'))
+                <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
+            @endif
         </h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fields-container">
             <!-- Primary Role -->
@@ -132,6 +216,12 @@
                     </div>
                     <input type="hidden" name="role" value="{{ $user->getRoleAttribute() }}">
                     <p class="mt-1 text-xs text-red-500"><i class="bi bi-exclamation-circle"></i> Super Admin cannot change their own role.</p>
+                @elseif($user->hasRole('pet_owner'))
+                    <div class="w-full px-4 py-3 rounded-lg border bg-gray-100 text-gray-600">
+                        {{ $user->getRoleDisplayName() }}
+                    </div>
+                    <input type="hidden" name="role" value="{{ $user->getRoleAttribute() }}">
+                    <p class="mt-1 text-xs text-gray-500">Pet owner role cannot be changed.</p>
                 @else
                     <select name="role" id="role" 
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('role') border-red-500 @enderror" required>
@@ -149,30 +239,8 @@
         </div>
     </div>
 
-    <!-- Barangay Assignment -->
-    @if(auth()->user()->hasAnyRole(['super_admin', 'city_vet']))
-    <div class="mb-8" id="section-barangay" data-section="barangay">
-        <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
-            <i class="bi bi-geo-alt text-blue-600"></i> Barangay Assignment
-            <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
-        </h4>
-        <div class="fields-container">
-            <label for="barangay_id" class="block text-sm font-medium text-gray-700 mb-2">Assigned Barangay</label>
-            <select name="barangay_id" id="barangay_id" 
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                <option value="">None</option>
-                @foreach(\App\Models\Barangay::orderBy('barangay_name')->get() as $barangay)
-                    <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id', $user->adminProfile?->barangay_id) == $barangay->barangay_id ? 'selected' : '' }}>
-                        {{ $barangay->barangay_name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-    @endif
-
     <!-- Facility Assignment (Super Admin Only) -->
-    @if(auth()->user()->hasRole('super_admin') && $facilities->count() > 0)
+    @if(auth()->user()->hasRole('super_admin') && $facilities->count() > 0 && !$user->hasRole('pet_owner'))
     <div class="mb-8" id="section-facility" data-section="facility">
         <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
             <i class="bi bi-hospital text-blue-600"></i> Facility Assignment

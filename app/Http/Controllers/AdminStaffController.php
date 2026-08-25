@@ -17,7 +17,7 @@ use App\Models\AdoptionRequest;
  * - Legacy Alias: admin_asst (for backward compatibility)
  *
  * MODULE ASSIGNMENTS:
- * - Pet Registration (Portal Gatekeeper)
+ * - Pet Registration (Portal Admin Assistant)
  * - Owner Records Management
  * - Vaccination Encoding
  * - Records Search

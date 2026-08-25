@@ -13,14 +13,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $last_name
  * @property string|null $suffix
  * @property string $role_type
- * @property int|null $barangay_id
  * @property int|null $facility_id
  * @property string|null $contact_number
  * @property \Illuminate\Support\Carbon|null $date_of_birth
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Address|null $address
- * @property-read \App\Models\Barangay|null $barangay
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Admin newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Admin newQuery()
@@ -49,7 +47,6 @@ class Admin extends Model
         'last_name',
         'suffix',
         'role_type',
-        'barangay_id',
         'facility_id',
         'contact_number',
         'date_of_birth',
@@ -65,14 +62,6 @@ class Admin extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    /**
-     * Get the barangay associated with this admin.
-     */
-    public function barangay(): BelongsTo
-    {
-        return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
     }
 
     /**

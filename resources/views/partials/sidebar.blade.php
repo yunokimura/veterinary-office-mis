@@ -249,11 +249,11 @@
             </a>
 
         {{-- =========================
-            ADMIN ASST (GATEKEEPER) MENU
+            ADMIN ASST MENU
            ========================= --}}
         @elseif($isAdminAsst)
             <div class="pt-4 pb-2">
-                <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Gatekeeper</p>
+                <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Admin Assistant</p>
             </div>
 
             <a href="{{ route('admin-asst.pet-registrations.index') }}"

@@ -161,19 +161,21 @@
 
 <style>
 .section-disabled {
-    opacity: 0.6;
     background-color: #f9fafb;
     border-radius: 0.5rem;
     padding: 1rem;
+    border: 1px solid #e5e7eb;
 }
 .section-fields-disabled {
     pointer-events: none;
-    opacity: 0.5;
 }
 .section-fields-disabled input,
 .section-fields-disabled select,
 .section-fields-disabled textarea {
     background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+    opacity: 1 !important;
     cursor: not-allowed;
 }
 </style>
