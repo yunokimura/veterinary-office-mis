@@ -8,13 +8,10 @@
 @php
     $roleLabels = [
         'super_admin'           => 'Super Admin',
-        'city_vet'              => 'City Veterinarian (Admin)',
+        'city_vet'              => 'City Veterinary (Admin)',
         'assistant_vet'         => 'Assistant Veterinarian',
         'admin_asst'            => 'Administrative Assistant',
-        'livestock_inspector'   => 'Livestock & Poultry Inspector',
         'meat_inspector'        => 'Meat Inspector',
-        'clinic'                => 'Veterinary Clinic',
-        'hospital'              => 'Hospital',
         'pet_owner'             => 'Pet Owner',
     ];
 
@@ -24,10 +21,7 @@
         'city_vet',
         'assistant_vet',
         'admin_asst',
-        'livestock_inspector',
         'meat_inspector',
-        'clinic',
-        'hospital',
         'pet_owner',
     ];
 
@@ -55,7 +49,7 @@
                 </div>
             </div>
             <div class="relative min-w-max">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Roles</label>
                 <select name="role" onchange="this.closest('form').submit()" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
                         style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
                     <option value="">All Roles</option>
@@ -92,7 +86,7 @@
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @forelse($users as $user)
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-gray-50" data-user-id="{{ $user->id }}">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -129,7 +123,7 @@
                             <span class="text-gray-400 text-xs">Restricted</span>
                             @endcan
                             @can('update', $user)
-                            <a href="{{ route('super-admin.users.edit', $user) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                            <button type="button" class="text-blue-600 hover:text-blue-900" onclick="openEditModal({{ $user->id }}, '{{ $user->name }}')">Edit</button>
                             @else
                             <span class="text-gray-400 text-xs">Restricted</span>
                             @endcan
@@ -149,4 +143,170 @@
         </div>
     </div>
 </div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="editModalBody">
+                <!-- Form loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let editModal;
+let currentUserId = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+
+    document.getElementById('editModalBody').addEventListener('click', function(e) {
+        const cancelBtn = e.target.closest('.cancel-edit-btn');
+        if (cancelBtn) {
+            e.preventDefault();
+            closeEditModal();
+        }
+    });
+});
+
+function openEditModal(userId, userName) {
+    currentUserId = userId;
+    const modalBody = document.getElementById('editModalBody');
+    const modalTitle = document.getElementById('editUserModalLabel');
+
+    modalTitle.textContent = 'Edit User - ' + userName;
+    modalBody.innerHTML = `
+        <div class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+            <p class="mt-4 text-gray-600">Loading form...</p>
+        </div>
+    `;
+
+    const url = `{{ route('super-admin.users.edit', ':id') }}`.replace(':id', userId);
+
+    fetch(url, {
+        headers: {
+            'Accept': 'text/html',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        modalBody.innerHTML = html;
+        editModal.show();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        modalBody.innerHTML = '<p class="text-red-600 text-center py-8">Error loading form. Please try again.</p>';
+    });
+}
+
+function closeEditModal() {
+    if (editModal) {
+        editModal.hide();
+    }
+}
+
+function showToast(type, message) {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+function updateUserRow(userData) {
+    const row = document.querySelector(`tr[data-user-id="${userData.id}"]`);
+    if (row) {
+        const nameCell = row.querySelector('td:first-child .text-sm.font-medium.text-gray-900');
+        if (nameCell) {
+            nameCell.textContent = userData.name;
+        }
+        const emailCell = row.querySelector('td:first-child .text-sm.text-gray-500');
+        if (emailCell) {
+            emailCell.textContent = userData.email;
+        }
+        const roleCell = row.querySelector('td:nth-child(2) span');
+        if (roleCell) {
+            roleCell.textContent = userData.role_label;
+        }
+    }
+}
+
+function showFormErrors(errors) {
+    const modalBody = document.getElementById('editModalBody');
+    modalBody.querySelectorAll('.text-red-600').forEach(el => el.remove());
+    modalBody.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+
+    for (const [field, messages] of Object.entries(errors)) {
+        const input = document.getElementById(field);
+        if (input) {
+            input.classList.add('border-red-500');
+            const errorEl = document.createElement('p');
+            errorEl.className = 'mt-1 text-sm text-red-600';
+            errorEl.textContent = messages[0];
+            input.parentNode.appendChild(errorEl);
+        }
+    }
+}
+
+document.addEventListener('submit', function(e) {
+    if (e.target && e.target.id === 'editUserForm') {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span> Saving...';
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                throw data;
+            }
+            return data;
+        })
+        .then(data => {
+            if (data.success) {
+                updateUserRow(data.user);
+                closeEditModal();
+                showToast('success', data.message);
+            }
+        })
+        .catch(error => {
+            if (error.errors) {
+                showFormErrors(error.errors);
+                showToast('error', error.message || 'Please check the form for errors.');
+            } else if (error.message) {
+                showToast('error', error.message);
+            } else {
+                showToast('error', 'An error occurred. Please try again.');
+            }
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        });
+    }
+});
+</script>
 @endsection

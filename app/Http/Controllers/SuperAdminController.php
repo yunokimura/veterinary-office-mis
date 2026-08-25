@@ -42,6 +42,8 @@ class SuperAdminController extends Controller
             'barangay_encoders' => User::where('role', 'barangay_encoder')->count(),
             'viewers' => User::where('role', 'viewer')->count(),
 
+            'admin_staff_total' => User::whereIn('role', ['super_admin', 'city_vet', 'admin_asst', 'assistant_vet', 'meat_inspector'])->count(),
+
             // Client & Animal statistics
             'total_clients' => User::where('role', 'pet_owner')->count(),
             'total_animals' => Pet::count(),
@@ -80,6 +82,38 @@ class SuperAdminController extends Controller
             ->pluck('count', 'month')
             ->toArray();
 
+        // Get system activity trend for last 7 days
+        $systemActivityLabels = [];
+        $systemActivitySuccess = [];
+        $systemActivityFailed = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->startOfDay();
+            $systemActivityLabels[] = $date->format('M d');
+            $systemActivitySuccess[] = SystemLog::whereDate('created_at', $date)->where('status', 'success')->count();
+            $systemActivityFailed[] = SystemLog::whereDate('created_at', $date)->where('status', 'failed')->count();
+        }
+
+        // Get announcement status counts
+        $announcementStatusCounts = Announcement::selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $statusOrder = ['Published', 'Draft', 'Archived'];
+        $orderedAnnouncementStatus = [];
+        foreach ($statusOrder as $status) {
+            if (array_key_exists($status, $announcementStatusCounts)) {
+                $orderedAnnouncementStatus[$status] = $announcementStatusCounts[$status];
+                unset($announcementStatusCounts[$status]);
+            }
+        }
+        foreach ($announcementStatusCounts as $status => $count) {
+            $orderedAnnouncementStatus[$status] = $count;
+        }
+
+        $announcementStatusLabels = array_keys($orderedAnnouncementStatus);
+        $announcementStatusData = array_values($orderedAnnouncementStatus);
+
         return view('dashboard.super-admin', compact(
             'user',
             'stats',
@@ -88,7 +122,12 @@ class SuperAdminController extends Controller
             'recentAnnouncements',
             'monthlyUserRegistrations',
             'monthlyRabiesCases',
-            'year'
+            'year',
+            'systemActivityLabels',
+            'systemActivitySuccess',
+            'systemActivityFailed',
+            'announcementStatusLabels',
+            'announcementStatusData'
         ));
     }
 
@@ -339,7 +378,8 @@ class SuperAdminController extends Controller
         }
 
         $users = $query->latest()->paginate(20);
-        $roles = Role::where('guard_name', 'web')->orderBy('name')->pluck('name')->toArray();
+        $allowedRoles = ['super_admin', 'city_vet', 'assistant_vet', 'admin_asst', 'meat_inspector', 'pet_owner'];
+        $roles = Role::where('guard_name', 'web')->whereIn('name', $allowedRoles)->orderBy('name')->pluck('name')->toArray();
 
         return view('super-admin.users', compact('users', 'roles', 'search', 'role', 'status'));
     }

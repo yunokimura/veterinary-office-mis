@@ -203,20 +203,24 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(Request $request, User $user)
     {
-        // Gate check using policy
         if (Gate::denies('update', $user)) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'You do not have permission to edit this user.'], 403);
+            }
             return back()->with('error', 'You do not have permission to edit this user.');
         }
 
-        // Get assignable roles
         $assignableRoles = auth()->user()->getAssignableRoles();
 
-        // Get facilities for dropdown (only Super Admin can modify)
         $facilities = auth()->user()->hasRole('super_admin')
             ? Facility::orderBy('name')->get()
             : collect();
+
+        if ($request->ajax()) {
+            return view('admin.users.edit-form', compact('user', 'assignableRoles', 'facilities'));
+        }
 
         return view('admin.users.edit', compact('user', 'assignableRoles', 'facilities'));
     }
@@ -226,8 +230,10 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        // Gate check using policy
         if (Gate::denies('update', $user)) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'You do not have permission to update this user.'], 403);
+            }
             return back()->with('error', 'You do not have permission to update this user.');
         }
 
@@ -251,6 +257,9 @@ class UserController extends Controller
 
         // 1. If user is super_admin trying to change their own role -> BLOCK
         if (auth()->user()->hasRole(User::ROLE_SUPER_ADMIN) && $user->isSelf() && $validated['role'] !== $currentRole) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'You cannot change your own role as Super Administrator.'], 403);
+            }
             return back()->with('error', 'You cannot change your own role as Super Administrator.');
         }
 
@@ -258,16 +267,25 @@ class UserController extends Controller
         if ($validated['role'] !== $currentRole) {
             // Check if user can assign the new role
             if (! auth()->user()->canAssignRole($validated['role'])) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'You cannot assign the role "'.$validated['role'].'".'], 403);
+                }
                 return back()->with('error', 'You cannot assign the role "'.$validated['role'].'".');
             }
 
             // Prevent changing to super_admin by non-super_admin
             if ($validated['role'] === User::ROLE_SUPER_ADMIN && ! auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'You cannot change a user to Super Administrator.'], 403);
+                }
                 return back()->with('error', 'You cannot change a user to Super Administrator.');
             }
 
             // Prevent non-super_admin from modifying super_admin
             if ($user->hasRole(User::ROLE_SUPER_ADMIN) && ! auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'You cannot modify Super Administrator accounts.'], 403);
+                }
                 return back()->with('error', 'You cannot modify Super Administrator accounts.');
             }
         }
@@ -361,6 +379,33 @@ class UserController extends Controller
             'ip_address' => request()->ip(),
             'status' => 'success',
         ]);
+
+        if ($request->ajax()) {
+            $user->load('adminProfile', 'petOwnerProfile', 'organizationProfile');
+
+            $roleLabels = [
+                'super_admin' => 'Super Admin',
+                'city_vet' => 'City Veterinary (Admin)',
+                'assistant_vet' => 'Assistant Veterinarian',
+                'admin_asst' => 'Administrative Assistant',
+                'meat_inspector' => 'Meat Inspector',
+                'pet_owner' => 'Pet Owner',
+            ];
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User updated successfully.',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->getRoleAttribute(),
+                    'role_label' => $roleLabels[$user->getRoleAttribute()] ?? ucwords(str_replace('_', ' ', $user->getRoleAttribute())),
+                    'status' => $user->status,
+                    'created_at' => $user->created_at->format('M d, Y'),
+                ]
+            ]);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }

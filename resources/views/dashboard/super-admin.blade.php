@@ -53,62 +53,74 @@
 
 
 <!-- Quick Stats -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">
-    <!-- Total Users -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs md:text-sm font-medium text-gray-500">Total Users</p>
-                <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\User::count() }}</p>
-                <p class="text-xs text-gray-500 mt-1">{{ \App\Models\User::where('status', 'active')->count() }} active</p>
-            </div>
-            <div class="w-10 h-10 md:w-14 md:h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-people text-blue-600 text-lg md:text-2xl"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Announcements -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs md:text-sm font-medium text-gray-500">Announcements</p>
-                <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\Announcement::count() }}</p>
-                <p class="text-xs text-green-600 mt-1">{{ \App\Models\Announcement::where('is_active', true)->count() }} active</p>
-            </div>
-            <div class="w-10 h-10 md:w-14 md:h-14 bg-green-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-megaphone text-green-600 text-lg md:text-2xl"></i>
-            </div>
-        </div>
-    </div>
-
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 items-stretch">
     <!-- Active Users -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs md:text-sm font-medium text-gray-500">Active Users</p>
-                <p class="text-xl md:text-3xl font-bold text-green-600 mt-1">{{ \App\Models\User::where('status', 'active')->count() }}</p>
-                <p class="text-xs text-red-600 mt-1">{{ $deactivatedUsers }} deactivated</p>
+    <a href="{{ route('super-admin.users.index') }}" class="block h-full">
+        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm font-medium text-gray-500">ACTIVE USERS</p>
+                    <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\User::where('status', 'active')->count() }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Currently active accounts</p>
+                </div>
+                <div class="w-10 h-10 md:w-14 md:h-14 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-person-check text-teal-600 text-lg md:text-2xl"></i>
+                </div>
             </div>
-            <div class="w-10 h-10 md:w-14 md:h-14 bg-teal-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-person-check text-teal-600 text-lg md:text-2xl"></i>
-            </div>
+            <p class="text-xs font-medium text-teal-600 hover:text-teal-800 mt-auto">View Users →</p>
         </div>
-    </div>
+    </a>
 
-    <!-- System Logs -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs md:text-sm font-medium text-gray-500">System Logs</p>
-                <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\SystemLog::count() }}</p>
-                <p class="text-xs text-gray-500 mt-1">Total records</p>
+    <!-- New Users -->
+    <a href="{{ route('super-admin.users.index') }}" class="block h-full">
+        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm font-medium text-gray-500">NEW USERS</p>
+                    <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\User::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count() }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Registered this month</p>
+                </div>
+                <div class="w-10 h-10 md:w-14 md:h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-person-plus text-blue-600 text-lg md:text-2xl"></i>
+                </div>
             </div>
-            <div class="w-10 h-10 md:w-14 md:h-14 bg-gray-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-journal-text text-gray-600 text-lg md:text-2xl"></i>
-            </div>
+            <p class="text-xs font-medium text-blue-600 hover:text-blue-800 mt-auto">View Users →</p>
         </div>
-    </div>
+    </a>
+
+    <!-- Draft Announcements -->
+    <a href="{{ route('super-admin.announcements.index') }}" class="block h-full">
+        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-amber-200 hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm font-medium text-amber-700">DRAFT ANNOUNCEMENTS</p>
+                    <p class="text-xl md:text-3xl font-bold text-amber-700 mt-1">{{ \App\Models\Announcement::where('status', 'draft')->count() }}</p>
+                    <p class="text-xs text-amber-600 mt-1">Awaiting publication</p>
+                </div>
+                <div class="w-10 h-10 md:w-14 md:h-14 bg-amber-100 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-megaphone text-amber-600 text-lg md:text-2xl"></i>
+                </div>
+            </div>
+            <p class="text-xs font-medium text-amber-700 hover:text-amber-900 mt-auto">Manage →</p>
+        </div>
+    </a>
+
+    <!-- Failed Activities -->
+    <a href="{{ route('super-admin.system-logs.index') }}" class="block h-full">
+        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-red-200 hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm font-medium text-red-600">FAILED ACTIVITIES</p>
+                    <p class="text-xl md:text-3xl font-bold text-red-600 mt-1">{{ \App\Models\SystemLog::where('status', 'failed')->count() }}</p>
+                    <p class="text-xs text-red-500 mt-1">Requires review</p>
+                </div>
+                <div class="w-10 h-10 md:w-14 md:h-14 bg-red-50 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-journal-text text-red-500 text-lg md:text-2xl"></i>
+                </div>
+            </div>
+            <p class="text-xs font-medium text-red-600 hover:text-red-800 mt-auto">View Logs →</p>
+        </div>
+    </a>
 </div>
 
 <!-- Quick Actions -->
@@ -145,6 +157,29 @@
     </div>
 </div>
 
+<!-- Analytics Overview -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
+    <!-- System Activity Overview -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">System Activity Overview</h3>
+        </div>
+        <div class="h-64">
+            <canvas id="systemActivityChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Announcement Status -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Announcement Status</h3>
+        </div>
+        <div class="h-64">
+            <canvas id="announcementStatusChart"></canvas>
+        </div>
+    </div>
+</div>
+
 <!-- User Management Section -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
     <div class="flex items-center justify-between mb-4">
@@ -168,7 +203,7 @@
         </div>
         <div class="bg-purple-50 rounded-lg p-3 border border-purple-100">
             <p class="text-xs text-purple-600 font-medium">Admin Staff</p>
-            <p class="text-xl font-bold text-purple-700">{{ $stats['super_admins'] ?? 0 }} SA + {{ $stats['city_vets'] ?? 0 }} CV</p>
+            <p class="text-xl font-bold text-purple-700">{{ $stats['admin_staff_total'] ?? 0 }}</p>
         </div>
         <div class="bg-green-50 rounded-lg p-3 border border-green-100">
             <p class="text-xs text-green-600 font-medium">Pet Owners</p>
@@ -308,4 +343,108 @@
         </table>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // System Activity Overview Chart
+    const systemActivityCtx = document.getElementById('systemActivityChart');
+    if (systemActivityCtx) {
+        const activityLabels = @json($systemActivityLabels ?? []);
+        const successData = @json($systemActivitySuccess ?? []);
+        const failedData = @json($systemActivityFailed ?? []);
+
+        new Chart(systemActivityCtx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: activityLabels,
+                datasets: [
+                    {
+                        label: 'Successful Activities',
+                        data: successData,
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                    {
+                        label: 'Failed Activities',
+                        data: failedData,
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { usePointStyle: true, pointStyle: 'circle' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    // Announcement Status Chart
+    const announcementStatusCtx = document.getElementById('announcementStatusChart');
+    if (announcementStatusCtx) {
+        const statusLabels = @json($announcementStatusLabels ?? []);
+        const statusData = @json($announcementStatusData ?? []);
+
+        const statusColorMap = {
+            'published': '#16a34a',
+            'Published': '#16a34a',
+            'draft': '#f59e0b',
+            'Draft': '#f59e0b',
+            'archived': '#64748b',
+            'Archived': '#64748b',
+        };
+        const fallbackColors = ['#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
+        const statusColors = statusLabels.map((label, index) => statusColorMap[label] ?? fallbackColors[index % fallbackColors.length]);
+
+        new Chart(announcementStatusCtx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusData,
+                    backgroundColor: statusColors,
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, pointStyle: 'circle', padding: 20 }
+                    }
+                },
+                cutout: '60%',
+            }
+        });
+    }
+});
+</script>
+@endpush
 @endsection
