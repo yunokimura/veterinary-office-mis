@@ -3,11 +3,12 @@
     @method('PUT')
 
     <!-- Personal Information -->
-    <div class="mb-8">
+    <div class="mb-8" id="section-personal-info" data-section="personal-info">
         <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
             <i class="bi bi-person text-blue-600"></i> Personal Information
+            <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
         </h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fields-container">
             <!-- First Name -->
             <div>
                 <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">First Name <span class="text-red-500">*</span></label>
@@ -87,11 +88,12 @@
     </div>
 
     <!-- Password Update (Optional) -->
-    <div class="mb-8">
+    <div class="mb-8" id="section-password" data-section="password">
         <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
             <i class="bi bi-key text-blue-600"></i> Change Password (Optional)
+            <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
         </h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fields-container">
             <!-- New Password -->
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
@@ -114,11 +116,12 @@
     </div>
 
     <!-- Role & Permissions -->
-    <div class="mb-8">
+    <div class="mb-8" id="section-role" data-section="role">
         <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
             <i class="bi bi-shield text-blue-600"></i> Role & Permissions
+            <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
         </h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fields-container">
             <!-- Primary Role -->
             <div>
                 <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Primary Role <span class="text-red-500">*</span></label>
@@ -148,11 +151,12 @@
 
     <!-- Barangay Assignment -->
     @if(auth()->user()->hasAnyRole(['super_admin', 'city_vet']))
-    <div class="mb-8">
+    <div class="mb-8" id="section-barangay" data-section="barangay">
         <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
             <i class="bi bi-geo-alt text-blue-600"></i> Barangay Assignment
+            <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
         </h4>
-        <div>
+        <div class="fields-container">
             <label for="barangay_id" class="block text-sm font-medium text-gray-700 mb-2">Assigned Barangay</label>
             <select name="barangay_id" id="barangay_id" 
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
@@ -169,11 +173,12 @@
 
     <!-- Facility Assignment (Super Admin Only) -->
     @if(auth()->user()->hasRole('super_admin') && $facilities->count() > 0)
-    <div class="mb-8">
+    <div class="mb-8" id="section-facility" data-section="facility">
         <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
             <i class="bi bi-hospital text-blue-600"></i> Facility Assignment
+            <button type="button" class="edit-section-btn btn btn-sm btn-outline-primary ms-auto"><i class="bi bi-pencil-square"></i> Edit</button>
         </h4>
-        <div>
+        <div class="fields-container">
             <label for="facility_id" class="block text-sm font-medium text-gray-700 mb-2">Assigned Facility</label>
             <select name="facility_id" id="facility_id" 
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">

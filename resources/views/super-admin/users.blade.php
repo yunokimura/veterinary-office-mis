@@ -159,9 +159,30 @@
     </div>
 </div>
 
+<style>
+.section-disabled {
+    opacity: 0.6;
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+.section-fields-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+.section-fields-disabled input,
+.section-fields-disabled select,
+.section-fields-disabled textarea {
+    background-color: #f3f4f6 !important;
+    cursor: not-allowed;
+}
+</style>
+
 <script>
 let editModal;
 let currentUserId = null;
+const sectionOriginalValues = {};
+let activeSectionId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
@@ -171,6 +192,20 @@ document.addEventListener('DOMContentLoaded', function() {
         if (cancelBtn) {
             e.preventDefault();
             closeEditModal();
+            return;
+        }
+
+        const editBtn = e.target.closest('.edit-section-btn');
+        if (editBtn) {
+            const section = editBtn.closest('[data-section]');
+            if (section) {
+                const sectionId = section.id;
+                if (activeSectionId === sectionId) {
+                    disableSection(sectionId);
+                } else {
+                    enableSection(sectionId);
+                }
+            }
         }
     });
 });
@@ -199,6 +234,7 @@ function openEditModal(userId, userName) {
     .then(response => response.text())
     .then(html => {
         modalBody.innerHTML = html;
+        initSections();
         editModal.show();
     })
     .catch(error => {
@@ -246,6 +282,8 @@ function showFormErrors(errors) {
     modalBody.querySelectorAll('.text-red-600').forEach(el => el.remove());
     modalBody.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
 
+    let erroredSectionId = null;
+
     for (const [field, messages] of Object.entries(errors)) {
         const input = document.getElementById(field);
         if (input) {
@@ -254,7 +292,24 @@ function showFormErrors(errors) {
             errorEl.className = 'mt-1 text-sm text-red-600';
             errorEl.textContent = messages[0];
             input.parentNode.appendChild(errorEl);
+
+            const section = input.closest('[data-section]');
+            if (section) {
+                erroredSectionId = section.id;
+            }
         }
+    }
+
+    if (erroredSectionId) {
+        const sections = document.querySelectorAll('[data-section]');
+        sections.forEach(section => {
+            if (section.id !== erroredSectionId) {
+                disableSection(section.id);
+            }
+        });
+        enableSection(erroredSectionId);
+    } else {
+        disableAllSections();
     }
 }
 
@@ -288,6 +343,7 @@ document.addEventListener('submit', function(e) {
         .then(data => {
             if (data.success) {
                 updateUserRow(data.user);
+                disableAllSections();
                 closeEditModal();
                 showToast('success', data.message);
             }
@@ -308,5 +364,133 @@ document.addEventListener('submit', function(e) {
         });
     }
 });
+
+function initSections() {
+    const sections = document.querySelectorAll('[data-section]');
+    sections.forEach(section => {
+        const sectionId = section.id;
+        storeOriginalValues(sectionId);
+        disableSection(sectionId);
+    });
+    activeSectionId = null;
+}
+
+function storeOriginalValues(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    
+    const inputs = section.querySelectorAll('input:not([type="hidden"]):not(.section-hidden-input), select, textarea');
+    sectionOriginalValues[sectionId] = {};
+    inputs.forEach(input => {
+        const key = input.name || input.id;
+        sectionOriginalValues[sectionId][key] = input.value;
+    });
+}
+
+function disableSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    const container = section.querySelector('.fields-container');
+    const inputs = section.querySelectorAll('input:not([type="hidden"]):not(.section-hidden-input), select, textarea');
+    const editBtn = section.querySelector('.edit-section-btn');
+
+    if (sectionOriginalValues[sectionId]) {
+        inputs.forEach(input => {
+            const key = input.name || input.id;
+            if (sectionOriginalValues[sectionId][key] !== undefined) {
+                input.value = sectionOriginalValues[sectionId][key];
+            }
+        });
+    }
+
+    inputs.forEach(input => {
+        if (input.tagName === 'SELECT') {
+            input.setAttribute('disabled', 'disabled');
+            addHiddenInput(section, input);
+        } else {
+            input.setAttribute('readonly', 'readonly');
+        }
+    });
+
+    if (container) {
+        container.classList.add('section-fields-disabled');
+    }
+    section.classList.add('section-disabled');
+
+    if (editBtn) {
+        editBtn.innerHTML = '<i class="bi bi-pencil-square"></i> Edit';
+        editBtn.classList.remove('btn-outline-danger');
+        editBtn.classList.add('btn-outline-primary');
+    }
+
+    if (activeSectionId === sectionId) {
+        activeSectionId = null;
+    }
+}
+
+function enableSection(sectionId) {
+    if (activeSectionId && activeSectionId !== sectionId) {
+        disableSection(activeSectionId);
+    }
+
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    const container = section.querySelector('.fields-container');
+    const inputs = section.querySelectorAll('input:not([type="hidden"]):not(.section-hidden-input), select, textarea');
+    const editBtn = section.querySelector('.edit-section-btn');
+
+    inputs.forEach(input => {
+        if (input.tagName === 'SELECT') {
+            input.removeAttribute('disabled');
+            removeHiddenInput(section, input);
+        } else {
+            input.removeAttribute('readonly');
+        }
+    });
+
+    if (container) {
+        container.classList.remove('section-fields-disabled');
+    }
+    section.classList.remove('section-disabled');
+
+    if (editBtn) {
+        editBtn.innerHTML = '<i class="bi bi-x-circle"></i> Cancel';
+        editBtn.classList.remove('btn-outline-primary');
+        editBtn.classList.add('btn-outline-danger');
+    }
+
+    activeSectionId = sectionId;
+}
+
+function addHiddenInput(section, select) {
+    const existing = section.querySelector(`input.section-hidden-input[name="${select.name}"]`);
+    if (existing) {
+        existing.value = select.value;
+        return;
+    }
+    const hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = select.name;
+    hidden.value = select.value;
+    hidden.classList.add('section-hidden-input');
+    select.parentNode.insertBefore(hidden, select);
+}
+
+function removeHiddenInput(section, select) {
+    const hidden = section.querySelector(`input.section-hidden-input[name="${select.name}"]`);
+    if (hidden) {
+        hidden.remove();
+    }
+}
+
+function disableAllSections() {
+    const sections = document.querySelectorAll('[data-section]');
+    sections.forEach(section => {
+        disableSection(section.id);
+    });
+    activeSectionId = null;
+}
 </script>
 @endsection
