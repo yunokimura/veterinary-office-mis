@@ -128,26 +128,36 @@
 
 <!-- Logs Table -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="overflow-hidden">
+        <table class="w-full table-fixed">
+            <colgroup>
+                <col class="w-[8%]">
+                <col class="w-[16%]">
+                <col class="w-[12%]">
+                <col class="w-[14%]">
+                <col class="w-[10%]">
+                <col class="w-[20%]">
+                <col class="w-[12%]">
+                <col class="w-[8%]">
+            </colgroup>
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 z-20 bg-gray-50 border-r border-gray-200">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">User</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Module</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Date & Time</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Module</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Description</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">IP Address</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">When</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse($logs as $log)
-                    <tr class="log-row hover:bg-gray-50 cursor-pointer" data-log-id="{{ $log->log_id }}">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $log->user_id ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                    @php $rowColor = $log->status == 'success' ? 'bg-green-50 hover:bg-green-100' : 'bg-red-50 hover:bg-red-100'; @endphp
+                    <tr class="log-row cursor-pointer {{ $rowColor }} group" data-log-id="{{ $log->log_id }}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 sticky left-0 z-10 border-r border-gray-200 {{ $log->status == 'success' ? 'bg-green-50 group-hover:bg-green-100' : 'bg-red-50 group-hover:bg-red-100' }}">{{ $log->user_id ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
                                     <i class="bi bi-person text-blue-600"></i>
@@ -158,28 +168,17 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $log->action }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $log->created_at }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $log->module }}</td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden md:table-cell">{{ $log->created_at }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden md:table-cell">{{ $log->module }}</td>
+                        <td class="px-6 py-4 hidden md:table-cell">
                             <span class="text-sm text-gray-600 truncate max-w-xs block">{{ Str::limit($log->description, 50) }}</span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">{{ $log->ip_address ?? 'N/A' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($log->status == 'success')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <i class="bi bi-check-circle mr-1"></i> Success
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                    <i class="bi bi-x-circle mr-1"></i> Failed
-                                </span>
-                            @endif
-                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono hidden md:table-cell">{{ $log->ip_address ?? 'N/A' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $log->created_at->diffForHumans() }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                             <i class="bi bi-inbox text-4xl mb-3 block"></i>
                             No system logs found
                         </td>
