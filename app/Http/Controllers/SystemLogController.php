@@ -117,8 +117,8 @@ class SystemLogController extends Controller
         $log = SystemLog::with('user')->findOrFail($id);
 
         return response()->json([
-            'log_id' => $log->log_id,
-            'status' => $log->status,
+            'log_id' => $log->id,
+            'status' => $log->status ?? 'N/A',
             'user' => $log->user ? $log->user->name : 'System',
             'role' => $log->role ?? 'N/A',
             'action' => $log->action,
@@ -159,7 +159,7 @@ class SystemLogController extends Controller
 
         $logs->each(function ($log) use (&$csv) {
             $csv->push([
-                $log->log_id,
+                $log->id,
                 $log->user ? $log->user->name : 'N/A',
                 $log->user ? $log->user->getRoleAttribute() : 'N/A',
                 $log->action,

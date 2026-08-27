@@ -59,7 +59,7 @@ class SystemLog extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'log_id';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'user_id',
         'role',

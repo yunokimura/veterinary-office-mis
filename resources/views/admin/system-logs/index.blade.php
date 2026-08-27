@@ -154,7 +154,7 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse($logs as $log)
-                    <tr class="log-row hover:bg-gray-50 cursor-pointer group" data-log-id="{{ $log->log_id }}">
+                    <tr class="log-row hover:bg-gray-50 cursor-pointer group" data-log-id="{{ $log->id }}">
                         <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 leading-[1.5] sticky left-0 z-10 border-r border-gray-200 bg-white group-hover:bg-gray-50">{{ $log->user_id ?? '-' }}</td>
                         <td class="px-4 py-[18px] whitespace-nowrap hidden md:table-cell">
                             <div class="flex items-center gap-2 whitespace-nowrap">

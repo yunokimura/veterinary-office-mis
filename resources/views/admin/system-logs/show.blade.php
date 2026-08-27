@@ -21,7 +21,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-500">Log ID</p>
-                        <p class="text-lg font-semibold text-gray-800">#{{ $log->log_id }}</p>
+                        <p class="text-lg font-semibold text-gray-800">#{{ $log->id }}</p>
                     </div>
                     <div>
                         @if($log->status == 'success')
@@ -145,7 +145,7 @@
             
             @php
                 $relatedLogs = \App\Models\SystemLog::where('user_id', $log->user_id)
-                    ->where('log_id', '!=', $log->log_id)
+                    ->where('id', '!=', $log->id)
                     ->orderBy('created_at', 'desc')
                     ->take(5)
                     ->get();
@@ -154,8 +154,8 @@
             @if($relatedLogs->count() > 0)
                 <div class="space-y-3">
                     @foreach($relatedLogs as $related)
-                        @if($related && $related->log_id)
-                        <a href="{{ route('admin.system-logs.show', $related->log_id) }}" class="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                        @if($related && $related->id)
+                        <a href="{{ route('admin.system-logs.show', $related->id) }}" class="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
                             <p class="text-sm font-medium text-gray-800">{{ $related->action }}</p>
                             <p class="text-xs text-gray-500">{{ $related->created_at->diffForHumans() }}</p>
                         </a>
