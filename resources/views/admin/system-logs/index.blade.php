@@ -154,9 +154,9 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse($logs as $log)
-                    @php $rowColor = $log->status == 'success' ? 'bg-green-50 hover:bg-green-100' : 'bg-red-50 hover:bg-red-100'; @endphp
+                    @php $rowColor = $log->status == 'success' ? 'bg-[#B2FBA5]/30 hover:bg-[#dcfce7]' : 'bg-red-50 hover:bg-red-100'; @endphp
                     <tr class="log-row cursor-pointer {{ $rowColor }} group" data-log-id="{{ $log->log_id }}">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 sticky left-0 z-10 border-r border-gray-200 {{ $log->status == 'success' ? 'bg-green-50 group-hover:bg-green-100' : 'bg-red-50 group-hover:bg-red-100' }}">{{ $log->user_id ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 sticky left-0 z-10 border-r border-gray-200 {{ $log->status == 'success' ? 'bg-[#B2FBA5]/45 group-hover:bg-[#dcfce7]' : 'bg-red-50 group-hover:bg-red-100' }}">{{ $log->user_id ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
