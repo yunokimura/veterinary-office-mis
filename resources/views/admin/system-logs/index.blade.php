@@ -95,6 +95,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Module</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
@@ -118,6 +119,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $log->action }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $log->created_at }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $log->module }}</td>
                         <td class="px-6 py-4">
                             <span class="text-sm text-gray-600 truncate max-w-xs block">{{ Str::limit($log->description, 50) }}</span>
@@ -145,7 +147,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="10" class="px-6 py-12 text-center text-gray-500">
                             <i class="bi bi-inbox text-4xl mb-3 block"></i>
                             No system logs found
                         </td>
