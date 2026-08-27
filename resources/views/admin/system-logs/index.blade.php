@@ -16,6 +16,46 @@
     </a>
 </div>
 
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center">
+        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+            <i class="bi bi-journal-text text-blue-600 text-base"></i>
+        </div>
+        <div>
+            <p class="text-xs text-gray-500">Total Logs</p>
+            <p class="text-xl font-semibold text-gray-800">{{ $totalLogs }}</p>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center">
+        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+            <i class="bi bi-check-circle text-green-600 text-base"></i>
+        </div>
+        <div>
+            <p class="text-xs text-gray-500">Successful Actions</p>
+            <p class="text-xl font-semibold text-gray-800">{{ $successfulActions }}</p>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center">
+        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+            <i class="bi bi-x-circle text-red-600 text-base"></i>
+        </div>
+        <div>
+            <p class="text-xs text-gray-500">Failed Actions</p>
+            <p class="text-xl font-semibold text-gray-800">{{ $failedActions }}</p>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center">
+        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+            <i class="bi bi-people text-purple-600 text-base"></i>
+        </div>
+        <div>
+            <p class="text-xs text-gray-500">Active Users Today</p>
+            <p class="text-xl font-semibold text-gray-800">{{ $activeUsersToday }}</p>
+        </div>
+    </div>
+</div>
+
 <!-- Filters -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
     <form method="GET" action="{{ route('admin.system-logs.index') }}" class="flex flex-wrap gap-4 items-end">

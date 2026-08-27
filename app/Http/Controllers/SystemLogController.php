@@ -89,7 +89,14 @@ class SystemLogController extends Controller
             ->sortBy('name')
             ->pluck('name', 'id');
 
-        return view('admin.system-logs.index', compact('logs', 'modules', 'actions', 'users'));
+        $totalLogs = SystemLog::count();
+        $successfulActions = SystemLog::where('status', 'success')->count();
+        $failedActions = SystemLog::where('status', 'failed')->count();
+        $activeUsersToday = SystemLog::whereDate('created_at', today())
+            ->distinct('user_id')
+            ->count('user_id');
+
+        return view('admin.system-logs.index', compact('logs', 'modules', 'actions', 'users', 'totalLogs', 'successfulActions', 'failedActions', 'activeUsersToday'));
     }
 
     /**
