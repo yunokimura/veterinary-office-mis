@@ -110,6 +110,28 @@ class SystemLogController extends Controller
     }
 
     /**
+     * Return log details as JSON for modal.
+     */
+    public function modal($id)
+    {
+        $log = SystemLog::with('user')->findOrFail($id);
+
+        return response()->json([
+            'log_id' => $log->log_id,
+            'status' => $log->status,
+            'user' => $log->user ? $log->user->name : 'System',
+            'role' => $log->role ?? 'N/A',
+            'action' => $log->action,
+            'module' => $log->module,
+            'record_id' => $log->record_id ?? 'N/A',
+            'ip_address' => $log->ip_address ?? 'N/A',
+            'description' => $log->description ?? 'No description provided',
+            'created_at' => $log->created_at->format('F j, Y \a\t g:i:s A'),
+            'diff_for_humans' => $log->created_at->diffForHumans(),
+        ]);
+    }
+
+    /**
      * Export logs to CSV.
      */
     public function export(Request $request)

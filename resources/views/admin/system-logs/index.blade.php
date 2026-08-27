@@ -141,12 +141,11 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">When</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse($logs as $log)
-                    <tr class="hover:bg-gray-50">
+                    <tr class="log-row hover:bg-gray-50 cursor-pointer" data-log-id="{{ $log->log_id }}">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $log->user_id ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
@@ -177,17 +176,10 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $log->created_at->diffForHumans() }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            @if($log->log_id)
-                            <a href="{{ route('admin.system-logs.show', $log->log_id) }}" class="text-blue-600 hover:text-blue-800">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            @endif
-                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="10" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="9" class="px-6 py-12 text-center text-gray-500">
                             <i class="bi bi-inbox text-4xl mb-3 block"></i>
                             No system logs found
                         </td>
@@ -202,4 +194,128 @@
         {{ $logs->appends(request()->query())->links() }}
     </div>
 </div>
+
+<!-- Log Details Modal -->
+<div class="modal fade" id="logDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Log Entry Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="logModalBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-green-600" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modalEl = document.getElementById('logDetailsModal');
+    const modalBody = document.getElementById('logModalBody');
+    const modal = new bootstrap.Modal(modalEl);
+
+    document.querySelectorAll('.log-row').forEach(row => {
+        row.addEventListener('click', function(e) {
+            const link = this.querySelector('a');
+            if (link && e.target.closest('a')) return;
+
+            const logId = this.dataset.logId;
+            const url = "{{ route('admin.system-logs.modal', ['log' => '__ID__']) }}".replace('__ID__', logId);
+
+            modalBody.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border text-green-600" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+            modal.show();
+
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(response => response.json())
+                .then(data => {
+                    const statusBadge = data.status === 'success'
+                        ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"><i class="bi bi-check-circle mr-1"></i> Success</span>'
+                        : '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"><i class="bi bi-x-circle mr-1"></i> Failed</span>';
+
+                    modalBody.innerHTML = `
+                        <div class="space-y-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">Log ID</p>
+                                    <p class="text-lg font-semibold text-gray-800">#${data.log_id}</p>
+                                </div>
+                                <div>${statusBadge}</div>
+                            </div>
+                            <hr class="border-gray-100">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-sm text-gray-500">User</p>
+                                    <div class="flex items-center mt-1">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                            <i class="bi bi-person text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-800">${data.user}</p>
+                                            <p class="text-sm text-gray-500">${data.role}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">IP Address</p>
+                                    <p class="font-mono text-gray-800 mt-1">${data.ip_address}</p>
+                                </div>
+                            </div>
+                            <hr class="border-gray-100">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-sm text-gray-500">Action</p>
+                                    <p class="font-medium text-gray-800 mt-1">${data.action}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Module</p>
+                                    <p class="font-medium text-gray-800 mt-1">${data.module}</p>
+                                </div>
+                            </div>
+                            <hr class="border-gray-100">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-sm text-gray-500">Record ID</p>
+                                    <p class="font-medium text-gray-800 mt-1">${data.record_id}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Created At</p>
+                                    <p class="font-medium text-gray-800 mt-1">${data.created_at}</p>
+                                </div>
+                            </div>
+                            <hr class="border-gray-100">
+                            <div>
+                                <p class="text-sm text-gray-500">Description</p>
+                                <p class="text-gray-800 mt-1">${data.description}</p>
+                            </div>
+                            <hr class="border-gray-100">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-sm text-gray-500">Time Elapsed</p>
+                                    <p class="font-medium text-gray-800 mt-1">${data.diff_for_humans}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(() => {
+                    modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load log details.</div>';
+                });
+        });
+    });
+});
+</script>
+@endpush
 @endsection

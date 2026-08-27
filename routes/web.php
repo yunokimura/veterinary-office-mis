@@ -228,6 +228,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
     // System Logs
     Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     Route::get('/system-logs/{log}', [SystemLogController::class, 'show'])->name('system-logs.show');
+    Route::get('/system-logs/{log}/modal', [SystemLogController::class, 'modal'])->name('system-logs.modal');
     Route::get('/system-logs/export', [SystemLogController::class, 'export'])->name('system-logs.export');
 
     // Announcements
@@ -297,6 +298,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
     // System Logs
     Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     Route::get('/system-logs/{log}', [SystemLogController::class, 'show'])->name('system-logs.show');
+    Route::get('/system-logs/{log}/modal', [SystemLogController::class, 'modal'])->name('system-logs.modal');
     Route::get('/system-logs/export', [SystemLogController::class, 'export'])->name('system-logs.export');
 
     // Announcements
