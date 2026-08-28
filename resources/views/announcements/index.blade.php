@@ -151,7 +151,7 @@
     </form>
 </div>
 
-<div class="mt-4 pt-4 border-t border-gray-100">
+<div class="mt-2 pt-3 border-t border-gray-100 mb-4">
     <a href="{{ route($rolePrefix . '.announcements.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition shadow-sm">
         <i class="bi bi-plus-circle"></i>
         Add Announcement
