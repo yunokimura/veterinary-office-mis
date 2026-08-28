@@ -88,120 +88,108 @@
 </div>
 
 <!-- Filter & Search Bar -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-    <form method="GET" action="{{ route($rolePrefix . '.announcements.index') }}" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <!-- Search Input -->
-            <div class="md:col-span-2">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="bi bi-search text-gray-400"></i>
-                    </div>
-                    <input 
-                        type="text" 
-                        name="search" 
-                        value="{{ $currentSearch }}"
-                        placeholder="Search announcements..." 
-                        class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition bg-white"
-                    >
-                </div>
-            </div>
-
-            <!-- Category Filter -->
-            <div>
-                <div class="relative">
-                    <select name="category" class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 appearance-none">
-                        <option value="">All Categories</option>
-                        <option value="campaign" {{ $currentCategory === 'campaign' ? 'selected' : '' }}>Campaign</option>
-                        <option value="event" {{ $currentCategory === 'event' ? 'selected' : '' }}>Event</option>
-                    </select>
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <i class="bi bi-chevron-down text-gray-400"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Status Filter -->
-            <div>
-                <div class="relative">
-                    <select name="status" class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 appearance-none">
-                        <option value="">All Status</option>
-                        <option value="Published" {{ $currentStatus === 'Published' ? 'selected' : '' }}>Published</option>
-                        <option value="Draft" {{ $currentStatus === 'Draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="Archived" {{ $currentStatus === 'Archived' ? 'selected' : '' }}>Archived</option>
-                    </select>
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <i class="bi bi-chevron-down text-gray-400"></i>
-                    </div>
-                </div>
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <form method="GET" action="{{ route($rolePrefix . '.announcements.index') }}" class="flex flex-wrap gap-4 items-end">
+        <!-- Search Input -->
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+            <div class="flex items-center relative">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ $currentSearch }}"
+                    placeholder="Search announcements..."
+                    class="flex-1 pl-3 pr-8 py-2 border border-gray-300 rounded-lg rounded-r-none outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 h-10"
+                >
+                <button type="submit" class="px-3 py-2 border border-gray-300 border-l-0 rounded-lg rounded-l-none bg-gray-50 text-gray-500 hover:text-green-600 hover:bg-green-50 transition-colors h-10 flex items-center justify-center">
+                    <i class="bi bi-search"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Sort & Actions Row -->
-        <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <select name="sort" class="px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 text-sm appearance-none">
-                        <option value="newest" {{ $currentSort === 'newest' ? 'selected' : '' }}>Newest First</option>
-                        <option value="oldest" {{ $currentSort === 'oldest' ? 'selected' : '' }}>Oldest First</option>
-                        <option value="title_asc" {{ $currentSort === 'title_asc' ? 'selected' : '' }}>Title A-Z</option>
-                        <option value="title_desc" {{ $currentSort === 'title_desc' ? 'selected' : '' }}>Title Z-A</option>
-                    </select>
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <i class="bi bi-chevron-down text-gray-400 text-sm"></i>
-                    </div>
-                </div>
-
-                @if($currentSearch || $currentCategory || $currentStatus)
-                    <a href="{{ route($rolePrefix . '.announcements.index') }}" class="inline-flex items-center gap-1 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition">
-                        <i class="bi bi-x-circle"></i>
-                        Clear Filters
-                    </a>
-                @endif
-            </div>
+        <!-- Category Filter -->
+        <div class="relative min-w-max">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <select name="category" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
+                    style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+                <option value="">All Categories</option>
+                <option value="campaign" {{ $currentCategory === 'campaign' ? 'selected' : '' }}>Campaign</option>
+                <option value="event" {{ $currentCategory === 'event' ? 'selected' : '' }}>Event</option>
+            </select>
         </div>
+
+        <!-- Status Filter -->
+        <div class="relative min-w-max">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select name="status" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
+                    style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+                <option value="">All Status</option>
+                <option value="Published" {{ $currentStatus === 'Published' ? 'selected' : '' }}>Published</option>
+                <option value="Draft" {{ $currentStatus === 'Draft' ? 'selected' : '' }}>Draft</option>
+                <option value="Archived" {{ $currentStatus === 'Archived' ? 'selected' : '' }}>Archived</option>
+            </select>
+        </div>
+
+        <!-- Sort -->
+        <div class="relative min-w-max">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+            <select name="sort" class="px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10 text-sm"
+                    style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+                <option value="newest" {{ $currentSort === 'newest' ? 'selected' : '' }}>Newest First</option>
+                <option value="oldest" {{ $currentSort === 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                <option value="title_asc" {{ $currentSort === 'title_asc' ? 'selected' : '' }}>Title A-Z</option>
+                <option value="title_desc" {{ $currentSort === 'title_desc' ? 'selected' : '' }}>Title Z-A</option>
+            </select>
+        </div>
+
+        @if($currentSearch || $currentCategory || $currentStatus)
+            <a href="{{ route($rolePrefix . '.announcements.index') }}" class="inline-flex items-center gap-1 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition h-10">
+                <i class="bi bi-x-circle"></i>
+                Clear Filters
+            </a>
+        @endif
     </form>
-
-    <div class="mt-4 pt-4 border-t border-gray-100">
-        <a href="{{ route($rolePrefix . '.announcements.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition shadow-sm">
-            <i class="bi bi-plus-circle"></i>
-            Add Announcement
-        </a>
-    </div>
-
-    <!-- Active Filter Tags -->
-    @if($currentSearch || $currentCategory || $currentStatus)
-        <div class="mt-4 pt-4 border-t border-gray-100">
-            <div class="flex flex-wrap items-center gap-2">
-                <span class="text-sm text-gray-600">Active filters:</span>
-                @if($currentSearch)
-                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                        Search: "{{ $currentSearch }}"
-                        <a href="{{ route($rolePrefix . '.announcements.index', array_filter(request()->except('search'))) }}" class="ml-1 hover:text-blue-900">
-                            <i class="bi bi-x"></i>
-                        </a>
-                    </span>
-                @endif
-                @if($currentCategory)
-                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
-                        Category: {{ ucfirst($currentCategory) }}
-                        <a href="{{ route($rolePrefix . '.announcements.index', array_filter(request()->except('category'))) }}" class="ml-1 hover:text-purple-900">
-                            <i class="bi bi-x"></i>
-                        </a>
-                    </span>
-                @endif
-                @if($currentStatus)
-                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                        Status: {{ $currentStatus }}
-                        <a href="{{ route($rolePrefix . '.announcements.index', array_filter(request()->except('status'))) }}" class="ml-1 hover:text-green-900">
-                            <i class="bi bi-x"></i>
-                        </a>
-                    </span>
-                @endif
-            </div>
-        </div>
-    @endif
 </div>
+
+<div class="mt-4 pt-4 border-t border-gray-100">
+    <a href="{{ route($rolePrefix . '.announcements.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition shadow-sm">
+        <i class="bi bi-plus-circle"></i>
+        Add Announcement
+    </a>
+</div>
+
+<!-- Active Filter Tags -->
+@if($currentSearch || $currentCategory || $currentStatus)
+    <div class="mt-4 pt-4 border-t border-gray-100">
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="text-sm text-gray-600">Active filters:</span>
+            @if($currentSearch)
+                <span class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                    Search: "{{ $currentSearch }}"
+                    <a href="{{ route($rolePrefix . '.announcements.index', array_filter(request()->except('search'))) }}" class="ml-1 hover:text-blue-900">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </span>
+            @endif
+            @if($currentCategory)
+                <span class="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                    Category: {{ ucfirst($currentCategory) }}
+                    <a href="{{ route($rolePrefix . '.announcements.index', array_filter(request()->except('category'))) }}" class="ml-1 hover:text-purple-900">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </span>
+            @endif
+            @if($currentStatus)
+                <span class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                    Status: {{ $currentStatus }}
+                    <a href="{{ route($rolePrefix . '.announcements.index', array_filter(request()->except('status'))) }}" class="ml-1 hover:text-green-900">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </span>
+            @endif
+        </div>
+    </div>
+@endif
 
 <!-- Bulk Actions Toolbar (Hidden by default) -->
 <div id="bulkActionsToolbar" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
