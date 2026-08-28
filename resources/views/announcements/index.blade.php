@@ -151,12 +151,7 @@
     </form>
 </div>
 
-<div class="mt-2 pt-3 border-t border-gray-100 mb-4">
-    <a href="{{ route($rolePrefix . '.announcements.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition shadow-sm">
-        <i class="bi bi-plus-circle"></i>
-        Add Announcement
-    </a>
-</div>
+
 
 <!-- Active Filter Tags -->
 @if($currentSearch || $currentCategory || $currentStatus)
@@ -986,4 +981,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<a href="{{ route($rolePrefix . '.announcements.create') }}" class="fixed bottom-6 right-6 z-40 flex items-center justify-center w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" aria-label="Add Announcement" title="Add Announcement">
+    <i class="bi bi-plus-lg text-2xl"></i>
+</a>
+
 @endsection
