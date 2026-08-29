@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Announcement;
 use App\Models\Barangay;
 use App\Models\BiteRabiesReport;
+use App\Models\Facility;
 use App\Models\Pet;
 use App\Models\RabiesVaccinationReport;
 use App\Models\SystemLog;
@@ -386,7 +387,12 @@ class SuperAdminController extends Controller
         $cityVetStaff = User::whereHas('roles', function ($q) { $q->where('name', 'city_vet'); })->count();
         $petOwners = User::whereHas('roles', function ($q) { $q->where('name', 'pet_owner'); })->count();
 
-        return view('super-admin.users', compact('users', 'roles', 'search', 'role', 'status', 'totalUsers', 'activeAccounts', 'cityVetStaff', 'petOwners'));
+        $assignableRoles = auth()->user()->getAssignableRoles();
+        $facilities = auth()->user()->hasRole('super_admin')
+            ? Facility::orderBy('name')->get()
+            : collect();
+
+        return view('super-admin.users', compact('users', 'roles', 'search', 'role', 'status', 'totalUsers', 'activeAccounts', 'cityVetStaff', 'petOwners', 'assignableRoles', 'facilities'));
     }
 
     /**

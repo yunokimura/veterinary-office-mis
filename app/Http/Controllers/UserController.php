@@ -216,6 +216,20 @@ class UserController extends Controller
 
         $redirectRoute = request()->routeIs('super-admin.*') ? 'super-admin.users.index' : 'admin.users.index';
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully.',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role_label' => $user->getRoleDisplayName(),
+                    'status' => $user->status,
+                ],
+            ]);
+        }
+
         return redirect()->route($redirectRoute)->with('success', 'User created successfully.');
     }
 
