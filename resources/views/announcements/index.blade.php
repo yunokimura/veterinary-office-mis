@@ -984,7 +984,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <span class="flex items-center justify-center w-14 h-14 flex-shrink-0 transition-transform duration-200 group-hover:scale-105 active:scale-95">
         <i class="bi bi-plus-lg text-2xl"></i>
     </span>
-    <span class="overflow-hidden opacity-0 max-w-0 min-w-0 group-hover:opacity-100 group-hover:max-w-[140px] group-focus:opacity-100 group-focus:max-w-[140px] transition-all duration-300 whitespace-nowrap font-medium">
+    <span class="overflow-hidden opacity-0 w-0 min-w-0 group-hover:opacity-100 group-hover:w-48 group-focus:opacity-100 group-focus:w-48 transition-all duration-300 whitespace-nowrap font-medium">
         <span class="px-5 block">Add Announcement</span>
     </span>
 </a>
