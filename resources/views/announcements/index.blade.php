@@ -978,14 +978,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <a href="{{ route($rolePrefix . '.announcements.create') }}"
-   class="fixed bottom-6 right-6 z-40 flex items-center bg-green-600 hover:bg-green-700 text-white rounded-full shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 group"
+   class="fixed bottom-6 right-6 z-50 flex items-center w-14 h-14
+          hover:w-56 bg-green-600 hover:bg-green-700
+          text-white rounded-full shadow-xl overflow-hidden
+          transition-all duration-300 ease-in-out"
    aria-label="Add Announcement"
    title="Add Announcement">
-    <span class="flex items-center justify-center w-14 h-14 flex-shrink-0 transition-transform duration-200 group-hover:scale-105 active:scale-95">
+
+    <span class="flex items-center justify-center w-14 h-14 flex-shrink-0">
         <i class="bi bi-plus-lg text-2xl"></i>
     </span>
-    <span class="overflow-hidden opacity-0 w-0 min-w-0 group-hover:opacity-100 group-hover:w-48 group-focus:opacity-100 group-focus:w-48 transition-all duration-300 whitespace-nowrap font-medium">
-        <span class="px-5 block">Add Announcement</span>
+
+    <span class="whitespace-nowrap font-medium">
+        Add Announcement
     </span>
 </a>
 
