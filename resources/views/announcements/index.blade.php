@@ -970,28 +970,194 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Sort filter
-    if (sortSelect) {
-        sortSelect.addEventListener('change', function() {
-            applyFilters(1);
-        });
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                applyFilters(1);
+            });
+        }
+
+        // Category change handler for announcement form
+        const categoryElement = document.getElementById('category');
+        if (categoryElement) {
+            categoryElement.addEventListener('change', function() {
+                const eventFields = document.querySelector('.event-fields');
+                if (this.value === 'event') {
+                    eventFields.classList.remove('hidden');
+                    document.getElementById('event_date').setAttribute('required', 'required');
+                } else {
+                    eventFields.classList.add('hidden');
+                    document.getElementById('event_date').removeAttribute('required');
+                }
+            });
+            
+            // Trigger category change to set initial state
+            categoryElement.dispatchEvent(new Event('change'));
+        }
+    });
+
+// Image preview for create modal form
+function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById('imagePreview');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
     }
-});
+}
+
+function removeImage() {
+    const input = document.getElementById('photo_path');
+    const preview = document.getElementById('imagePreview');
+    input.value = '';
+    preview.classList.add('hidden');
+}
+
+// Attachment preview
+function previewAttachment(event) {
+    const input = event.target;
+    const preview = document.getElementById('attachmentPreview');
+    const nameSpan = document.getElementById('attachmentName');
+
+    if (input.files && input.files[0]) {
+        nameSpan.textContent = 'Selected: ' + input.files[0].name;
+        preview.classList.remove('hidden');
+    }
+}
+
+function removeAttachment() {
+    const input = document.getElementById('attachment_path');
+    const preview = document.getElementById('attachmentPreview');
+    input.value = '';
+    preview.classList.add('hidden');
+}
+
+// Inline Success Toast
+function showInlineSuccess(message) {
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 z-[60] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2';
+    toast.innerHTML = `<i class="bi bi-check-circle"></i><span>${message}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
 </script>
-<a href="{{ route($rolePrefix . '.announcements.create') }}"
-   class="fixed bottom-6 right-6 z-50 flex items-center w-14 h-14
-          hover:w-56 bg-green-600 hover:bg-green-700
-          text-white rounded-full shadow-xl overflow-hidden
-          transition-all duration-300 ease-in-out"
-   aria-label="Add Announcement"
-   title="Add Announcement">
+<div x-data="{
+    showCreateModal: false,
+    isSubmitting: false,
+    errors: {},
+    
+    openModal() {
+        this.errors = {};
+        this.resetForm();
+        this.showCreateModal = true;
+        document.body.style.overflow = 'hidden';
+    },
+    
+    closeModal() {
+        this.showCreateModal = false;
+        this.isSubmitting = false;
+        document.body.style.overflow = 'auto';
+    },
+    
+    resetForm() {
+        const form = document.getElementById('announcementForm');
+        if (form) form.reset();
+        const category = document.getElementById('category');
+        if (category) {
+            category.dispatchEvent(new Event('change'));
+        }
+    },
+    
+    async submitForm() {
+        this.errors = {};
+        this.isSubmitting = true;
+        
+        const form = document.getElementById('announcementForm');
+        const formData = new FormData(form);
+        
+        const contactInput = document.getElementById('contact_number');
+        if (contactInput && contactInput.value) {
+            contactInput.value = contactInput.value.replace(/\s/g, '');
+        }
+        
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                    'Accept': 'application/json',
+                },
+                body: formData,
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.closeModal();
+                showInlineSuccess(data.message || 'Announcement created successfully.');
+                applyFilters(1);
+            } else if (data.errors) {
+                this.errors = data.errors;
+            }
+        } catch (error) {
+            this.errors = { general: ['Network error. Please try again.'] };
+        } finally {
+            this.isSubmitting = false;
+        }
+    },
+    
+    async saveAsDraft() {
+        this.errors = {};
+        const form = document.getElementById('announcementForm');
+        const statusField = document.getElementById('status');
+        if (statusField) {
+            statusField.value = 'Draft';
+        }
+        await this.submitForm();
+        if (statusField) {
+            statusField.value = 'Published';
+        }
+    }
+}">
+    <div x-show="showCreateModal"
+         x-on:keydown.escape.window="showCreateModal && closeModal()"
+         style="display: none;"
+    >
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" x-on:click.self="closeModal()">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">New Announcement</h3>
+                    <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="bi bi-x-lg text-2xl"></i>
+                    </button>
+                </div>
+                <div class="overflow-y-auto" style="max-height: calc(90vh - 140px);">
+                    @include('announcements._form')
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <span class="flex items-center justify-center w-14 h-14 flex-shrink-0">
-        <i class="bi bi-plus-lg text-2xl"></i>
-    </span>
+    <button @click="openModal()"
+       class="fixed bottom-6 right-6 z-50 flex items-center w-14 h-14
+              hover:w-56 bg-green-600 hover:bg-green-700
+              text-white rounded-full shadow-xl overflow-hidden
+              transition-all duration-300 ease-in-out"
+       aria-label="Add Announcement"
+       title="Add Announcement">
 
-    <span class="whitespace-nowrap font-medium">
-        Add Announcement
-    </span>
-</a>
+        <span class="flex items-center justify-center w-14 h-14 flex-shrink-0">
+            <i class="bi bi-plus-lg text-2xl"></i>
+        </span>
+
+        <span class="whitespace-nowrap font-medium">
+            Add Announcement
+        </span>
+    </button>
+</div>
 
 @endsection

@@ -48,8 +48,9 @@ class AnnouncementController extends Controller
         }
 
         $announcements = $query->orderBy('created_at', 'desc')->paginate(15);
+        $barangays = Barangay::orderBy('barangay_name')->get();
 
-        return view('announcements.index', compact('announcements'));
+        return view('announcements.index', compact('announcements', 'barangays'));
     }
 
     public function campaigns(Request $request)
@@ -121,6 +122,10 @@ class AnnouncementController extends Controller
         ]);
 
         if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
@@ -156,6 +161,14 @@ class AnnouncementController extends Controller
         ));
 
         NotificationService::announcementCreated($announcement->id);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Announcement created successfully.',
+                'announcement' => $announcement,
+            ]);
+        }
 
         return redirect()->route($this->getAdminRedirectRoute())
             ->with('success', 'Announcement created successfully.');
