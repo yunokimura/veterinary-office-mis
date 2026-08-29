@@ -381,7 +381,12 @@ class SuperAdminController extends Controller
         $allowedRoles = ['super_admin', 'city_vet', 'assistant_vet', 'admin_asst', 'meat_inspector', 'pet_owner'];
         $roles = Role::where('guard_name', 'web')->whereIn('name', $allowedRoles)->orderBy('name')->pluck('name')->toArray();
 
-        return view('super-admin.users', compact('users', 'roles', 'search', 'role', 'status'));
+        $totalUsers = User::count();
+        $activeAccounts = User::where('status', 'active')->count();
+        $cityVetStaff = User::whereHas('roles', function ($q) { $q->where('name', 'city_vet'); })->count();
+        $petOwners = User::whereHas('roles', function ($q) { $q->where('name', 'pet_owner'); })->count();
+
+        return view('super-admin.users', compact('users', 'roles', 'search', 'role', 'status', 'totalUsers', 'activeAccounts', 'cityVetStaff', 'petOwners'));
     }
 
     /**

@@ -35,6 +35,57 @@
 @endphp
 
 <div class="space-y-6">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-gray-500">Total Users</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ $totalUsers }}</p>
+                </div>
+                <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-people text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-gray-500">Active Accounts</p>
+                    <p class="text-2xl font-bold text-green-600 mt-1">{{ $activeAccounts }}</p>
+                </div>
+                <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-check-circle text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-gray-500">City Vet Staff</p>
+                    <p class="text-2xl font-bold text-purple-600 mt-1">{{ $cityVetStaff }}</p>
+                </div>
+                <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-building text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-gray-500">Pet Owners</p>
+                    <p class="text-2xl font-bold text-pink-600 mt-1">{{ $petOwners }}</p>
+                </div>
+                <div class="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-heart text-pink-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Search and Filter Bar -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <form method="GET" action="{{ route('super-admin.users.index') }}" class="flex flex-wrap gap-4 items-end">
