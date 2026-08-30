@@ -211,117 +211,42 @@
 </div>
 
 <!-- Create User Modal -->
-<div x-data="{
-    showCreateModal: false,
-    isSubmitting: false,
-    errors: {},
-
-    openModal() {
-        this.errors = {};
-        this.resetForm();
-        this.showCreateModal = true;
-        document.body.style.overflow = 'hidden';
-    },
-
-    closeModal() {
-        this.showCreateModal = false;
-        this.isSubmitting = false;
-        document.body.style.overflow = 'auto';
-    },
-
-    resetForm() {
-        const form = document.getElementById('createUserModalForm');
-        if (form) form.reset();
-    },
-
-    async submitForm() {
-        this.errors = {};
-        this.isSubmitting = true;
-
-        const form = document.getElementById('createUserModalForm');
-        const formData = new FormData(form);
-
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                    'Accept': 'application/json',
-                },
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                this.closeModal();
-                showInlineSuccess(data.message || 'User created successfully.');
-                setTimeout(() => location.reload(), 500);
-            } else if (data.errors) {
-                this.errors = data.errors;
-            }
-        } catch (error) {
-            this.errors = { general: ['Network error. Please try again.'] };
-        } finally {
-            this.isSubmitting = false;
-        }
-    }
-}">
-    <div x-show="showCreateModal"
-         x-on:keydown.escape.window="showCreateModal && closeModal()"
-         style="display: none;"
-    >
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" x-on:click.self="closeModal()">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-gray-800">Create User</h3>
-                    <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 transition">
-                        <i class="bi bi-x-lg text-2xl"></i>
-                    </button>
-                </div>
-                <div class="overflow-y-auto" style="max-height: calc(90vh - 140px);">
-                    <div x-show="errors.general" class="px-6 mt-4">
-                        <template x-if="errors.general">
-                            <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-                                <p class="text-sm text-red-700" x-text="errors.general[0]"></p>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                            <h3 class="text-lg font-semibold text-gray-800">User Information</h3>
-                            <p class="text-sm text-gray-500">Fill in the information below to create a new user</p>
-                        </div>
-                        @include('admin.users._form', [
-                            'formAction' => route('super-admin.users.store'),
-                            'formId' => 'createUserModalForm',
-                            'modal' => true,
-                            'assignableRoles' => $assignableRoles,
-                            'facilities' => $facilities,
-                        ])
-                    </div>
-                </div>
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="createModalBody">
+                @include('admin.users._modal-form', [
+                    'user' => null,
+                    'formAction' => route('super-admin.users.store'),
+                    'formId' => 'createUserModalForm',
+                    'assignableRoles' => $assignableRoles,
+                    'facilities' => $facilities,
+                ])
             </div>
         </div>
     </div>
-
-    <button @click="openModal()"
-       class="fixed bottom-6 right-6 z-50 flex items-center w-14 h-14
-              hover:w-40 bg-green-600 hover:bg-green-700
-              text-white rounded-full shadow-xl overflow-hidden
-              transition-all duration-300 ease-in-out"
-       aria-label="Add User"
-       title="Add User">
-
-        <span class="flex items-center justify-center w-14 h-14 flex-shrink-0">
-            <i class="bi bi-plus-lg text-2xl"></i>
-        </span>
-
-        <span class="whitespace-nowrap font-medium">
-            Add User
-        </span>
-    </button>
 </div>
+
+<button data-bs-toggle="modal" data-bs-target="#createUserModal"
+    class="fixed bottom-6 right-6 z-50 flex items-center w-14 h-14
+           hover:w-40 bg-green-600 hover:bg-green-700
+           text-white rounded-full shadow-xl overflow-hidden
+           transition-all duration-300 ease-in-out"
+    aria-label="Add User"
+    title="Add User">
+
+    <span class="flex items-center justify-center w-14 h-14 flex-shrink-0">
+        <i class="bi bi-plus-lg text-2xl"></i>
+    </span>
+
+    <span class="whitespace-nowrap font-medium">
+        Add User
+    </span>
+</button>
 
 <style>
 .section-disabled {
@@ -346,12 +271,14 @@
 
 <script>
 let editModal;
+let createModal;
 let currentUserId = null;
 const sectionOriginalValues = {};
 let activeSectionId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+    createModal = new bootstrap.Modal(document.getElementById('createUserModal'));
 
     document.getElementById('editModalBody').addEventListener('click', function(e) {
         const cancelBtn = e.target.closest('.cancel-edit-btn');
@@ -373,6 +300,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
+    });
+
+    const createForm = document.getElementById('createUserModalForm');
+    if (createForm) {
+        createForm.addEventListener('change', function(e) {
+            if (e.target.name === 'role') {
+                const alternatePhoneContainer = document.getElementById('alternate_phone_number_container');
+                const facilitySection = document.getElementById('section-facility');
+                if (e.target.value === 'pet_owner') {
+                    if (alternatePhoneContainer) alternatePhoneContainer.style.display = 'block';
+                    if (facilitySection) facilitySection.style.display = 'none';
+                } else {
+                    if (alternatePhoneContainer) alternatePhoneContainer.style.display = 'none';
+                    if (facilitySection) facilitySection.style.display = 'block';
+                }
+            }
+        });
+    }
+
+    document.getElementById('createUserModal').addEventListener('hidden.bs.modal', function () {
+        const form = document.getElementById('createUserModalForm');
+        if (form) {
+            form.reset();
+            form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+            form.querySelectorAll('.text-red-600').forEach(el => el.remove());
+        }
+        const alternatePhoneContainer = document.getElementById('alternate_phone_number_container');
+        if (alternatePhoneContainer) alternatePhoneContainer.style.display = 'none';
+        const facilitySection = document.getElementById('section-facility');
+        if (facilitySection) facilitySection.style.display = 'block';
     });
 });
 
@@ -487,6 +444,23 @@ function showFormErrors(errors) {
     }
 }
 
+function showCreateFormErrors(errors) {
+    const modalBody = document.getElementById('createModalBody');
+    modalBody.querySelectorAll('.text-red-600').forEach(el => el.remove());
+    modalBody.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+
+    for (const [field, messages] of Object.entries(errors)) {
+        const input = document.getElementById(field);
+        if (input) {
+            input.classList.add('border-red-500');
+            const errorEl = document.createElement('p');
+            errorEl.className = 'mt-1 text-sm text-red-600';
+            errorEl.textContent = messages[0];
+            input.parentNode.appendChild(errorEl);
+        }
+    }
+}
+
 document.addEventListener('submit', function(e) {
     if (e.target && e.target.id === 'editUserForm') {
         e.preventDefault();
@@ -525,6 +499,55 @@ document.addEventListener('submit', function(e) {
         .catch(error => {
             if (error.errors) {
                 showFormErrors(error.errors);
+                showToast('error', error.message || 'Please check the form for errors.');
+            } else if (error.message) {
+                showToast('error', error.message);
+            } else {
+                showToast('error', 'An error occurred. Please try again.');
+            }
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        });
+    }
+
+    if (e.target && e.target.id === 'createUserModalForm') {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span> Creating...';
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                throw data;
+            }
+            return data;
+        })
+        .then(data => {
+            if (data.success) {
+                createModal.hide();
+                showToast('success', data.message);
+                setTimeout(() => location.reload(), 500);
+            }
+        })
+        .catch(error => {
+            if (error.errors) {
+                showCreateFormErrors(error.errors);
                 showToast('error', error.message || 'Please check the form for errors.');
             } else if (error.message) {
                 showToast('error', error.message);
