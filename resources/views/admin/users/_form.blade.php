@@ -177,10 +177,10 @@
     <!-- Form Actions -->
     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
         @if($modal ?? false)
-            <button type="button" @click="closeCreateModal()" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition">
+            <button type="button" @click="closeModal()" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition">
                 Cancel
             </button>
-            <button type="button" @click="submitCreateForm()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition shadow-sm" :disabled="isSubmitting">
+            <button type="button" @click="submitForm()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition shadow-sm" :disabled="isSubmitting">
                 <i class="bi bi-check-lg mr-2"></i>
                 <span x-text="isSubmitting ? 'Creating...' : 'Create User'"></span>
             </button>
