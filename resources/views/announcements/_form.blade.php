@@ -2,13 +2,7 @@
     @csrf
 
     <!-- General Error Banner -->
-    @if($modal ?? false)
-        <template x-if="errors.general">
-            <div class="px-6 mt-4 bg-red-50 border border-red-200 rounded-lg p-3">
-                <p class="text-sm text-red-700" x-text="errors.general[0]"></p>
-            </div>
-        </template>
-    @endif
+
 
     <!-- Title -->
     <div class="px-6 pt-6">
@@ -25,11 +19,7 @@
         @error('title')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
-        @if($modal ?? false)
-            <template x-if="errors.title">
-                <p class="mt-1 text-sm text-red-600" x-text="errors.title[0]"></p>
-            </template>
-        @endif
+
     </div>
 
     <!-- Category & Barangay Row -->
@@ -51,11 +41,7 @@
             @error('category')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-            @if($modal ?? false)
-                <template x-if="errors.category">
-                    <p class="mt-1 text-sm text-red-600" x-text="errors.category[0]"></p>
-                </template>
-            @endif
+
         </div>
 
         <!-- Barangay -->
@@ -75,11 +61,7 @@
             @error('barangay_id')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-            @if($modal ?? false)
-                <template x-if="errors.barangay_id">
-                    <p class="mt-1 text-sm text-red-600" x-text="errors.barangay_id[0]"></p>
-                </template>
-            @endif
+
         </div>
     </div>
 
@@ -98,11 +80,7 @@
             @error('event_date')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-            @if($modal ?? false)
-                <template x-if="errors.event_date">
-                    <p class="mt-1 text-sm text-red-600" x-text="errors.event_date[0]"></p>
-                </template>
-            @endif
+
         </div>
 
         <!-- Event Time -->
@@ -118,11 +96,7 @@
             @error('event_time')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-            @if($modal ?? false)
-                <template x-if="errors.event_time">
-                    <p class="mt-1 text-sm text-red-600" x-text="errors.event_time[0]"></p>
-                </template>
-            @endif
+
         </div>
     </div>
 
@@ -143,11 +117,7 @@
             @error('organized_by')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-            @if($modal ?? false)
-                <template x-if="errors.organized_by">
-                    <p class="mt-1 text-sm text-red-600" x-text="errors.organized_by[0]"></p>
-                </template>
-            @endif
+
         </div>
 
         <!-- Contact Number -->
@@ -172,11 +142,7 @@
             @error('contact_number')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-            @if($modal ?? false)
-                <template x-if="errors.contact_number">
-                    <p class="mt-1 text-sm text-red-600" x-text="errors.contact_number[0]"></p>
-                </template>
-            @endif
+
         </div>
     </div>
 
@@ -194,11 +160,7 @@
         @error('content')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
-        @if($modal ?? false)
-            <template x-if="errors.content">
-                <p class="mt-1 text-sm text-red-600" x-text="errors.content[0]"></p>
-            </template>
-        @endif
+
     </div>
 
     <!-- Photo Upload -->
@@ -222,11 +184,7 @@
         @error('photo_path')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
-        @if($modal ?? false)
-            <template x-if="errors.photo_path">
-                <p class="mt-1 text-sm text-red-600" x-text="errors.photo_path[0]"></p>
-            </template>
-        @endif
+
 
         <!-- Image Preview -->
         <div class="mt-4 hidden" id="imagePreview">
@@ -263,11 +221,7 @@
         @error('attachment_path')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
-        @if($modal ?? false)
-            <template x-if="errors.attachment_path">
-                <p class="mt-1 text-sm text-red-600" x-text="errors.attachment_path[0]"></p>
-            </template>
-        @endif
+
 
         <!-- Attachment Preview -->
         <div class="mt-4 hidden" id="attachmentPreview">
@@ -284,15 +238,15 @@
     <!-- Submit Button -->
     <div class="px-6 py-6 mt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:justify-end gap-3">
         @if($modal ?? false)
-            <button type="button" @click="closeModal()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center">
+            <button type="button" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center" data-bs-dismiss="modal">
                 <i class="bi bi-x-circle me-2"></i>Cancel
             </button>
-            <button type="button" @click="saveAsDraft()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center">
+            <button type="button" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center" data-action="draft">
                 <i class="bi bi-pencil me-2"></i>Save as Draft
             </button>
-            <button type="button" @click="submitForm()" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition shadow-sm" :disabled="isSubmitting">
+            <button type="submit" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition shadow-sm">
                 <i class="bi bi-check-circle me-2"></i>
-                <span x-text="isSubmitting ? 'Creating...' : 'Create Announcement'"></span>
+                <span>Create Announcement</span>
             </button>
         @else
             <button type="button" onclick="checkFormChanges()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center">

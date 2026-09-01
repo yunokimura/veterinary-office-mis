@@ -384,7 +384,9 @@ class SuperAdminController extends Controller
 
         $totalUsers = User::count();
         $activeAccounts = User::where('status', 'active')->count();
-        $cityVetStaff = User::whereHas('roles', function ($q) { $q->where('name', 'city_vet'); })->count();
+        $cityVetStaff = User::whereHas('roles', function ($q) {
+            $q->whereIn('name', ['super_admin', 'city_vet', 'assistant_vet', 'admin_asst', 'meat_inspector']);
+        })->count();
         $petOwners = User::whereHas('roles', function ($q) { $q->where('name', 'pet_owner'); })->count();
 
         $assignableRoles = auth()->user()->getAssignableRoles();

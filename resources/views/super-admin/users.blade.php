@@ -64,7 +64,7 @@
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-gray-500">City Vet Staff</p>
+                    <p class="text-xs font-medium text-gray-500">Admin Staff</p>
                     <p class="text-2xl font-bold text-purple-600 mt-1">{{ $cityVetStaff }}</p>
                 </div>
                 <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
@@ -163,18 +163,18 @@
                             {{ $user->created_at->format('M d, Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            @can('toggleStatus', $user)
-                            <form action="{{ route('super-admin.users.toggle-status', $user) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="return confirm('Are you sure you want to {{ $user->status === 'active' ? 'deactivate' : 'activate' }} this user?')">
-                                    {{ $user->status === 'active' ? 'Deactivate' : 'Activate' }}
-                                </button>
-                            </form>
+                            @can('update', $user)
+                            <button type="button" class="text-blue-600 hover:text-blue-900 mr-3" onclick="openEditModal({{ $user->id }}, '{{ $user->name }}')">View/Edit</button>
                             @else
                             <span class="text-gray-400 text-xs">Restricted</span>
                             @endcan
-                            @can('update', $user)
-                            <button type="button" class="text-blue-600 hover:text-blue-900" onclick="openEditModal({{ $user->id }}, '{{ $user->name }}')">Edit</button>
+                            @can('toggleStatus', $user)
+                            <form action="{{ route('super-admin.users.toggle-status', $user) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to {{ $user->status === 'active' ? 'deactivate' : 'activate' }} this user?')">
+                                    {{ $user->status === 'active' ? 'Deactivate' : 'Activate' }}
+                                </button>
+                            </form>
                             @else
                             <span class="text-gray-400 text-xs">Restricted</span>
                             @endcan

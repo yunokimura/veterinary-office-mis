@@ -238,7 +238,6 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // Gate check using policy
         if (Gate::denies('view', $user)) {
             return back()->with('error', 'You do not have permission to view this user.');
         }

@@ -1044,120 +1044,165 @@ function showInlineSuccess(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
-</script>
-<div x-data="{
-    showCreateModal: false,
-    isSubmitting: false,
-    errors: {},
-    
-    openModal() {
-        this.errors = {};
-        this.resetForm();
-        this.showCreateModal = true;
-        document.body.style.overflow = 'hidden';
-    },
-    
-    closeModal() {
-        this.showCreateModal = false;
-        this.isSubmitting = false;
-        document.body.style.overflow = 'auto';
-    },
-    
-    resetForm() {
-        const form = document.getElementById('announcementForm');
-        if (form) form.reset();
-        const category = document.getElementById('category');
-        if (category) {
-            category.dispatchEvent(new Event('change'));
-        }
-    },
-    
-    async submitForm() {
-        this.errors = {};
-        this.isSubmitting = true;
-        
-        const form = document.getElementById('announcementForm');
-        const formData = new FormData(form);
-        
-        const contactInput = document.getElementById('contact_number');
-        if (contactInput && contactInput.value) {
-            contactInput.value = contactInput.value.replace(/\s/g, '');
-        }
-        
-        try {
-            const response = await fetch(form.action, {
+
+// Add Announcement Modal (Bootstrap)
+let addAnnouncementModal;
+let isDraft = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const addAnnouncementModalEl = document.getElementById('addAnnouncementModal');
+    addAnnouncementModal = new bootstrap.Modal(addAnnouncementModalEl);
+
+    const form = document.getElementById('announcementForm');
+    const draftBtn = document.querySelector('[data-action="draft"]');
+
+    if (draftBtn) {
+        draftBtn.addEventListener('click', function() {
+            isDraft = true;
+            form.dispatchEvent(new Event('submit', {cancelable: true}));
+        });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const statusField = document.getElementById('status');
+            if (isDraft && statusField) {
+                statusField.value = 'Draft';
+            }
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span> Creating...';
+
+            const formData = new FormData(form);
+            const contactInput = document.getElementById('contact_number');
+            if (contactInput && contactInput.value) {
+                contactInput.value = contactInput.value.replace(/\s/g, '');
+            }
+
+            fetch(form.action, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
                     'Accept': 'application/json',
                 },
                 body: formData,
+            })
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw data;
+                }
+                return data;
+            })
+            .then(data => {
+                if (data.success) {
+                    addAnnouncementModal.hide();
+                    showInlineSuccess(data.message || 'Announcement created successfully.');
+                    applyFilters(1);
+                }
+            })
+            .catch(error => {
+                if (error.errors) {
+                    showAnnouncementFormErrors(error.errors);
+                } else if (error.message) {
+                    showInlineError(error.message);
+                } else {
+                    showInlineError('An error occurred. Please try again.');
+                }
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                if (statusField) {
+                    statusField.value = 'Published';
+                }
+                isDraft = false;
             });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                this.closeModal();
-                showInlineSuccess(data.message || 'Announcement created successfully.');
-                applyFilters(1);
-            } else if (data.errors) {
-                this.errors = data.errors;
+        });
+    }
+
+    if (addAnnouncementModalEl) {
+        addAnnouncementModalEl.addEventListener('show.bs.modal', function () {
+            if (form) {
+                form.reset();
+                form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+                form.querySelectorAll('.text-red-600').forEach(el => el.remove());
             }
-        } catch (error) {
-            this.errors = { general: ['Network error. Please try again.'] };
-        } finally {
-            this.isSubmitting = false;
-        }
-    },
-    
-    async saveAsDraft() {
-        this.errors = {};
-        const form = document.getElementById('announcementForm');
-        const statusField = document.getElementById('status');
-        if (statusField) {
-            statusField.value = 'Draft';
-        }
-        await this.submitForm();
-        if (statusField) {
-            statusField.value = 'Published';
+            const categoryElement = document.getElementById('category');
+            if (categoryElement) {
+                categoryElement.dispatchEvent(new Event('change'));
+            }
+        });
+
+        addAnnouncementModalEl.addEventListener('hidden.bs.modal', function () {
+            if (form) {
+                form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+                form.querySelectorAll('.text-red-600').forEach(el => el.remove());
+            }
+        });
+    }
+});
+
+function showAnnouncementFormErrors(errors) {
+    const form = document.getElementById('announcementForm');
+    form.querySelectorAll('.text-red-600').forEach(el => el.remove());
+    form.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+
+    for (const [field, messages] of Object.entries(errors)) {
+        const input = document.getElementById(field);
+        if (input) {
+            input.classList.add('border-red-500');
+            const errorEl = document.createElement('p');
+            errorEl.className = 'mt-1 text-sm text-red-600';
+            errorEl.textContent = messages[0];
+            input.parentNode.appendChild(errorEl);
         }
     }
-}">
-    <div x-show="showCreateModal"
-         x-on:keydown.escape.window="showCreateModal && closeModal()"
-         style="display: none;"
-    >
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" x-on:click.self="closeModal()">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-gray-800">New Announcement</h3>
-                    <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 transition">
-                        <i class="bi bi-x-lg text-2xl"></i>
-                    </button>
-                </div>
-                <div class="overflow-y-auto" style="max-height: calc(90vh - 140px);">
-                    @include('announcements._form')
-                </div>
+}
+
+function showInlineError(message) {
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 z-[60] bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2';
+    toast.innerHTML = `<i class="bi bi-exclamation-circle"></i><span>${message}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+</script>
+<!-- Add Announcement Modal -->
+<div class="modal fade" id="addAnnouncementModal" tabindex="-1" aria-labelledby="addAnnouncementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAnnouncementModalLabel">New Announcement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @include('announcements._form', ['modal' => true])
             </div>
         </div>
     </div>
-
-    <button @click="openModal()"
-       class="fixed bottom-6 right-6 z-50 flex items-center w-14 h-14
-              hover:w-56 bg-green-600 hover:bg-green-700
-              text-white rounded-full shadow-xl overflow-hidden
-              transition-all duration-300 ease-in-out"
-       aria-label="Add Announcement"
-       title="Add Announcement">
-
-        <span class="flex items-center justify-center w-14 h-14 flex-shrink-0">
-            <i class="bi bi-plus-lg text-2xl"></i>
-        </span>
-
-        <span class="whitespace-nowrap font-medium">
-            Add Announcement
-        </span>
-    </button>
 </div>
+
+<button data-bs-toggle="modal" data-bs-target="#addAnnouncementModal"
+   class="fixed bottom-6 right-6 z-50 flex items-center w-14 h-14
+          hover:w-56 bg-green-600 hover:bg-green-700
+          text-white rounded-full shadow-xl overflow-hidden
+          transition-all duration-300 ease-in-out"
+   aria-label="Add Announcement"
+   title="Add Announcement">
+
+    <span class="flex items-center justify-center w-14 h-14 flex-shrink-0">
+        <i class="bi bi-plus-lg text-2xl"></i>
+    </span>
+
+    <span class="whitespace-nowrap font-medium">
+        Add Announcement
+    </span>
+</button>
 
 @endsection
