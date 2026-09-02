@@ -28,7 +28,7 @@
     </td>
     <td class="px-6 py-4">
         @if($report->status == 'missing')
-            <span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Active</span>
+            <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Missing</span>
         @elseif($report->status == 'found')
             <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Found</span>
         @elseif($report->status == 'reunited')

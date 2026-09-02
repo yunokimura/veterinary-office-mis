@@ -123,12 +123,10 @@ $rolePrefix = 'admin';
 
             <!-- Clear Button -->
             <div class="col-12 col-md-3">
-                <div class="d-flex align-items-end h-100">
-                    <button type="button" onclick="clearVaccinationFilters()"
-                            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
-                        <i class="bi bi-x-circle mr-1"></i>Clear
-                    </button>
-                </div>
+                <button type="button" onclick="clearVaccinationFilters()"
+                        class="btn btn-outline-danger w-100">
+                    <i class="bi bi-x-circle mr-1"></i>Clear
+                </button>
             </div>
         </div>
     </div>
