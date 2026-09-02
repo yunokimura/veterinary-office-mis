@@ -39,10 +39,10 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
 <!-- Welcome Banner -->
 <div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
     <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
-        {{ $greeting }}, {{ auth()->user()->name ?? 'Meat Inspector' }}!
+        Meat Inspection Reports
     </h2>
     <p class="text-sm md:text-base text-gray-600">
-        Monitor and manage meat establishments and inspection records.
+        View and manage meat inspection records
     </p>
 </div>
 
