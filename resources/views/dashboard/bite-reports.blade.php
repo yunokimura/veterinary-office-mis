@@ -80,29 +80,16 @@ $rolePrefix = 'admin';
 
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="row g-3 align-items-end">
             <!-- Search -->
-            <div class="lg:col-span-2">
+            <div class="col-12 col-md-3">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                 <input type="text" id="biteSearch" value="{{ request('search') }}" placeholder="Patient Name"
                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
             </div>
 
-            <!-- Age Filter -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
-                <select id="biteAgeFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <option value="">All Ages</option>
-                    <option value="0-4" {{ request('age_filter') === '0-4' ? 'selected' : '' }}>0 – 4 Years</option>
-                    <option value="5-14" {{ request('age_filter') === '5-14' ? 'selected' : '' }}>5 – 14 Years</option>
-                    <option value="15-59" {{ request('age_filter') === '15-59' ? 'selected' : '' }}>15 – 59 Years</option>
-                    <option value="60+" {{ request('age_filter') === '60+' ? 'selected' : '' }}>60+ Years</option>
-                    <option value="unknown" {{ request('age_filter') === 'unknown' ? 'selected' : '' }}>Unknown</option>
-                </select>
-            </div>
-
             <!-- Barangay Filter -->
-            <div>
+            <div class="col-12 col-md-3">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
                 <div class="relative">
                     <div id="barangayDisplay" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer hover:border-gray-400 transition" onclick="toggleBarangayDropdown()">
@@ -128,19 +115,8 @@ $rolePrefix = 'admin';
                 <input type="hidden" id="biteBarangay" value="{{ request('barangay_id') ?? '' }}">
             </div>
 
-            <!-- Animal Type -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
-                <select id="biteAnimalType" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <option value="">All Types</option>
-                    <option value="dog" {{ request('animal_type') === 'dog' ? 'selected' : '' }}>Dog</option>
-                    <option value="cat" {{ request('animal_type') === 'cat' ? 'selected' : '' }}>Cat</option>
-                    <option value="others" {{ request('animal_type') === 'others' ? 'selected' : '' }}>Others</option>
-                </select>
-            </div>
-
             <!-- Bite Category -->
-            <div>
+            <div class="col-12 col-md-3">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Bite Category</label>
                 <select id="biteCategory" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                     <option value="">All Categories</option>
@@ -150,26 +126,52 @@ $rolePrefix = 'admin';
                 </select>
             </div>
 
+            <!-- Animal Type -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
+                <select id="biteAnimalType" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Types</option>
+                    <option value="dog" {{ request('animal_type') === 'dog' ? 'selected' : '' }}>Dog</option>
+                    <option value="cat" {{ request('animal_type') === 'cat' ? 'selected' : '' }}>Cat</option>
+                    <option value="others" {{ request('animal_type') === 'others' ? 'selected' : '' }}>Others</option>
+                </select>
+            </div>
+
+            <!-- Age Filter -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                <select id="biteAgeFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Ages</option>
+                    <option value="0-4" {{ request('age_filter') === '0-4' ? 'selected' : '' }}>0 – 4 Years</option>
+                    <option value="5-14" {{ request('age_filter') === '5-14' ? 'selected' : '' }}>5 – 14 Years</option>
+                    <option value="15-59" {{ request('age_filter') === '15-59' ? 'selected' : '' }}>15 – 59 Years</option>
+                    <option value="60+" {{ request('age_filter') === '60+' ? 'selected' : '' }}>60+ Years</option>
+                    <option value="unknown" {{ request('age_filter') === 'unknown' ? 'selected' : '' }}>Unknown</option>
+                </select>
+            </div>
+
             <!-- Date From -->
-            <div>
+            <div class="col-12 col-md-3">
                 <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
                 <input type="date" id="biteDateFrom" value="{{ request('date_from') }}"
                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
             </div>
 
             <!-- Date To -->
-            <div>
+            <div class="col-12 col-md-3">
                 <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
                 <input type="date" id="biteDateTo" value="{{ request('date_to') }}"
                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
             </div>
 
-            <!-- Actions -->
-            <div class="flex items-end gap-3">
+            <!-- Clear Button -->
+            <div class="col-12 col-md-3">
+                <div class="d-flex align-items-end h-100">
                 <button type="button" onclick="clearBiteFilters()"
-                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
-                    <i class="bi bi-x-circle mr-1"></i>Clear
+                   class="btn btn-outline-danger w-100">
+                         <i class="bi bi-x-circle mr-1"></i>Clear Filters
                 </button>
+                </div>
             </div>
         </div>
     </div>
