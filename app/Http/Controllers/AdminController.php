@@ -198,6 +198,18 @@ class AdminController extends Controller
         $query = BiteRabiesReport::where('rabies_confirmed', true)
             ->with(['barangay']);
 
+        // Apply search filter
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('patient_first_name', 'like', "%{$search}%")
+                  ->orWhere('patient_middle_name', 'like', "%{$search}%")
+                  ->orWhere('patient_last_name', 'like', "%{$search}%")
+                  ->orWhere('patient_suffix', 'like', "%{$search}%")
+                  ->orWhere('patient_name', 'like', "%{$search}%");
+            });
+        }
+
         // Apply date filters
         if ($request->has('date_from') && $request->date_from) {
             $query->whereDate('incident_date', '>=', $request->date_from);

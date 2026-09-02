@@ -81,7 +81,14 @@ $rolePrefix = 'admin';
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
         <form method="GET" action="{{ route($rolePrefix . '.bite-reports.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Search -->
+                <div class="lg:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Patient Name"
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                </div>
+
                 <!-- Date From -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
@@ -94,17 +101,6 @@ $rolePrefix = 'admin';
                     <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
                     <input type="date" name="date_to" value="{{ request('date_to') }}"
                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
-
-                <!-- Quick Filters -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Quick Filter</label>
-                    <select name="quick_filter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" onchange="this.form.submit()">
-                        <option value="">All Time</option>
-                        <option value="today" {{ request('quick_filter') === 'today' ? 'selected' : '' }}>Today</option>
-                        <option value="week" {{ request('quick_filter') === 'week' ? 'selected' : '' }}>This Week</option>
-                        <option value="month" {{ request('quick_filter') === 'month' ? 'selected' : '' }}>This Month</option>
-                    </select>
                 </div>
             </div>
 
