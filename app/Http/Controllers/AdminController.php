@@ -235,6 +235,11 @@ class AdminController extends Controller
             }
         }
 
+        // Apply category filter
+        if ($request->has('category') && $request->category) {
+            $query->where('category', $request->category);
+        }
+
         // Apply barangay filter
         if ($request->has('barangay_id') && $request->barangay_id) {
             $barangayNames = explode(',', $request->barangay_id);
@@ -312,6 +317,10 @@ class AdminController extends Controller
                     });
                     break;
             }
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
         }
 
         if ($request->filled('barangay_id')) {

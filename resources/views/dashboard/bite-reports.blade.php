@@ -128,6 +128,17 @@ $rolePrefix = 'admin';
                 <input type="hidden" id="biteBarangay" value="{{ request('barangay_id') ?? '' }}">
             </div>
 
+            <!-- Bite Category -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Bite Category</label>
+                <select id="biteCategory" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Categories</option>
+                    <option value="I" {{ request('category') === 'I' ? 'selected' : '' }}>Category I</option>
+                    <option value="II" {{ request('category') === 'II' ? 'selected' : '' }}>Category II</option>
+                    <option value="III" {{ request('category') === 'III' ? 'selected' : '' }}>Category III</option>
+                </select>
+            </div>
+
             <!-- Date From -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
@@ -408,6 +419,7 @@ function getBiteFilterParams() {
     return {
         search: document.getElementById('biteSearch').value,
         age_filter: document.getElementById('biteAgeFilter').value,
+        category: document.getElementById('biteCategory').value,
         barangay_id: document.getElementById('biteBarangay').value,
         date_from: document.getElementById('biteDateFrom').value,
         date_to: document.getElementById('biteDateTo').value,
@@ -532,6 +544,7 @@ function applyBiteFilters() {
 function clearBiteFilters() {
     document.getElementById('biteSearch').value = '';
     document.getElementById('biteAgeFilter').value = '';
+    document.getElementById('biteCategory').value = '';
     document.getElementById('biteBarangay').value = '';
     document.getElementById('biteDateFrom').value = '';
     document.getElementById('biteDateTo').value = '';
@@ -552,6 +565,7 @@ document.getElementById('biteSearch').addEventListener('input', () => {
 });
 
 document.getElementById('biteAgeFilter').addEventListener('change', applyBiteFilters);
+document.getElementById('biteCategory').addEventListener('change', applyBiteFilters);
 document.getElementById('biteDateFrom').addEventListener('change', applyBiteFilters);
 document.getElementById('biteDateTo').addEventListener('change', applyBiteFilters);
 
