@@ -773,7 +773,76 @@ class CityVetController extends Controller
                 ->count(),
         ];
 
-        return view('dashboard.adoption-reports', compact('user', 'reports', 'stats'));
+        $animalTypes = \App\Models\Pet::select('species')
+            ->distinct()
+            ->orderBy('species')
+            ->pluck('species');
+
+        return view('dashboard.adoption-reports', compact('user', 'reports', 'stats', 'animalTypes'));
+    }
+
+    public function filterAdoptionReports(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = \App\Models\AdoptionApplication::with(['user', 'pet']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($q2) use ($search) {
+                    $q2->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('pet', function ($q2) use ($search) {
+                    $q2->where('pet_name', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        if ($request->filled('animal_type')) {
+            $query->whereHas('pet', function ($q) use ($request) {
+                $q->where('species', $request->animal_type);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('quick_filter')) {
+            $today = \Carbon\Carbon::now()->startOfDay();
+            switch ($request->quick_filter) {
+                case 'today':
+                    $query->whereDate('created_at', $today);
+                    break;
+                case 'week':
+                    $query->where('created_at', '>=', \Carbon\Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('created_at', '>=', \Carbon\Carbon::now()->startOfMonth());
+                    break;
+            }
+        }
+
+        $reports = $query->latest()->paginate(10);
+
+        $tableHtml = view('dashboard.partials.adoption-reports-table', compact('reports'))->render();
+        $paginationHtml = $reports->links()->render();
+
+        return response()->json([
+            'success' => true,
+            'table_html' => $tableHtml,
+            'pagination_html' => $paginationHtml,
+            'total_count' => $reports->total(),
+            'has_results' => $reports->count() > 0,
+        ]);
     }
 
     /**

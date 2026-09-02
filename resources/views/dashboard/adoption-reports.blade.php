@@ -62,15 +62,15 @@ $rolePrefix = 'city-vet';
                 </div>
             </div>
         </div>
-        <!-- Completed -->
+        <!-- Rejected -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
             <div class="flex items-start justify-between gap-3">
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Completed</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['completed'] ?? 0 }}</p>
+                    <p class="text-xs md:text-sm text-gray-500 mb-1">Rejected</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['rejected'] ?? 0 }}</p>
                 </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-heart-fill text-purple-600 text-lg md:text-xl"></i>
+                <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-x-circle text-red-600 text-lg md:text-xl"></i>
                 </div>
             </div>
         </div>
@@ -78,45 +78,59 @@ $rolePrefix = 'city-vet';
 
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-        <form method="GET" action="{{ route($rolePrefix . '.adoption-reports.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Status Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select name="status" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" onchange="this.form.submit()">
-                        <option value="">All Status</option>
-                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
-                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                    </select>
-                </div>
-
-                <!-- Date From -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                    <input type="date" name="date_from" value="{{ request('date_from') }}"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
-
-                <!-- Date To -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                    <input type="date" name="date_to" value="{{ request('date_to') }}"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
+        <div class="row g-3 align-items-end">
+            <!-- Applicant Name/Pet Name Search -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Applicant Name/Pet Name</label>
+                <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Search by name..."
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
             </div>
 
-            <div class="flex justify-start gap-3">
-                <a href="{{ route($rolePrefix . '.adoption-reports.index') }}"
-                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+            <!-- Animal Type -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
+                <select id="animalTypeSearch" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Animal Types</option>
+                    @foreach($animalTypes as $type)
+                        <option value="{{ $type }}" {{ request('animal_type') === $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select id="statusFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Status</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
+                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                    <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                </select>
+            </div>
+
+            <!-- Date From -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                <input type="date" id="dateFrom" value="{{ request('date_from') }}"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
+
+            <!-- Date To -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                <input type="date" id="dateTo" value="{{ request('date_to') }}"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
+
+            <!-- Clear Button -->
+            <div class="col-12 col-md-3">
+                <button type="button" onclick="clearAdoptionFilters()"
+                        class="btn btn-outline-danger w-100">
                     <i class="bi bi-x-circle mr-1"></i>Clear
-                </a>
-                <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
-                    <i class="bi bi-funnel mr-1"></i>Filter
                 </button>
             </div>
-        </form>
+        </div>
     </div>
 
     <!-- Reports Table -->
@@ -129,67 +143,22 @@ $rolePrefix = 'city-vet';
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Application No.</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Applicant</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Pet</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Species</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animal Type</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Applied Date</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($reports as $report)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4">
-                                <span class="font-medium text-gray-800">AD-{{ str_pad($report->id, 5, '0', STR_PAD_LEFT) }}</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i class="bi bi-person text-purple-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-800">{{ $report->user->name ?? 'Unknown' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $report->user->email ?? 'N/A' }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="font-medium text-gray-800">{{ $report->pet->pet_name ?? 'N/A' }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ ucfirst($report->pet->species ?? 'N/A') }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                @if($report->status == 'pending')
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                                @elseif($report->status == 'approved')
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Approved</span>
-                                @elseif($report->status == 'completed')
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Completed</span>
-                                @elseif($report->status == 'rejected')
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Rejected</span>
-                                @else
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">{{ ucfirst($report->status) }}</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-gray-600">{{ \Carbon\Carbon::parse($report->created_at)->format('M d, Y') }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <button onclick="openReportModal({{ $report->id }})"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
-                                    <i class="bi bi-eye"></i>View
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
+                    <tbody class="divide-y divide-gray-100" id="reportsTableBody">
+                        @include('dashboard.partials.adoption-reports-table')
                     </tbody>
                 </table>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100">
+            <div class="px-6 py-4 border-t border-gray-100" id="reportsPagination">
                 {{ $reports->links() }}
             </div>
         @else
-            <div class="p-12 text-center">
+            <div class="p-12 text-center" id="reportsEmptyState">
                 <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="bi bi-heart text-2xl text-purple-400"></i>
                 </div>
@@ -197,6 +166,10 @@ $rolePrefix = 'city-vet';
                 <p class="text-gray-500">There are currently no adoption applications in the system.</p>
             </div>
         @endif
+        <div id="reportsLoading" class="hidden p-12 text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
+            <p class="mt-4 text-gray-600">Loading reports...</p>
+        </div>
     </div>
 </div>
 
@@ -378,5 +351,77 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+const adoptionFilterUrl = `{{ route($rolePrefix . '.adoption-reports.filter') }}`;
+
+function getAdoptionFilterParams() {
+    return {
+        search: document.getElementById('searchInput').value,
+        animal_type: document.getElementById('animalTypeSearch').value,
+        status: document.getElementById('statusFilter').value,
+        date_from: document.getElementById('dateFrom').value,
+        date_to: document.getElementById('dateTo').value,
+    };
+}
+
+function applyAdoptionFilters() {
+    const params = getAdoptionFilterParams();
+    const loading = document.getElementById('reportsLoading');
+    const tableBody = document.getElementById('reportsTableBody');
+    const pagination = document.getElementById('reportsPagination');
+    const emptyState = document.getElementById('reportsEmptyState');
+
+    if (loading) loading.classList.remove('hidden');
+    if (tableBody) tableBody.style.opacity = '0.3';
+    if (pagination) pagination.style.opacity = '0.3';
+
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.append(key, value);
+    });
+
+    fetch(`${adoptionFilterUrl}?${query.toString()}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (tableBody) {
+                tableBody.innerHTML = data.table_html;
+                tableBody.style.opacity = '1';
+            }
+            if (pagination) {
+                pagination.innerHTML = data.pagination_html;
+                pagination.style.opacity = '1';
+            }
+            if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
+            if (loading) loading.classList.add('hidden');
+        }
+    })
+    .catch(error => {
+        console.error('Error filtering adoption reports:', error);
+        if (tableBody) tableBody.style.opacity = '1';
+        if (pagination) pagination.style.opacity = '1';
+        if (loading) loading.classList.add('hidden');
+    });
+}
+
+function clearAdoptionFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('animalTypeSearch').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    applyAdoptionFilters();
+}
+
+document.getElementById('searchInput').addEventListener('input', applyAdoptionFilters);
+document.getElementById('animalTypeSearch').addEventListener('change', applyAdoptionFilters);
+document.getElementById('statusFilter').addEventListener('change', applyAdoptionFilters);
+document.getElementById('dateFrom').addEventListener('change', applyAdoptionFilters);
+document.getElementById('dateTo').addEventListener('change', applyAdoptionFilters);
 </script>
 @endsection

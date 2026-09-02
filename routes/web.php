@@ -296,6 +296,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
 
     // Adoption Reports
     Route::get('/adoption-reports', [CityVetController::class, 'indexAdoptionReports'])->name('adoption-reports.index');
+    Route::get('/adoption-reports/filter', [CityVetController::class, 'filterAdoptionReports'])->name('adoption-reports.filter');
     Route::get('/adoption-reports/{adoption}', [CityVetController::class, 'showAdoptionReport'])->name('adoption-reports.show');
     Route::get('/adoption-reports/{adoption}/json', [CityVetController::class, 'showAdoptionReportJson'])->name('adoption-reports.show-json');
 
@@ -431,6 +432,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
 
     // Adoption Reports
     Route::get('/adoption-reports', [CityVetController::class, 'indexAdoptionReports'])->name('adoption-reports.index');
+    Route::get('/adoption-reports/filter', [CityVetController::class, 'filterAdoptionReports'])->name('adoption-reports.filter');
     Route::get('/adoption-reports/{adoption}', [CityVetController::class, 'showAdoptionReport'])->name('adoption-reports.show');
     Route::get('/adoption-reports/{adoption}/json', [CityVetController::class, 'showAdoptionReportJson'])->name('adoption-reports.show-json');
 });
