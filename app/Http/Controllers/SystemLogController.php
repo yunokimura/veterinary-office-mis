@@ -47,16 +47,32 @@ class SystemLogController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
 
-        // Search in description
+        // Search in user name or IP
         if ($request->has('search') && $request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('description', 'like', "%{$request->search}%")
-                    ->orWhere('ip_address', 'like', "%{$request->search}%");
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('ip_address', 'like', "%{$search}%")
+                    ->orWhereIn('user_id', function ($sub) use ($search) {
+                        $sub->select('user_id')
+                            ->from('admins')
+                            ->where(function ($s) use ($search) {
+                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
+                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"]);
+                            });
+                    })
+                    ->orWhereIn('user_id', function ($sub) use ($search) {
+                        $sub->select('user_id')
+                            ->from('pet_owners')
+                            ->where(function ($s) use ($search) {
+                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
+                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"]);
+                            });
+                    });
             });
         }
 
         $logs = $query->orderBy('created_at', 'desc')
-            ->paginate(25)
+            ->paginate(7)
             ->appends($request->query());
 
         // Get filter options (filter out empty/null values)
@@ -149,6 +165,29 @@ class SystemLogController extends Controller
 
         if ($request->has('end_date') && $request->end_date) {
             $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('ip_address', 'like', "%{$search}%")
+                    ->orWhereIn('user_id', function ($sub) use ($search) {
+                        $sub->select('user_id')
+                            ->from('admins')
+                            ->where(function ($s) use ($search) {
+                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
+                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"]);
+                            });
+                    })
+                    ->orWhereIn('user_id', function ($sub) use ($search) {
+                        $sub->select('user_id')
+                            ->from('pet_owners')
+                            ->where(function ($s) use ($search) {
+                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
+                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"]);
+                            });
+                    });
+            });
         }
 
         $logs = $query->orderBy('created_at', 'desc')->get();
