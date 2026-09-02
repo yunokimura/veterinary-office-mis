@@ -47,96 +47,57 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
 </div>
 
 <!-- Stats Cards -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <!-- Total Establishments -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-red-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-lg flex items-center justify-center mb-3">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+                <p class="text-xs md:text-sm text-gray-500 mb-1">Total Establishments</p>
+                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->count() }}</p>
+            </div>
+            <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-shop text-red-600 text-lg md:text-xl"></i>
             </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Total Establishments</p>
-        </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $establishments->count() }}</p>
         </div>
     </div>
 
     <!-- Active -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-green-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+                <p class="text-xs md:text-sm text-gray-500 mb-1">Active</p>
+                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->where('status', 'Active')->count() }}</p>
+            </div>
+            <div class="w-10 h-10 md:w-11 md:h-11 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-check-circle text-green-600 text-lg md:text-xl"></i>
             </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Active</p>
-        </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $establishments->where('status', 'Active')->count() }}</p>
         </div>
     </div>
 
     <!-- Expired -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-red-600 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-lg flex items-center justify-center mb-3">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+                <p class="text-xs md:text-sm text-gray-500 mb-1">Expired</p>
+                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->where('status', 'Expired')->count() }}</p>
+            </div>
+            <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-x-circle text-red-600 text-lg md:text-xl"></i>
             </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Expired</p>
-        </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $establishments->where('status', 'Expired')->count() }}</p>
         </div>
     </div>
 
     <!-- Pending Inspection -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-yellow-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-3">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+                <p class="text-xs md:text-sm text-gray-500 mb-1">Pending Inspection</p>
+                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->where('status', 'Pending Inspection')->count() }}</p>
+            </div>
+            <div class="w-10 h-10 md:w-11 md:h-11 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-clock text-yellow-600 text-lg md:text-xl"></i>
             </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Pending Inspection</p>
         </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $establishments->where('status', 'Pending Inspection')->count() }}</p>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
-
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <a href="{{ route('meat-inspection.reports.create') }}"
-           class="flex flex-col items-center p-4 bg-red-50 hover:bg-red-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-plus-circle text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">New Report</span>
-        </a>
-
-        <a href="{{ route('meat-inspection.meat-shop.index') }}"
-           class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-shop text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Shop Inspections</span>
-        </a>
-
-        <a href="{{ route('meat-inspection.establishments.index') }}"
-           class="flex flex-col items-center p-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-plus-circle text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Register Shop</span>
-        </a>
-
-        <a href="{{ route('meat-inspection.reports.index') }}"
-           class="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-list-ul text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">View All Reports</span>
-        </a>
     </div>
 </div>
 
