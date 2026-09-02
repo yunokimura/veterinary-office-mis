@@ -257,7 +257,7 @@ class AdminController extends Controller
             }
         }
 
-        $reports = $query->latest()->paginate(10);
+        $reports = $query->orderByDesc('incident_date')->paginate(10);
         return view('dashboard.bite-reports', compact('user', 'reports', 'stats'));
     }
 
