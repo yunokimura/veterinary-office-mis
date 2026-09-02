@@ -271,10 +271,105 @@ class AdminController extends Controller
         return view('dashboard.bite-reports', compact('user', 'reports', 'stats', 'barangays'));
     }
 
+    public function filterBiteReports(Request $request)
+    {
+        $user = Auth::user();
+
+        $barangays = Barangay::orderBy('barangay_name')->get(['barangay_id', 'barangay_name']);
+
+        $query = BiteRabiesReport::where('rabies_confirmed', true)
+            ->with(['barangay']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('patient_first_name', 'like', "%{$search}%")
+                  ->orWhere('patient_middle_name', 'like', "%{$search}%")
+                  ->orWhere('patient_last_name', 'like', "%{$search}%")
+                  ->orWhere('patient_suffix', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('age_filter')) {
+            switch ($request->age_filter) {
+                case '0-4':
+                    $query->whereBetween('age', [0, 4]);
+                    break;
+                case '5-14':
+                    $query->whereBetween('age', [5, 14]);
+                    break;
+                case '15-59':
+                    $query->whereBetween('age', [15, 59]);
+                    break;
+                case '60+':
+                    $query->where('age', '>=', 60);
+                    break;
+                case 'unknown':
+                    $query->where(function ($q) {
+                        $q->whereNull('age')->orWhere('age', '');
+                    });
+                    break;
+            }
+        }
+
+        if ($request->filled('barangay_id')) {
+            $barangay = Barangay::where('barangay_name', $request->barangay_id)->first();
+            if ($barangay) {
+                $query->where('barangay_id', $barangay->barangay_id);
+            }
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('incident_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('incident_date', '<=', $request->date_to);
+        }
+
+        if ($request->filled('quick_filter')) {
+            $today = \Carbon\Carbon::now()->startOfDay();
+            switch ($request->quick_filter) {
+                case 'today':
+                    $query->whereDate('incident_date', $today);
+                    break;
+                case 'week':
+                    $query->where('incident_date', '>=', \Carbon\Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('incident_date', '>=', \Carbon\Carbon::now()->startOfMonth());
+                    break;
+            }
+        }
+
+        $filteredQuery = clone $query;
+        $stats = [
+            'total' => $filteredQuery->count(),
+            'dog_cases' => $filteredQuery->whereRaw('LOWER(animal_type) = ?', ['dog'])->count(),
+            'cat_cases' => $filteredQuery->whereRaw('LOWER(animal_type) = ?', ['cat'])->count(),
+            'other_cases' => $filteredQuery->whereRaw('LOWER(animal_type) = ?', ['other'])->count(),
+            'confirmed_this_year' => $filteredQuery->whereYear('incident_date', date('Y'))->count(),
+        ];
+
+        $reports = $query->orderByDesc('incident_date')->paginate(10);
+
+        $tableHtml = view('dashboard.partials.bite-reports-table', compact('reports'))->render();
+        $paginationHtml = $reports->links()->render();
+
+        return response()->json([
+            'success' => true,
+            'stats' => $stats,
+            'table_html' => $tableHtml,
+            'pagination_html' => $paginationHtml,
+            'total_count' => $reports->total(),
+            'has_results' => $reports->count() > 0,
+        ]);
+    }
+
     /**
      * Show bite report details (JSON for modal).
      */
     public function showBiteReportJson(BiteRabiesReport $report)
+    
     {
         $report->load(['barangay', 'patientBarangay', 'reportedBy']);
         

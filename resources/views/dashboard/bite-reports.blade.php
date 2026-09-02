@@ -31,7 +31,7 @@ $rolePrefix = 'admin';
             <div class="flex items-start justify-between gap-3">
                 <div class="flex-1 min-w-0">
                     <p class="text-xs md:text-sm text-gray-500 mb-1">Total Confirmed Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['total'] ?? 0 }}</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800" id="statTotal">{{ $stats['total'] ?? 0 }}</p>
                 </div>
                 <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="bi bi-virus text-red-600 text-lg md:text-xl"></i>
@@ -43,7 +43,7 @@ $rolePrefix = 'admin';
             <div class="flex items-start justify-between gap-3">
                 <div class="flex-1 min-w-0">
                     <p class="text-xs md:text-sm text-gray-500 mb-1">Confirmed Rabies Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['confirmed_this_year'] ?? 0 }}</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800" id="statConfirmedThisYear">{{ $stats['confirmed_this_year'] ?? 0 }}</p>
                     <p class="text-xs text-gray-400 mt-1">This Year</p>
                 </div>
                 <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -56,7 +56,7 @@ $rolePrefix = 'admin';
             <div class="flex items-start justify-between gap-3">
                 <div class="flex-1 min-w-0">
                     <p class="text-xs md:text-sm text-gray-500 mb-1">Dog Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['dog_cases'] ?? 0 }}</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800" id="statDogCases">{{ $stats['dog_cases'] ?? 0 }}</p>
                 </div>
                 <div class="w-10 h-10 md:w-11 md:h-11 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="bi bi-briefcase text-orange-600 text-lg md:text-xl"></i>
@@ -68,7 +68,7 @@ $rolePrefix = 'admin';
             <div class="flex items-start justify-between gap-3">
                 <div class="flex-1 min-w-0">
                     <p class="text-xs md:text-sm text-gray-500 mb-1">Cat Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['cat_cases'] ?? 0 }}</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800" id="statCatCases">{{ $stats['cat_cases'] ?? 0 }}</p>
                 </div>
                 <div class="w-10 h-10 md:w-11 md:h-11 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="bi bi-briefcase text-purple-600 text-lg md:text-xl"></i>
@@ -80,71 +80,66 @@ $rolePrefix = 'admin';
 
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-        <form method="GET" action="{{ route($rolePrefix . '.bite-reports.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Search -->
-                <div class="lg:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Patient Name"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
-
-                <!-- Age Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
-                    <select name="age_filter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                        <option value="">All Ages</option>
-                        <option value="0-4" {{ request('age_filter') === '0-4' ? 'selected' : '' }}>0 – 4 Years</option>
-                        <option value="5-14" {{ request('age_filter') === '5-14' ? 'selected' : '' }}>5 – 14 Years</option>
-                        <option value="15-59" {{ request('age_filter') === '15-59' ? 'selected' : '' }}>15 – 59 Years</option>
-                        <option value="60+" {{ request('age_filter') === '60+' ? 'selected' : '' }}>60+ Years</option>
-                        <option value="unknown" {{ request('age_filter') === 'unknown' ? 'selected' : '' }}>Unknown</option>
-                    </select>
-                </div>
-
-                <!-- Barangay Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
-                    <input type="text" name="barangay_id" list="barangay-list" value="{{ request('barangay_id') ? ($barangays->firstWhere('barangay_id', request('barangay_id'))?->barangay_name ?? request('barangay_id')) : '' }}" placeholder="Search Barangay..."
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <datalist id="barangay-list">
-                        <option value="">All Barangays</option>
-                        @foreach($barangays as $barangay)
-                            <option value="{{ $barangay->barangay_name }}">
-                        @endforeach
-                    </datalist>
-                </div>
-
-                <!-- Date From -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                    <input type="date" name="date_from" value="{{ request('date_from') }}"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
-
-                <!-- Date To -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                    <input type="date" name="date_to" value="{{ request('date_to') }}"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
-
-                <!-- Actions -->
-                <div class="flex items-end gap-3">
-                    <a href="{{ route($rolePrefix . '.bite-reports.index') }}"
-                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
-                        <i class="bi bi-x-circle mr-1"></i>Clear
-                    </a>
-                    <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
-                        <i class="bi bi-funnel mr-1"></i>Filter
-                    </button>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Search -->
+            <div class="lg:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <input type="text" id="biteSearch" value="{{ request('search') }}" placeholder="Patient Name"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
             </div>
-        </form>
+
+            <!-- Age Filter -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                <select id="biteAgeFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Ages</option>
+                    <option value="0-4" {{ request('age_filter') === '0-4' ? 'selected' : '' }}>0 – 4 Years</option>
+                    <option value="5-14" {{ request('age_filter') === '5-14' ? 'selected' : '' }}>5 – 14 Years</option>
+                    <option value="15-59" {{ request('age_filter') === '15-59' ? 'selected' : '' }}>15 – 59 Years</option>
+                    <option value="60+" {{ request('age_filter') === '60+' ? 'selected' : '' }}>60+ Years</option>
+                    <option value="unknown" {{ request('age_filter') === 'unknown' ? 'selected' : '' }}>Unknown</option>
+                </select>
+            </div>
+
+            <!-- Barangay Filter -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
+                <input type="text" id="biteBarangay" list="barangay-list" value="{{ request('barangay_id') ? ($barangays->firstWhere('barangay_id', request('barangay_id'))?->barangay_name ?? request('barangay_id')) : '' }}" placeholder="Search Barangay..."
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                <datalist id="barangay-list">
+                    <option value="">All Barangays</option>
+                    @foreach($barangays as $barangay)
+                        <option value="{{ $barangay->barangay_name }}">
+                    @endforeach
+                </datalist>
+            </div>
+
+            <!-- Date From -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                <input type="date" id="biteDateFrom" value="{{ request('date_from') }}"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
+
+            <!-- Date To -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                <input type="date" id="biteDateTo" value="{{ request('date_to') }}"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-end gap-3">
+                <button type="button" onclick="clearBiteFilters()"
+                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+                    <i class="bi bi-x-circle mr-1"></i>Clear
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Reports Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" id="reportsTableContainer">
         @if($reports->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -158,53 +153,16 @@ $rolePrefix = 'admin';
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($reports as $report)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4">
-                                <span class="font-medium text-gray-800">{{ $report->report_number ?? 'N/A' }}</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i class="bi bi-person text-red-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-800">
-                                            {{ trim(($report->patient_first_name ?? '') . ' ' . ($report->patient_middle_name ?? '') . ' ' . ($report->patient_last_name ?? '') . ' ' . ($report->patient_suffix ?? '')) ?: 'Unknown' }}
-                                        </p>
-                                        <p class="text-sm text-gray-500">{{ $report->age ?? 'N/A' }} yrs old</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A') }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-gray-600">{{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div>
-                                    <p class="text-gray-800">{{ ucfirst($report->animal_type) }}</p>
-                                    <p class="text-sm text-gray-500">{{ ucfirst($report->animal_status) }}</p>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <button onclick="openReportModal({{ $report->id }})"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
-                                    <i class="bi bi-eye"></i>View
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
+                    <tbody class="divide-y divide-gray-100" id="reportsTableBody">
+                        @include('dashboard.partials.bite-reports-table')
                     </tbody>
                 </table>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100">
+            <div class="px-6 py-4 border-t border-gray-100" id="reportsPagination">
                 {{ $reports->links() }}
             </div>
         @else
-            <div class="p-12 text-center">
+            <div class="p-12 text-center" id="reportsEmptyState">
                 <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="bi bi-virus text-2xl text-red-400"></i>
                 </div>
@@ -212,6 +170,10 @@ $rolePrefix = 'admin';
                 <p class="text-gray-500">There are currently no confirmed rabies cases in the system.</p>
             </div>
         @endif
+        <div id="reportsLoading" class="hidden p-12 text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
+            <p class="mt-4 text-gray-600">Loading reports...</p>
+        </div>
     </div>
 </div>
 
@@ -424,5 +386,88 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+let biteFilterTimeout;
+const biteFilterUrl = '{{ route($rolePrefix . '.bite-reports.filter') }}';
+
+function getBiteFilterParams() {
+    return {
+        search: document.getElementById('biteSearch').value,
+        age_filter: document.getElementById('biteAgeFilter').value,
+        barangay_id: document.getElementById('biteBarangay').value,
+        date_from: document.getElementById('biteDateFrom').value,
+        date_to: document.getElementById('biteDateTo').value,
+    };
+}
+
+function applyBiteFilters() {
+    const params = getBiteFilterParams();
+    const loading = document.getElementById('reportsLoading');
+    const tableBody = document.getElementById('reportsTableBody');
+    const pagination = document.getElementById('reportsPagination');
+    const emptyState = document.getElementById('reportsEmptyState');
+
+    if (loading) loading.classList.remove('hidden');
+    if (tableBody) tableBody.style.opacity = '0.3';
+    if (pagination) pagination.style.opacity = '0.3';
+
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.append(key, value);
+    });
+
+    fetch(`${biteFilterUrl}?${query.toString()}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (tableBody) {
+                tableBody.innerHTML = data.table_html;
+                tableBody.style.opacity = '1';
+            }
+            if (pagination) {
+                pagination.innerHTML = data.pagination_html;
+                pagination.style.opacity = '1';
+            }
+            if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
+
+            document.getElementById('statTotal').textContent = data.stats.total ?? 0;
+            document.getElementById('statConfirmedThisYear').textContent = data.stats.confirmed_this_year ?? 0;
+            document.getElementById('statDogCases').textContent = data.stats.dog_cases ?? 0;
+            document.getElementById('statCatCases').textContent = data.stats.cat_cases ?? 0;
+        }
+    })
+    .catch(error => {
+        console.error('Error filtering bite reports:', error);
+        if (tableBody) tableBody.style.opacity = '1';
+        if (pagination) pagination.style.opacity = '1';
+    })
+    .finally(() => {
+        if (loading) loading.classList.add('hidden');
+    });
+}
+
+function clearBiteFilters() {
+    document.getElementById('biteSearch').value = '';
+    document.getElementById('biteAgeFilter').value = '';
+    document.getElementById('biteBarangay').value = '';
+    document.getElementById('biteDateFrom').value = '';
+    document.getElementById('biteDateTo').value = '';
+    applyBiteFilters();
+}
+
+document.getElementById('biteSearch').addEventListener('input', () => {
+    clearTimeout(biteFilterTimeout);
+    biteFilterTimeout = setTimeout(applyBiteFilters, 300);
+});
+
+document.getElementById('biteAgeFilter').addEventListener('change', applyBiteFilters);
+document.getElementById('biteBarangay').addEventListener('change', applyBiteFilters);
+document.getElementById('biteDateFrom').addEventListener('change', applyBiteFilters);
+document.getElementById('biteDateTo').addEventListener('change', applyBiteFilters);
 </script>
 @endsection

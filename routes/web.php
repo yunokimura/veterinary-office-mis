@@ -266,6 +266,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
 
     // Bite & Rabies Reports
     Route::get('/bite-rabies-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
+    Route::get('/bite-rabies-reports/filter', [AdminController::class, 'filterBiteReports'])->name('bite-reports.filter');
     Route::get('/bite-rabies-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
     Route::get('/bite-rabies-reports/{report}/json', [AdminController::class, 'showBiteReportJson'])->name('bite-reports.show-json');
     Route::put('/bite-rabies-reports/{report}', [AdminController::class, 'updateBiteReport'])->name('bite-reports.update');
