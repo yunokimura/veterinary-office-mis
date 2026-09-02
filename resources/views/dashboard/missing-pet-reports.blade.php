@@ -78,44 +78,87 @@ $rolePrefix = 'city-vet';
 
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-        <form method="GET" action="{{ route($rolePrefix . '.missing-pet-reports.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Status Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select name="status" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" onchange="this.form.submit()">
-                        <option value="">All Status</option>
-                        <option value="missing" {{ request('status') === 'missing' ? 'selected' : '' }}>Active</option>
-                        <option value="found" {{ request('status') === 'found' ? 'selected' : '' }}>Found</option>
-                        <option value="reunited" {{ request('status') === 'reunited' ? 'selected' : '' }}>Reunited</option>
-                    </select>
-                </div>
-
-                <!-- Date From -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                    <input type="date" name="date_from" value="{{ request('date_from') }}"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
-
-                <!-- Date To -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                    <input type="date" name="date_to" value="{{ request('date_to') }}"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
+        <div class="row g-3 align-items-end">
+            <!-- Pet Name Search -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Pet Name</label>
+                <input type="text" id="petNameSearch" value="{{ request('pet_name_search') }}" placeholder="Search pet name..."
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
             </div>
 
-            <div class="flex justify-start gap-3">
-                <a href="{{ route($rolePrefix . '.missing-pet-reports.index') }}"
-                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
-                    <i class="bi bi-x-circle mr-1"></i>Clear
-                </a>
-                <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
-                    <i class="bi bi-funnel mr-1"></i>Filter
-                </button>
+            <!-- Animal Type Search -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
+                <select id="animalTypeSearch" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Animal Types</option>
+                    <option value="dog" {{ request('animal_type') === 'dog' ? 'selected' : '' }}>Dog</option>
+                    <option value="cat" {{ request('animal_type') === 'cat' ? 'selected' : '' }}>Cat</option>
+                    <option value="other" {{ request('animal_type') === 'other' ? 'selected' : '' }}>Other</option>
+                </select>
             </div>
-        </form>
+
+            <!-- Barangay Filter -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
+                <div class="relative">
+                    <div id="missingPetBarangayDisplay" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer hover:border-gray-400 transition" onclick="toggleMissingPetBarangayDropdown()">
+                        <span id="selectedMissingPetBarangayText" class="text-gray-500">All Barangays</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                    <div id="missingPetBarangayDropdown" class="hidden absolute z-10 w-full mt-1 border border-gray-300 rounded-lg bg-white shadow-lg max-h-64">
+                        <div class="p-2 border-b border-gray-200">
+                            <input type="text" id="missingPetBarangaySearch" placeholder="Search barangay..." class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-green-500" onkeyup="filterMissingPetBarangays()" onclick="event.stopPropagation()">
+                        </div>
+                        <div id="missingPetBarangayOptions" class="max-h-48 overflow-y-auto py-1">
+                            @foreach($barangays as $barangay)
+                                <label class="flex items-center px-3 py-2 cursor-pointer hover:bg-gray-100">
+                                    <input type="checkbox" value="{{ $barangay->barangay_name }}" class="missing-pet-barangay-checkbox h-4 w-4 text-green-600 border-gray-300 rounded" onchange="updateMissingPetBarangaySelection()" {{ request('barangay') && str_contains(request('barangay'), $barangay->barangay_name) ? 'checked' : '' }}>
+                                    <span class="ml-3 text-sm text-gray-700">{{ $barangay->barangay_name }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="missingPetBarangay" value="{{ request('barangay') ?? '' }}">
+            </div>
+
+            <!-- Status Filter -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select id="statusFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Status</option>
+                    <option value="missing" {{ request('status') === 'missing' ? 'selected' : '' }}>Active</option>
+                    <option value="found" {{ request('status') === 'found' ? 'selected' : '' }}>Found</option>
+                    <option value="reunited" {{ request('status') === 'reunited' ? 'selected' : '' }}>Reunited</option>
+                </select>
+            </div>
+
+            <!-- Date From -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                <input type="date" id="dateFrom" value="{{ request('date_from') }}"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
+
+            <!-- Date To -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                <input type="date" id="dateTo" value="{{ request('date_to') }}"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
+
+            <!-- Clear Button -->
+            <div class="col-12 col-md-3">
+                <div class="d-flex align-items-end h-100">
+                    <button type="button" onclick="clearMissingPetFilters()"
+                            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+                        <i class="bi bi-x-circle mr-1"></i>Clear
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Reports Table -->
@@ -127,7 +170,7 @@ $rolePrefix = 'city-vet';
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Report No.</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Pet Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Species</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animal Type</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Last Seen</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Location</th>
@@ -135,62 +178,16 @@ $rolePrefix = 'city-vet';
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($reports as $report)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4">
-                                <span class="font-medium text-gray-800">MP-{{ str_pad($report->report_id, 5, '0', STR_PAD_LEFT) }}</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i class="bi bi-paw text-blue-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-800">{{ $report->pet->pet_name ?? 'Unknown' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $report->pet->breed ?? 'Unknown' }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ ucfirst($report->pet->species ?? 'Unknown') }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-gray-600">{{ \Carbon\Carbon::parse($report->last_seen_at)->format('M d, Y') }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ $report->location_barangay ?? 'Unknown' }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ $report->location_description ?? 'Unknown' }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                @if($report->status == 'missing')
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Active</span>
-                                @elseif($report->status == 'found')
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Found</span>
-                                @elseif($report->status == 'reunited')
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Reunited</span>
-                                @else
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">{{ ucfirst($report->status) }}</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4">
-                                <button onclick="openReportModal({{ $report->report_id }})"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
-                                    <i class="bi bi-eye"></i>View
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
+                    <tbody class="divide-y divide-gray-100" id="reportsTableBody">
+                        @include('dashboard.partials.missing-pet-reports-table')
                     </tbody>
                 </table>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100">
+            <div class="px-6 py-4 border-t border-gray-100" id="reportsPagination">
                 {{ $reports->links() }}
             </div>
         @else
-            <div class="p-12 text-center">
+            <div class="p-12 text-center" id="reportsEmptyState">
                 <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="bi bi-search text-2xl text-blue-400"></i>
                 </div>
@@ -198,6 +195,10 @@ $rolePrefix = 'city-vet';
                 <p class="text-gray-500">There are currently no missing pet reports in the system.</p>
             </div>
         @endif
+        <div id="reportsLoading" class="hidden p-12 text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
+            <p class="mt-4 text-gray-600">Loading reports...</p>
+        </div>
     </div>
 </div>
 
@@ -375,5 +376,148 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+const missingPetFilterUrl = `{{ route($rolePrefix . '.missing-pet-reports.filter') }}`;
+
+function getMissingPetFilterParams() {
+    return {
+        animal_type: document.getElementById('animalTypeSearch').value,
+        barangay: document.getElementById('missingPetBarangay').value,
+        pet_name_search: document.getElementById('petNameSearch').value,
+        status: document.getElementById('statusFilter').value,
+        date_from: document.getElementById('dateFrom').value,
+        date_to: document.getElementById('dateTo').value,
+    };
+}
+
+function toggleMissingPetBarangayDropdown() {
+    const dropdown = document.getElementById('missingPetBarangayDropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+function updateMissingPetBarangaySelection() {
+    const checkboxes = document.querySelectorAll('.missing-pet-barangay-checkbox:checked');
+    const selected = Array.from(checkboxes).map(cb => cb.value).sort();
+    const hiddenInput = document.getElementById('missingPetBarangay');
+    const displayText = document.getElementById('selectedMissingPetBarangayText');
+
+    hiddenInput.value = selected.join(',');
+
+    if (selected.length === 0) {
+        displayText.textContent = 'All Barangays';
+        displayText.classList.add('text-gray-500');
+        displayText.classList.remove('text-gray-900');
+    } else {
+        displayText.textContent = selected.length === 1 ? selected[0] : selected.length + ' barangays selected';
+        displayText.classList.remove('text-gray-500');
+        displayText.classList.add('text-gray-900');
+    }
+
+    reorderMissingPetBarangayOptions();
+    document.getElementById('missingPetBarangayDropdown').classList.add('hidden');
+    applyMissingPetFilters();
+}
+
+function reorderMissingPetBarangayOptions() {
+    const container = document.getElementById('missingPetBarangayOptions');
+    const labels = Array.from(container.querySelectorAll('label'));
+    const selected = labels.filter(label => label.querySelector('.missing-pet-barangay-checkbox')?.checked).sort((a, b) => {
+        const aText = a.querySelector('span')?.textContent?.trim() || '';
+        const bText = b.querySelector('span')?.textContent?.trim() || '';
+        return aText.localeCompare(bText);
+    });
+    const unselected = labels.filter(label => !label.querySelector('.missing-pet-barangay-checkbox')?.checked).sort((a, b) => {
+        const aText = a.querySelector('span')?.textContent?.trim() || '';
+        const bText = b.querySelector('span')?.textContent?.trim() || '';
+        return aText.localeCompare(bText);
+    });
+
+    container.innerHTML = '';
+    selected.forEach(label => container.appendChild(label));
+    unselected.forEach(label => container.appendChild(label));
+}
+
+function filterMissingPetBarangays() {
+    const search = document.getElementById('missingPetBarangaySearch').value.toLowerCase();
+    const labels = document.querySelectorAll('#missingPetBarangayOptions label');
+    labels.forEach(label => {
+        const text = label.textContent.toLowerCase();
+        label.style.display = text.includes(search) ? 'flex' : 'none';
+    });
+}
+
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('missingPetBarangayDropdown');
+    const display = document.getElementById('missingPetBarangayDisplay');
+    if (dropdown && display && !dropdown.contains(e.target) && !display.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
+
+function applyMissingPetFilters() {
+    const params = getMissingPetFilterParams();
+    const loading = document.getElementById('reportsLoading');
+    const tableBody = document.getElementById('reportsTableBody');
+    const pagination = document.getElementById('reportsPagination');
+    const emptyState = document.getElementById('reportsEmptyState');
+
+    if (loading) loading.classList.remove('hidden');
+    if (tableBody) tableBody.style.opacity = '0.3';
+    if (pagination) pagination.style.opacity = '0.3';
+
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.append(key, value);
+    });
+
+    fetch(`${missingPetFilterUrl}?${query.toString()}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (tableBody) {
+                tableBody.innerHTML = data.table_html;
+                tableBody.style.opacity = '1';
+            }
+            if (pagination) {
+                pagination.innerHTML = data.pagination_html;
+                pagination.style.opacity = '1';
+            }
+            if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
+            if (loading) loading.classList.add('hidden');
+        }
+    })
+    .catch(error => {
+        console.error('Error filtering missing pet reports:', error);
+        if (tableBody) tableBody.style.opacity = '1';
+        if (pagination) pagination.style.opacity = '1';
+        if (loading) loading.classList.add('hidden');
+    });
+}
+
+function clearMissingPetFilters() {
+    document.getElementById('animalTypeSearch').value = '';
+    document.querySelectorAll('.missing-pet-barangay-checkbox:checked').forEach(cb => cb.checked = false);
+    document.getElementById('selectedMissingPetBarangayText').textContent = 'All Barangays';
+    document.getElementById('selectedMissingPetBarangayText').classList.add('text-gray-500');
+    document.getElementById('selectedMissingPetBarangayText').classList.remove('text-gray-900');
+    document.getElementById('missingPetBarangay').value = '';
+    document.getElementById('petNameSearch').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    applyMissingPetFilters();
+}
+
+document.getElementById('animalTypeSearch').addEventListener('change', applyMissingPetFilters);
+document.querySelectorAll('.missing-pet-barangay-checkbox').forEach(cb => cb.addEventListener('change', applyMissingPetFilters));
+document.getElementById('petNameSearch').addEventListener('input', applyMissingPetFilters);
+document.getElementById('statusFilter').addEventListener('change', applyMissingPetFilters);
+document.getElementById('dateFrom').addEventListener('change', applyMissingPetFilters);
+document.getElementById('dateTo').addEventListener('change', applyMissingPetFilters);
 </script>
 @endsection

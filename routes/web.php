@@ -290,6 +290,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
 
     // Missing Pet Reports
     Route::get('/missing-pet-reports', [CityVetController::class, 'indexMissingPetReports'])->name('missing-pet-reports.index');
+    Route::get('/missing-pet-reports/filter', [CityVetController::class, 'filterMissingPetReports'])->name('missing-pet-reports.filter');
     Route::get('/missing-pet-reports/{missingPet}', [CityVetController::class, 'showMissingPetReport'])->name('missing-pet-reports.show');
     Route::get('/missing-pet-reports/{missingPet}/json', [CityVetController::class, 'showMissingPetReportJson'])->name('missing-pet-reports.show-json');
 
@@ -424,6 +425,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
 
     // Missing Pet Reports
     Route::get('/missing-pet-reports', [CityVetController::class, 'indexMissingPetReports'])->name('missing-pet-reports.index');
+    Route::get('/missing-pet-reports/filter', [CityVetController::class, 'filterMissingPetReports'])->name('missing-pet-reports.filter');
     Route::get('/missing-pet-reports/{missingPet}', [CityVetController::class, 'showMissingPetReport'])->name('missing-pet-reports.show');
     Route::get('/missing-pet-reports/{missingPet}/json', [CityVetController::class, 'showMissingPetReportJson'])->name('missing-pet-reports.show-json');
 

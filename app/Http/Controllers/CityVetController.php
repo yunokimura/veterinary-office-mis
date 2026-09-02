@@ -547,9 +547,30 @@ class CityVetController extends Controller
 
         $query = \App\Models\MissingPetsReport::with(['pet', 'user']);
 
+        // Apply animal type filter
+        if ($request->has('animal_type') && $request->animal_type) {
+            $query->whereHas('pet', function ($q) use ($request) {
+                $q->where('species', $request->animal_type);
+            });
+        }
+
+        // Apply pet name search filter
+        if ($request->has('pet_name_search') && $request->pet_name_search) {
+            $query->whereHas('pet', function ($q) use ($request) {
+                $q->where('pet_name', 'like', '%' . $request->pet_name_search . '%');
+            });
+        }
+
         // Apply status filter
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
+        }
+
+        // Apply barangay filter
+        if ($request->has('barangay') && $request->barangay) {
+            $barangayNames = explode(',', $request->barangay);
+            $barangayNames = array_map('trim', $barangayNames);
+            $query->whereIn('location_barangay', $barangayNames);
         }
 
         // Apply date filters
@@ -588,7 +609,73 @@ class CityVetController extends Controller
                 ->count(),
         ];
 
-        return view('dashboard.missing-pet-reports', compact('user', 'reports', 'stats'));
+        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get(['barangay_id', 'barangay_name']);
+
+        return view('dashboard.missing-pet-reports', compact('user', 'reports', 'stats', 'barangays'));
+    }
+
+    public function filterMissingPetReports(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = \App\Models\MissingPetsReport::with(['pet', 'user']);
+
+        if ($request->filled('animal_type')) {
+            $query->whereHas('pet', function ($q) use ($request) {
+                $q->where('species', $request->animal_type);
+            });
+        }
+
+        if ($request->filled('pet_name_search')) {
+            $query->whereHas('pet', function ($q) use ($request) {
+                $q->where('pet_name', 'like', '%' . $request->pet_name_search . '%');
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('barangay')) {
+            $barangayNames = explode(',', $request->barangay);
+            $barangayNames = array_map('trim', $barangayNames);
+            $query->whereIn('location_barangay', $barangayNames);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('last_seen_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('last_seen_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('quick_filter')) {
+            $today = \Carbon\Carbon::now()->startOfDay();
+            switch ($request->quick_filter) {
+                case 'today':
+                    $query->whereDate('last_seen_at', $today);
+                    break;
+                case 'week':
+                    $query->where('last_seen_at', '>=', \Carbon\Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('last_seen_at', '>=', \Carbon\Carbon::now()->startOfMonth());
+                    break;
+            }
+        }
+
+        $reports = $query->latest()->paginate(10);
+
+        $tableHtml = view('dashboard.partials.missing-pet-reports-table', compact('reports'))->render();
+        $paginationHtml = $reports->links()->render();
+
+        return response()->json([
+            'success' => true,
+            'table_html' => $tableHtml,
+            'pagination_html' => $paginationHtml,
+            'total_count' => $reports->total(),
+            'has_results' => $reports->count() > 0,
+        ]);
     }
 
     /**
