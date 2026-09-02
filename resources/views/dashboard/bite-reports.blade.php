@@ -104,14 +104,29 @@ $rolePrefix = 'admin';
             <!-- Barangay Filter -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
-                <input type="text" id="biteBarangay" list="barangay-list" value="{{ request('barangay_id') ? ($barangays->firstWhere('barangay_id', request('barangay_id'))?->barangay_name ?? request('barangay_id')) : '' }}" placeholder="Search Barangay..."
-                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                <datalist id="barangay-list">
-                    <option value="">All Barangays</option>
-                    @foreach($barangays as $barangay)
-                        <option value="{{ $barangay->barangay_name }}">
-                    @endforeach
-                </datalist>
+                <div class="relative">
+                    <div id="barangayDisplay" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer hover:border-gray-400 transition" onclick="toggleBarangayDropdown()">
+                        <span id="selectedBarangayText" class="text-gray-500">All Barangays</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                    <div id="barangayDropdown" class="hidden absolute z-10 w-full mt-1 border border-gray-300 rounded-lg bg-white shadow-lg max-h-64">
+                        <div class="p-2 border-b border-gray-200">
+                            <input type="text" id="barangaySearch" placeholder="Search barangay..." class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-green-500" onkeyup="filterBarangays()" onclick="event.stopPropagation()">
+                        </div>
+                        <div id="barangayOptions" class="max-h-48 overflow-y-auto py-1">
+                            @foreach($barangays as $barangay)
+                                <label class="flex items-center px-3 py-2 cursor-pointer hover:bg-gray-100">
+                                    <input type="checkbox" value="{{ $barangay->barangay_name }}" class="barangay-checkbox h-4 w-4 text-green-600 border-gray-300 rounded" onchange="updateBarangaySelection()" {{ request('barangay_id') && str_contains(request('barangay_id'), $barangay->barangay_name) ? 'checked' : '' }}>
+                                    <span class="ml-3 text-sm text-gray-700">{{ $barangay->barangay_name }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="biteBarangay" value="{{ request('barangay_id') ?? '' }}">
+                <div id="selectedBarangayTags" class="mt-2 flex flex-wrap gap-2 hidden"></div>
             </div>
 
             <!-- Date From -->
@@ -400,6 +415,70 @@ function getBiteFilterParams() {
     };
 }
 
+function toggleBarangayDropdown() {
+    const dropdown = document.getElementById('barangayDropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+function updateBarangaySelection() {
+    const checkboxes = document.querySelectorAll('.barangay-checkbox:checked');
+    const selected = Array.from(checkboxes).map(cb => cb.value);
+    const hiddenInput = document.getElementById('biteBarangay');
+    const displayText = document.getElementById('selectedBarangayText');
+    const tagsContainer = document.getElementById('selectedBarangayTags');
+
+    hiddenInput.value = selected.join(',');
+
+    if (selected.length === 0) {
+        displayText.textContent = 'All Barangays';
+        displayText.classList.add('text-gray-500');
+        displayText.classList.remove('text-gray-900');
+        tagsContainer.classList.add('hidden');
+        tagsContainer.innerHTML = '';
+    } else {
+        displayText.textContent = selected.length === 1 ? selected[0] : selected.length + ' barangays selected';
+        displayText.classList.remove('text-gray-500');
+        displayText.classList.add('text-gray-900');
+        tagsContainer.classList.remove('hidden');
+        tagsContainer.innerHTML = selected.map(name => `
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                ${name}
+                <button type="button" onclick="removeBarangay('${name}')" class="ml-2 hover:text-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </span>
+        `).join('');
+    }
+
+    document.getElementById('barangayDropdown').classList.add('hidden');
+    applyBiteFilters();
+}
+
+function removeBarangay(name) {
+    const checkbox = document.querySelector(`.barangay-checkbox[value="${name}"]`);
+    if (checkbox) checkbox.checked = false;
+    updateBarangaySelection();
+}
+
+function filterBarangays() {
+    const search = document.getElementById('barangaySearch').value.toLowerCase();
+    const labels = document.querySelectorAll('#barangayOptions label');
+    labels.forEach(label => {
+        const text = label.textContent.toLowerCase();
+        label.style.display = text.includes(search) ? 'flex' : 'none';
+    });
+}
+
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('barangayDropdown');
+    const display = document.getElementById('barangayDisplay');
+    if (dropdown && display && !dropdown.contains(e.target) && !display.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
+
 function applyBiteFilters() {
     const params = getBiteFilterParams();
     const loading = document.getElementById('reportsLoading');
@@ -457,6 +536,18 @@ function clearBiteFilters() {
     document.getElementById('biteBarangay').value = '';
     document.getElementById('biteDateFrom').value = '';
     document.getElementById('biteDateTo').value = '';
+    document.querySelectorAll('.barangay-checkbox').forEach(cb => cb.checked = false);
+    const selectedText = document.getElementById('selectedBarangayText');
+    if (selectedText) {
+        selectedText.textContent = 'All Barangays';
+        selectedText.classList.add('text-gray-500');
+        selectedText.classList.remove('text-gray-900');
+    }
+    const tagsContainer = document.getElementById('selectedBarangayTags');
+    if (tagsContainer) {
+        tagsContainer.classList.add('hidden');
+        tagsContainer.innerHTML = '';
+    }
     applyBiteFilters();
 }
 
@@ -466,8 +557,19 @@ document.getElementById('biteSearch').addEventListener('input', () => {
 });
 
 document.getElementById('biteAgeFilter').addEventListener('change', applyBiteFilters);
-document.getElementById('biteBarangay').addEventListener('change', applyBiteFilters);
 document.getElementById('biteDateFrom').addEventListener('change', applyBiteFilters);
 document.getElementById('biteDateTo').addEventListener('change', applyBiteFilters);
+
+(function initializeBarangayDisplay() {
+    const initialBarangay = document.getElementById('biteBarangay').value;
+    if (initialBarangay) {
+        const names = initialBarangay.split(',').map(name => name.trim()).filter(Boolean);
+        names.forEach(name => {
+            const checkbox = document.querySelector(`.barangay-checkbox[value="${name}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+    updateBarangaySelection();
+})();
 </script>
 @endsection

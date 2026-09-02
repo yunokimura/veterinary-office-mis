@@ -237,9 +237,11 @@ class AdminController extends Controller
 
         // Apply barangay filter
         if ($request->has('barangay_id') && $request->barangay_id) {
-            $barangay = Barangay::where('barangay_name', $request->barangay_id)->first();
-            if ($barangay) {
-                $query->where('barangay_id', $barangay->barangay_id);
+            $barangayNames = explode(',', $request->barangay_id);
+            $barangayNames = array_map('trim', $barangayNames);
+            $barangays = Barangay::whereIn('barangay_name', $barangayNames)->get();
+            if ($barangays->count() > 0) {
+                $query->whereIn('barangay_id', $barangays->pluck('barangay_id'));
             }
         }
 
@@ -313,9 +315,11 @@ class AdminController extends Controller
         }
 
         if ($request->filled('barangay_id')) {
-            $barangay = Barangay::where('barangay_name', $request->barangay_id)->first();
-            if ($barangay) {
-                $query->where('barangay_id', $barangay->barangay_id);
+            $barangayNames = explode(',', $request->barangay_id);
+            $barangayNames = array_map('trim', $barangayNames);
+            $barangays = Barangay::whereIn('barangay_name', $barangayNames)->get();
+            if ($barangays->count() > 0) {
+                $query->whereIn('barangay_id', $barangays->pluck('barangay_id'));
             }
         }
 
