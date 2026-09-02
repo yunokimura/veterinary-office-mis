@@ -709,8 +709,77 @@ class AdminController extends Controller
     public function indexMeatInspectionReports()
     {
         $user = Auth::user();
-        $establishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
-        return view('dashboard.meat-inspection', compact('user', 'establishments'));
+        $query = MeatEstablishment::with('barangay');
+
+        $establishments = $query->latest()->paginate(10);
+
+        $stats = [
+            'total' => MeatEstablishment::count(),
+            'active' => MeatEstablishment::where('status', 'Active')->count(),
+            'expired' => MeatEstablishment::where('status', 'Expired')->count(),
+            'pending_inspection' => MeatEstablishment::where('status', 'Pending Inspection')->count(),
+        ];
+
+        $establishmentTypes = MeatEstablishment::select('establishment_type')
+            ->distinct()
+            ->orderBy('establishment_type')
+            ->pluck('establishment_type');
+
+        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get(['barangay_id', 'barangay_name']);
+
+        return view('dashboard.meat-inspection', compact('user', 'establishments', 'stats', 'establishmentTypes', 'barangays'));
+    }
+
+    public function filterMeatInspectionReports(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = MeatEstablishment::with('barangay');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('establishment_name', 'like', '%' . $search . '%')
+                  ->orWhere('owner_name', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($request->filled('type')) {
+            $query->where('establishment_type', $request->type);
+        }
+
+        if ($request->filled('barangay')) {
+            $barangayNames = explode(',', $request->barangay);
+            $barangayNames = array_map('trim', $barangayNames);
+            $query->whereHas('barangay', function ($q) use ($barangayNames) {
+                $q->whereIn('barangay_name', $barangayNames);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $establishments = $query->latest()->paginate(10);
+
+        $stats = [
+            'total' => (clone $query)->count(),
+            'active' => (clone $query)->where('status', 'Active')->count(),
+            'expired' => (clone $query)->where('status', 'Expired')->count(),
+            'pending_inspection' => (clone $query)->where('status', 'Pending Inspection')->count(),
+        ];
+
+        $tableHtml = view('dashboard.partials.meat-inspection-table', compact('establishments'))->render();
+        $paginationHtml = $establishments->links()->render();
+
+        return response()->json([
+            'success' => true,
+            'table_html' => $tableHtml,
+            'pagination_html' => $paginationHtml,
+            'total_count' => $establishments->total(),
+            'has_results' => $establishments->count() > 0,
+            'stats' => $stats,
+        ]);
     }
 
     /**

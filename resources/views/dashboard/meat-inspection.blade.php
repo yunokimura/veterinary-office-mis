@@ -53,7 +53,7 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
         <div class="flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
                 <p class="text-xs md:text-sm text-gray-500 mb-1">Total Establishments</p>
-                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->count() }}</p>
+                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['total'] ?? 0 }}</p>
             </div>
             <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-shop text-red-600 text-lg md:text-xl"></i>
@@ -66,7 +66,7 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
         <div class="flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
                 <p class="text-xs md:text-sm text-gray-500 mb-1">Active</p>
-                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->where('status', 'Active')->count() }}</p>
+                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['active'] ?? 0 }}</p>
             </div>
             <div class="w-10 h-10 md:w-11 md:h-11 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-check-circle text-green-600 text-lg md:text-xl"></i>
@@ -79,7 +79,7 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
         <div class="flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
                 <p class="text-xs md:text-sm text-gray-500 mb-1">Expired</p>
-                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->where('status', 'Expired')->count() }}</p>
+                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['expired'] ?? 0 }}</p>
             </div>
             <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-x-circle text-red-600 text-lg md:text-xl"></i>
@@ -92,7 +92,7 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
         <div class="flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
                 <p class="text-xs md:text-sm text-gray-500 mb-1">Pending Inspection</p>
-                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $establishments->where('status', 'Pending Inspection')->count() }}</p>
+                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['pending_inspection'] ?? 0 }}</p>
             </div>
             <div class="w-10 h-10 md:w-11 md:h-11 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-clock text-yellow-600 text-lg md:text-xl"></i>
@@ -101,17 +101,77 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
     </div>
 </div>
 
-<!-- Recent Establishments Table -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-        <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <i class="bi bi-shop-window text-red-600"></i>
-            Recent Establishments
-        </h3>
-        <a href="{{ route('meat-inspection.establishments-overview') }}" class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
-            View All <i class="bi bi-arrow-right"></i>
-        </a>
+<!-- Filters -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
+    <div class="row g-3 align-items-end">
+        <!-- Owner/Establishment Name Search -->
+        <div class="col-12 col-md-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Owner/Establishment Name</label>
+            <input type="text" id="searchInput" placeholder="Search by name..."
+                   class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+        </div>
+
+        <!-- Type Filter -->
+        <div class="col-12 col-md-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+            <select id="typeFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                <option value="">All Types</option>
+                @foreach($establishmentTypes as $type)
+                    <option value="{{ $type }}">{{ str_replace('_', ' ', ucfirst($type)) }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Barangay Filter -->
+        <div class="col-12 col-md-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
+            <div class="relative">
+                <div id="meatBarangayDisplay" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer hover:border-gray-400 transition" onclick="toggleMeatBarangayDropdown()">
+                    <span id="selectedMeatBarangayText" class="text-gray-500">All Barangays</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+                <div id="meatBarangayDropdown" class="hidden absolute z-10 w-full mt-1 border border-gray-300 rounded-lg bg-white shadow-lg max-h-64">
+                    <div class="p-2 border-b border-gray-200">
+                        <input type="text" id="meatBarangaySearch" placeholder="Search barangay..." class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-green-500" onkeyup="filterMeatBarangays()" onclick="event.stopPropagation()">
+                    </div>
+                    <div id="meatBarangayOptions" class="max-h-48 overflow-y-auto py-1">
+                        @foreach($barangays as $barangay)
+                            <label class="flex items-center px-3 py-2 cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" value="{{ $barangay->barangay_name }}" class="meat-barangay-checkbox h-4 w-4 text-green-600 border-gray-300 rounded" onchange="updateMeatBarangaySelection()">
+                                <span class="ml-3 text-sm text-gray-700">{{ $barangay->barangay_name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="meatBarangay" value="">
+        </div>
+
+        <!-- Status Filter -->
+        <div class="col-12 col-md-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select id="statusFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Expired">Expired</option>
+                <option value="Pending Inspection">Pending Inspection</option>
+            </select>
+        </div>
+
+        <!-- Clear Button -->
+        <div class="col-12 col-md-3">
+            <button type="button" onclick="clearMeatFilters()"
+                    class="btn btn-outline-danger w-100">
+                <i class="bi bi-x-circle mr-1"></i>Clear
+            </button>
+        </div>
     </div>
+</div>
+
+<!-- Establishments Table -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     @if($establishments->count() > 0)
         <div class="overflow-x-auto">
             <table class="w-full">
@@ -125,69 +185,27 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @foreach($establishments as $establishment)
-                    <tr>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <i class="bi bi-shop text-orange-600"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">{{ $establishment->establishment_name }}</p>
-                                    <p class="text-sm text-gray-500">{{ $establishment->address_text }}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
-                                {{ str_replace('_', ' ', $establishment->establishment_type ?? 'N/A') }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-medium text-gray-800">{{ $establishment->owner_name ?? 'N/A' }}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-gray-700">{{ $establishment->barangay->barangay_name ?? 'N/A' }}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            @php
-                                $statusColors = [
-                                    'Active' => 'bg-green-100 text-green-700 border-green-200',
-                                    'Expired' => 'bg-red-100 text-red-700 border-red-200',
-                                    'Pending Inspection' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
-                                ];
-                            @endphp
-                            <span class="px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap {{ $statusColors[$establishment->status] ?? 'bg-gray-100 text-gray-700 border-gray-200' }}">
-                                {{ $establishment->status ?? 'Unknown' }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <button onclick="openEstablishmentModal({{ $establishment->establishment_id }})"
-                                    class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
-                                <i class="bi bi-eye"></i>View
-                            </button>
-                        </td>
-                    </tr>
-                    @endforeach
+                <tbody class="divide-y divide-gray-100" id="establishmentsTableBody">
+                    @include('dashboard.partials.meat-inspection-table')
                 </tbody>
             </table>
         </div>
-        <div class="px-6 py-4 border-t border-gray-100">
+        <div class="px-6 py-4 border-t border-gray-100" id="establishmentsPagination">
             {{ $establishments->links() }}
         </div>
     @else
-        <div class="p-12 text-center">
+        <div class="p-12 text-center" id="establishmentsEmptyState">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="bi bi-shop text-red-400 text-3xl"></i>
             </div>
             <h3 class="text-xl font-bold text-gray-800 mb-2">No Meat Establishments Found</h3>
             <p class="text-gray-500 mb-6">No establishments registered yet.</p>
-            <a href="{{ route('meat-inspection.establishments.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition shadow-md">
-                <i class="bi bi-plus-lg"></i>Register First Establishment
-            </a>
         </div>
     @endif
+    <div id="establishmentsLoading" class="hidden p-12 text-center">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-red-600"></div>
+        <p class="mt-4 text-gray-600">Loading establishments...</p>
+    </div>
 </div>
 
 <!-- Establishment Details Modal -->
@@ -356,5 +374,142 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+const meatFilterUrl = `{{ route('admin.meat-inspection-reports.filter') }}`;
+
+function getMeatFilterParams() {
+    return {
+        search: document.getElementById('searchInput').value,
+        type: document.getElementById('typeFilter').value,
+        barangay: document.getElementById('meatBarangay').value,
+        status: document.getElementById('statusFilter').value,
+    };
+}
+
+function toggleMeatBarangayDropdown() {
+    const dropdown = document.getElementById('meatBarangayDropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+function updateMeatBarangaySelection() {
+    const checkboxes = document.querySelectorAll('.meat-barangay-checkbox:checked');
+    const selected = Array.from(checkboxes).map(cb => cb.value).sort();
+    const hiddenInput = document.getElementById('meatBarangay');
+    const displayText = document.getElementById('selectedMeatBarangayText');
+
+    hiddenInput.value = selected.join(',');
+
+    if (selected.length === 0) {
+        displayText.textContent = 'All Barangays';
+        displayText.classList.add('text-gray-500');
+        displayText.classList.remove('text-gray-900');
+    } else {
+        displayText.textContent = selected.length === 1 ? selected[0] : selected.length + ' barangays selected';
+        displayText.classList.remove('text-gray-500');
+        displayText.classList.add('text-gray-900');
+    }
+
+    reorderMeatBarangayOptions();
+    document.getElementById('meatBarangayDropdown').classList.add('hidden');
+    applyMeatFilters();
+}
+
+function reorderMeatBarangayOptions() {
+    const container = document.getElementById('meatBarangayOptions');
+    const labels = Array.from(container.querySelectorAll('label'));
+    const selected = labels.filter(label => label.querySelector('.meat-barangay-checkbox')?.checked).sort((a, b) => {
+        const aText = a.querySelector('span')?.textContent?.trim() || '';
+        const bText = b.querySelector('span')?.textContent?.trim() || '';
+        return aText.localeCompare(bText);
+    });
+    const unselected = labels.filter(label => !label.querySelector('.meat-barangay-checkbox')?.checked).sort((a, b) => {
+        const aText = a.querySelector('span')?.textContent?.trim() || '';
+        const bText = b.querySelector('span')?.textContent?.trim() || '';
+        return aText.localeCompare(bText);
+    });
+
+    container.innerHTML = '';
+    selected.forEach(label => container.appendChild(label));
+    unselected.forEach(label => container.appendChild(label));
+}
+
+function filterMeatBarangays() {
+    const search = document.getElementById('meatBarangaySearch').value.toLowerCase();
+    const labels = document.querySelectorAll('#meatBarangayOptions label');
+    labels.forEach(label => {
+        const text = label.textContent.toLowerCase();
+        label.style.display = text.includes(search) ? 'flex' : 'none';
+    });
+}
+
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('meatBarangayDropdown');
+    const display = document.getElementById('meatBarangayDisplay');
+    if (dropdown && display && !dropdown.contains(e.target) && !display.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
+
+function applyMeatFilters() {
+    const params = getMeatFilterParams();
+    const loading = document.getElementById('establishmentsLoading');
+    const tableBody = document.getElementById('establishmentsTableBody');
+    const pagination = document.getElementById('establishmentsPagination');
+    const emptyState = document.getElementById('establishmentsEmptyState');
+
+    if (loading) loading.classList.remove('hidden');
+    if (tableBody) tableBody.style.opacity = '0.3';
+    if (pagination) pagination.style.opacity = '0.3';
+
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.append(key, value);
+    });
+
+    fetch(`${meatFilterUrl}?${query.toString()}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (tableBody) {
+                tableBody.innerHTML = data.table_html;
+                tableBody.style.opacity = '1';
+            }
+            if (pagination) {
+                pagination.innerHTML = data.pagination_html;
+                pagination.style.opacity = '1';
+            }
+            if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
+            if (loading) loading.classList.add('hidden');
+        }
+    })
+    .catch(error => {
+        console.error('Error filtering meat inspection reports:', error);
+        if (tableBody) tableBody.style.opacity = '1';
+        if (pagination) pagination.style.opacity = '1';
+        if (loading) loading.classList.add('hidden');
+    });
+}
+
+function clearMeatFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('typeFilter').value = '';
+    document.querySelectorAll('.meat-barangay-checkbox:checked').forEach(cb => cb.checked = false);
+    document.getElementById('selectedMeatBarangayText').textContent = 'All Barangays';
+    document.getElementById('selectedMeatBarangayText').classList.add('text-gray-500');
+    document.getElementById('selectedMeatBarangayText').classList.remove('text-gray-900');
+    document.getElementById('meatBarangay').value = '';
+    document.getElementById('statusFilter').value = '';
+    applyMeatFilters();
+}
+
+document.getElementById('searchInput').addEventListener('input', applyMeatFilters);
+document.getElementById('typeFilter').addEventListener('change', applyMeatFilters);
+document.querySelectorAll('.meat-barangay-checkbox').forEach(cb => cb.addEventListener('change', applyMeatFilters));
+document.getElementById('statusFilter').addEventListener('change', applyMeatFilters);
 </script>
 @endsection
