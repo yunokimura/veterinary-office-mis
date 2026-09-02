@@ -210,6 +210,29 @@ class AdminController extends Controller
             });
         }
 
+        // Apply age filter
+        if ($request->has('age_filter') && $request->age_filter) {
+            switch ($request->age_filter) {
+                case '0-4':
+                    $query->whereBetween('age', [0, 4]);
+                    break;
+                case '5-14':
+                    $query->whereBetween('age', [5, 14]);
+                    break;
+                case '15-59':
+                    $query->whereBetween('age', [15, 59]);
+                    break;
+                case '60+':
+                    $query->where('age', '>=', 60);
+                    break;
+                case 'unknown':
+                    $query->where(function ($q) {
+                        $q->whereNull('age')->orWhere('age', '');
+                    });
+                    break;
+            }
+        }
+
         // Apply date filters
         if ($request->has('date_from') && $request->date_from) {
             $query->whereDate('incident_date', '>=', $request->date_from);

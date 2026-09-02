@@ -89,6 +89,19 @@ $rolePrefix = 'admin';
                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                 </div>
 
+                <!-- Age Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                    <select name="age_filter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        <option value="">All Ages</option>
+                        <option value="0-4" {{ request('age_filter') === '0-4' ? 'selected' : '' }}>0 – 4 Years</option>
+                        <option value="5-14" {{ request('age_filter') === '5-14' ? 'selected' : '' }}>5 – 14 Years</option>
+                        <option value="15-59" {{ request('age_filter') === '15-59' ? 'selected' : '' }}>15 – 59 Years</option>
+                        <option value="60+" {{ request('age_filter') === '60+' ? 'selected' : '' }}>60+ Years</option>
+                        <option value="unknown" {{ request('age_filter') === 'unknown' ? 'selected' : '' }}>Unknown</option>
+                    </select>
+                </div>
+
                 <!-- Date From -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
@@ -102,16 +115,17 @@ $rolePrefix = 'admin';
                     <input type="date" name="date_to" value="{{ request('date_to') }}"
                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                 </div>
-            </div>
 
-            <div class="flex justify-start gap-3">
-                <a href="{{ route($rolePrefix . '.bite-reports.index') }}"
-                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
-                    <i class="bi bi-x-circle mr-1"></i>Clear
-                </a>
-                <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
-                    <i class="bi bi-funnel mr-1"></i>Filter
-                </button>
+                <!-- Actions -->
+                <div class="flex items-end gap-3">
+                    <a href="{{ route($rolePrefix . '.bite-reports.index') }}"
+                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+                        <i class="bi bi-x-circle mr-1"></i>Clear
+                    </a>
+                    <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
+                        <i class="bi bi-funnel mr-1"></i>Filter
+                    </button>
+                </div>
             </div>
         </form>
     </div>
