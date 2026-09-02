@@ -235,6 +235,11 @@ class AdminController extends Controller
             }
         }
 
+        // Apply animal type filter
+        if ($request->has('animal_type') && $request->animal_type) {
+            $query->where('animal_type', $request->animal_type);
+        }
+
         // Apply category filter
         if ($request->has('category') && $request->category) {
             $query->where('category', $request->category);
@@ -323,6 +328,10 @@ class AdminController extends Controller
             $query->where('category', $request->category);
         }
 
+        if ($request->filled('animal_type')) {
+            $query->where('animal_type', $request->animal_type);
+        }
+
         if ($request->filled('barangay_id')) {
             $barangayNames = explode(',', $request->barangay_id);
             $barangayNames = array_map('trim', $barangayNames);
@@ -357,10 +366,10 @@ class AdminController extends Controller
         $filteredQuery = clone $query;
         $stats = [
             'total' => $filteredQuery->count(),
-            'dog_cases' => $filteredQuery->whereRaw('LOWER(animal_type) = ?', ['dog'])->count(),
-            'cat_cases' => $filteredQuery->whereRaw('LOWER(animal_type) = ?', ['cat'])->count(),
-            'other_cases' => $filteredQuery->whereRaw('LOWER(animal_type) = ?', ['other'])->count(),
-            'confirmed_this_year' => $filteredQuery->whereYear('incident_date', date('Y'))->count(),
+            'dog_cases' => (clone $filteredQuery)->whereRaw('LOWER(animal_type) = ?', ['dog'])->count(),
+            'cat_cases' => (clone $filteredQuery)->whereRaw('LOWER(animal_type) = ?', ['cat'])->count(),
+            'other_cases' => (clone $filteredQuery)->whereRaw('LOWER(animal_type) = ?', ['other'])->count(),
+            'confirmed_this_year' => (clone $filteredQuery)->whereYear('incident_date', date('Y'))->count(),
         ];
 
         $reports = $query->orderByDesc('incident_date')->paginate(10);
