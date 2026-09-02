@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Barangay;
 use App\Models\BiteRabiesReport;
 use App\Models\RabiesVaccinationReport;
 use App\Models\MeatInspectionReport;
@@ -195,6 +196,8 @@ class AdminController extends Controller
             'confirmed_this_year' => BiteRabiesReport::where('rabies_confirmed', true)->whereYear('incident_date', date('Y'))->count(),
         ];
 
+        $barangays = Barangay::orderBy('barangay_name')->get(['barangay_id', 'barangay_name']);
+
         $query = BiteRabiesReport::where('rabies_confirmed', true)
             ->with(['barangay']);
 
@@ -205,8 +208,7 @@ class AdminController extends Controller
                 $q->where('patient_first_name', 'like', "%{$search}%")
                   ->orWhere('patient_middle_name', 'like', "%{$search}%")
                   ->orWhere('patient_last_name', 'like', "%{$search}%")
-                  ->orWhere('patient_suffix', 'like', "%{$search}%")
-                  ->orWhere('patient_name', 'like', "%{$search}%");
+                  ->orWhere('patient_suffix', 'like', "%{$search}%");
             });
         }
 
@@ -230,6 +232,14 @@ class AdminController extends Controller
                         $q->whereNull('age')->orWhere('age', '');
                     });
                     break;
+            }
+        }
+
+        // Apply barangay filter
+        if ($request->has('barangay_id') && $request->barangay_id) {
+            $barangay = Barangay::where('barangay_name', $request->barangay_id)->first();
+            if ($barangay) {
+                $query->where('barangay_id', $barangay->barangay_id);
             }
         }
 
@@ -258,7 +268,7 @@ class AdminController extends Controller
         }
 
         $reports = $query->orderByDesc('incident_date')->paginate(10);
-        return view('dashboard.bite-reports', compact('user', 'reports', 'stats'));
+        return view('dashboard.bite-reports', compact('user', 'reports', 'stats', 'barangays'));
     }
 
     /**

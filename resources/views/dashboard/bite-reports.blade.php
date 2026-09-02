@@ -102,6 +102,19 @@ $rolePrefix = 'admin';
                     </select>
                 </div>
 
+                <!-- Barangay Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
+                    <input type="text" name="barangay_id" list="barangay-list" value="{{ request('barangay_id') ? ($barangays->firstWhere('barangay_id', request('barangay_id'))?->barangay_name ?? request('barangay_id')) : '' }}" placeholder="Search Barangay..."
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <datalist id="barangay-list">
+                        <option value="">All Barangays</option>
+                        @foreach($barangays as $barangay)
+                            <option value="{{ $barangay->barangay_name }}">
+                        @endforeach
+                    </datalist>
+                </div>
+
                 <!-- Date From -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
