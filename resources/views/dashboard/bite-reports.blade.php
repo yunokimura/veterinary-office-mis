@@ -126,7 +126,6 @@ $rolePrefix = 'admin';
                     </div>
                 </div>
                 <input type="hidden" id="biteBarangay" value="{{ request('barangay_id') ?? '' }}">
-                <div id="selectedBarangayTags" class="mt-2 flex flex-wrap gap-2 hidden"></div>
             </div>
 
             <!-- Date From -->
@@ -422,10 +421,9 @@ function toggleBarangayDropdown() {
 
 function updateBarangaySelection() {
     const checkboxes = document.querySelectorAll('.barangay-checkbox:checked');
-    const selected = Array.from(checkboxes).map(cb => cb.value);
+    const selected = Array.from(checkboxes).map(cb => cb.value).sort();
     const hiddenInput = document.getElementById('biteBarangay');
     const displayText = document.getElementById('selectedBarangayText');
-    const tagsContainer = document.getElementById('selectedBarangayTags');
 
     hiddenInput.value = selected.join(',');
 
@@ -433,33 +431,34 @@ function updateBarangaySelection() {
         displayText.textContent = 'All Barangays';
         displayText.classList.add('text-gray-500');
         displayText.classList.remove('text-gray-900');
-        tagsContainer.classList.add('hidden');
-        tagsContainer.innerHTML = '';
     } else {
         displayText.textContent = selected.length === 1 ? selected[0] : selected.length + ' barangays selected';
         displayText.classList.remove('text-gray-500');
         displayText.classList.add('text-gray-900');
-        tagsContainer.classList.remove('hidden');
-        tagsContainer.innerHTML = selected.map(name => `
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                ${name}
-                <button type="button" onclick="removeBarangay('${name}')" class="ml-2 hover:text-green-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </span>
-        `).join('');
     }
 
+    reorderBarangayOptions();
     document.getElementById('barangayDropdown').classList.add('hidden');
     applyBiteFilters();
 }
 
-function removeBarangay(name) {
-    const checkbox = document.querySelector(`.barangay-checkbox[value="${name}"]`);
-    if (checkbox) checkbox.checked = false;
-    updateBarangaySelection();
+function reorderBarangayOptions() {
+    const container = document.getElementById('barangayOptions');
+    const labels = Array.from(container.querySelectorAll('label'));
+    const selected = labels.filter(label => label.querySelector('.barangay-checkbox')?.checked).sort((a, b) => {
+        const aText = a.querySelector('span')?.textContent?.trim() || '';
+        const bText = b.querySelector('span')?.textContent?.trim() || '';
+        return aText.localeCompare(bText);
+    });
+    const unselected = labels.filter(label => !label.querySelector('.barangay-checkbox')?.checked).sort((a, b) => {
+        const aText = a.querySelector('span')?.textContent?.trim() || '';
+        const bText = b.querySelector('span')?.textContent?.trim() || '';
+        return aText.localeCompare(bText);
+    });
+
+    container.innerHTML = '';
+    selected.forEach(label => container.appendChild(label));
+    unselected.forEach(label => container.appendChild(label));
 }
 
 function filterBarangays() {
@@ -543,11 +542,7 @@ function clearBiteFilters() {
         selectedText.classList.add('text-gray-500');
         selectedText.classList.remove('text-gray-900');
     }
-    const tagsContainer = document.getElementById('selectedBarangayTags');
-    if (tagsContainer) {
-        tagsContainer.classList.add('hidden');
-        tagsContainer.innerHTML = '';
-    }
+    reorderBarangayOptions();
     applyBiteFilters();
 }
 
