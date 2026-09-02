@@ -78,41 +78,63 @@ $rolePrefix = 'admin';
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
         <form method="GET" action="{{ route($rolePrefix . '.vaccination-reports.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="row g-3 align-items-end">
+                <!-- Clinic Search -->
+                <div class="col-12 col-md-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Clinic</label>
+                    <input type="text" name="clinic_search" value="{{ request('clinic_search') }}"
+                           placeholder="Search clinic..."
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                </div>
+
+                <!-- Animal Type Search -->
+                <div class="col-12 col-md-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
+                    <select name="animal_type_search" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        <option value="">All Animal Types</option>
+                        @foreach($animalTypes as $type)
+                            <option value="{{ $type }}" {{ request('animal_type_search') === $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Vaccine Search -->
+                <div class="col-12 col-md-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vaccine</label>
+                    <select name="vaccine_search" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        <option value="">All Vaccines</option>
+                        @foreach($vaccines as $vaccine)
+                            <option value="{{ $vaccine }}" {{ request('vaccine_search') === $vaccine ? 'selected' : '' }}>{{ $vaccine }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <!-- Date From -->
-                <div>
+                <div class="col-12 col-md-3">
                     <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
                     <input type="date" name="date_from" value="{{ request('date_from') }}"
                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                 </div>
 
                 <!-- Date To -->
-                <div>
+                <div class="col-12 col-md-3">
                     <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
                     <input type="date" name="date_to" value="{{ request('date_to') }}"
                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                 </div>
 
-                <!-- Quick Filters -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Quick Filter</label>
-                    <select name="quick_filter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition" onchange="this.form.submit()">
-                        <option value="">All Time</option>
-                        <option value="today" {{ request('quick_filter') === 'today' ? 'selected' : '' }}>Today</option>
-                        <option value="week" {{ request('quick_filter') === 'week' ? 'selected' : '' }}>This Week</option>
-                        <option value="month" {{ request('quick_filter') === 'month' ? 'selected' : '' }}>This Month</option>
-                    </select>
+                <!-- Action Buttons -->
+                <div class="col-12 col-md-3 d-flex align-items-end">
+                    <div class="flex gap-2">
+                        <a href="{{ route($rolePrefix . '.vaccination-reports.index') }}"
+                           class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+                            <i class="bi bi-x-circle mr-1"></i>Clear
+                        </a>
+                        <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
+                            <i class="bi bi-funnel mr-1"></i>Filter
+                        </button>
+                    </div>
                 </div>
-            </div>
-
-            <div class="flex justify-start gap-3">
-                <a href="{{ route($rolePrefix . '.vaccination-reports.index') }}"
-                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
-                    <i class="bi bi-x-circle mr-1"></i>Clear
-                </a>
-                <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
-                    <i class="bi bi-funnel mr-1"></i>Filter
-                </button>
             </div>
         </form>
     </div>
@@ -127,7 +149,7 @@ $rolePrefix = 'admin';
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Report ID</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Clinic</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Vaccine</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animals</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animal Type</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>

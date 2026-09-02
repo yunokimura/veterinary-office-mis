@@ -543,6 +543,21 @@ class AdminController extends Controller
         
         $query = RabiesVaccinationReport::latest();
 
+        // Apply clinic search filter
+        if ($request->has('clinic_search') && $request->clinic_search) {
+            $query->where('clinic_name', 'like', '%' . $request->clinic_search . '%');
+        }
+
+        // Apply animal type search filter
+        if ($request->has('animal_type_search') && $request->animal_type_search) {
+            $query->where('pet_species', 'like', '%' . $request->animal_type_search . '%');
+        }
+
+        // Apply vaccine search filter
+        if ($request->has('vaccine_search') && $request->vaccine_search) {
+            $query->where('vaccine_brand', 'like', '%' . $request->vaccine_search . '%');
+        }
+
         // Apply date filters
         if ($request->has('date_from') && $request->date_from) {
             $query->whereDate('vaccination_date', '>=', $request->date_from);
@@ -568,7 +583,22 @@ class AdminController extends Controller
         }
 
         $reports = $query->paginate(10);
-        return view('dashboard.vaccination-reports', compact('user', 'reports'));
+
+        $animalTypes = RabiesVaccinationReport::select('pet_species')
+            ->distinct()
+            ->orderBy('pet_species')
+            ->pluck('pet_species')
+            ->push('Other')
+            ->unique()
+            ->sort()
+            ->values();
+
+        $vaccines = RabiesVaccinationReport::select('vaccine_brand')
+            ->distinct()
+            ->orderBy('vaccine_brand')
+            ->pluck('vaccine_brand');
+
+        return view('dashboard.vaccination-reports', compact('user', 'reports', 'animalTypes', 'vaccines'));
     }
 
     /**
