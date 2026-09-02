@@ -601,6 +601,60 @@ class AdminController extends Controller
         return view('dashboard.vaccination-reports', compact('user', 'reports', 'animalTypes', 'vaccines'));
     }
 
+    public function filterVaccinationReports(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = RabiesVaccinationReport::latest();
+
+        if ($request->filled('clinic_search')) {
+            $query->where('clinic_name', 'like', '%' . $request->clinic_search . '%');
+        }
+
+        if ($request->filled('animal_type_search')) {
+            $query->where('pet_species', 'like', '%' . $request->animal_type_search . '%');
+        }
+
+        if ($request->filled('vaccine_search')) {
+            $query->where('vaccine_brand', 'like', '%' . $request->vaccine_search . '%');
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('vaccination_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('vaccination_date', '<=', $request->date_to);
+        }
+
+        if ($request->filled('quick_filter')) {
+            $today = \Carbon\Carbon::now()->startOfDay();
+            switch ($request->quick_filter) {
+                case 'today':
+                    $query->whereDate('vaccination_date', $today);
+                    break;
+                case 'week':
+                    $query->where('vaccination_date', '>=', \Carbon\Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('vaccination_date', '>=', \Carbon\Carbon::now()->startOfMonth());
+                    break;
+            }
+        }
+
+        $reports = $query->paginate(10);
+
+        $tableHtml = view('dashboard.partials.vaccination-reports-table', compact('reports'))->render();
+        $paginationHtml = $reports->links()->render();
+
+        return response()->json([
+            'success' => true,
+            'table_html' => $tableHtml,
+            'pagination_html' => $paginationHtml,
+            'total_count' => $reports->total(),
+            'has_results' => $reports->count() > 0,
+        ]);
+    }
+
     /**
      * Show rabies vaccination report details (JSON for modal).
      */

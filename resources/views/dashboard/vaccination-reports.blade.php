@@ -77,66 +77,60 @@ $rolePrefix = 'admin';
 
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-        <form method="GET" action="{{ route($rolePrefix . '.vaccination-reports.index') }}" class="space-y-4">
-            <div class="row g-3 align-items-end">
-                <!-- Clinic Search -->
-                <div class="col-12 col-md-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Clinic</label>
-                    <input type="text" name="clinic_search" value="{{ request('clinic_search') }}"
-                           placeholder="Search clinic..."
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
+        <div class="row g-3 align-items-end">
+            <!-- Clinic Search -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Clinic</label>
+                <input type="text" id="clinicSearch" value="{{ request('clinic_search') }}" placeholder="Search clinic..."
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
 
-                <!-- Animal Type Search -->
-                <div class="col-12 col-md-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
-                    <select name="animal_type_search" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                        <option value="">All Animal Types</option>
-                        @foreach($animalTypes as $type)
-                            <option value="{{ $type }}" {{ request('animal_type_search') === $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            <!-- Animal Type Search -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
+                <select id="animalTypeSearch" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Animal Types</option>
+                    @foreach($animalTypes as $type)
+                        <option value="{{ $type }}" {{ request('animal_type_search') === $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                <!-- Vaccine Search -->
-                <div class="col-12 col-md-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Vaccine</label>
-                    <select name="vaccine_search" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                        <option value="">All Vaccines</option>
-                        @foreach($vaccines as $vaccine)
-                            <option value="{{ $vaccine }}" {{ request('vaccine_search') === $vaccine ? 'selected' : '' }}>{{ $vaccine }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            <!-- Vaccine Search -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Vaccine</label>
+                <select id="vaccineSearch" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <option value="">All Vaccines</option>
+                    @foreach($vaccines as $vaccine)
+                        <option value="{{ $vaccine }}" {{ request('vaccine_search') === $vaccine ? 'selected' : '' }}>{{ $vaccine }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                <!-- Date From -->
-                <div class="col-12 col-md-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                    <input type="date" name="date_from" value="{{ request('date_from') }}"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
+            <!-- Date From -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                <input type="date" id="dateFrom" value="{{ request('date_from') }}"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
 
-                <!-- Date To -->
-                <div class="col-12 col-md-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                    <input type="date" name="date_to" value="{{ request('date_to') }}"
-                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                </div>
+            <!-- Date To -->
+            <div class="col-12 col-md-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                <input type="date" id="dateTo" value="{{ request('date_to') }}"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+            </div>
 
-                <!-- Action Buttons -->
-                <div class="col-12 col-md-3 d-flex align-items-end">
-                    <div class="flex gap-2">
-                        <a href="{{ route($rolePrefix . '.vaccination-reports.index') }}"
-                           class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
-                            <i class="bi bi-x-circle mr-1"></i>Clear
-                        </a>
-                        <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">
-                            <i class="bi bi-funnel mr-1"></i>Filter
-                        </button>
-                    </div>
+            <!-- Clear Button -->
+            <div class="col-12 col-md-3">
+                <div class="d-flex align-items-end h-100">
+                    <button type="button" onclick="clearVaccinationFilters()"
+                            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+                        <i class="bi bi-x-circle mr-1"></i>Clear
+                    </button>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 
     <!-- Reports Table -->
@@ -154,32 +148,16 @@ $rolePrefix = 'admin';
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($reports as $report)
-                        <tr>
-                            <td class="px-6 py-4">
-                                <span class="font-medium text-gray-800">RV-{{ str_pad($report->id, 5, '0', STR_PAD_LEFT) }}</span>
-                            </td>
-                            <td class="px-6 py-4 text-gray-800">{{ $report->clinic_name ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 text-gray-800">{{ $report->vaccine_brand ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 text-gray-800">{{ $report->pet_species ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 text-gray-600">{{ $report->vaccination_date ? \Carbon\Carbon::parse($report->vaccination_date)->format('M d, Y') : 'N/A' }}</td>
-                            <td class="px-6 py-4">
-                                <button onclick="openVaccinationModal({{ $report->id }})"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition">
-                                    <i class="bi bi-eye"></i>View
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
+                    <tbody class="divide-y divide-gray-100" id="reportsTableBody">
+                        @include('dashboard.partials.vaccination-reports-table')
                     </tbody>
                 </table>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100">
+            <div class="px-6 py-4 border-t border-gray-100" id="reportsPagination">
                 {{ $reports->links() }}
             </div>
         @else
-            <div class="p-12 text-center">
+            <div class="p-12 text-center" id="reportsEmptyState">
                 <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="bi bi-shield-check text-green-400 text-3xl"></i>
                 </div>
@@ -187,6 +165,10 @@ $rolePrefix = 'admin';
                 <p class="text-gray-500 mb-6">No records found.</p>
             </div>
         @endif
+        <div id="reportsLoading" class="hidden p-12 text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
+            <p class="mt-4 text-gray-600">Loading reports...</p>
+        </div>
     </div>
 </div>
 
@@ -399,5 +381,77 @@ window.onclick = function(event) {
         closeVaccinationModal();
     }
 }
+
+const vaccinationFilterUrl = `{{ route($rolePrefix . '.vaccination-reports.filter') }}`;
+
+function getVaccinationFilterParams() {
+    return {
+        clinic_search: document.getElementById('clinicSearch').value,
+        animal_type_search: document.getElementById('animalTypeSearch').value,
+        vaccine_search: document.getElementById('vaccineSearch').value,
+        date_from: document.getElementById('dateFrom').value,
+        date_to: document.getElementById('dateTo').value,
+    };
+}
+
+function applyVaccinationFilters() {
+    const params = getVaccinationFilterParams();
+    const loading = document.getElementById('reportsLoading');
+    const tableBody = document.getElementById('reportsTableBody');
+    const pagination = document.getElementById('reportsPagination');
+    const emptyState = document.getElementById('reportsEmptyState');
+
+    if (loading) loading.classList.remove('hidden');
+    if (tableBody) tableBody.style.opacity = '0.3';
+    if (pagination) pagination.style.opacity = '0.3';
+
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.append(key, value);
+    });
+
+    fetch(`${vaccinationFilterUrl}?${query.toString()}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (tableBody) {
+                tableBody.innerHTML = data.table_html;
+                tableBody.style.opacity = '1';
+            }
+            if (pagination) {
+                pagination.innerHTML = data.pagination_html;
+                pagination.style.opacity = '1';
+            }
+            if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
+            if (loading) loading.classList.add('hidden');
+        }
+    })
+    .catch(error => {
+        console.error('Error filtering vaccination reports:', error);
+        if (tableBody) tableBody.style.opacity = '1';
+        if (pagination) pagination.style.opacity = '1';
+        if (loading) loading.classList.add('hidden');
+    });
+}
+
+function clearVaccinationFilters() {
+    document.getElementById('clinicSearch').value = '';
+    document.getElementById('animalTypeSearch').value = '';
+    document.getElementById('vaccineSearch').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    applyVaccinationFilters();
+}
+
+document.getElementById('clinicSearch').addEventListener('input', applyVaccinationFilters);
+document.getElementById('animalTypeSearch').addEventListener('change', applyVaccinationFilters);
+document.getElementById('vaccineSearch').addEventListener('change', applyVaccinationFilters);
+document.getElementById('dateFrom').addEventListener('change', applyVaccinationFilters);
+document.getElementById('dateTo').addEventListener('change', applyVaccinationFilters);
 </script>
 @endsection

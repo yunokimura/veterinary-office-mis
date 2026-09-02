@@ -217,6 +217,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
 
     // Rabies Vaccination Reports (from Clinic)
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
+    Route::get('/vaccination-reports/filter', [AdminController::class, 'filterVaccinationReports'])->name('vaccination-reports.filter');
     Route::get('/vaccination-reports/{report}/json', [AdminController::class, 'showVaccinationReportJson'])->name('vaccination-reports.show-json');
     Route::get('/vaccination-reports/{report}', [AdminController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
 
@@ -273,6 +274,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
 
     // Rabies Vaccination Reports (from Clinic)
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
+    Route::get('/vaccination-reports/filter', [AdminController::class, 'filterVaccinationReports'])->name('vaccination-reports.filter');
     Route::get('/vaccination-reports/{report}/json', [AdminController::class, 'showVaccinationReportJson'])->name('vaccination-reports.show-json');
     Route::get('/vaccination-reports/{report}', [AdminController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
 
@@ -323,6 +325,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
 
     // Vaccination Reports
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
+    Route::get('/vaccination-reports/filter', [AdminController::class, 'filterVaccinationReports'])->name('vaccination-reports.filter');
     Route::get('/vaccination-reports/{report}', [AdminController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
 
     // Rabies Geomap
