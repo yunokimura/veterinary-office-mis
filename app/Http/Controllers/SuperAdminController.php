@@ -205,6 +205,60 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Get filtered system activity chart data.
+     */
+    public function systemActivity(Request $request)
+    {
+        $period = $request->period ?? 'last_7_days';
+        $startDate = $request->start_date ? \Carbon\Carbon::parse($request->start_date)->startOfDay() : null;
+        $endDate = $request->end_date ? \Carbon\Carbon::parse($request->end_date)->endOfDay() : null;
+
+        switch ($period) {
+            case 'today':
+                $dates = [now()->startOfDay()];
+                break;
+            case 'last_7_days':
+                $dates = collect(range(6, 0))->map(fn($i) => now()->subDays($i)->startOfDay())->toArray();
+                break;
+            case 'last_30_days':
+                $dates = collect(range(29, 0))->map(fn($i) => now()->subDays($i)->startOfDay())->toArray();
+                break;
+            case 'this_month':
+                $dates = collect(range(now()->day - 1, 0))->map(fn($i) => now()->subDays($i)->startOfDay())->toArray();
+                break;
+            case 'custom':
+                if (!$startDate || !$endDate) {
+                    return response()->json(['success' => false, 'message' => 'Invalid date range'], 422);
+                }
+                $dates = collect(range(0, $startDate->diffInDays($endDate)))->map(fn($i) => (clone $startDate)->addDays($i))->toArray();
+                break;
+            default:
+                $dates = collect(range(6, 0))->map(fn($i) => now()->subDays($i)->startOfDay())->toArray();
+        }
+
+        $labels = [];
+        $success = [];
+        $failed = [];
+
+        foreach ($dates as $date) {
+            $labels[] = $date->format('M d');
+            $query = SystemLog::whereDate('created_at', $date);
+            $success[] = (clone $query)->where('status', 'success')->count();
+            $failed[] = (clone $query)->where('status', 'failed')->count();
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'labels' => $labels,
+                'success' => $success,
+                'failed' => $failed,
+                'period' => $period,
+            ],
+        ]);
+    }
+
+    /**
      * Get activity logs.
      */
     public function activityLogs(Request $request)

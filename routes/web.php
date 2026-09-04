@@ -186,6 +186,9 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
     Route::get('/stats', [SuperAdminController::class, 'systemStats'])->name('stats');
     Route::get('/user-stats', [SuperAdminController::class, 'userStats'])->name('user-stats');
 
+    // System Activity Chart Data
+    Route::get('/system-activity', [SuperAdminController::class, 'systemActivity'])->name('system-activity');
+
     // Activity Logs
     Route::get('/activity-logs', [SuperAdminController::class, 'activityLogs'])->name('activity-logs');
 

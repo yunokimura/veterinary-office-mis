@@ -131,8 +131,32 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
     <!-- System Activity Overview -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">System Activity Overview</h3>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+            <div class="flex items-center gap-3">
+                <h3 class="text-base font-semibold text-gray-800">System Activity Overview</h3>
+                <div class="flex items-center gap-2">
+                    <button id="toggleSuccess" class="metric-toggle px-2.5 py-1 text-xs font-medium rounded-md border border-green-200 bg-green-50 text-green-700 hover:bg-green-100 transition" data-active="true">
+                        Successful
+                    </button>
+                    <button id="toggleFailed" class="metric-toggle px-2.5 py-1 text-xs font-medium rounded-md border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition" data-active="true">
+                        Failed
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <select id="activityPeriod" class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="today">Today</option>
+                    <option value="last_7_days" selected>Last 7 Days</option>
+                    <option value="last_30_days">Last 30 Days</option>
+                    <option value="this_month">This Month</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+                <div id="customRangeInputs" class="hidden items-center gap-2">
+                    <input type="date" id="startDate" class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <span class="text-xs text-gray-500">to</span>
+                    <input type="date" id="endDate" class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
         </div>
         <div class="h-64">
             <canvas id="systemActivityChart"></canvas>
@@ -300,15 +324,30 @@
 document.addEventListener('DOMContentLoaded', function() {
     // System Activity Overview Chart
     const systemActivityCtx = document.getElementById('systemActivityChart');
-    if (systemActivityCtx) {
-        const activityLabels = @json($systemActivityLabels ?? []);
-        const successData = @json($systemActivitySuccess ?? []);
-        const failedData = @json($systemActivityFailed ?? []);
+    let systemActivityChart = null;
 
-        new Chart(systemActivityCtx.getContext('2d'), {
+    const toggleSuccessBtn = document.getElementById('toggleSuccess');
+    const toggleFailedBtn = document.getElementById('toggleFailed');
+    const periodSelect = document.getElementById('activityPeriod');
+    const customRangeInputs = document.getElementById('customRangeInputs');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    function buildSystemActivityChart(labels, successData, failedData) {
+        if (!systemActivityCtx) return;
+
+        if (systemActivityChart) {
+            systemActivityChart.data.labels = labels;
+            systemActivityChart.data.datasets[0].data = successData;
+            systemActivityChart.data.datasets[1].data = failedData;
+            systemActivityChart.update();
+            return;
+        }
+
+        systemActivityChart = new Chart(systemActivityCtx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: activityLabels,
+                labels: labels,
                 datasets: [
                     {
                         label: 'Successful Activities',
@@ -319,6 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         fill: true,
                         pointRadius: 4,
                         pointHoverRadius: 6,
+                        hidden: false,
                     },
                     {
                         label: 'Failed Activities',
@@ -329,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         fill: true,
                         pointRadius: 4,
                         pointHoverRadius: 6,
+                        hidden: false,
                     }
                 ]
             },
@@ -352,6 +393,77 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    }
+
+    function getActiveMetrics() {
+        return {
+            success: toggleSuccessBtn.dataset.active !== 'false',
+            failed: toggleFailedBtn.dataset.active !== 'false',
+        };
+    }
+
+    function applyMetricVisibility() {
+        if (!systemActivityChart) return;
+        const metrics = getActiveMetrics();
+        systemActivityChart.data.datasets[0].hidden = !metrics.success;
+        systemActivityChart.data.datasets[1].hidden = !metrics.failed;
+        systemActivityChart.update();
+    }
+
+    async function loadSystemActivity() {
+        const params = new URLSearchParams();
+        params.set('period', periodSelect.value);
+
+        if (periodSelect.value === 'custom') {
+            if (!startDateInput.value || !endDateInput.value) {
+                return;
+            }
+            params.set('start_date', startDateInput.value);
+            params.set('end_date', endDateInput.value);
+        }
+
+        const response = await fetch(`{{ route('super-admin.system-activity') }}?${params.toString()}`);
+        const result = await response.json();
+
+        if (result.success) {
+            buildSystemActivityChart(result.data.labels, result.data.success, result.data.failed);
+            applyMetricVisibility();
+        }
+    }
+
+    if (systemActivityCtx) {
+        const initialLabels = @json($systemActivityLabels ?? []);
+        const initialSuccess = @json($systemActivitySuccess ?? []);
+        const initialFailed = @json($systemActivityFailed ?? []);
+        buildSystemActivityChart(initialLabels, initialSuccess, initialFailed);
+    }
+
+    if (toggleSuccessBtn && toggleFailedBtn) {
+        [toggleSuccessBtn, toggleFailedBtn].forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.dataset.active = this.dataset.active === 'true' ? 'false' : 'true';
+                this.classList.toggle('opacity-50');
+                applyMetricVisibility();
+            });
+        });
+    }
+
+    if (periodSelect) {
+        periodSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customRangeInputs.classList.remove('hidden');
+                customRangeInputs.classList.add('flex');
+            } else {
+                customRangeInputs.classList.add('hidden');
+                customRangeInputs.classList.remove('flex');
+                loadSystemActivity();
+            }
+        });
+
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', loadSystemActivity);
+            endDateInput.addEventListener('change', loadSystemActivity);
+        }
     }
 
     // User Accounts by Role Chart
