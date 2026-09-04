@@ -150,7 +150,7 @@
     </div>
 </div>
 
-<!-- User Management Section -->
+<!-- User Management Section
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
     <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-800">
@@ -161,7 +161,7 @@
         </a>
     </div>
 
-    <!-- Stats Row -->
+    Stats Row
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         <div class="bg-blue-50 rounded-lg p-3 border border-blue-100">
             <p class="text-xs text-blue-600 font-medium">Active Users</p>
@@ -181,7 +181,7 @@
         </div>
     </div>
 
-    <!-- Recent Users Table -->
+    Recent Users Table
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead class="bg-gray-50">
@@ -213,8 +213,9 @@
         </table>
     </div>
 </div>
+-->
 
-<!-- Announcements Section -->
+<!-- Announcements Section
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
     <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-800">
@@ -225,7 +226,7 @@
         </a>
     </div>
 
-    <!-- Stats -->
+    Stats
     <div class="grid grid-cols-3 gap-3 mb-4">
         <div class="bg-green-50 rounded-lg p-3 border border-green-100">
             <p class="text-xs text-green-600 font-medium">Active</p>
@@ -241,7 +242,7 @@
         </div>
     </div>
 
-    <!-- Recent Announcements List -->
+    Recent Announcements List
     <div class="divide-y divide-gray-100">
         @forelse(\App\Models\Announcement::latest()->take(5)->get() as $announcement)
             <div class="py-3 flex items-center justify-between hover:bg-gray-50">
@@ -269,8 +270,9 @@
         @endforelse
     </div>
 </div>
+-->
 
-<!-- System Health Section -->
+<!-- System Health Section
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
     <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-800">
@@ -313,6 +315,7 @@
         </table>
     </div>
 </div>
+-->
 
 @push('scripts')
 <script>
