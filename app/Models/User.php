@@ -434,15 +434,15 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public function getRoleDisplayName(): string
     {
         return match ($this->getRoleAttribute()) {
-            self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
+            self::ROLE_SUPER_ADMIN => 'Super Administrator',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
-            self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV',
+            self::ROLE_ADMIN_STAFF => 'Administrative Assistant',
             self::ROLE_ADMIN_ASST => 'Admin Assistant',
-            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
+            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian',
             self::ROLE_CLINIC => 'External Vet Clinic',
             self::ROLE_HOSPITAL => 'External Vet Hospital',
             self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
-            self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
+            self::ROLE_MEAT_INSPECTOR => 'Meat Inspector',
             self::ROLE_CITY_POUND => 'City Pound Personnel',
             self::ROLE_PET_OWNER => 'Pet Owner',
             default => 'Unknown',
@@ -455,15 +455,15 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public static function getRoles(): array
     {
         return [
-            self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
+            self::ROLE_SUPER_ADMIN => 'Super Administrator',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
-            self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV (Book Binder 4)',
+            self::ROLE_ADMIN_STAFF => 'Administrative Assistant',
             self::ROLE_ADMIN_ASST => 'Admin Assistant',
-            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
+            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian',
             self::ROLE_CLINIC => 'External Vet Clinic',
             self::ROLE_HOSPITAL => 'External Vet Hospital',
-            self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector (Book Binder 1)',
-            self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
+            self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
+            self::ROLE_MEAT_INSPECTOR => 'Meat Inspector',
             self::ROLE_PET_OWNER => 'Pet Owner',
         ];
     }

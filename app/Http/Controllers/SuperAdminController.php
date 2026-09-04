@@ -101,7 +101,7 @@ class SuperAdminController extends Controller
             ->toArray();
 
         $displayRoles = [
-            'super_admin'    => 'Super Administrator (IT)',
+            'super_admin'    => 'Super Administrator',
             'city_vet'       => 'City Veterinarian',
             'assistant_vet'  => 'Assistant Veterinarian',
             'admin_asst'     => 'Administrative Assistant',
@@ -184,10 +184,12 @@ class SuperAdminController extends Controller
             ->toArray();
 
         $roleNames = [
-            'super_admin' => 'Super Admin (IT)',
+            'super_admin' => 'Super Admin',
             'city_vet' => 'City Veterinarian',
-            'admin_asst' => 'Administrative Assistant IV',
+            'admin_asst' => 'Administrative Assistant',
+            'admin_staff' => 'Administrative Assistant',
             'veterinarian' => 'Veterinarian III',
+            'assistant_vet' => 'Assistant Veterinarian',
             'livestock_inspector' => 'Livestock Inspector',
             'meat_inspector' => 'Meat Inspector',
             'disease_control' => 'Assistant Veterinary',
