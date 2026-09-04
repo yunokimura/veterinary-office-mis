@@ -161,7 +161,7 @@
         @forelse(\App\Models\SystemLog::with('user')->latest()->take(5)->get() as $log)
             <div class="py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-2 h-2 rounded-full {{ $log->status == 'success' ? 'bg-green-500' : 'bg-red-500' }}"></div>
+                    <div class="w-2 h-2 rounded-full {{ $log->status_color }}"></div>
                     <span class="text-sm text-gray-700">
                         {!! $log->activity_text !!}
                     </span>

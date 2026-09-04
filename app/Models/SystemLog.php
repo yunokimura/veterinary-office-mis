@@ -127,6 +127,22 @@ class SystemLog extends Model
         return $module ? "{$boldName} {$action} in {$module}" : "{$boldName} {$action}";
     }
 
+    public function getStatusColorAttribute(): string
+    {
+        $action = strtolower($this->action ?? '');
+        $status = strtolower($this->status ?? '');
+
+        if ($status === 'failed' || $action === 'delete' || $action === 'delete_user') {
+            return 'bg-red-500';
+        }
+
+        if (in_array($action, ['create', 'update', 'create_user', 'update_user'])) {
+            return 'bg-blue-500';
+        }
+
+        return 'bg-green-500';
+    }
+
     /**
      * Scope for filtering by module.
      */
