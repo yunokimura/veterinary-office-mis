@@ -37,56 +37,56 @@
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 items-stretch">
     <!-- Active Users -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 h-full flex flex-col">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 md:w-14 md:h-14 bg-teal-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bi bi-person-check text-teal-600 text-lg md:text-2xl"></i>
+                </div>
                 <div>
                     <p class="text-xs md:text-sm font-medium text-gray-500">ACTIVE USERS</p>
                     <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\User::where('status', 'active')->count() }}</p>
                     <p class="text-xs text-gray-500 mt-1">Currently active accounts</p>
-                </div>
-                <div class="w-10 h-10 md:w-14 md:h-14 bg-teal-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-person-check text-teal-600 text-lg md:text-2xl"></i>
                 </div>
             </div>
         </div>
 
     <!-- New Users -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 h-full flex flex-col">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 md:w-14 md:h-14 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bi bi-person-plus text-blue-600 text-lg md:text-2xl"></i>
+                </div>
                 <div>
                     <p class="text-xs md:text-sm font-medium text-gray-500">NEW USERS</p>
                     <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\User::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count() }}</p>
                     <p class="text-xs text-gray-500 mt-1">Registered this month</p>
-                </div>
-                <div class="w-10 h-10 md:w-14 md:h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-person-plus text-blue-600 text-lg md:text-2xl"></i>
                 </div>
             </div>
         </div>
 
     <!-- Scheduled Announcements -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 h-full flex flex-col">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 md:w-14 md:h-14 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bi bi-megaphone text-amber-600 text-lg md:text-2xl"></i>
+                </div>
                 <div>
                     <p class="text-xs md:text-sm font-medium text-amber-700">SCHEDULED ANNOUNCEMENTS</p>
                     <p class="text-xl md:text-3xl font-bold text-amber-700 mt-1">{{ \App\Models\Announcement::where('status', 'Scheduled')->count() }}</p>
                     <p class="text-xs text-amber-600 mt-1">Awaiting publication</p>
-                </div>
-                <div class="w-10 h-10 md:w-14 md:h-14 bg-amber-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-megaphone text-amber-600 text-lg md:text-2xl"></i>
                 </div>
             </div>
         </div>
 
     <!-- Failed Activities -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 h-full flex flex-col">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 md:w-14 md:h-14 bg-red-50 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="bi bi-journal-text text-red-500 text-lg md:text-2xl"></i>
+                </div>
                 <div>
                     <p class="text-xs md:text-sm font-medium text-red-600">FAILED ACTIVITIES</p>
                     <p class="text-xl md:text-3xl font-bold text-red-600 mt-1">{{ \App\Models\SystemLog::where('status', 'failed')->count() }}</p>
                     <p class="text-xs text-red-500 mt-1">Requires review</p>
-                </div>
-                <div class="w-10 h-10 md:w-14 md:h-14 bg-red-50 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-journal-text text-red-500 text-lg md:text-2xl"></i>
                 </div>
             </div>
         </div>
