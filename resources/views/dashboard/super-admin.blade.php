@@ -150,6 +150,30 @@
     </div>
 </div>
 
+<!-- Recent Activity Stream -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">
+            <i class="bi bi-activity mr-2 text-gray-600"></i>Recent Activity Stream
+        </h3>
+    </div>
+    <div class="divide-y divide-gray-100">
+        @forelse(\App\Models\SystemLog::with('user')->latest()->take(5)->get() as $log)
+            <div class="py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-2 h-2 rounded-full {{ $log->status == 'success' ? 'bg-green-500' : 'bg-red-500' }}"></div>
+                    <span class="text-sm text-gray-700">
+                        {{ $log->user->name ?? 'System' }} {{ $log->action }} in {{ $log->module }}
+                    </span>
+                </div>
+                <span class="text-xs text-gray-400">{{ $log->created_at->diffForHumans() }}</span>
+            </div>
+        @empty
+            <div class="py-4 text-center text-gray-500 text-sm">No activity yet</div>
+        @endforelse
+    </div>
+</div>
+
 <!-- User Management Section
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
     <div class="flex items-center justify-between mb-4">
@@ -270,52 +294,6 @@
         @endforelse
     </div>
 </div>
--->
-
-<!-- System Health Section
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-    <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">
-            <i class="bi bi-activity mr-2 text-gray-600"></i>System Health
-        </h3>
-        <a href="{{ route('super-admin.system-logs.index') }}" class="text-sm text-gray-600 hover:text-gray-800 font-medium">
-            View Logs <i class="bi bi-arrow-right ml-1"></i>
-        </a>
-    </div>
-    <div class="overflow-x-auto -mx-4 md:mx-0">
-        <table class="w-full min-w-[600px]">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-3 md:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                    <th class="px-3 md:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                    <th class="px-3 md:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Module</th>
-                    <th class="px-3 md:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-3 md:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">When</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse(\App\Models\SystemLog::with('user')->latest()->take(10)->get() as $log)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-3 md:px-4 py-3 text-xs md:text-sm">{{ $log->user->name ?? 'System' }}</td>
-                        <td class="px-3 md:px-4 py-3 text-xs md:text-sm text-gray-700">{{ $log->action }}</td>
-                        <td class="px-3 md:px-4 py-3 text-xs md:text-sm text-gray-600">{{ $log->module }}</td>
-                        <td class="px-3 md:px-4 py-3">
-                            @if($log->status == 'success')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Success</span>
-                            @else
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Failed</span>
-                            @endif
-                        </td>
-                        <td class="px-3 md:px-4 py-3 text-xs md:text-sm text-gray-500">{{ $log->created_at->diffForHumans() }}</td>
-                    </tr>
-                @empty
-                    <tr><td colspan="5" class="px-3 md:px-4 py-8 text-center text-gray-500 text-xs md:text-sm">No system logs yet</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
--->
 
 @push('scripts')
 <script>
