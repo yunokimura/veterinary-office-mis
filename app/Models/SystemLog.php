@@ -99,31 +99,32 @@ class SystemLog extends Model
     public function getActivityTextAttribute(): string
     {
         $name = $this->user->name ?? 'System';
+        $boldName = "<strong>{$name}</strong>";
 
         return match (strtolower($this->action)) {
-            'login', 'logout' => "{$name} {$this->action_in_past_tense}",
-            'register' => "{$name} registered",
-            'address_fallback' => "{$name} triggered a barangay fallback",
-            'create_user' => "{$name} created a user",
-            'update_user' => "{$name} updated a user",
-            'delete_user' => "{$name} deleted a user",
-            'toggle_user_status' => "{$name} changed a user status",
-            'export_report' => "{$name} exported a report",
-            'update_settings' => "{$name} updated system settings",
-            default => $this->defaultActivityText($name),
+            'login', 'logout' => "{$boldName} {$this->action_in_past_tense}",
+            'register' => "{$boldName} registered",
+            'address_fallback' => "{$boldName} triggered a barangay fallback",
+            'create_user' => "{$boldName} created a user",
+            'update_user' => "{$boldName} updated a user",
+            'delete_user' => "{$boldName} deleted a user",
+            'toggle_user_status' => "{$boldName} changed a user status",
+            'export_report' => "{$boldName} exported a report",
+            'update_settings' => "{$boldName} updated system settings",
+            default => $this->defaultActivityText($boldName),
         };
     }
 
-    private function defaultActivityText(string $name): string
+    private function defaultActivityText(string $boldName): string
     {
         $action = $this->action_in_past_tense;
         $module = $this->module;
 
         if (stripos($module ?? '', 'pet') === 0 && strtolower($this->action) === 'create') {
-            return "{$name} {$action} a {$module}";
+            return "{$boldName} registered a {$module}";
         }
 
-        return $module ? "{$name} {$action} in {$module}" : "{$name} {$action}";
+        return $module ? "{$boldName} {$action} in {$module}" : "{$boldName} {$action}";
     }
 
     /**

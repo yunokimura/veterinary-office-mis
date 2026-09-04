@@ -163,7 +163,7 @@
                 <div class="flex items-center gap-3">
                     <div class="w-2 h-2 rounded-full {{ $log->status == 'success' ? 'bg-green-500' : 'bg-red-500' }}"></div>
                     <span class="text-sm text-gray-700">
-                        {{ $log->activity_text }}
+                        {!! $log->activity_text !!}
                     </span>
                 </div>
                 <span class="text-xs text-gray-400">{{ $log->created_at->diffForHumans() }}</span>
