@@ -160,19 +160,6 @@
             </div>
         </div>
 
-        <!-- User Info -->
-        <div class="px-0 py-3 border-b border-green-700">
-            <div class="flex items-center justify-start gap-3 px-3">
-                <div class="w-9 h-9 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span class="font-bold text-sm">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
-                </div>
-                <div class="min-w-0">
-                    <p class="text-[13px] font-medium text-green-100 truncate">{{ auth()->user()->name ?? 'Admin' }}</p>
-                    <p class="text-[11px] text-green-300 truncate">{{ auth()->user()->email ?? '' }}</p>
-                </div>
-            </div>
-        </div>
-
         @php
             $role = auth()->check() ? auth()->user()->getRoleAttribute() : null;
             $routeMap = [
