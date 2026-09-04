@@ -83,13 +83,13 @@ class TestAccountsSeeder extends Seeder
                 'status' => 'active',
             ]
         );
-        $user3->assignRole('admin_staff');
+        $user3->assignRole('admin_asst');
         Admin::firstOrCreate(
             ['user_id' => $user3->id],
             [
                 'first_name' => $firstName,
                 'last_name' => $lastName,
-                'role_type' => 'admin_staff',
+                'role_type' => 'admin_asst',
                 'contact_number' => $contactNumber,
             ]
         );
@@ -121,39 +121,13 @@ class TestAccountsSeeder extends Seeder
         );
 
         // ==============================
-        // THESIS ROLE 5: LIVESTOCK INSPECTOR
-        // ==============================
-        $firstName = 'Roberto';
-        $lastName = 'Gonzales';
-        $contactNumber = '091988877705';
-
-        $user5 = User::firstOrCreate(
-            ['email' => 'livestock@vetmis.gov'],
-            [
-                'email' => 'livestock@vetmis.gov',
-                'password' => bcrypt('password123'),
-                'status' => 'active',
-            ]
-        );
-        $user5->assignRole('livestock_inspector');
-        Admin::firstOrCreate(
-            ['user_id' => $user5->id],
-            [
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-                'role_type' => 'livestock_inspector',
-                'contact_number' => $contactNumber,
-            ]
-        );
-
-        // ==============================
-        // THESIS ROLE 6: MEAT INSPECTOR
+        // THESIS ROLE 5: MEAT INSPECTOR
         // ==============================
         $firstName = 'Pedro';
         $lastName = 'Martinez';
         $contactNumber = '091988877706';
 
-        $user6 = User::firstOrCreate(
+        $user5 = User::firstOrCreate(
             ['email' => 'meatinspector@vetmis.gov'],
             [
                 'email' => 'meatinspector@vetmis.gov',
@@ -161,9 +135,9 @@ class TestAccountsSeeder extends Seeder
                 'status' => 'active',
             ]
         );
-        $user6->assignRole('meat_inspector');
+        $user5->assignRole('meat_inspector');
         Admin::firstOrCreate(
-            ['user_id' => $user6->id],
+            ['user_id' => $user5->id],
             [
                 'first_name' => $firstName,
                 'last_name' => $lastName,
@@ -201,37 +175,12 @@ class TestAccountsSeeder extends Seeder
         // ADDITIONAL ACCOUNTS
         // ==============================
 
-        // Disease Control (alias for assistant_vet)
-        $firstName = 'Miguel';
-        $lastName = 'Torres';
-        $contactNumber = '091988877708';
-
-        $user8 = User::firstOrCreate(
-            ['email' => 'diseasecontrol@vetmis.gov'],
-            [
-                'email' => 'diseasecontrol@vetmis.gov',
-                'password' => bcrypt('password123'),
-                'status' => 'active',
-            ]
-        );
-        $user8->assignRole('disease_control');
-        // Map to assistant_vet for role_type since disease_control not in admins.role_type enum
-        Admin::firstOrCreate(
-            ['user_id' => $user8->id],
-            [
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-                'role_type' => 'assistant_vet',
-                'contact_number' => $contactNumber,
-            ]
-        );
-
         // Admin Assistant
         $firstName = 'Lucia';
         $lastName = 'Fernandez';
         $contactNumber = '091988877709';
 
-        $user9 = User::firstOrCreate(
+        $user8 = User::firstOrCreate(
             ['email' => 'adminasst@vetmis.gov'],
             [
                 'email' => 'adminasst@vetmis.gov',
@@ -239,64 +188,14 @@ class TestAccountsSeeder extends Seeder
                 'status' => 'active',
             ]
         );
-        $user9->assignRole('admin_asst');
+        $user8->assignRole('admin_asst');
         Admin::firstOrCreate(
-            ['user_id' => $user9->id],
+            ['user_id' => $user8->id],
             [
                 'first_name' => $firstName,
                 'last_name' => $lastName,
                 'role_type' => 'admin_asst',
                 'contact_number' => $contactNumber,
-            ]
-        );
-
-        // Vet Clinic
-        $firstName = 'Happy Paws';
-        $lastName = 'Veterinary Clinic';
-        $contactNumber = '091988877710';
-
-        $user10 = User::firstOrCreate(
-            ['email' => 'clinic@vetmis.gov'],
-            [
-                'email' => 'clinic@vetmis.gov',
-                'password' => bcrypt('password123'),
-                'status' => 'active',
-            ]
-        );
-        $user10->assignRole('clinic');
-        Organization::firstOrCreate(
-            ['contact_user_id' => $user10->id],
-            [
-                'name' => $firstName.' '.$lastName,
-                'type' => 'clinic',
-                'contact_number' => $contactNumber,
-                'official_email' => $user10->email,
-                'is_active' => true,
-            ]
-        );
-
-        // Vet Hospital
-        $firstName = 'City Pet';
-        $lastName = 'Hospital';
-        $contactNumber = '091988877711';
-
-        $user11 = User::firstOrCreate(
-            ['email' => 'hospital@vetmis.gov'],
-            [
-                'email' => 'hospital@vetmis.gov',
-                'password' => bcrypt('password123'),
-                'status' => 'active',
-            ]
-        );
-        $user11->assignRole('hospital');
-        Organization::firstOrCreate(
-            ['contact_user_id' => $user11->id],
-            [
-                'name' => $firstName.' '.$lastName,
-                'type' => 'hospital',
-                'contact_number' => $contactNumber,
-                'official_email' => $user11->email,
-                'is_active' => true,
             ]
         );
 
@@ -309,15 +208,10 @@ class TestAccountsSeeder extends Seeder
         $this->command->info('📋 ROLES:');
         $this->command->info('1. superadmin@vetmis.gov - Super Admin (password123)');
         $this->command->info('2. cityvet@vetmis.gov - City Veterinarian (password123)');
-        $this->command->info('3. adminstaff@vetmis.gov - Admin Staff (password123)');
+        $this->command->info('3. adminasst@vetmis.gov - Admin Assistant (password123)');
         $this->command->info('4. assistantvet@vetmis.gov - Assistant Vet (password123)');
-        $this->command->info('5. livestock@vetmis.gov - Livestock Inspector (password123)');
-        $this->command->info('6. meatinspector@vetmis.gov - Meat Inspector (password123)');
-        $this->command->info('7. citizen@test.com - Pet Owner (password123)');
-        $this->command->info('8. diseasecontrol@vetmis.gov - Disease Control (password123)');
-        $this->command->info('9. adminasst@vetmis.gov - Admin Assistant (password123)');
-        $this->command->info('10. clinic@vetmis.gov - Vet Clinic (password123)');
-        $this->command->info('11. hospital@vetmis.gov - Vet Hospital (password123)');
+        $this->command->info('5. meatinspector@vetmis.gov - Meat Inspector (password123)');
+        $this->command->info('6. citizen@test.com - Pet Owner (password123)');
         $this->command->info('');
     }
 }

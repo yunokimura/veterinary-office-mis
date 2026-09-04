@@ -56,38 +56,18 @@ class AuthenticatedSessionController extends Controller
             case 'city_vet':
                 return redirect()->intended('/city-vet/dashboard')
                     ->with('success', 'Welcome back, City Veterinarian ' . $user->name . '!');
-            case 'admin_staff':
-                return redirect()->intended('/admin-staff/dashboard')
-                    ->with('success', 'Welcome back, Admin Staff ' . $user->name . '!');
             case 'admin_asst':
                 return redirect()->intended('/admin-asst/dashboard')
-                    ->with('success', 'Welcome back, Admin Assistant ' . $user->name . '!');
+                    ->with('success', 'Welcome back, Administrative Assistant ' . $user->name . '!');
             case 'assistant_vet':
-            case 'disease_control':
                 return redirect()->intended('/assistant-vet/dashboard')
                     ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
-            case 'clinic':
-                return redirect()->intended('/clinic/dashboard')
-                    ->with('success', 'Welcome back, Clinic ' . $user->name . '!');
-            case 'hospital':
-                return redirect()->intended('/hospital/dashboard')
-                    ->with('success', 'Welcome back, Hospital ' . $user->name . '!');
-            case 'livestock_inspector':
-                return redirect()->intended('/livestock/dashboard')
-                    ->with('success', 'Welcome back, Livestock Inspector ' . $user->name . '!');
             case 'meat_inspector':
                 return redirect()->intended(route('meat-inspection.dashboard'))
                     ->with('success', 'Welcome back, Meat Inspector ' . $user->name . '!');
-            case 'city_pound':
-            case 'inventory_staff':
-                return redirect()->intended('/assistant-vet/dashboard')
-                    ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
             case 'pet_owner':
                 return redirect()->intended(route('owner.dashboard'))
                     ->with('success', 'Welcome back, Pet Owner ' . $user->name . '!');
-            case 'viewer':
-                return redirect()->intended('/viewer/dashboard')
-                    ->with('success', 'Welcome back, Viewer ' . $user->name . '!');
             default:
                 Auth::logout();
                 return redirect()->route('login')->with('error', 'Invalid role. Please contact the system administrator.');

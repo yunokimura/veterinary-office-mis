@@ -9,12 +9,9 @@ use App\Http\Controllers\Client\OtpController;
 use App\Http\Controllers\Client\PetController;
 use App\Http\Controllers\Client\PetRegistrationController;
 use App\Http\Controllers\Client\ProfileController;
-use App\Http\Controllers\ClinicController;
-use App\Http\Controllers\DiseaseControlController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LivestockCensusController;
-use App\Http\Controllers\LivestockController;
 use App\Http\Controllers\MeatInspectionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RabiesCaseController;
@@ -23,7 +20,6 @@ use App\Http\Controllers\SpayNeuterController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\SystemLogController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ViewerController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -97,22 +93,15 @@ Route::get('/', function () {
             return redirect()->route('super-admin.dashboard');
         } elseif ($user->hasRole('city_vet')) {
             return redirect()->route('city-vet.dashboard');
-        } elseif ($user->hasRole('admin_staff')) {
-            return redirect()->route('admin-staff.dashboard');
         } elseif ($user->hasRole('admin_asst')) {
-            return redirect()->route('admin-asst.dashboard');
+            return redirect()->intended('/admin-asst/dashboard')
+                ->with('success', 'Welcome back, Administrative Assistant ' . $user->name . '!');
         } elseif ($user->hasRole('assistant_vet')) {
             return redirect()->route('assistant-vet.dashboard');
-        } elseif ($user->hasRole('livestock_inspector')) {
-            return redirect()->route('livestock.dashboard');
         } elseif ($user->hasRole('meat_inspector')) {
             return redirect()->route('meat-inspection.dashboard');
         } elseif ($user->hasRole('pet_owner')) {
             return redirect()->route('owner.dashboard');
-        } elseif ($user->hasRole('clinic')) {
-            return redirect()->route('clinic.dashboard');
-        } elseif ($user->hasRole('hospital')) {
-            return redirect()->route('hospital.dashboard');
         } else {
             // Unknown role - log out and redirect to login for security
             Auth::logout();
@@ -488,64 +477,6 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
 });
 
 // ==============================
-// ADMIN STAFF PORTAL
-// Role: Admin Staff
-// Access: Pet registration records, owner records, vaccination encoding
-// ==============================
-Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('admin-staff.')->group(function () {
-    Route::get('/dashboard', [RecordsController::class, 'dashboard'])->name('dashboard');
-
-    // Pet Records
-    Route::get('/pets', [RecordsController::class, 'pets'])->name('pets.index');
-    Route::get('/pets/create', [RecordsController::class, 'createPet'])->name('pets.create');
-    Route::post('/pets', [RecordsController::class, 'storePet'])->name('pets.store');
-    Route::get('/pets/{pet}', [RecordsController::class, 'showAnimal'])->name('pets.show');
-    Route::get('/pets/{pet}/edit', [RecordsController::class, 'editAnimal'])->name('pets.edit');
-    Route::put('/pets/{pet}', [RecordsController::class, 'updateAnimal'])->name('pets.update');
-
-    // Owner Records
-    Route::get('/owners', [RecordsController::class, 'owners'])->name('owners.index');
-    Route::get('/owners/{owner}', [RecordsController::class, 'showOwner'])->name('owners.show');
-
-    // Vaccination Records
-    Route::get('/vaccinations', [RecordsController::class, 'vaccinations'])->name('vaccinations.index');
-    Route::get('/vaccinations/create', [RecordsController::class, 'createVaccination'])->name('vaccinations.create');
-    Route::post('/vaccinations', [RecordsController::class, 'storeVaccination'])->name('vaccinations.store');
-    Route::get('/vaccinations/{report}', [RecordsController::class, 'showVaccination'])->name('vaccinations.show');
-
-    // Search Records
-    Route::get('/search', [RecordsController::class, 'search'])->name('search');
-
-    // Missing Pets
-    Route::get('/missing-pets', [MissingPetController::class, 'index'])->name('missing-pets.index');
-    Route::get('/missing-pets/create', [MissingPetController::class, 'create'])->name('missing-pets.create');
-    Route::post('/missing-pets', [MissingPetController::class, 'store'])->name('missing-pets.store');
-    Route::get('/missing-pets/{missingPet}', [MissingPetController::class, 'show'])->name('missing-pets.show');
-    Route::get('/missing-pets/{missingPet}/edit', [MissingPetController::class, 'edit'])->name('missing-pets.edit');
-    Route::put('/missing-pets/{missingPet}', [MissingPetController::class, 'update'])->name('missing-pets.update');
-    Route::post('/missing-pets/{missingPet}/found', [MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
-    Route::post('/missing-pets/{missingPet}/approve', [MissingPetController::class, 'approve'])->name('missing-pets.approve');
-
-    // Adoption Pets
-    Route::get('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'index'])->name('adoption-pets.index');
-    Route::get('/adoption-pets/create', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'create'])->name('adoption-pets.create');
-    Route::post('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'store'])->name('adoption-pets.store');
-    Route::get('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'show'])->name('adoption-pets.show');
-    Route::get('/adoption-pets/{pet}/edit', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'edit'])->name('adoption-pets.edit');
-    Route::put('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'update'])->name('adoption-pets.update');
-    Route::delete('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'destroy'])->name('adoption-pets.destroy');
-
-    // Medical Records
-    Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical-records.index');
-    Route::get('/medical-records/create', [MedicalRecordController::class, 'create'])->name('medical-records.create');
-    Route::post('/medical-records', [MedicalRecordController::class, 'store'])->name('medical-records.store');
-    Route::get('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'show'])->name('medical-records.show');
-    Route::get('/medical-records/{medicalRecord}/edit', [MedicalRecordController::class, 'edit'])->name('medical-records.edit');
-    Route::put('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'update'])->name('medical-records.update');
-    Route::delete('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
-});
-
-// ==============================
 // ASSISTANT VET PORTAL
 // Role: Assistant Veterinarian
 // Access: Shares access with city_vet (merged modules)
@@ -553,7 +484,7 @@ Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('ad
 Route::middleware(['auth', 'role:assistant_vet'])->prefix('assistant-vet')->name('assistant-vet.')->group(function () {
     Route::get('/dashboard', [AssistantVetController::class, 'dashboard'])->name('dashboard');
 
-    // Vaccination Records (shared with admin_staff)
+    // Vaccination Records
     Route::get('/vaccinations', [RecordsController::class, 'vaccinations'])->name('vaccinations.index');
     Route::get('/vaccinations/create', [RecordsController::class, 'createVaccination'])->name('vaccinations.create');
     Route::post('/vaccinations', [RecordsController::class, 'storeVaccination'])->name('vaccinations.store');
@@ -607,7 +538,7 @@ Route::middleware(['auth', 'role:meat_inspector'])->prefix('meat-inspection')->n
 
 // ==============================
 // SPAY/NEUTER PROGRAM MODULE
-// Roles: admin, city_vet, super_admin, disease_control
+// Roles: city_vet, super_admin, assistant_vet
 // Access: Spay and neuter procedure reports
 // ==============================
 Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet'])->prefix('spay-neuter')->name('spay-neuter.')->group(function () {
@@ -628,7 +559,7 @@ Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet'])->prefix('
 // Roles: city_vet, super_admin, inventory_staff, assistant_vet (merged)
 // Access: Vaccine and supply inventory management
 // ==============================
-Route::middleware(['auth', 'role:city_vet|super_admin|inventory_staff|assistant_vet'])->prefix('inventory')->name('inventory.')->group(function () {
+    Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet'])->prefix('inventory')->name('inventory.')->group(function () {
     Route::get('/dashboard', [InventoryController::class, 'dashboard'])->name('dashboard');
 
     // Inventory Items
@@ -657,26 +588,11 @@ Route::middleware(['auth', 'role:city_vet|super_admin|inventory_staff|assistant_
 });
 
 // ==============================
-// ESTABLISHMENT MANAGEMENT MODULE (Business Profiling)
-// Roles: city_vet, super_admin, meat_inspector, livestock_inspector
-// Access: Meat shops, pet shops, vet clinics, livestock facilities, grooming
-// ==============================
-Route::middleware(['auth', 'role:livestock_inspector'])->prefix('establishments')->name('establishments.')->group(function () {
-    Route::get('/', [EstablishmentController::class, 'index'])->name('index');
-    Route::get('/create', [EstablishmentController::class, 'create'])->name('create');
-    Route::post('/', [EstablishmentController::class, 'store'])->name('store');
-    Route::get('/{establishment}', [EstablishmentController::class, 'show'])->name('show');
-    Route::get('/{establishment}/edit', [EstablishmentController::class, 'edit'])->name('edit');
-    Route::put('/{establishment}', [EstablishmentController::class, 'update'])->name('update');
-    Route::delete('/{establishment}', [EstablishmentController::class, 'destroy'])->name('destroy');
-});
-
-// ==============================
 // LIVESTOCK CENSUS MODULE
-// Roles: city_vet, super_admin, assistant_vet, livestock_inspector
+// Roles: city_vet, super_admin, assistant_vet
 // Access: Provincial livestock census data
 // ==============================
-Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet|livestock_inspector'])->prefix('livestock-census')->name('livestock-census.')->group(function () {
+Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet'])->prefix('livestock-census')->name('livestock-census.')->group(function () {
     Route::get('/dashboard', [LivestockCensusController::class, 'index'])->name('dashboard');
     Route::get('/', [LivestockCensusController::class, 'index'])->name('index');
     Route::get('/create', [LivestockCensusController::class, 'create'])->name('create');
@@ -686,23 +602,6 @@ Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet|livestock_in
     Route::put('/{census}', [LivestockCensusController::class, 'update'])->name('update');
     Route::delete('/{census}', [LivestockCensusController::class, 'destroy'])->name('destroy');
     Route::get('/summary', [LivestockCensusController::class, 'summary'])->name('summary');
-});
-
-// ==============================
-// LIVESTOCK MANAGEMENT MODULE (Individual Animals)
-// Roles: livestock_inspector, city_vet, super_admin
-// Access: Individual livestock records for tracking
-// ==============================
-Route::middleware(['auth', 'role:livestock_inspector'])->prefix('livestock')->name('livestock.')->group(function () {
-    Route::get('/dashboard', [LivestockController::class, 'dashboard'])->name('dashboard');
-    Route::get('/census', [LivestockController::class, 'census'])->name('census');
-    Route::get('/', [LivestockController::class, 'index'])->name('index');
-    Route::get('/create', [LivestockController::class, 'create'])->name('create');
-    Route::post('/', [LivestockController::class, 'store'])->name('store');
-    Route::get('/{livestock}', [LivestockController::class, 'show'])->name('show');
-    Route::get('/{livestock}/edit', [LivestockController::class, 'edit'])->name('edit');
-    Route::put('/{livestock}', [LivestockController::class, 'update'])->name('update');
-    Route::delete('/{livestock}', [LivestockController::class, 'destroy'])->name('destroy');
 });
 
 // ==============================
@@ -1411,55 +1310,6 @@ Route::put('/owner/pets/{id}', [PetController::class, 'update'])->middleware(['a
 
 // Delete Pet Route
 Route::delete('/owner/pets/{id}', [PetController::class, 'destroy'])->middleware(['auth'])->name('pet.destroy');
-
-// ==============================
-// VETERINARIAN CLINIC PORTAL
-// Role: Veterinarian (Clinic)
-// Access: Submit bite reports, rabies vaccination reports, view own reports
-// ==============================
-Route::middleware(['auth', 'role:clinic|hospital'])->prefix('clinic')->name('clinic.')->group(function () {
-    Route::get('/dashboard', [ClinicController::class, 'dashboard'])->name('dashboard');
-
-    // Bite Reports
-    Route::get('/bite-reports', [ClinicController::class, 'indexBiteReports'])->name('bite-reports.index');
-    Route::get('/bite-reports/create', [ClinicController::class, 'createBiteReport'])->name('bite-reports.create');
-    Route::post('/bite-reports', [ClinicController::class, 'storeBiteReport'])->name('bite-reports.store');
-    Route::get('/bite-reports/{report}', [ClinicController::class, 'showBiteReport'])->name('bite-reports.show');
-
-    // Rabies Vaccination Reports (existing)
-    Route::get('/vaccination-reports', [ClinicController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
-    Route::get('/vaccination-reports/create', [ClinicController::class, 'createVaccinationReport'])->name('vaccination-reports.create');
-    Route::post('/vaccination-reports', [ClinicController::class, 'storeVaccinationReport'])->name('vaccination-reports.store');
-    Route::get('/vaccination-reports/{report}', [ClinicController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
-});
-
-// ==============================
-// HOSPITAL PORTAL (Hospital)
-// Access: Same as clinic - Submit bite reports, rabies vaccination reports, view own reports
-// ==============================
-Route::middleware(['auth', 'role:hospital'])->prefix('hospital')->name('hospital.')->group(function () {
-    Route::get('/dashboard', [ClinicController::class, 'dashboard'])->name('dashboard');
-
-    // Bite Reports
-    Route::get('/bite-reports', [ClinicController::class, 'indexBiteReports'])->name('bite-reports.index');
-    Route::get('/bite-reports/create', [ClinicController::class, 'createBiteReport'])->name('bite-reports.create');
-    Route::post('/bite-reports', [ClinicController::class, 'storeBiteReport'])->name('bite-reports.store');
-    Route::get('/bite-reports/{report}', [ClinicController::class, 'showBiteReport'])->name('bite-reports.show');
-
-    // Rabies Vaccination Reports (existing)
-    Route::get('/vaccination-reports', [ClinicController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
-    Route::get('/vaccination-reports/create', [ClinicController::class, 'createVaccinationReport'])->name('vaccination-reports.create');
-    Route::post('/vaccination-reports', [ClinicController::class, 'storeVaccinationReport'])->name('vaccination-reports.store');
-    Route::get('/vaccination-reports/{report}', [ClinicController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
-});
-
-// ==============================
-// VIEWER PORTAL (Viewer)
-// Access: Read-only access
-// ==============================
-Route::middleware(['auth', 'role:viewer'])->prefix('viewer')->name('viewer.')->group(function () {
-    Route::get('/dashboard', [ViewerController::class, 'dashboard'])->name('dashboard');
-});
 
 // ==============================
 // PROFILE ROUTES (Authenticated Users)

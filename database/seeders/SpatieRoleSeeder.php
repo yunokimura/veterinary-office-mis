@@ -24,10 +24,6 @@ class SpatieRoleSeeder extends Seeder
                 'guard_name' => 'web',
             ],
             [
-                'name' => 'admin_staff',
-                'guard_name' => 'web',
-            ],
-            [
                 'name' => 'assistant_vet',
                 'guard_name' => 'web',
             ],
@@ -36,39 +32,11 @@ class SpatieRoleSeeder extends Seeder
                 'guard_name' => 'web',
             ],
             [
-                'name' => 'disease_control',
-                'guard_name' => 'web',
-            ],
-            [
-                'name' => 'livestock_inspector',
-                'guard_name' => 'web',
-            ],
-            [
                 'name' => 'meat_inspector',
                 'guard_name' => 'web',
             ],
             [
-                'name' => 'barangay_encoder',
-                'guard_name' => 'web',
-            ],
-            [
-                'name' => 'clinic',
-                'guard_name' => 'web',
-            ],
-            [
-                'name' => 'hospital',
-                'guard_name' => 'web',
-            ],
-            [
                 'name' => 'pet_owner',
-                'guard_name' => 'web',
-            ],
-            [
-                'name' => 'viewer',
-                'guard_name' => 'web',
-            ],
-            [
-                'name' => 'city_pound',
                 'guard_name' => 'web',
             ],
         ];
@@ -86,18 +54,14 @@ class SpatieRoleSeeder extends Seeder
             $roleMapping = [
                 'super_admin' => 'super_admin',
                 'city_vet' => 'city_vet',
-                'admin_staff' => 'admin_staff',
-                'admin_asst' => 'admin_staff',
-                'assistant_vet' => 'city_vet',
-                'livestock_inspector' => 'city_vet',
-                'meat_inspector' => 'city_vet',
-                'clinic' => 'city_vet',
-                'hospital' => 'city_vet',
+                                'admin_asst' => 'admin_asst',
+                'assistant_vet' => 'assistant_vet',
+                'meat_inspector' => 'meat_inspector',
                 'pet_owner' => 'pet_owner',
             ];
 
             $existingRole = $firstAdmin->getRoleNames()->first();
-            $spatieRole = $roleMapping[$existingRole] ?? 'admin_staff';
+            $spatieRole = $roleMapping[$existingRole] ?? 'admin_asst';
 
             $firstAdmin->assignRole($spatieRole);
 

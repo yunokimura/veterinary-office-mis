@@ -63,7 +63,7 @@ class NotificationService
     public static function biteReportCreated(?int $reportId = null): void
     {
         self::notifyMultipleRoles(
-            [User::ROLE_CITY_VET, User::ROLE_ASSISTANT_VET, User::ROLE_ADMIN_STAFF],
+            [User::ROLE_CITY_VET, User::ROLE_ASSISTANT_VET, User::ROLE_ADMIN_ASST],
             'New Bite/Rabies Report',
             'A new bite/rabies report has been submitted and requires attention.',
             'bite_rabies_report',
@@ -75,7 +75,7 @@ class NotificationService
     public static function strayReportCreated(?int $reportId = null): void
     {
         self::notifyMultipleRoles(
-            [User::ROLE_CITY_VET, User::ROLE_CITY_POUND, User::ROLE_ADMIN_ASST],
+            [User::ROLE_CITY_VET, User::ROLE_ADMIN_ASST],
             'New Stray Animal Report',
             'A new stray animal report has been submitted.',
             'stray_report',
@@ -87,7 +87,7 @@ class NotificationService
     public static function petRegistrationCreated(?int $petId = null): void
     {
         self::notifyMultipleRoles(
-            [User::ROLE_CITY_VET, User::ROLE_ADMIN_STAFF, User::ROLE_ASSISTANT_VET],
+            [User::ROLE_CITY_VET, User::ROLE_ADMIN_ASST, User::ROLE_ASSISTANT_VET],
             'New Pet Registration',
             'A new pet has been registered in the system.',
             'pet_registration',
@@ -111,7 +111,7 @@ class NotificationService
     public static function livestockCreated(?int $id = null): void
     {
         self::notifyMultipleRoles(
-            [User::ROLE_CITY_VET, User::ROLE_LIVESTOCK_INSPECTOR],
+            [User::ROLE_CITY_VET, User::ROLE_ASSISTANT_VET],
             'New Livestock Record',
             'A new livestock census record has been added.',
             'livestock',
@@ -147,7 +147,7 @@ class NotificationService
     public static function impoundCreated(?int $impoundId = null): void
     {
         self::notifyMultipleRoles(
-            [User::ROLE_CITY_VET, User::ROLE_CITY_POUND],
+            [User::ROLE_CITY_VET, User::ROLE_ADMIN_ASST],
             'New Impound Record',
             'A new animal has been impounded.',
             'impound',
@@ -159,7 +159,7 @@ class NotificationService
     public static function adoptionCreated(?int $adoptionId = null): void
     {
         self::notifyMultipleRoles(
-            [User::ROLE_CITY_VET, User::ROLE_ADMIN_STAFF],
+            [User::ROLE_CITY_VET, User::ROLE_ADMIN_ASST],
             'New Adoption Request',
             'A new adoption request has been submitted.',
             'adoption',
@@ -183,7 +183,7 @@ class NotificationService
     public static function announcementCreated(int $announcementId): void
     {
         self::notifyMultipleRoles(
-            [User::ROLE_SUPER_ADMIN, User::ROLE_CITY_VET, User::ROLE_ADMIN_STAFF, User::ROLE_ADMIN_ASST],
+            [User::ROLE_SUPER_ADMIN, User::ROLE_CITY_VET, User::ROLE_ADMIN_ASST],
             'New Announcement',
             'A new announcement has been published.',
             'announcement',

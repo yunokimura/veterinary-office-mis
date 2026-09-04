@@ -149,7 +149,7 @@ class UserController extends Controller
         $user->update(['role' => $validated['role']]);
 
         // Create profile based on role type
-        $adminRoles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 'livestock_inspector', 'meat_inspector'];
+        $adminRoles = ['super_admin', 'city_vet', 'admin_asst', 'assistant_vet', 'meat_inspector'];
 
         if (in_array($validated['role'], $adminRoles)) {
             // Create admin profile
@@ -359,7 +359,7 @@ class UserController extends Controller
             $user->update(['role' => $validated['role']]); // Sync column
 
             // Handle role change: delete old profile, create new one
-            $adminRoles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 'livestock_inspector', 'meat_inspector'];
+            $adminRoles = ['super_admin', 'city_vet', 'admin_asst', 'assistant_vet', 'meat_inspector'];
 
             // Remove old profile
             if ($user->adminProfile) {
@@ -399,7 +399,7 @@ class UserController extends Controller
             }
         } else {
             // Role unchanged, just update existing profile
-            $adminRoles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 'livestock_inspector', 'meat_inspector'];
+            $adminRoles = ['super_admin', 'city_vet', 'admin_asst', 'assistant_vet', 'meat_inspector'];
 
             if (in_array($validated['role'], $adminRoles) && $user->adminProfile) {
                 $user->adminProfile->update([

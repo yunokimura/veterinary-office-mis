@@ -34,14 +34,14 @@ class AdoptionPetController extends Controller
         $adoptionPets = $query->with('traits')->orderBy('created_at', 'desc')->paginate(12);
         $traits = AdoptionTrait::orderBy('name')->get();
 
-        return view('admin-staff.adoption-pets.index', compact('adoptionPets', 'traits'));
+        return view('admin-asst.adoption-pets.index', compact('adoptionPets', 'traits'));
     }
 
     public function create()
     {
         $traits = AdoptionTrait::orderBy('name')->get();
 
-        return view('admin-staff.adoption-pets.create', compact('traits'));
+        return view('admin-asst.adoption-pets.create', compact('traits'));
     }
 
     public function store(Request $request)
@@ -91,7 +91,7 @@ class AdoptionPetController extends Controller
             $pet->traits()->attach($validated['traits']);
         }
 
-        return redirect()->route('admin-staff.adoption-pets.index')
+        return redirect()->route('admin-asst.adoption-pets.index')
             ->with('success', 'Pet added to adoption successfully!');
     }
 
@@ -103,7 +103,7 @@ class AdoptionPetController extends Controller
         }
         $pet->load('traits');
 
-        return view('admin-staff.adoption-pets.show', compact('pet'));
+        return view('admin-asst.adoption-pets.show', compact('pet'));
     }
 
     public function edit(Pet $pet)
@@ -115,7 +115,7 @@ class AdoptionPetController extends Controller
         $traits = AdoptionTrait::orderBy('name')->get();
         $selectedTraits = $pet->traits->pluck('trait_id')->toArray();
 
-        return view('admin-staff.adoption-pets.edit', compact('pet', 'traits', 'selectedTraits'));
+        return view('admin-asst.adoption-pets.edit', compact('pet', 'traits', 'selectedTraits'));
     }
 
     public function update(Request $request, Pet $pet)
@@ -161,7 +161,7 @@ class AdoptionPetController extends Controller
             $pet->traits()->sync($validated['traits']);
         }
 
-        return redirect()->route('admin-staff.adoption-pets.show', $pet)
+        return redirect()->route('admin-asst.adoption-pets.show', $pet)
             ->with('success', 'Adoption pet updated successfully!');
     }
 
@@ -178,7 +178,7 @@ class AdoptionPetController extends Controller
         $pet->traits()->detach();
         $pet->delete();
 
-        return redirect()->route('admin-staff.adoption-pets.index')
+        return redirect()->route('admin-asst.adoption-pets.index')
             ->with('success', 'Adoption pet removed successfully!');
     }
 

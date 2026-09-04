@@ -127,7 +127,7 @@ class SpayNeuterController extends Controller
         }
 
         // Non-admin users can only see their own reports
-        if (! Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'disease_control', 'admin_staff'])) {
+        if (! Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'assistant_vet'])) {
             $query->where('user_id', Auth::id());
         }
 
@@ -291,7 +291,7 @@ class SpayNeuterController extends Controller
     private function authorizeReport($report)
     {
         if ($report->user_id !== Auth::id() &&
-            ! Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'disease_control', 'admin_staff'])) {
+            ! Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'assistant_vet'])) {
             abort(403, 'Unauthorized action.');
         }
     }

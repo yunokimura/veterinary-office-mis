@@ -28,11 +28,6 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
-        // Viewers cannot access the admin dashboard - redirect to their own
-        if ($user->hasRole('viewer')) {
-            return redirect()->route('viewer.dashboard');
-        }
-
         // Get statistics
         $stats = [
             'total_bite_reports' => BiteRabiesReport::count(),

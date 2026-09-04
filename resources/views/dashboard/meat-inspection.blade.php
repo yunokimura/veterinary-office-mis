@@ -10,11 +10,9 @@ $role = auth()->user()->getRoleAttribute() ?? 'city_vet';
 $dashboardRoutes = [
     'super_admin' => 'super-admin.dashboard',
     'city_vet' => 'city-vet.dashboard',
-    'admin_staff' => 'admin-staff.dashboard',
-    'admin_asst' => 'admin-staff.dashboard',
+    'admin_asst' => 'admin-asst.dashboard',
     'assistant_vet' => 'assistant-vet.dashboard',
     'meat_inspector' => 'meat-inspection.dashboard',
-    'livestock_inspector' => 'livestock.dashboard',
     'pet_owner' => 'owner.dashboard',
 ];
 $rolePrefix = str_replace('_', '-', $role);

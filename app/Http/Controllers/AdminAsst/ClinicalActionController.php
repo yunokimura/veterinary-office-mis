@@ -37,7 +37,7 @@ class ClinicalActionController extends Controller
 
         $actions = $query->orderBy('action_date', 'desc')->paginate(15);
         $barangays = Barangay::orderBy('barangay_name')->get();
-        $veterinarians = User::where('role', 'veterinarian')->orWhere('role', 'assistant_vet')->get();
+        $veterinarians = User::where('role', 'assistant_vet')->get();
 
         return view('admin-asst.clinical-actions.index', compact('actions', 'barangays', 'veterinarians'));
     }
@@ -45,7 +45,7 @@ class ClinicalActionController extends Controller
     public function create()
     {
         $barangays = Barangay::orderBy('barangay_name')->get();
-        $veterinarians = User::where('role', 'veterinarian')->orWhere('role', 'assistant_vet')->get();
+        $veterinarians = User::where('role', 'assistant_vet')->get();
         return view('admin-asst.clinical-actions.create', compact('barangays', 'veterinarians'));
     }
 
@@ -84,7 +84,7 @@ class ClinicalActionController extends Controller
     public function edit(ClinicalAction $clinicalAction)
     {
         $barangays = Barangay::orderBy('barangay_name')->get();
-        $veterinarians = User::where('role', 'veterinarian')->orWhere('role', 'assistant_vet')->get();
+        $veterinarians = User::where('role', 'assistant_vet')->get();
         return view('admin-asst.clinical-actions.edit', compact('clinicalAction', 'barangays', 'veterinarians'));
     }
 

@@ -32,16 +32,12 @@ class SuperAdminController extends Controller
             'active_users' => User::where('status', 'active')->count(),
             'deactivated_users' => User::where('status', 'deactivated')->count(),
 
-            // Role breakdown - Clean structure (8 active roles)
+            // Role breakdown - Clean structure (6 active roles)
             'super_admins' => User::where('role', 'super_admin')->count(),
             'city_vets' => User::where('role', 'city_vet')->count(),
             'admin_assistants' => User::where('role', 'admin_asst')->count(),
-            'assistant_vets' => User::whereIn('role', ['assistant_vet', 'disease_control'])->count(),
-            'veterinarians' => User::where('role', 'veterinarian')->count(),
-            'livestock_inspectors' => User::where('role', 'livestock_inspector')->count(),
+            'assistant_vets' => User::where('role', 'assistant_vet')->count(),
             'meat_inspectors' => User::where('role', 'meat_inspector')->count(),
-            'barangay_encoders' => User::where('role', 'barangay_encoder')->count(),
-            'viewers' => User::where('role', 'viewer')->count(),
 
             'admin_staff_total' => User::whereIn('role', ['super_admin', 'city_vet', 'admin_asst', 'assistant_vet', 'meat_inspector'])->count(),
 
@@ -187,14 +183,9 @@ class SuperAdminController extends Controller
             'super_admin' => 'Super Admin',
             'city_vet' => 'City Veterinarian',
             'admin_asst' => 'Administrative Assistant',
-            'admin_staff' => 'Administrative Assistant',
-            'veterinarian' => 'Veterinarian III',
             'assistant_vet' => 'Assistant Veterinarian',
-            'livestock_inspector' => 'Livestock Inspector',
             'meat_inspector' => 'Meat Inspector',
-            'disease_control' => 'Assistant Veterinary',
-            'barangay_encoder' => 'Barangay Encoder',
-            'viewer' => 'Viewer/Supervisor',
+            'pet_owner' => 'Pet Owner',
         ];
 
         $formattedRoles = [];

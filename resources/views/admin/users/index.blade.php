@@ -14,7 +14,7 @@
     $stats = [
         'total_users' => \App\Models\User::count(),
         'admins' => \App\Models\User::role(['super_admin', 'city_vet'])->count(),
-        'staff' => \App\Models\User::role(['admin_staff', 'assistant_vet', 'livestock_inspector', 'meat_inspector'])->count(),
+        'staff' => \App\Models\User::role(['admin_asst', 'assistant_vet', 'meat_inspector'])->count(),
         'pet_owners' => \App\Models\User::role('pet_owner')->count(),
         'active' => \App\Models\User::where('status', 'active')->count(),
         'deactivated' => \App\Models\User::where('status', 'deactivated')->count(),
@@ -174,9 +174,7 @@
                                 @switch($user->getRoleAttribute())
                                     @case('super_admin') bg-red-100 text-red-800 @break
                                     @case('city_vet') bg-blue-100 text-blue-800 @break
-                                    @case('admin_staff') bg-green-100 text-green-800 @break
-                                    @case('assistant_vet') bg-purple-100 text-purple-800 @break
-                                    @case('livestock_inspector') bg-yellow-100 text-yellow-800 @break
+                                                                        @case('assistant_vet') bg-purple-100 text-purple-800 @break
                                     @case('meat_inspector') bg-orange-100 text-orange-800 @break
                                     @case('pet_owner') bg-pink-100 text-pink-800 @break
                                     @default bg-gray-100 text-gray-800

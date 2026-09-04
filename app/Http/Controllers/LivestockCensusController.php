@@ -32,7 +32,7 @@ class LivestockCensusController extends Controller
         }
 
         // Non-admin users can only see their own entries
-        if (!Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'livestock_inspector', 'admin_staff'])) {
+        if (!Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'assistant_vet'])) {
             $query->where('encoded_by_user_id', Auth::id());
         }
 

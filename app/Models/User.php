@@ -297,26 +297,16 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
         return $this->checkPermissionTo($ability);
     }
 
-    // Role constants - Clean Role Structure for Vet MIS (7 roles)
+    // Role constants - Clean Role Structure for Vet MIS (6 roles)
     public const ROLE_SUPER_ADMIN = 'super_admin';          // IT Personnel
 
     public const ROLE_CITY_VET = 'city_vet';               // City Veterinarian (Admin/Office Head)
-
-    public const ROLE_ADMIN_STAFF = 'admin_staff';         // Administrative Assistant IV (Book Binder 4)
 
     public const ROLE_ADMIN_ASST = 'admin_asst';           // Administrative Assistant
 
     public const ROLE_ASSISTANT_VET = 'assistant_vet';     // Assistant Veterinarian (Vet 3)
 
-    public const ROLE_CLINIC = 'clinic';                   // External Vet Clinic
-
-    public const ROLE_HOSPITAL = 'hospital';                // External Vet Hospital
-
-    public const ROLE_LIVESTOCK_INSPECTOR = 'livestock_inspector'; // Livestock Inspector (Book Binder 1)
-
     public const ROLE_MEAT_INSPECTOR = 'meat_inspector';     // Meat & Post-Abattoir Inspector
-
-    public const ROLE_CITY_POUND = 'city_pound';             // City Pound Personnel
 
     public const ROLE_PET_OWNER = 'pet_owner';                  // Pet owner/citizen portal
 
@@ -345,15 +335,6 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     public function isCityVet(): bool
     {
         return $this->hasRole('city_vet');
-    }
-
-    /**
-     * Check if user is a barangay encoder.
-     * Uses Spatie hasRole() for permission checking.
-     */
-    public function isBarangayEncoder(): bool
-    {
-        return $this->hasRole('barangay_encoder');
     }
 
     /**
@@ -400,7 +381,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     {
         $roles = $this->getRoleNames();
 
-        return $roles->first() ?? 'viewer';
+        return $roles->first() ?? 'pet_owner';
     }
 
     /**
@@ -417,7 +398,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      */
     public function isAdminWithBarangayAccess(): bool
     {
-        return $this->hasAnyRole([self::ROLE_CITY_VET, self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN_STAFF]);
+        return $this->hasAnyRole([self::ROLE_CITY_VET, self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN_ASST]);
     }
 
     /**
@@ -436,14 +417,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
         return match ($this->getRoleAttribute()) {
             self::ROLE_SUPER_ADMIN => 'Super Administrator',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
-            self::ROLE_ADMIN_STAFF => 'Administrative Assistant',
             self::ROLE_ADMIN_ASST => 'Admin Assistant',
             self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian',
-            self::ROLE_CLINIC => 'External Vet Clinic',
-            self::ROLE_HOSPITAL => 'External Vet Hospital',
-            self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
             self::ROLE_MEAT_INSPECTOR => 'Meat Inspector',
-            self::ROLE_CITY_POUND => 'City Pound Personnel',
             self::ROLE_PET_OWNER => 'Pet Owner',
             default => 'Unknown',
         };
@@ -457,12 +433,8 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
         return [
             self::ROLE_SUPER_ADMIN => 'Super Administrator',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
-            self::ROLE_ADMIN_STAFF => 'Administrative Assistant',
             self::ROLE_ADMIN_ASST => 'Admin Assistant',
             self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian',
-            self::ROLE_CLINIC => 'External Vet Clinic',
-            self::ROLE_HOSPITAL => 'External Vet Hospital',
-            self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
             self::ROLE_MEAT_INSPECTOR => 'Meat Inspector',
             self::ROLE_PET_OWNER => 'Pet Owner',
         ];
@@ -476,14 +448,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
         return [
             self::ROLE_SUPER_ADMIN => 10,       // IT Personnel - Highest
             self::ROLE_CITY_VET => 8,           // Admin/Office Head
-            self::ROLE_ADMIN_STAFF => 6,         // Administrative Assistant IV
             self::ROLE_ADMIN_ASST => 5,         // Admin Assistant
             self::ROLE_ASSISTANT_VET => 5,      // Assistant Veterinarian
-            self::ROLE_CLINIC => 4,              // External Vet Clinic
-            self::ROLE_HOSPITAL => 4,              // External Vet Hospital
-            self::ROLE_LIVESTOCK_INSPECTOR => 4, // Livestock Inspector
             self::ROLE_MEAT_INSPECTOR => 4,     // Meat & Post-Abattoir Inspector
-            self::ROLE_CITY_POUND => 3,         // City Pound Personnel
             self::ROLE_PET_OWNER => 1,            // Pet owner / citizen portal
         ];
     }
@@ -590,12 +557,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     {
         return [
             self::ROLE_CITY_VET,
-            self::ROLE_ADMIN_STAFF,
+            self::ROLE_ADMIN_ASST,
             self::ROLE_ASSISTANT_VET,
-            self::ROLE_CLINIC,
-            self::ROLE_LIVESTOCK_INSPECTOR,
             self::ROLE_MEAT_INSPECTOR,
-            self::ROLE_CITY_POUND,
         ];
     }
 
@@ -729,14 +693,10 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
         }
 
         if ($this->hasRole([
-            'super_admin', 'city_vet', 'admin_staff', 'admin_asst',
-            'assistant_vet', 'livestock_inspector', 'meat_inspector',
+            'super_admin', 'city_vet', 'admin_asst',
+            'assistant_vet', 'meat_inspector',
         ])) {
             return $this->adminProfile;
-        }
-
-        if ($this->hasRole(['clinic', 'hospital', 'bite_center'])) {
-            return $this->organizationProfile;
         }
 
         return null;

@@ -59,19 +59,13 @@ class MigrateProfilesAndAddresses extends Command
             // Step 1: Migrate Admin Staff
             $this->migrateAdmins($dryRun);
 
-            // Step 2: Migrate Organizations (clinics/hospitals)
-            $this->migrateOrganizations($dryRun);
-
-            // Step 3: Migrate Pet Owner Addresses
+            // Step 2: Migrate Pet Owner Addresses
             $this->migratePetOwnerAddresses($dryRun);
 
-            // Step 4: Migrate Admin Addresses
+            // Step 3: Migrate Admin Addresses
             $this->migrateAdminAddresses($dryRun);
 
-            // Step 5: Migrate Organization Addresses
-            $this->migrateOrganizationAddresses($dryRun);
-
-            // Step 6: Consolidate Pet Owner Emails into users.email
+            // Step 4: Consolidate Pet Owner Emails into users.email
             $emailConflicts = $this->consolidatePetOwnerEmails($dryRun);
 
             if (! empty($emailConflicts) && $dryRun) {
@@ -103,7 +97,7 @@ class MigrateProfilesAndAddresses extends Command
     private function migrateAdmins(bool $dryRun): void
     {
         $this->info('Step 1: Migrating admin staff to admins table...');
-        $adminRoles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 'livestock_inspector', 'meat_inspector'];
+        $adminRoles = ['super_admin', 'city_vet', 'admin_asst', 'assistant_vet', 'meat_inspector'];
 
         $users = User::whereHas('roles', fn ($q) => $q->whereIn('name', $adminRoles))
             ->with('roles')
@@ -132,39 +126,6 @@ class MigrateProfilesAndAddresses extends Command
 
         $status = $dryRun ? '(DRY RUN)' : '';
         $this->info("  {$status} Migrated {$count} admin users.");
-    }
-
-    private function migrateOrganizations(bool $dryRun): void
-    {
-        $this->info('Step 2: Migrating organizations (clinics/hospitals)...');
-        $orgRoles = ['clinic', 'hospital'];
-
-        $users = User::whereHas('roles', fn ($q) => $q->whereIn('name', $orgRoles))
-            ->with('roles')
-            ->get();
-
-        $count = 0;
-        foreach ($users as $user) {
-            $primaryRole = $user->roles->first()->name;
-
-            if ($dryRun) {
-                $this->line("  [DRY] Would create {$primaryRole} organization for user {$user->id} ({$user->email})");
-            } else {
-                $org = Organization::create([
-                    'type' => $primaryRole,
-                    'name' => $user->first_name ?: $user->email, // org name from user's name
-                    'contact_user_id' => $user->id,
-                    'contact_number' => $user->contact_number,
-                    'official_email' => $user->email,
-                    'is_active' => $user->status === 'active',
-                ]);
-                $user->update(['organization_id' => $org->id]);
-            }
-            $count++;
-        }
-
-        $status = $dryRun ? '(DRY RUN)' : '';
-        $this->info("  {$status} Migrated {$count} organizations.");
     }
 
     private function migratePetOwnerAddresses(bool $dryRun): void
@@ -257,45 +218,6 @@ class MigrateProfilesAndAddresses extends Command
         }
 
         $this->info("  Created {$created} admin addresses.");
-    }
-
-    private function migrateOrganizationAddresses(bool $dryRun): void
-    {
-        $this->info('Step 5: Migrating organization addresses...');
-        $orgs = Organization::with('contactUser')->get();
-        $total = $orgs->count();
-
-        if ($dryRun) {
-            $this->line("  [DRY] Would create addresses for {$total} organizations");
-
-            return;
-        }
-
-        $created = 0;
-        foreach ($orgs as $org) {
-            $user = $org->contactUser;
-            if ($user && ($user->address || $user->barangay_id)) {
-                try {
-                    Address::create([
-                        'addressable_type' => 'organization',
-                        'addressable_id' => $org->id,
-                        'block_lot_phase' => $user->address,
-                        'street' => null,
-                        'subdivision' => null,
-                        'barangay_id' => $user->barangay_id,
-                        'city' => null,
-                        'province' => null,
-                        'postal_code' => null,
-                        'is_primary' => true,
-                    ]);
-                    $created++;
-                } catch (Exception $e) {
-                    $this->warn("  Failed to create address for org ID {$org->id}: ".$e->getMessage());
-                }
-            }
-        }
-
-        $this->info("  Created {$created} organization addresses.");
     }
 
     private function consolidatePetOwnerEmails(bool $dryRun): array

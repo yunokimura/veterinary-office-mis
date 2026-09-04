@@ -11,9 +11,8 @@ class AssignSpatieRolesSeeder extends Seeder
     public function run(): void
     {
         // Ensure roles exist
-        $roles = ['super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet',
-            'meat_inspector', 'livestock_inspector', 'disease_control',
-            'barangay_encoder', 'viewer', 'pet_owner', 'clinic', 'hospital', 'city_pound'];
+        $roles = ['super_admin', 'city_vet', 'admin_asst', 'assistant_vet',
+            'meat_inspector', 'pet_owner'];
 
         foreach ($roles as $roleName) {
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
@@ -26,24 +25,16 @@ class AssignSpatieRolesSeeder extends Seeder
             'super_admin' => 'super_admin',
             'city_vet' => 'city_vet',
             'admin' => 'city_vet',
-            'admin_staff' => 'admin_staff',
             'admin_asst' => 'admin_asst',
             'assistant_vet' => 'assistant_vet',
             'meat_inspector' => 'meat_inspector',
-            'livestock_inspector' => 'livestock_inspector',
-            'disease_control' => 'disease_control',
-            'barangay_encoder' => 'barangay_encoder',
-            'viewer' => 'viewer',
             'pet_owner' => 'pet_owner',
-            'clinic' => 'clinic',
-            'hospital' => 'hospital',
-            'city_pound' => 'city_pound',
         ];
 
         foreach ($users as $user) {
             // Read legacy role column directly
             $currentRole = $user->role;
-            $spatieRole = $roleMapping[$currentRole] ?? 'viewer';
+            $spatieRole = $roleMapping[$currentRole] ?? 'pet_owner';
 
             // Remove existing roles and assign new one
             $user->syncRoles($spatieRole);

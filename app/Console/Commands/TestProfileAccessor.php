@@ -15,7 +15,7 @@ class TestProfileAccessor extends Command
     {
         $this->info('=== Admin Profiles ===');
         $adminUsers = User::whereHas('roles', fn ($q) => $q->whereIn('name', [
-            'super_admin', 'city_vet', 'admin_staff', 'admin_asst', 'assistant_vet', 'livestock_inspector', 'meat_inspector',
+            'super_admin', 'city_vet', 'admin_asst', 'assistant_vet', 'meat_inspector',
         ]))->with(['adminProfile', 'petOwnerProfile', 'organizationProfile'])->take(3)->get();
 
         foreach ($adminUsers as $user) {
@@ -41,23 +41,6 @@ class TestProfileAccessor extends Command
             if ($user->petOwnerProfile) {
                 $this->line("  PetOwner phone: {$user->petOwnerProfile->phone_number}");
                 $this->line("  Address ID: {$user->petOwnerProfile->address_id}");
-            }
-            $this->newLine();
-        }
-
-        $this->info('=== Organization Profiles ===');
-        $orgUsers = User::whereHas('roles', fn ($q) => $q->whereIn('name', ['clinic', 'hospital']))
-            ->with(['organizationProfile'])
-            ->take(3)->get();
-
-        foreach ($orgUsers as $user) {
-            $this->info("User: {$user->email}");
-            $this->line("  Name: {$user->first_name}");
-            $this->line("  Role: {$user->role}");
-            $this->line('  Profile: '.($user->profile ? get_class($user->profile) : 'NULL'));
-            if ($user->organizationProfile) {
-                $this->line("  Org Name: {$user->organizationProfile->name}");
-                $this->line("  Contact #: {$user->organizationProfile->contact_number}");
             }
             $this->newLine();
         }

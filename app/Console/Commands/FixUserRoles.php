@@ -35,11 +35,9 @@ class FixUserRoles extends Command
         'superadmin@vetmis.gov',
         'cityvet@vetmis.gov',
         'assistantvet@vetmis.gov',
-        'livestock@vetmis.gov',
         'meatinspector@vetmis.gov',
         'adminasst@vetmis.gov',
-        'clinic@vetmis.gov',
-        'hospital@vetmis.gov',
+        'citizen@test.com',
         'sawkevin581@gmail.com',
         'keryuxo@gmail.com',
     ];
@@ -48,11 +46,6 @@ class FixUserRoles extends Command
      * Orphaned role values that trigger deletion.
      */
     protected array $orphanRoleValues = [
-        'viewer',
-        'admin_asst',
-        'barangay_encoder',
-        'city_pound',
-        'disease_control',
     ];
 
     /**
@@ -62,11 +55,9 @@ class FixUserRoles extends Command
         'superadmin@vetmis.gov' => 'super_admin',
         'cityvet@vetmis.gov' => 'city_vet',
         'assistantvet@vetmis.gov' => 'assistant_vet',
-        'livestock@vetmis.gov' => 'livestock_inspector',
         'meatinspector@vetmis.gov' => 'meat_inspector',
         'adminasst@vetmis.gov' => 'admin_asst',
-        'clinic@vetmis.gov' => 'clinic',
-        'hospital@vetmis.gov' => 'hospital',
+        'citizen@test.com' => 'pet_owner',
         'sawkevin581@gmail.com' => 'pet_owner',
         'keryuxo@gmail.com' => 'pet_owner',
     ];

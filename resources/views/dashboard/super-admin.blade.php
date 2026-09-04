@@ -196,7 +196,7 @@
             <p class="text-xl font-bold text-red-700">{{ $stats['deactivated_users'] ?? 0 }}</p>
         </div>
         <div class="bg-purple-50 rounded-lg p-3 border border-purple-100">
-            <p class="text-xs text-purple-600 font-medium">Admin Staff</p>
+            <p class="text-xs text-purple-600 font-medium">Administrative Assistant</p>
             <p class="text-xl font-bold text-purple-700">{{ $stats['admin_staff_total'] ?? 0 }}</p>
         </div>
         <div class="bg-green-50 rounded-lg p-3 border border-green-100">

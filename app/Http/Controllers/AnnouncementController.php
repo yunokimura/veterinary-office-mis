@@ -16,7 +16,7 @@ class AnnouncementController extends Controller
     {
         $user = Auth::user();
 
-        return $user && $user->hasAnyRole(['super_admin', 'city_vet', 'admin_asst', 'admin_staff']);
+        return $user && $user->hasAnyRole(['super_admin', 'city_vet', 'admin_asst']);
     }
 
     private function getAdminRedirectRoute()
@@ -26,7 +26,7 @@ class AnnouncementController extends Controller
         return match ($role) {
             'super_admin' => 'super-admin.announcements.index',
             'city_vet' => 'admin.announcements.index',
-            'admin_asst', 'admin_staff' => 'admin-staff.announcements.index',
+            'admin_asst' => 'admin.announcements.index',
             default => 'announcements.public.index',
         };
     }

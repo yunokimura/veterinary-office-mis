@@ -55,21 +55,13 @@ class AuthenticatedSessionController extends Controller
             } elseif ($user->hasRole('city_vet')) {
                 return redirect()->route('city-vet.dashboard')
                     ->with('success', 'Welcome back, City Veterinarian '.$user->name.'!');
-            } elseif ($user->hasAnyRole(['admin_staff', 'admin_asst'])) {
-                return redirect()->route('admin-staff.dashboard')
-                    ->with('success', 'Welcome back, Admin Staff '.$user->name.'!');
+            } elseif ($user->hasRole('admin_asst')) {
             } elseif ($user->hasRole('assistant_vet')) {
                 return redirect()->route('assistant-vet.dashboard')
                     ->with('success', 'Welcome back, Assistant Veterinarian '.$user->name.'!');
-            } elseif ($user->hasRole('livestock_inspector')) {
-                return redirect()->route('livestock.dashboard')
-                    ->with('success', 'Welcome back, Livestock Inspector '.$user->name.'!');
             } elseif ($user->hasRole('meat_inspector')) {
                 return redirect()->route('meat-inspection.dashboard')
                     ->with('success', 'Welcome back, Meat Inspector '.$user->name.'!');
-            } elseif ($user->hasAnyRole(['clinic', 'hospital'])) {
-                return redirect()->route('clinic.dashboard')
-                    ->with('success', 'Welcome back, Clinic User '.$user->name.'!');
             } elseif ($user->hasRole('pet_owner')) {
                 return redirect()->to('/client')
                     ->with('success', 'Welcome back, '.$user->name.'!');

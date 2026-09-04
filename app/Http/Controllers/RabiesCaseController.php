@@ -42,7 +42,7 @@ class RabiesCaseController extends Controller
         }
 
         // Non-admin users can only see their own entries
-        if (!Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'disease_control', 'admin_staff'])) {
+        if (!Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'assistant_vet'])) {
             $query->where('user_id', Auth::id());
         }
 
@@ -205,9 +205,8 @@ class RabiesCaseController extends Controller
 
         // Define access levels
         // City Veterinarian: Full operational access
-        // Veterinarian III: View-only access
         // Assistant Veterinarian: View-only access
-        $allowedRoles = ['city_vet', 'veterinarian', 'assistant_vet'];
+        $allowedRoles = ['city_vet', 'assistant_vet'];
 
         // Check if user has access using Spatie
         $hasAccess = $user->hasAnyRole($allowedRoles);
@@ -395,7 +394,7 @@ class RabiesCaseController extends Controller
         $user = Auth::user();
 
         // Define access levels
-        $allowedRoles = ['city_vet', 'veterinarian', 'assistant_vet'];
+        $allowedRoles = ['city_vet', 'assistant_vet'];
 
         // Check if user has access using Spatie
         $hasAccess = $user->hasAnyRole($allowedRoles);
@@ -409,14 +408,13 @@ class RabiesCaseController extends Controller
 
         // Determine access level based on role
         // City Vet gets full operational access
-        // Veterinarian gets view-only access
+        // Assistant Veterinarian gets view-only access
         $isCityVet = $user->hasRole('city_vet');
-        $isVeterinarian = $user->hasRole('veterinarian');
         $isAssistantVet = $user->hasRole('assistant_vet');
 
-        // Validate request - apply stricter validation for Veterinarian (view-only)
-        if ($isVeterinarian && !$isCityVet) {
-            // Veterinarian: Limited filters (only year for viewing)
+        // Validate request - apply stricter validation for Assistant Vet (view-only)
+        if ($isAssistantVet && !$isCityVet) {
+            // Assistant Veterinarian: Limited filters (only year for viewing)
             $validated = $request->validate([
                 'year' => 'nullable|integer|min:2020|max:' . (date('Y') + 1),
             ]);
@@ -581,7 +579,7 @@ class RabiesCaseController extends Controller
         $user = Auth::user();
 
         // Check access
-        $allowedRoles = ['city_vet', 'assistant_vet', 'veterinarian'];
+        $allowedRoles = ['city_vet', 'assistant_vet'];
         $hasAccess = $user->hasAnyRole($allowedRoles);
 
         if (!$hasAccess) {

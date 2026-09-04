@@ -40,14 +40,9 @@ class CheckRole
         // Map roles to their dashboards
         $roleDashboards = [
             'city_vet' => 'admin.dashboard',
-            'admin_staff' => 'admin-staff.dashboard',
             'admin_asst' => 'admin-asst.dashboard',
             'assistant_vet' => 'assistant-vet.dashboard',
-            'livestock_inspector' => 'livestock.dashboard',
             'meat_inspector' => 'meat-inspection.dashboard',
-            'disease_control' => 'disease-control.dashboard',
-            'clinic' => 'clinic.dashboard',
-            'hospital' => 'hospital.dashboard',
             'pet_owner' => 'owner.dashboard',
         ];
 

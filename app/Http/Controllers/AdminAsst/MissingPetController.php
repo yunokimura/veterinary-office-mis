@@ -29,7 +29,7 @@ class MissingPetController extends Controller
         $approvedCount = MissingPet::where('status', 'approved')->count();
         $totalCount = MissingPet::count();
             
-        return view('admin-staff.missing-pets.index', compact('missingPets', 'pendingCount', 'approvedCount', 'totalCount'));
+        return view('admin-asst.missing-pets.index', compact('missingPets', 'pendingCount', 'approvedCount', 'totalCount'));
     }
 
     /**
@@ -38,7 +38,7 @@ class MissingPetController extends Controller
     public function create()
     {
         $clients = PetOwner::active()->orderBy('last_name')->get();
-        return view('admin-staff.missing-pets.create', compact('clients'));
+        return view('admin-asst.missing-pets.create', compact('clients'));
     }
 
     /**
@@ -68,7 +68,7 @@ class MissingPetController extends Controller
 
         $pet = MissingPet::create($validated);
 
-        return redirect()->route('admin-staff.missing-pets.show', $pet->missing_id)
+        return redirect()->route('admin-asst.missing-pets.show', $pet->missing_id)
             ->with('success', 'Missing pet report created successfully!');
     }
 
@@ -77,7 +77,7 @@ class MissingPetController extends Controller
      */
 public function show(MissingPet $missingPet)
     {
-        return view('admin-staff.missing-pets.show', compact('missingPet'));
+        return view('admin-asst.missing-pets.show', compact('missingPet'));
     }
 
     /**
@@ -87,7 +87,7 @@ public function show(MissingPet $missingPet)
     {
         $missingPet->delete();
 
-        return redirect()->route('admin-staff.missing-pets.index')
+        return redirect()->route('admin-asst.missing-pets.index')
             ->with('success', 'Pet marked as found!');
     }
 
@@ -108,7 +108,7 @@ public function show(MissingPet $missingPet)
      */
     public function edit(MissingPet $missingPet)
     {
-        return view('admin-staff.missing-pets.edit', compact('missingPet'));
+        return view('admin-asst.missing-pets.edit', compact('missingPet'));
     }
 
     /**
@@ -137,7 +137,7 @@ public function show(MissingPet $missingPet)
 
         $missingPet->update($validated);
 
-        return redirect()->route('admin-staff.missing-pets.show', $missingPet->missing_id)
+        return redirect()->route('admin-asst.missing-pets.show', $missingPet->missing_id)
             ->with('success', 'Missing pet report updated successfully!');
     }
 }

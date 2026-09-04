@@ -31,17 +31,7 @@ class UserRoleSeeder extends Seeder
                 'status' => 'active',
             ],
             [
-                'email' => 'veterinarian@vetmis.gov',
-                'password' => Hash::make('password123'),
-                'status' => 'active',
-            ],
-            [
-                'email' => 'clinic@vetmis.gov',
-                'password' => Hash::make('password123'),
-                'status' => 'active',
-            ],
-            [
-                'email' => 'livestock@vetmis.gov',
+                'email' => 'assistantvet@vetmis.gov',
                 'password' => Hash::make('password123'),
                 'status' => 'active',
             ],
@@ -51,22 +41,7 @@ class UserRoleSeeder extends Seeder
                 'status' => 'active',
             ],
             [
-                'email' => 'records@vetmis.gov',
-                'password' => Hash::make('password123'),
-                'status' => 'active',
-            ],
-            [
-                'email' => 'diseasecontrol@vetmis.gov',
-                'password' => Hash::make('password123'),
-                'status' => 'active',
-            ],
-            [
-                'email' => 'barangay@vetmis.gov',
-                'password' => Hash::make('password123'),
-                'status' => 'active',
-            ],
-            [
-                'email' => 'viewer@vetmis.gov',
+                'email' => 'citizen@test.com',
                 'password' => Hash::make('password123'),
                 'status' => 'active',
             ],
