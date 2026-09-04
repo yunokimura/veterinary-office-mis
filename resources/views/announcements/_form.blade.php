@@ -244,6 +244,9 @@
             <button type="button" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center" data-action="draft">
                 <i class="bi bi-pencil me-2"></i>Save as Draft
             </button>
+            <button type="button" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center" data-action="scheduled">
+                <i class="bi bi-calendar-check me-2"></i>Save as Scheduled
+            </button>
             <button type="submit" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition shadow-sm">
                 <i class="bi bi-check-circle me-2"></i>
                 <span>Create Announcement</span>

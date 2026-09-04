@@ -35,9 +35,10 @@
     $totalCount = Announcement::count();
     $publishedCount = Announcement::where('status', 'Published')->count();
     $draftCount = Announcement::where('status', 'Draft')->count();
+    $scheduledCount = Announcement::where('status', 'Scheduled')->count();
     $archivedCount = Announcement::where('status', 'Archived')->count();
-@endphp
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+@endphp>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
     <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
             <div>
@@ -65,11 +66,23 @@
     <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-xs font-medium text-gray-500">Drafts</p>
-                <p class="text-2xl font-bold text-yellow-500 mt-1">{{ $draftCount }}</p>
+                <p class="text-xs font-medium text-gray-500">Scheduled</p>
+                <p class="text-2xl font-bold text-yellow-500 mt-1">{{ $scheduledCount }}</p>
             </div>
             <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-pencil text-yellow-600 text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Drafts</p>
+                <p class="text-2xl font-bold text-gray-500 mt-1">{{ $draftCount }}</p>
+            </div>
+            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-file-earmark-text text-gray-600 text-xl"></i>
             </div>
         </div>
     </div>
@@ -125,6 +138,7 @@
                     style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 6px center; background-size: 12px 12px;">
                 <option value="">All Status</option>
                 <option value="Published" {{ $currentStatus === 'Published' ? 'selected' : '' }}>Published</option>
+                <option value="Scheduled" {{ $currentStatus === 'Scheduled' ? 'selected' : '' }}>Scheduled</option>
                 <option value="Draft" {{ $currentStatus === 'Draft' ? 'selected' : '' }}>Draft</option>
                 <option value="Archived" {{ $currentStatus === 'Archived' ? 'selected' : '' }}>Archived</option>
             </select>
@@ -202,6 +216,7 @@
                 <select id="bulkStatusChange" class="px-4 py-3 pr-10 border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 appearance-none">
                     <option value="">Change Status To...</option>
                     <option value="Published">Published</option>
+                    <option value="Scheduled">Scheduled</option>
                     <option value="Draft">Draft</option>
                     <option value="Archived">Archived</option>
                 </select>
@@ -241,7 +256,8 @@
                         @php
                             $statusColors = [
                                 'Published' => 'bg-green-500',
-                                'Draft' => 'bg-yellow-500',
+                                'Scheduled' => 'bg-yellow-500',
+                                'Draft' => 'bg-gray-500',
                                 'Archived' => 'bg-gray-500'
                             ];
                         @endphp
@@ -304,6 +320,7 @@
                             >
                                 <option value="">-- Select Status --</option>
                                 <option value="Published" {{ $announcement->status === 'Published' ? 'selected' : '' }}>Published</option>
+                                <option value="Scheduled" {{ $announcement->status === 'Scheduled' ? 'selected' : '' }}>Scheduled</option>
                                 <option value="Draft" {{ $announcement->status === 'Draft' ? 'selected' : '' }}>Draft</option>
                                 <option value="Archived" {{ $announcement->status === 'Archived' ? 'selected' : '' }}>Archived</option>
                             </select>
@@ -813,6 +830,7 @@ function updateAnnouncementsGrid(announcements) {
                             >
                                 <option value="">-- Select Status --</option>
                                 <option value="Published" ${announcement.status === 'Published' ? 'selected' : ''}>Published</option>
+                                <option value="Scheduled" ${announcement.status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
                                 <option value="Draft" ${announcement.status === 'Draft' ? 'selected' : ''}>Draft</option>
                                 <option value="Archived" ${announcement.status === 'Archived' ? 'selected' : ''}>Archived</option>
                             </select>
@@ -866,7 +884,8 @@ function updateAnnouncementsGrid(announcements) {
 function getStatusBadge(status) {
     const colors = {
         'Published': 'bg-green-500',
-        'Draft': 'bg-yellow-500',
+        'Scheduled': 'bg-yellow-500',
+        'Draft': 'bg-gray-500',
         'Archived': 'bg-gray-500'
     };
     return `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white shadow-lg ${colors[status] || 'bg-gray-500'}">
@@ -1048,6 +1067,7 @@ function showInlineSuccess(message) {
 // Add Announcement Modal (Bootstrap)
 let addAnnouncementModal;
 let isDraft = false;
+let isScheduled = false;
 
 document.addEventListener('DOMContentLoaded', function() {
     const addAnnouncementModalEl = document.getElementById('addAnnouncementModal');
@@ -1055,10 +1075,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const form = document.getElementById('announcementForm');
     const draftBtn = document.querySelector('[data-action="draft"]');
+    const scheduledBtn = document.querySelector('[data-action="scheduled"]');
 
     if (draftBtn) {
         draftBtn.addEventListener('click', function() {
             isDraft = true;
+            isScheduled = false;
+            form.dispatchEvent(new Event('submit', {cancelable: true}));
+        });
+    }
+
+    if (scheduledBtn) {
+        scheduledBtn.addEventListener('click', function() {
+            isScheduled = true;
+            isDraft = false;
             form.dispatchEvent(new Event('submit', {cancelable: true}));
         });
     }
@@ -1070,6 +1100,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const statusField = document.getElementById('status');
             if (isDraft && statusField) {
                 statusField.value = 'Draft';
+            }
+            if (isScheduled && statusField) {
+                statusField.value = 'Scheduled';
             }
 
             const submitBtn = form.querySelector('button[type="submit"]');
@@ -1122,6 +1155,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     statusField.value = 'Published';
                 }
                 isDraft = false;
+                isScheduled = false;
             });
         });
     }

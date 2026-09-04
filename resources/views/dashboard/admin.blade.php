@@ -76,7 +76,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500">Approvals</p>
-                <p class="text-xl md:text-3xl font-bold text-red-600 mt-1">{{ \App\Models\Announcement::where('status', 'draft')->count() }}</p>
+                <p class="text-xl md:text-3xl font-bold text-red-600 mt-1">{{ \App\Models\Announcement::where('status', 'Scheduled')->count() }}</p>
             </div>
             <div class="w-10 h-10 md:w-14 md:h-14 bg-red-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-check-circle text-red-600 text-lg md:text-2xl"></i>
@@ -148,9 +148,9 @@
 
     <div class="relative flex items-center justify-between">
         <div>
-            <p class="text-sm font-medium text-yellow-100">Pending Announc.</p>
+            <p class="text-sm font-medium text-yellow-100">Scheduled</p>
             <p class="text-2xl md:text-3xl font-bold mt-1">
-                {{ \App\Models\Announcement::where('status', 'draft')->count() }}
+                {{ \App\Models\Announcement::where('status', 'Scheduled')->count() }}
             </p>
         </div>
 
@@ -286,7 +286,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-800">{{ $announcement->title }}</p>
-                            <p class="text-xs text-gray-500">{{ $announcement->status === 'published' ? 'Published' : 'Draft' }}</p>
+                            <p class="text-xs text-gray-500">{{ $announcement->status === 'published' ? 'Published' : 'Scheduled' }}</p>
                         </div>
                     </div>
                     <span class="text-xs text-gray-400">{{ $announcement->created_at->format('M d, Y') }}</span>

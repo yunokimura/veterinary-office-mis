@@ -100,7 +100,7 @@ class SuperAdminController extends Controller
             ->pluck('count', 'status')
             ->toArray();
 
-        $statusOrder = ['Published', 'Draft', 'Archived'];
+        $statusOrder = ['Published', 'Scheduled', 'Archived'];
         $orderedAnnouncementStatus = [];
         foreach ($statusOrder as $status) {
             if (array_key_exists($status, $announcementStatusCounts)) {

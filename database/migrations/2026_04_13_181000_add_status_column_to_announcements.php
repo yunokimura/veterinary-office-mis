@@ -14,7 +14,7 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('announcements', 'status')) {
             Schema::table('announcements', function (Blueprint $table) {
-                $table->enum('status', ['Draft', 'Published', 'Archived'])->nullable()->after('is_active')->default('Draft');
+                 $table->enum('status', ['Draft', 'Scheduled', 'Published', 'Archived'])->nullable()->after('is_active')->default('Draft');
             });
         }
     }

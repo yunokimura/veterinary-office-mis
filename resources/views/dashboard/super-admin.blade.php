@@ -7,28 +7,9 @@
 
 @section('content')
 @php
-    $hour = date('H');
-    if ($hour >= 5 && $hour < 12) {
-        $greeting = 'Good morning';
-    } elseif ($hour >= 12 && $hour < 18) {
-        $greeting = 'Good afternoon';
-    } else {
-        $greeting = 'Good evening';
-    }
-    
     $deactivatedUsers = \App\Models\User::where('status', 'deactivated')->count();
-    $draftAnnouncements = \App\Models\Announcement::where('status', 'draft')->count();
+    $scheduledAnnouncements = \App\Models\Announcement::where('status', 'Scheduled')->count();
 @endphp
-
-<!-- Welcome Banner -->
-<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
-    <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
-        {{ $greeting }}, {{ auth()->user()->name ?? 'System Administrator' }}!
-    </h2>
-    <p class="text-sm md:text-base text-gray-600">
-        Full system access and account management.
-    </p>
-</div>
 
 <!-- Alert Banner for Deactivated Users -->
 @if($deactivatedUsers > 0)
@@ -55,8 +36,7 @@
 <!-- Quick Stats -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 items-stretch">
     <!-- Active Users -->
-    <a href="{{ route('super-admin.users.index') }}" class="block h-full">
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 h-full flex flex-col">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs md:text-sm font-medium text-gray-500">ACTIVE USERS</p>
@@ -67,13 +47,10 @@
                     <i class="bi bi-person-check text-teal-600 text-lg md:text-2xl"></i>
                 </div>
             </div>
-            <p class="text-xs font-medium text-teal-600 hover:text-teal-800 mt-auto">View Users →</p>
         </div>
-    </a>
 
     <!-- New Users -->
-    <a href="{{ route('super-admin.users.index') }}" class="block h-full">
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 h-full flex flex-col">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs md:text-sm font-medium text-gray-500">NEW USERS</p>
@@ -84,30 +61,24 @@
                     <i class="bi bi-person-plus text-blue-600 text-lg md:text-2xl"></i>
                 </div>
             </div>
-            <p class="text-xs font-medium text-blue-600 hover:text-blue-800 mt-auto">View Users →</p>
         </div>
-    </a>
 
-    <!-- Draft Announcements -->
-    <a href="{{ route('super-admin.announcements.index') }}" class="block h-full">
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-amber-200 hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+    <!-- Scheduled Announcements -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 h-full flex flex-col">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs md:text-sm font-medium text-amber-700">DRAFT ANNOUNCEMENTS</p>
-                    <p class="text-xl md:text-3xl font-bold text-amber-700 mt-1">{{ \App\Models\Announcement::where('status', 'draft')->count() }}</p>
+                    <p class="text-xs md:text-sm font-medium text-amber-700">SCHEDULED ANNOUNCEMENTS</p>
+                    <p class="text-xl md:text-3xl font-bold text-amber-700 mt-1">{{ \App\Models\Announcement::where('status', 'Scheduled')->count() }}</p>
                     <p class="text-xs text-amber-600 mt-1">Awaiting publication</p>
                 </div>
                 <div class="w-10 h-10 md:w-14 md:h-14 bg-amber-100 rounded-xl flex items-center justify-center">
                     <i class="bi bi-megaphone text-amber-600 text-lg md:text-2xl"></i>
                 </div>
             </div>
-            <p class="text-xs font-medium text-amber-700 hover:text-amber-900 mt-auto">Manage →</p>
         </div>
-    </a>
 
     <!-- Failed Activities -->
-    <a href="{{ route('super-admin.system-logs.index') }}" class="block h-full">
-        <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-red-200 hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 h-full flex flex-col">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs md:text-sm font-medium text-red-600">FAILED ACTIVITIES</p>
@@ -118,9 +89,7 @@
                     <i class="bi bi-journal-text text-red-500 text-lg md:text-2xl"></i>
                 </div>
             </div>
-            <p class="text-xs font-medium text-red-600 hover:text-red-800 mt-auto">View Logs →</p>
         </div>
-    </a>
 </div>
 
 <!-- Quick Actions -->
@@ -262,8 +231,8 @@
             <p class="text-xl font-bold text-green-700">{{ \App\Models\Announcement::where('is_active', true)->count() }}</p>
         </div>
         <div class="bg-yellow-50 rounded-lg p-3 border border-yellow-100">
-            <p class="text-xs text-yellow-600 font-medium">Drafts</p>
-            <p class="text-xl font-bold text-yellow-700">{{ $draftAnnouncements }}</p>
+            <p class="text-xs text-yellow-600 font-medium">Scheduled</p>
+            <p class="text-xl font-bold text-yellow-700">{{ $scheduledAnnouncements }}</p>
         </div>
         <div class="bg-blue-50 rounded-lg p-3 border border-blue-100">
             <p class="text-xs text-blue-600 font-medium">Total</p>
@@ -412,8 +381,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const statusColorMap = {
             'published': '#16a34a',
             'Published': '#16a34a',
-            'draft': '#f59e0b',
-            'Draft': '#f59e0b',
+            'scheduled': '#f59e0b',
+            'Scheduled': '#f59e0b',
             'archived': '#64748b',
             'Archived': '#64748b',
         };

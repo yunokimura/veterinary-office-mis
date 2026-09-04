@@ -52,6 +52,7 @@
                     <span class="px-2 py-1 rounded text-xs font-semibold 
                         @if($announcement->status === 'Published') bg-success text-white
                         @elseif($announcement->status === 'Draft') bg-secondary text-white
+                        @elseif($announcement->status === 'Scheduled') bg-warning text-white
                         @else bg-dark text-white @endif">
                         {{ $announcement->status }}
                     </span>
