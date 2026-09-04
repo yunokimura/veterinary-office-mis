@@ -17,9 +17,18 @@ class LogActivity
             $user = $request->user();
             
             if ($user) {
-                $action = $this->mapMethodToAction($request->method());
                 $routeName = $request->route() ? $request->route()->getName() : null;
-                $module = $this->extractModuleFromRoute($routeName);
+
+                if ($routeName === 'login' || $request->is('login')) {
+                    $action = 'login';
+                    $module = 'auth';
+                } elseif ($routeName === 'logout' || $request->is('logout')) {
+                    $action = 'logout';
+                    $module = 'auth';
+                } else {
+                    $action = $this->mapMethodToAction($request->method());
+                    $module = $this->extractModuleFromRoute($routeName);
+                }
                 
                 SystemLog::create([
                     'user_id' => $user->id,

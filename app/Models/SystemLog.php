@@ -84,6 +84,34 @@ class SystemLog extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function getActionInPastTenseAttribute(): string
+    {
+        return match (strtolower($this->action)) {
+            'create' => 'created',
+            'update' => 'updated',
+            'delete' => 'deleted',
+            'login' => 'logged in',
+            'logout' => 'logged out',
+            default => $this->action,
+        };
+    }
+
+    public function getActivityTextAttribute(): string
+    {
+        $name = $this->user->name ?? 'System';
+        $action = $this->action_in_past_tense;
+
+        if (in_array(strtolower($this->action), ['login', 'logout'])) {
+            return "{$name} {$action}";
+        }
+
+        if (stripos($this->module ?? '', 'pet') === 0 && strtolower($this->action) === 'create') {
+            return "{$name} {$action} a {$this->module}";
+        }
+
+        return "{$name} {$action} in {$this->module}";
+    }
+
     /**
      * Scope for filtering by module.
      */
