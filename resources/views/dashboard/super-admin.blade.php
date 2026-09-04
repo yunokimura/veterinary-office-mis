@@ -132,17 +132,7 @@
     <!-- System Activity Overview -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-            <div class="flex items-center gap-3">
-                <h3 class="text-base font-semibold text-gray-800">System Activity Overview</h3>
-                <div class="flex items-center gap-2">
-                    <button id="toggleSuccess" class="metric-toggle px-2.5 py-1 text-xs font-medium rounded-md border border-green-200 bg-green-50 text-green-700 hover:bg-green-100 transition" data-active="true">
-                        Successful
-                    </button>
-                    <button id="toggleFailed" class="metric-toggle px-2.5 py-1 text-xs font-medium rounded-md border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition" data-active="true">
-                        Failed
-                    </button>
-                </div>
-            </div>
+            <h3 class="text-base font-semibold text-gray-800">System Activity Overview</h3>
             <div class="flex items-center gap-2">
                 <select id="activityPeriod" class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="today">Today</option>
@@ -317,17 +307,15 @@
             </div>
         @endforelse
     </div>
-</div>
+    </div>
 
-@push('scripts')
+    @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // System Activity Overview Chart
     const systemActivityCtx = document.getElementById('systemActivityChart');
     let systemActivityChart = null;
 
-    const toggleSuccessBtn = document.getElementById('toggleSuccess');
-    const toggleFailedBtn = document.getElementById('toggleFailed');
     const periodSelect = document.getElementById('activityPeriod');
     const customRangeInputs = document.getElementById('customRangeInputs');
     const startDateInput = document.getElementById('startDate');
@@ -379,7 +367,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     legend: {
                         position: 'top',
-                        labels: { usePointStyle: true, pointStyle: 'circle' }
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 16,
+                            font: { size: 12 },
+                            color: '#374151',
+                            useBorderRadius: true,
+                            borderRadius: 4,
+                        },
                     }
                 },
                 scales: {
@@ -393,21 +389,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    }
-
-    function getActiveMetrics() {
-        return {
-            success: toggleSuccessBtn.dataset.active !== 'false',
-            failed: toggleFailedBtn.dataset.active !== 'false',
-        };
-    }
-
-    function applyMetricVisibility() {
-        if (!systemActivityChart) return;
-        const metrics = getActiveMetrics();
-        systemActivityChart.data.datasets[0].hidden = !metrics.success;
-        systemActivityChart.data.datasets[1].hidden = !metrics.failed;
-        systemActivityChart.update();
     }
 
     async function loadSystemActivity() {
@@ -427,7 +408,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (result.success) {
             buildSystemActivityChart(result.data.labels, result.data.success, result.data.failed);
-            applyMetricVisibility();
         }
     }
 
@@ -436,16 +416,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const initialSuccess = @json($systemActivitySuccess ?? []);
         const initialFailed = @json($systemActivityFailed ?? []);
         buildSystemActivityChart(initialLabels, initialSuccess, initialFailed);
-    }
-
-    if (toggleSuccessBtn && toggleFailedBtn) {
-        [toggleSuccessBtn, toggleFailedBtn].forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.dataset.active = this.dataset.active === 'true' ? 'false' : 'true';
-                this.classList.toggle('opacity-50');
-                applyMetricVisibility();
-            });
-        });
     }
 
     if (periodSelect) {
