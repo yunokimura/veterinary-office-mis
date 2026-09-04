@@ -450,8 +450,8 @@
                                 <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
                             </div>
                             <span class="text-sm font-medium text-slate-600 hidden md:block">{{ auth()->user()->name ?? 'Admin' }}</span>
-                            <i class="bi bi-chevron-down text-xs text-slate-400 hidden md:block transition-transform duration-200"
-                               :class="open ? 'rotate-180' : ''"></i>
+                            <i class="bi text-xs text-slate-400 hidden md:block"
+                               :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
                         </button>
                         <div x-show="open" @click.away="open = false"
                              class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-slate-200 z-50 py-1"
