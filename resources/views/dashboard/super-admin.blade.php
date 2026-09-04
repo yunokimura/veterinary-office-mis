@@ -92,12 +92,12 @@
         </div>
 </div>
 
-<!-- Quick Actions -->
+<!-- Quick Actions
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
     <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
     
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <!-- Create User -->
+        Create User
         <a href="{{ route('super-admin.users.create') }}"
            class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
             <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
@@ -106,7 +106,7 @@
             <span class="text-sm font-medium text-gray-700">New User</span>
         </a>
 
-        <!-- New Announcement -->
+        New Announcement
         <a href="{{ route('super-admin.announcements.create') }}"
            class="flex flex-col items-center p-4 bg-green-50 hover:bg-green-100 rounded-xl transition group">
             <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
@@ -115,7 +115,7 @@
             <span class="text-sm font-medium text-gray-700">Announcement</span>
         </a>
 
-        <!-- System Logs -->
+        System Logs
         <a href="{{ route('super-admin.system-logs.index') }}"
            class="flex flex-col items-center p-4 bg-red-50 hover:bg-red-100 rounded-xl transition group">
             <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
@@ -125,6 +125,7 @@
         </a>
     </div>
 </div>
+-->
 
 <!-- Analytics Overview -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
