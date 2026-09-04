@@ -99,17 +99,31 @@ class SystemLog extends Model
     public function getActivityTextAttribute(): string
     {
         $name = $this->user->name ?? 'System';
+
+        return match (strtolower($this->action)) {
+            'login', 'logout' => "{$name} {$this->action_in_past_tense}",
+            'register' => "{$name} registered",
+            'address_fallback' => "{$name} triggered a barangay fallback",
+            'create_user' => "{$name} created a user",
+            'update_user' => "{$name} updated a user",
+            'delete_user' => "{$name} deleted a user",
+            'toggle_user_status' => "{$name} changed a user status",
+            'export_report' => "{$name} exported a report",
+            'update_settings' => "{$name} updated system settings",
+            default => $this->defaultActivityText($name),
+        };
+    }
+
+    private function defaultActivityText(string $name): string
+    {
         $action = $this->action_in_past_tense;
+        $module = $this->module;
 
-        if (in_array(strtolower($this->action), ['login', 'logout'])) {
-            return "{$name} {$action}";
+        if (stripos($module ?? '', 'pet') === 0 && strtolower($this->action) === 'create') {
+            return "{$name} {$action} a {$module}";
         }
 
-        if (stripos($this->module ?? '', 'pet') === 0 && strtolower($this->action) === 'create') {
-            return "{$name} {$action} a {$this->module}";
-        }
-
-        return "{$name} {$action} in {$this->module}";
+        return $module ? "{$name} {$action} in {$module}" : "{$name} {$action}";
     }
 
     /**
