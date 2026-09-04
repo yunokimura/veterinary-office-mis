@@ -143,8 +143,22 @@
                     <span class="font-bold text-slate-800 text-sm">City Vet MIS</span>
                 </div>
             </div>
-            <div class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center">
-                <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open"
+                        class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-400">
+                    <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
+                </button>
+                <div x-show="open" @click.away="open = false"
+                     class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-slate-200 z-50 py-1"
+                     style="display: none;">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                                class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                            <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </header>
@@ -364,16 +378,6 @@
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Information</div>
             @endif
-
-            <div class="sidebar-divider"></div>
-            <div class="px-2 pt-2 mt-auto flex justify-center">
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="nav-item">
-                        <i class="bi bi-box-arrow-right"></i><span>Logout</span>
-                    </button>
-                </form>
-            </div>
         </nav>
     </aside>
 
@@ -439,11 +443,27 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 pl-3 border-l border-slate-200">
-                        <div class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center">
-                            <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open"
+                                class="flex items-center gap-2 pl-3 border-l border-slate-200 focus:outline-none rounded-md py-1 pr-2 hover:bg-slate-50">
+                            <div class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
+                            </div>
+                            <span class="text-sm font-medium text-slate-600 hidden md:block">{{ auth()->user()->name ?? 'Admin' }}</span>
+                            <i class="bi bi-chevron-down text-xs text-slate-400 hidden md:block transition-transform duration-200"
+                               :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" @click.away="open = false"
+                             class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-slate-200 z-50 py-1"
+                             style="display: none;">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                        class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+                                </button>
+                            </form>
                         </div>
-                        <span class="text-sm font-medium text-slate-600 hidden md:block">{{ auth()->user()->name ?? 'Admin' }}</span>
                     </div>
                 </div>
             </div>
