@@ -139,13 +139,13 @@
         </div>
     </div>
 
-    <!-- Announcement Status -->
+    <!-- User Accounts by Role -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Announcement Status</h3>
+            <h3 class="text-base font-semibold text-gray-800">User Accounts by Role</h3>
         </div>
         <div class="h-64">
-            <canvas id="announcementStatusChart"></canvas>
+            <canvas id="userRoleChart"></canvas>
         </div>
     </div>
 </div>
@@ -376,30 +376,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Announcement Status Chart
-    const announcementStatusCtx = document.getElementById('announcementStatusChart');
-    if (announcementStatusCtx) {
-        const statusLabels = @json($announcementStatusLabels ?? []);
-        const statusData = @json($announcementStatusData ?? []);
+    // User Accounts by Role Chart
+    const userRoleCtx = document.getElementById('userRoleChart');
+    if (userRoleCtx) {
+        const roleLabels = @json($userRoleLabels ?? []);
+        const roleData = @json($userRoleData ?? []);
+        const roleColors = @json($userRoleColors ?? []);
 
-        const statusColorMap = {
-            'published': '#16a34a',
-            'Published': '#16a34a',
-            'scheduled': '#f59e0b',
-            'Scheduled': '#f59e0b',
-            'archived': '#64748b',
-            'Archived': '#64748b',
-        };
-        const fallbackColors = ['#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
-        const statusColors = statusLabels.map((label, index) => statusColorMap[label] ?? fallbackColors[index % fallbackColors.length]);
-
-        new Chart(announcementStatusCtx.getContext('2d'), {
+        new Chart(userRoleCtx.getContext('2d'), {
             type: 'doughnut',
             data: {
-                labels: statusLabels,
+                labels: roleLabels,
                 datasets: [{
-                    data: statusData,
-                    backgroundColor: statusColors,
+                    data: roleData,
+                    backgroundColor: roleColors,
                     borderWidth: 2,
                     borderColor: '#fff',
                 }]
@@ -410,7 +400,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: { usePointStyle: true, pointStyle: 'circle', padding: 20 }
+                        labels: { usePointStyle: true, pointStyle: 'circle', padding: 16 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const value = context.parsed;
+                                const pct = total > 0 ? Math.round((value / total) * 100) : 0;
+                                return ` ${context.label}: ${value} (${pct}%)`;
+                            }
+                        }
                     }
                 },
                 cutout: '60%',

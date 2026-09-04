@@ -94,26 +94,42 @@ class SuperAdminController extends Controller
             $systemActivityFailed[] = SystemLog::whereDate('created_at', $date)->where('status', 'failed')->count();
         }
 
-        // Get announcement status counts
-        $announcementStatusCounts = Announcement::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status')
+        // Get user accounts by role (6 display roles)
+        $userRoleCounts = User::selectRaw('role, COUNT(*) as count')
+            ->groupBy('role')
+            ->pluck('count', 'role')
             ->toArray();
 
-        $statusOrder = ['Published', 'Scheduled', 'Archived'];
-        $orderedAnnouncementStatus = [];
-        foreach ($statusOrder as $status) {
-            if (array_key_exists($status, $announcementStatusCounts)) {
-                $orderedAnnouncementStatus[$status] = $announcementStatusCounts[$status];
-                unset($announcementStatusCounts[$status]);
+        $displayRoles = [
+            'super_admin'    => 'Super Administrator (IT)',
+            'city_vet'       => 'City Veterinarian',
+            'assistant_vet'  => 'Assistant Veterinarian',
+            'admin_asst'     => 'Administrative Assistant',
+            'meat_inspector' => 'Meat Inspector',
+            'pet_owner'      => 'Pet Owner',
+        ];
+
+        $userRoleLabels = [];
+        $userRoleData = [];
+        $userRoleColors = [];
+
+        $roleColorMap = [
+            'super_admin'    => '#7c3aed',
+            'city_vet'       => '#2563eb',
+            'assistant_vet'  => '#16a34a',
+            'admin_asst'     => '#0891b2',
+            'meat_inspector' => '#dc2626',
+            'pet_owner'      => '#6366f1',
+        ];
+
+        arsort($userRoleCounts);
+        foreach ($userRoleCounts as $roleKey => $count) {
+            if (array_key_exists($roleKey, $displayRoles)) {
+                $userRoleLabels[] = $displayRoles[$roleKey];
+                $userRoleData[] = $count;
+                $userRoleColors[] = $roleColorMap[$roleKey] ?? '#94a3b8';
             }
         }
-        foreach ($announcementStatusCounts as $status => $count) {
-            $orderedAnnouncementStatus[$status] = $count;
-        }
-
-        $announcementStatusLabels = array_keys($orderedAnnouncementStatus);
-        $announcementStatusData = array_values($orderedAnnouncementStatus);
 
         return view('dashboard.super-admin', compact(
             'user',
@@ -127,8 +143,9 @@ class SuperAdminController extends Controller
             'systemActivityLabels',
             'systemActivitySuccess',
             'systemActivityFailed',
-            'announcementStatusLabels',
-            'announcementStatusData'
+            'userRoleLabels',
+            'userRoleData',
+            'userRoleColors'
         ));
     }
 
