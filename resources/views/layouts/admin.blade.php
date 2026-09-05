@@ -189,8 +189,7 @@
         @endphp
 
         <!-- Navigation -->
-        <nav class="px-3 py-2 overflow-y-auto" style="height: calc(100vh - 140px);">
-            <div class="sidebar-section-label">Main</div>
+        <nav class="px-3 py-2 overflow-y-auto space-y-2" style="height: calc(100vh - 140px);">
             <a href="{{ route($dashboardRoute) }}"
                class="nav-item {{ request()->routeIs($prefix.'.dashboard') ? 'active-nav' : '' }}">
                 <i class="bi bi-grid-1x2"></i>
@@ -198,17 +197,34 @@
             </a>
 
             @if(auth()->check() && auth()->user()->hasRole('super_admin'))
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">System Admin</div>
 
-            <a href="{{ route('super-admin.users.index') }}" class="nav-item {{ request()->routeIs('super-admin.users.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-people"></i><span>User Management</span>
+            <div x-data="{ open: false }">
+                <button @click="open = !open"
+                        class="nav-item w-full justify-between {{ request()->routeIs('super-admin.users.*') ? 'active-nav' : '' }}">
+                    <span class="flex items-center gap-2 whitespace-nowrap">
+                        <i class="bi bi-people"></i><span>User Management</span>
+                    </span>
+                    <i class="bi text-xs transition-transform duration-200"
+                       :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                </button>
+                <div x-show="open" x-cloak class="ml-8 mt-1 mb-3 space-y-3">
+                    <a href="{{ route('super-admin.users.index') }}" class="block text-sm text-green-100 hover:text-white">
+                        <i class="bi bi-person-lines-fill mr-2 text-xs"></i>All Users
+                    </a>
+                    <a href="#" class="block text-sm text-green-400 hover:text-white cursor-default opacity-80">
+                        <i class="bi bi-person-plus mr-2 text-xs"></i>Add New User
+                    </a>
+                    <a href="#" class="block text-sm text-green-400 hover:text-white cursor-default opacity-80">
+                        <i class="bi bi-shield-lock mr-2 text-xs"></i>Roles & Permissions
+                    </a>
+                </div>
+            </div>
+
+            <a href="{{ route('super-admin.announcements.index') }}" class="nav-item {{ request()->routeIs('super-admin.announcements.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-megaphone"></i><span>Announcements</span>
             </a>
             <a href="{{ route('super-admin.system-logs.index') }}" class="nav-item {{ request()->routeIs('super-admin.system-logs.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-journal-text"></i><span>System Logs</span>
-            </a>
-            <a href="{{ route('super-admin.announcements.index') }}" class="nav-item {{ request()->routeIs('super-admin.announcements.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-megaphone"></i><span>Announcements</span>
             </a>
 
             @elseif(auth()->check() && auth()->user()->hasRole('city_vet'))
