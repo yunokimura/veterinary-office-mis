@@ -80,20 +80,27 @@ class UserController extends Controller
      * Show the form for creating a new resource.
      * Permission: Must have level >= 3 to create users
      */
-    public function create()
+    public function create(Request $request)
     {
-        // Gate check using policy
         if (Gate::denies('create', User::class)) {
             return back()->with('error', 'You do not have permission to create users.');
         }
 
-        // Get assignable roles based on current user's hierarchy
         $assignableRoles = auth()->user()->getAssignableRoles();
-
-        // Get facilities for dropdown (only Super Admin sees this)
         $facilities = auth()->user()->hasRole('super_admin')
             ? Facility::orderBy('name')->get()
             : collect();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('admin.users._modal-form', [
+                'user' => null,
+                'formAction' => route('super-admin.users.store'),
+                'formId' => 'globalCreateUserModalForm',
+                'assignableRoles' => $assignableRoles,
+                'facilities' => $facilities,
+                'modal' => true,
+            ]);
+        }
 
         return view('admin.users.create', compact('assignableRoles', 'facilities'));
     }

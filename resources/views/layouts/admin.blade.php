@@ -211,7 +211,7 @@
                     <a href="{{ route('super-admin.users.index') }}" class="block text-sm text-green-100 hover:text-white">
                         <i class="bi bi-person-lines-fill mr-2 text-xs"></i>All Users
                     </a>
-                    <a href="#" class="block text-sm text-green-400 hover:text-white cursor-default opacity-80">
+                    <a href="javascript:void(0)" onclick="openGlobalCreateUserModal()" class="block text-sm text-green-400 hover:text-white">
                         <i class="bi bi-person-plus mr-2 text-xs"></i>Add New User
                     </a>
                     <a href="#" class="block text-sm text-green-400 hover:text-white cursor-default opacity-80">
@@ -426,6 +426,144 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="modal fade" id="globalCreateUserModal" tabindex="-1" aria-labelledby="globalCreateUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="globalCreateUserModalLabel">Add User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="globalCreateModalBody">
+                    <div class="text-center py-12">
+                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
+                        <p class="mt-4 text-gray-600">Loading form...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let globalCreateModal;
+        let globalCreateFormInjected = false;
+
+        function openGlobalCreateUserModal() {
+            if (!globalCreateModal) {
+                globalCreateModal = new bootstrap.Modal(document.getElementById('globalCreateUserModal'));
+            }
+
+            if (!globalCreateFormInjected) {
+                const modalBody = document.getElementById('globalCreateModalBody');
+                fetch('{{ route('super-admin.users.create') }}', {
+                    headers: {
+                        'Accept': 'text/html',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    modalBody.innerHTML = html;
+                    globalCreateFormInjected = true;
+                    globalCreateModal.show();
+                })
+                .catch(() => {
+                    modalBody.innerHTML = '<p class="text-red-600 text-center py-8">Error loading form. Please try again.</p>';
+                    globalCreateModal.show();
+                });
+            } else {
+                globalCreateModal.show();
+            }
+        }
+
+        function refreshUsersTableIfAvailable() {
+            const path = window.location.pathname;
+            const isUsersPage = path.includes('/super-admin/users') || path.includes('/admin/users');
+            if (!isUsersPage) return;
+            location.reload();
+        }
+
+        function showGlobalToast(type, message) {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'role' && e.target.closest('#globalCreateModalBody')) {
+                const alternatePhoneContainer = document.getElementById('alternate_phone_number_container');
+                const facilitySection = document.getElementById('section-facility');
+                if (e.target.value === 'pet_owner') {
+                    if (alternatePhoneContainer) alternatePhoneContainer.style.display = 'block';
+                    if (facilitySection) facilitySection.style.display = 'none';
+                } else {
+                    if (alternatePhoneContainer) alternatePhoneContainer.style.display = 'none';
+                    if (facilitySection) facilitySection.style.display = 'block';
+                }
+            }
+        });
+
+        document.addEventListener('submit', function(e) {
+            if (e.target && e.target.id === 'globalCreateUserModalForm') {
+                e.preventDefault();
+
+                const form = e.target;
+                const formData = new FormData(form);
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span> Creating...';
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw data;
+                    }
+                    return data;
+                })
+                .then(data => {
+                    if (data.success) {
+                        globalCreateModal.hide();
+                        showGlobalToast('success', data.message);
+                        refreshUsersTableIfAvailable();
+                    }
+                })
+                .catch(error => {
+                    if (error.errors) {
+                        const modalBody = document.getElementById('globalCreateModalBody');
+                        modalBody.querySelectorAll('.text-red-600').forEach(el => el.remove());
+                        modalBody.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+                        for (const [field, messages] of Object.entries(error.errors)) {
+                            const input = document.getElementById(field);
+                            if (input) {
+                                input.classList.add('border-red-500');
+                                const errorEl = document.createElement('p');
+                                errorEl.className = 'mt-1 text-sm text-red-600';
+                                errorEl.textContent = messages[0];
+                                input.parentNode.appendChild(errorEl);
+                            }
+                        }
+                    }
+                    showGlobalToast('error', error.message || 'Please check the form for errors.');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                });
+            }
+        });
+    </script>
     @stack('scripts')
 </body>
 </html>
