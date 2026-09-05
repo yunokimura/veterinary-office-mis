@@ -56,7 +56,7 @@
             gap: 10px;
             padding: 9px 14px;
             border-radius: 8px;
-            color: #94a3b8;
+            color: #fff;
             font-size: 13.5px;
             font-weight: 500;
             transition: all 0.15s ease;
@@ -207,14 +207,14 @@
                     <i class="bi text-xs transition-transform duration-200"
                        :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
                 </button>
-                <div x-show="open" x-cloak class="ml-8 mt-1 mb-3 space-y-3">
-                    <a href="{{ route('super-admin.users.index') }}" class="block text-sm text-green-100 hover:text-white">
+                <div x-show="open" x-cloak class="ml-4 mt-1 mb-3 space-y-3">
+                    <a href="{{ route('super-admin.users.index') }}" class="block text-sm text-white hover:bg-white/10 hover:text-white rounded-md px-2 py-1 transition-colors">
                         <i class="bi bi-person-lines-fill mr-2 text-xs"></i>All Users
                     </a>
-                    <a href="javascript:void(0)" onclick="openGlobalCreateUserModal()" class="block text-sm text-green-400 hover:text-white">
+                    <a href="javascript:void(0)" onclick="openGlobalCreateUserModal()" class="block text-sm text-white hover:bg-white/10 hover:text-white rounded-md px-2 py-1 transition-colors">
                         <i class="bi bi-person-plus mr-2 text-xs"></i>Add New User
                     </a>
-                    <a href="#" class="block text-sm text-green-400 hover:text-white cursor-default opacity-80">
+                    <a href="#" class="block text-sm text-white hover:bg-white/10 hover:text-white rounded-md px-2 py-1 transition-colors cursor-default opacity-80 whitespace-nowrap">
                         <i class="bi bi-shield-lock mr-2 text-xs"></i>Roles & Permissions
                     </a>
                 </div>
