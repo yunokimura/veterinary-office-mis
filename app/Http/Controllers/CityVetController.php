@@ -71,6 +71,27 @@ class CityVetController extends Controller
             ->pluck('count', 'month')
             ->toArray();
 
+        $availableYears = BiteRabiesReport::where('rabies_confirmed', true)
+            ->selectRaw('DISTINCT YEAR(incident_date) as year')
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->filter(function ($y) {
+                return $y >= 2024;
+            })
+            ->values()
+            ->toArray();
+
+        $currentYear = (int) date('Y');
+        $compareYear1 = $request->compare_year1 ?? $currentYear;
+        $compareYear2 = $request->compare_year2 ?? ($currentYear - 1);
+
+        if ($compareYear2 === $currentYear || $compareYear2 === $compareYear1) {
+            $compareYear2 = $currentYear - 1;
+        }
+
+        $monthlyCasesYear1 = $this->getMonthlyCasesByYear($compareYear1);
+        $monthlyCasesYear2 = $this->getMonthlyCasesByYear($compareYear2);
+
         // Get cases by type for the selected year
         $casesByType = BiteRabiesReport::whereYear('incident_date', $speciesYear)
             ->selectRaw('animal_type, COUNT(*) as count')
@@ -139,7 +160,12 @@ class CityVetController extends Controller
             'biteCasesByBarangay',
             'topBarangays',
             'lowestVaccination',
-            'establishments'
+            'establishments',
+            'availableYears',
+            'compareYear1',
+            'compareYear2',
+            'monthlyCasesYear1',
+            'monthlyCasesYear2'
         ));
     }
 
@@ -292,6 +318,19 @@ class CityVetController extends Controller
         }
 
         return $data;
+    }
+
+    /**
+     * Get monthly confirmed rabies cases for a given year as 1-indexed array.
+     */
+    private function getMonthlyCasesByYear(int $year): array
+    {
+        return BiteRabiesReport::where('rabies_confirmed', true)
+            ->whereYear('incident_date', $year)
+            ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
     }
 
     /**

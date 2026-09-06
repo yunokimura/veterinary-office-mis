@@ -75,21 +75,25 @@
 
 <!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
-    <!-- Confirmed Rabies Cases by Month -->
+    <!-- Confirmed Rabies Cases -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases by Month</h3>
-            <select onchange="window.location.href='?chart_month='+this.value" 
-                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                <option value="">All Months</option>
-                @for($m = 1; $m <= 12; $m++)
-                    <option value="{{ $m }}" {{ ($chartMonth ?? '') == $m ? 'selected' : '' }}>
-                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
-                    </option>
-                @endfor
-            </select>
+            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
+            <div class="flex items-center gap-2">
+                <select id="compareYear1" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                    @foreach($availableYears as $y)
+                        <option value="{{ $y }}" {{ $compareYear1 == $y ? 'selected' : '' }}>{{ $y }}</option>
+                    @endforeach
+                </select>
+                <span class="text-xs text-gray-500">vs</span>
+                <select id="compareYear2" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                    @foreach($availableYears as $y)
+                        <option value="{{ $y }}" {{ $compareYear2 == $y ? 'selected' : '' }}>{{ $y }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
-        <div class="h-64">
+        <div class="h-64 relative">
             <canvas id="biteCasesByMonthChart"></canvas>
         </div>
     </div>
@@ -199,49 +203,144 @@ document.addEventListener('DOMContentLoaded', function() {
     const monthlyBiteCases = @json($monthlyCases ?? []);
     const adoptionReportsByMonth = @json($adoptionReportsByMonth ?? []);
     const missingPetReportsByMonth = @json($missingPetReportsByMonth ?? []);
-    const monthLabels = Array.from({length: 12}, (_, i) => {
-        const date = new Date({{ $monthlyYear ?? date('Y') }}, i, 1);
-        return date.toLocaleString('default', { month: 'short' });
-    });
+    const monthlyCasesYear1 = @json($monthlyCasesYear1 ?? []);
+    const monthlyCasesYear2 = @json($monthlyCasesYear2 ?? []);
+    const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const biteData = monthLabels.map((_, i) => monthlyBiteCases[i + 1] || 0);
     const adoptionData = monthLabels.map((_, i) => adoptionReportsByMonth[i + 1] || 0);
     const missingData = monthLabels.map((_, i) => missingPetReportsByMonth[i + 1] || 0);
-    
+
     // Barangay data for bar charts
     const vaccinationsByBarangay = @json($vaccinationsByBarangay ?? []);
     const biteCasesByBarangay = @json($biteCasesByBarangay ?? []);
     const barangays = @json($barangays ?? []);
 
-    // Confirmed Rabies Cases by Month Chart
+    const year1Select = document.getElementById('compareYear1');
+    const year2Select = document.getElementById('compareYear2');
+    const currentMonth = new Date().getMonth() + 1;
+
+    function buildLineDataset(yearLabel, rawData, borderColor, backgroundColor) {
+        const isCurrentYear = parseInt(yearLabel, 10) === new Date().getFullYear();
+        const data = monthLabels.map((_, i) => {
+            const monthNum = i + 1;
+            if (isCurrentYear && monthNum > currentMonth) return null;
+            return rawData[monthNum] || 0;
+        });
+        return {
+            label: String(yearLabel),
+            data,
+            borderColor,
+            backgroundColor,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: borderColor,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+        };
+    }
+
+    function getBiteCasesDatasets() {
+        const y1 = year1Select ? year1Select.value : '{{ $compareYear1 }}';
+        const y2 = year2Select ? year2Select.value : '{{ $compareYear2 }}';
+        const ds1 = buildLineDataset(y1, monthlyCasesYear1, '#DC2626', 'rgba(220, 38, 38, 0.08)');
+        const ds2 = buildLineDataset(y2, monthlyCasesYear2, '#4B5563', 'rgba(75, 85, 99, 0.06)');
+        return [ds1, ds2];
+    }
+
     const biteCtx = document.getElementById('biteCasesByMonthChart').getContext('2d');
-    new Chart(biteCtx, {
+    const biteChart = new Chart(biteCtx, {
         type: 'line',
         data: {
             labels: monthLabels,
-            datasets: [{
-                label: 'Confirmed Rabies Cases',
-                data: biteData,
-                borderColor: '#ef4444',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#ef4444',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
-            }]
+            datasets: getBiteCasesDatasets()
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 16,
+                        font: { size: 12 },
+                        color: '#374151'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#111827',
+                    bodyColor: '#374151',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                        title: function(context) {
+                            return context[0].label;
+                        },
+                        label: function(context) {
+                            const year = context.dataset.label;
+                            const value = context.parsed.y;
+                            const currentIdx = context.dataIndex;
+                            const lines = [`${year}: ${value} case${value !== 1 ? 's' : ''}`];
+                            if (parseInt(year, 10) === new Date().getFullYear() && currentIdx > 0) {
+                                const prevYear = String(new Date().getFullYear() - 1);
+                                const prevValue = monthLabels.map((_, i) => monthlyCasesYear2[i + 1] || 0)[currentIdx];
+                                if (prevValue > 0) {
+                                    const yoy = (((value || 0) - prevValue) / prevValue) * 100;
+                                    const sign = yoy > 0 ? '+' : '';
+                                    lines.push(`YoY: ${sign}${yoy.toFixed(1)}%`);
+                                }
+                            }
+                            return lines;
+                        }
+                    }
+                }
+            },
             scales: {
-                y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-                x: { grid: { display: false } }
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    ticks: {
+                        stepSize: 2,
+                        callback: function(value) { return Number.isInteger(value) ? value : ''; }
+                    },
+                    grid: { color: '#f3f4f6' }
+                },
+                x: {
+                    grid: { display: false }
+                }
             }
         }
     });
+
+    if (year1Select && year2Select) {
+        [year1Select, year2Select].forEach(sel => {
+            sel.addEventListener('change', function() {
+                const v1 = year1Select.value;
+                const v2 = year2Select.value;
+                if (v1 === v2) {
+                    const availableYears = Array.from(year1Select.options).map(o => o.value);
+                    const other = sel === year1Select ? year2Select : year1Select;
+                    const currentOther = other.value;
+                    const replacement = availableYears.find(y => y !== currentOther) || currentOther;
+                    other.value = replacement;
+                }
+                biteChart.data.datasets = getBiteCasesDatasets();
+                biteChart.update();
+            });
+        });
+    }
 
     // Adoption Reports by Month Chart
     const adoptionCtx = document.getElementById('adoptionReportsChart').getContext('2d');
