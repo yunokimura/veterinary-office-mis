@@ -35,146 +35,39 @@
     </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 mb-6">
-    <h3 class="text-base font-semibold text-gray-800 mb-4">Quick Actions</h3>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
-        <a href="{{ route('admin.vaccination-reports.index') }}" class="flex flex-col items-center justify-center p-3 md:p-4 pr-4 mr-1 bg-white rounded-xl shadow-sm transition group hover:-translate-y-1 h-full">
-            <div class="w-12 h-12 md:w-14 md:h-14 bg-red-600 rounded-xl flex items-center justify-center mb-1 md:mb-2">
-                <i class="bi bi-eyedropper text-white text-lg md:text-xl"></i>
-            </div>
-            <span class="text-xs md:text-sm font-semibold text-gray-700 text-center leading-tight whitespace-nowrap">Vaccination</span>
-        </a>
-        <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="flex flex-col items-center justify-center p-3 md:p-4 ml-1 bg-white rounded-xl shadow-sm transition group hover:-translate-y-1 h-full">
-            <div class="w-12 h-12 md:w-14 md:h-14 bg-orange-600 rounded-xl flex items-center justify-center mb-1 md:mb-2">
-                <i class="bi bi-file-earmark-medical text-white text-lg md:text-xl"></i>
-            </div>
-            <span class="text-xs md:text-sm font-semibold text-gray-700 text-center leading-tight whitespace-nowrap">Bite Reports</span>
-        </a>
-        <a href="{{ route('city-vet.rabies-geomap') }}" class="flex flex-col items-center justify-center p-3 md:p-4 ml-1 bg-white rounded-xl shadow-sm transition group hover:-translate-y-1 h-full">
-            <div class="w-12 h-12 md:w-14 md:h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-1 md:mb-2">
-                <i class="bi bi-geo-alt-fill text-white text-lg md:text-xl"></i>
-            </div>
-            <span class="text-xs md:text-sm font-semibold text-gray-700 text-center leading-tight whitespace-nowrap">Heatmap</span>
-        </a>
-        <a href="{{ route('admin.all-reports') }}" class="flex flex-col items-center justify-center p-3 md:p-4 ml-1 bg-white rounded-xl shadow-sm transition group hover:-translate-y-1 h-full">
-            <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-1 md:mb-2">
-                <i class="bi bi-file-earmark-bar-graph text-white text-lg md:text-xl"></i>
-            </div>
-            <span class="text-xs md:text-sm font-semibold text-gray-700 text-center leading-tight whitespace-nowrap">Reports</span>
-        </a>
-    </div>
-</div>
 
 <!-- Analytics Section -->
 <div class="mb-6">
     <h3 class="text-lg font-semibold text-gray-800 mb-4">Analytics Overview</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <!-- Monthly Bite Case Trend -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-gray-500">Monthly Bite Case Trend</p>
-                <i class="bi bi-graph-up text-gray-400"></i>
-            </div>
-            <p class="text-2xl font-bold text-gray-800 mb-1">
-                {{ $analytics['monthly_trend'] ?? 0 }}%
-            </p>
-            <p class="text-xs text-gray-500">
-                @if(($analytics['monthly_trend'] ?? 0) > 0)
-                    <span class="text-red-600">↑</span> vs last year
-                @elseif(($analytics['monthly_trend'] ?? 0) < 0)
-                    <span class="text-green-600">↓</span> vs last year
-                @else
-                    <span class="text-gray-600">→</span> vs last year
-                @endif
-            </p>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
         <!-- Bite Cases by Barangay -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-gray-500">Rabies Cases by Barangay</p>
-                <i class="bi bi-geo-alt text-gray-400"></i>
-            </div>
-        <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-                <span class="text-gray-600">Highest:</span>
-                <span class="font-semibold text-gray-800">{{ $analytics['bite_cases_by_barangay']['highest']->count ?? 0 }}</span>
-            </div>
-            <div class="flex justify-between text-xs">
-                <span class="text-gray-600">Lowest:</span>
-                <span class="font-semibold text-gray-800">{{ $analytics['bite_cases_by_barangay']['lowest']->count ?? 0 }}</span>
-            </div>
-            <div class="flex justify-between text-xs">
-                <span class="text-gray-600">Average:</span>
-                <span class="font-semibold text-gray-800">{{ round($analytics['bite_cases_by_barangay']['average'] ?? 0, 1) }}</span>
-            </div>
-        </div>
+            <p class="text-xs font-medium text-gray-500 mb-2">Rabies Cases by Barangay</p>
+            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['bite_cases_by_barangay']['highest']->count ?? 0 }}</p>
+            <p class="text-xs text-gray-500 mb-3">Peak Cases</p>
+            <p class="text-xs text-gray-400">Avg: {{ round($analytics['bite_cases_by_barangay']['average'] ?? 0, 1) }} per barangay</p>
         </div>
 
         <!-- Adoption Performance -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-gray-500">Adoption Performance</p>
-                <i class="bi bi-heart text-gray-400"></i>
-            </div>
-            <div class="space-y-1">
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Pending:</span>
-                    <span class="font-semibold text-orange-600">{{ $analytics['adoption_performance']['pending'] ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Approved:</span>
-                    <span class="font-semibold text-green-600">{{ $analytics['adoption_performance']['approved'] ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Adoption Rate:</span>
-                    <span class="font-semibold text-blue-600">{{ $analytics['adoption_performance']['adoption_rate'] ?? 0 }}%</span>
-                </div>
+            <p class="text-xs font-medium text-gray-500 mb-2">Adoption Performance</p>
+            <p class="text-2xl font-bold text-gray-800 mb-1">{{ $analytics['adoption_performance']['adoption_rate'] ?? 0 }}%</p>
+            <p class="text-xs text-gray-500 mb-3">Adoption Rate</p>
+            <div class="flex gap-2">
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['adoption_performance']['approved'] ?? 0 }} Approved</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">{{ $analytics['adoption_performance']['pending'] ?? 0 }} Pending</span>
             </div>
         </div>
 
         <!-- Missing Pet Recovery -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-gray-500">Missing Pet Recovery</p>
-                <i class="bi bi-search text-gray-400"></i>
-            </div>
-            <div class="space-y-1">
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Active:</span>
-                    <span class="font-semibold text-orange-600">{{ $analytics['missing_pet_recovery']['active'] ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Resolved:</span>
-                    <span class="font-semibold text-green-600">{{ $analytics['missing_pet_recovery']['resolved'] ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Recovery Rate:</span>
-                    <span class="font-semibold text-blue-600">{{ $analytics['missing_pet_recovery']['recovery_rate'] ?? 0 }}%</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Meat Establishment Monitoring -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-gray-500">Meat Establishment</p>
-                <i class="bi bi-shop text-gray-400"></i>
-            </div>
-            <div class="space-y-1">
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Active:</span>
-                    <span class="font-semibold text-green-600">{{ $analytics['meat_establishment_monitoring']['active'] ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Pending:</span>
-                    <span class="font-semibold text-orange-600">{{ $analytics['meat_establishment_monitoring']['pending_inspection'] ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Expired:</span>
-                    <span class="font-semibold text-red-600">{{ $analytics['meat_establishment_monitoring']['expired'] ?? 0 }}</span>
-                </div>
+            <p class="text-xs font-medium text-gray-500 mb-2">Missing Pet Recovery</p>
+            <p class="text-2xl font-bold text-gray-800 mb-1">{{ $analytics['missing_pet_recovery']['recovery_rate'] ?? 0 }}%</p>
+            <p class="text-xs text-gray-500 mb-3">Recovery Rate</p>
+            <div class="flex gap-2">
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['missing_pet_recovery']['resolved'] ?? 0 }} Resolved</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">{{ $analytics['missing_pet_recovery']['active'] ?? 0 }} Active</span>
             </div>
         </div>
     </div>
