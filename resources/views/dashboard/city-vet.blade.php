@@ -77,9 +77,9 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
     <!-- Confirmed Rabies Cases -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
             <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
                 <select id="chartViewMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
                     <option value="month" {{ $chartViewMode == 'month' ? 'selected' : '' }}>by month</option>
                     <option value="year" {{ $chartViewMode == 'year' ? 'selected' : '' }}>by year</option>
@@ -238,7 +238,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const year1Select = document.getElementById('compareYear1');
     const year2Select = document.getElementById('compareYear2');
     const monthlyChartYear = document.getElementById('monthlyChartYear');
-    const monthlyChartMonth = document.getElementById('monthlyChartMonth');
     const chartViewMode = document.getElementById('chartViewMode');
     const monthFilter = document.getElementById('monthFilter');
     const yearFilter = document.getElementById('yearFilter');
@@ -359,10 +358,12 @@ document.addEventListener('DOMContentLoaded', function() {
             monthFilter.classList.add('hidden');
             yearFilter.classList.remove('hidden');
             yearFilter.classList.add('flex');
+            biteChart.data.labels = monthLabels;
         } else {
             monthFilter.classList.remove('hidden');
             yearFilter.classList.add('hidden');
             yearFilter.classList.remove('flex');
+            biteChart.data.labels = monthLabels;
         }
         biteChart.data.datasets = getBiteCasesDatasets();
         biteChart.update();
