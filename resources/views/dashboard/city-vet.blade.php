@@ -6,46 +6,7 @@
 @section('subheader', 'Rabies Control & Vaccination Program Overview')
 
 @section('content')
-@php
-    $hour = date('H');
-    if ($hour >= 5 && $hour < 12) {
-        $greeting = 'Good morning';
-    } elseif ($hour >= 12 && $hour < 18) {
-        $greeting = 'Good afternoon';
-    } else {
-        $greeting = 'Good evening';
-    }
-@endphp
 
-<!-- Welcome Banner -->
-<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
-    <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
-        {{ $greeting }}, {{ auth()->user()->name ?? 'City Veterinarian' }}!
-    </h2>
-    <p class="text-sm md:text-base text-gray-600">
-        Monitor rabies cases, vaccination programs, and animal health statistics.
-    </p>
-</div>
-
-<!-- Alert Banner for critical issues -->
-@if(($stats['confirmed_bite_cases'] ?? 0) > 0)
-<div class="bg-white border border-red-200 rounded-xl p-4 mb-6">
-    <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0">
-            <i class="bi bi-exclamation-triangle text-red-600"></i>
-        </div>
-        <div class="flex-1">
-            <p class="text-sm font-medium text-gray-800">Attention Required</p>
-            <p class="text-xs text-gray-600">
-                <span class="font-semibold">{{ $stats['confirmed_bite_cases'] }}</span> confirmed bite case(s) requiring attention.
-            </p>
-        </div>
-        <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition whitespace-nowrap">
-            View Cases
-        </a>
-    </div>
-</div>
-@endif
 
 <!-- KPI Cards Grid -->
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
@@ -105,19 +66,6 @@
         </div>
     </div>
 
-    <!-- Registered Meat Establishments -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border-l-4 border-purple-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
-                <i class="bi bi-shop text-purple-600 text-lg md:text-xl"></i>
-            </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Registered Meat Establishments</p>
-        </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $stats['registered_meat_establishments'] ?? 0 }}</p>
-            <p class="text-xs text-gray-500">Total</p>
-        </div>
-    </div>
 </div>
 
 <!-- Quick Actions -->
