@@ -71,17 +71,22 @@ class CityVetController extends Controller
             ->pluck('count', 'month')
             ->toArray();
 
-        $availableYears = BiteRabiesReport::where('rabies_confirmed', true)
+        $dbYears = BiteRabiesReport::where('rabies_confirmed', true)
             ->selectRaw('DISTINCT YEAR(incident_date) as year')
             ->orderByDesc('year')
             ->pluck('year')
-            ->filter(function ($y) {
-                return $y >= 2024;
-            })
-            ->values()
             ->toArray();
 
+        $requiredYears = [date('Y'), date('Y') - 1, 2024];
+        $availableYears = array_values(array_unique(array_merge($requiredYears, $dbYears)));
+        $availableYears = array_filter($availableYears, function ($y) {
+            return $y >= 2024;
+        });
+        rsort($availableYears);
+        $availableYears = array_values($availableYears);
+
         $currentYear = (int) date('Y');
+        $chartViewMode = $request->chart_view_mode ?? 'month';
         $compareYear1 = $request->compare_year1 ?? $currentYear;
         $compareYear2 = $request->compare_year2 ?? ($currentYear - 1);
 
@@ -89,8 +94,11 @@ class CityVetController extends Controller
             $compareYear2 = $currentYear - 1;
         }
 
+        $monthlyChartYear = $request->monthly_chart_year ?? $currentYear;
+        $monthlyChartMonth = $request->monthly_chart_month ?? date('m');
         $monthlyCasesYear1 = $this->getMonthlyCasesByYear($compareYear1);
         $monthlyCasesYear2 = $this->getMonthlyCasesByYear($compareYear2);
+        $monthlyCasesSingle = $this->getMonthlyCasesByYear($monthlyChartYear);
 
         // Get cases by type for the selected year
         $casesByType = BiteRabiesReport::whereYear('incident_date', $speciesYear)
@@ -165,7 +173,11 @@ class CityVetController extends Controller
             'compareYear1',
             'compareYear2',
             'monthlyCasesYear1',
-            'monthlyCasesYear2'
+            'monthlyCasesYear2',
+            'chartViewMode',
+            'monthlyChartYear',
+            'monthlyChartMonth',
+            'monthlyCasesSingle'
         ));
     }
 

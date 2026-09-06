@@ -80,17 +80,37 @@
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
             <div class="flex items-center gap-2">
-                <select id="compareYear1" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                    @foreach($availableYears as $y)
-                        <option value="{{ $y }}" {{ $compareYear1 == $y ? 'selected' : '' }}>{{ $y }}</option>
-                    @endforeach
+                <select id="chartViewMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                    <option value="month" {{ $chartViewMode == 'month' ? 'selected' : '' }}>by month</option>
+                    <option value="year" {{ $chartViewMode == 'year' ? 'selected' : '' }}>by year</option>
                 </select>
-                <span class="text-xs text-gray-500">vs</span>
-                <select id="compareYear2" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                    @foreach($availableYears as $y)
-                        <option value="{{ $y }}" {{ $compareYear2 == $y ? 'selected' : '' }}>{{ $y }}</option>
-                    @endforeach
-                </select>
+                <div id="monthFilter" class="flex items-center gap-2">
+                    <select id="monthlyChartYear" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $monthlyChartYear == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                    <select id="monthlyChartMonth" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $monthlyChartMonth == str_pad($m, 2, '0', STR_PAD_LEFT) ? 'selected' : '' }}>
+                                {{ date('M', mktime(0, 0, 0, $m, 1)) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div id="yearFilter" class="hidden items-center gap-2">
+                    <select id="compareYear1" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $compareYear1 == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                    <span class="text-xs text-gray-500">vs</span>
+                    <select id="compareYear2" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $compareYear2 == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
         <div class="h-64 relative">
@@ -217,6 +237,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const year1Select = document.getElementById('compareYear1');
     const year2Select = document.getElementById('compareYear2');
+    const monthlyChartYear = document.getElementById('monthlyChartYear');
+    const monthlyChartMonth = document.getElementById('monthlyChartMonth');
+    const chartViewMode = document.getElementById('chartViewMode');
+    const monthFilter = document.getElementById('monthFilter');
+    const yearFilter = document.getElementById('yearFilter');
     const currentMonth = new Date().getMonth() + 1;
 
     function buildLineDataset(yearLabel, rawData, borderColor, backgroundColor) {
@@ -243,11 +268,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getBiteCasesDatasets() {
-        const y1 = year1Select ? year1Select.value : '{{ $compareYear1 }}';
-        const y2 = year2Select ? year2Select.value : '{{ $compareYear2 }}';
-        const ds1 = buildLineDataset(y1, monthlyCasesYear1, '#DC2626', 'rgba(220, 38, 38, 0.08)');
-        const ds2 = buildLineDataset(y2, monthlyCasesYear2, '#4B5563', 'rgba(75, 85, 99, 0.06)');
-        return [ds1, ds2];
+        if (chartViewMode && chartViewMode.value === 'year') {
+            const y1 = year1Select ? year1Select.value : '{{ $compareYear1 }}';
+            const y2 = year2Select ? year2Select.value : '{{ $compareYear2 }}';
+            const ds1 = buildLineDataset(y1, monthlyCasesYear1, '#DC2626', 'rgba(220, 38, 38, 0.08)');
+            const ds2 = buildLineDataset(y2, monthlyCasesYear2, '#4B5563', 'rgba(75, 85, 99, 0.06)');
+            return [ds1, ds2];
+        }
+        const y1 = monthlyChartYear ? monthlyChartYear.value : '{{ $monthlyChartYear }}';
+        const ds1 = buildLineDataset(y1, @json($monthlyCasesSingle ?? []), '#DC2626', 'rgba(220, 38, 38, 0.08)');
+        return [ds1];
     }
 
     const biteCtx = document.getElementById('biteCasesByMonthChart').getContext('2d');
@@ -324,6 +354,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function updateChartView() {
+        if (chartViewMode && chartViewMode.value === 'year') {
+            monthFilter.classList.add('hidden');
+            yearFilter.classList.remove('hidden');
+            yearFilter.classList.add('flex');
+        } else {
+            monthFilter.classList.remove('hidden');
+            yearFilter.classList.add('hidden');
+            yearFilter.classList.remove('flex');
+        }
+        biteChart.data.datasets = getBiteCasesDatasets();
+        biteChart.update();
+    }
+
+    if (chartViewMode) {
+        chartViewMode.addEventListener('change', updateChartView);
+    }
+
     if (year1Select && year2Select) {
         [year1Select, year2Select].forEach(sel => {
             sel.addEventListener('change', function() {
@@ -336,9 +384,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     const replacement = availableYears.find(y => y !== currentOther) || currentOther;
                     other.value = replacement;
                 }
+                if (chartViewMode && chartViewMode.value === 'year') {
+                    biteChart.data.datasets = getBiteCasesDatasets();
+                    biteChart.update();
+                }
+            });
+        });
+    }
+
+    if (monthlyChartYear) {
+        monthlyChartYear.addEventListener('change', function() {
+            if (chartViewMode && chartViewMode.value === 'month') {
                 biteChart.data.datasets = getBiteCasesDatasets();
                 biteChart.update();
-            });
+            }
         });
     }
 
