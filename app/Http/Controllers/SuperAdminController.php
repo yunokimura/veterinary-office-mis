@@ -8,12 +8,12 @@ use App\Models\BiteRabiesReport;
 use App\Models\Facility;
 use App\Models\Pet;
 use App\Models\RabiesVaccinationReport;
+use App\Models\Role;
 use App\Models\SystemLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Spatie\Permission\Models\Role;
 
 class SuperAdminController extends Controller
 {
@@ -143,6 +143,62 @@ class SuperAdminController extends Controller
             'userRoleData',
             'userRoleColors'
         ));
+    }
+
+    /**
+     * Show roles management page.
+     */
+    public function roles()
+    {
+        $roles = Role::orderBy('hierarchy_level', 'desc')->get();
+        $totalUsers = User::count();
+
+        $roleUserCounts = User::selectRaw('role, COUNT(*) as count')
+            ->groupBy('role')
+            ->pluck('count', 'role')
+            ->toArray();
+
+        return view('super-admin.roles', compact('roles', 'totalUsers', 'roleUserCounts'));
+    }
+
+    /**
+     * Show edit form for a role via AJAX.
+     */
+    public function editRole(Request $request, $id)
+    {
+        $role = Role::findOrFail($id);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('super-admin.roles._form', compact('role'));
+        }
+
+        return view('super-admin.roles.edit', compact('role'));
+    }
+
+    /**
+     * Update a role.
+     */
+    public function updateRole(Request $request, $id)
+    {
+        $role = Role::findOrFail($id);
+
+        $validated = $request->validate([
+            'display_name' => 'nullable|string|max:255',
+            'hierarchy_level' => 'required|integer|min:0',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        $role->update($validated);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Role updated successfully',
+                'role' => $role,
+            ]);
+        }
+
+        return back()->with('success', 'Role updated successfully');
     }
 
     /**

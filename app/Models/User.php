@@ -445,13 +445,15 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
      */
     public static function getRoleHierarchy(): array
     {
+        $dbHierarchy = \App\Models\Role::pluck('hierarchy_level', 'name')->toArray();
+
         return [
-            self::ROLE_SUPER_ADMIN => 10,       // IT Personnel - Highest
-            self::ROLE_CITY_VET => 8,           // Admin/Office Head
-            self::ROLE_ADMIN_ASST => 5,         // Admin Assistant
-            self::ROLE_ASSISTANT_VET => 5,      // Assistant Veterinarian
-            self::ROLE_MEAT_INSPECTOR => 4,     // Meat & Post-Abattoir Inspector
-            self::ROLE_PET_OWNER => 1,            // Pet owner / citizen portal
+            self::ROLE_SUPER_ADMIN => $dbHierarchy[self::ROLE_SUPER_ADMIN] ?? 10,
+            self::ROLE_CITY_VET => $dbHierarchy[self::ROLE_CITY_VET] ?? 8,
+            self::ROLE_ADMIN_ASST => $dbHierarchy[self::ROLE_ADMIN_ASST] ?? 5,
+            self::ROLE_ASSISTANT_VET => $dbHierarchy[self::ROLE_ASSISTANT_VET] ?? 5,
+            self::ROLE_MEAT_INSPECTOR => $dbHierarchy[self::ROLE_MEAT_INSPECTOR] ?? 4,
+            self::ROLE_PET_OWNER => $dbHierarchy[self::ROLE_PET_OWNER] ?? 1,
         ];
     }
 

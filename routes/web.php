@@ -170,6 +170,10 @@ Route::middleware(['auth'])->group(function () {
 // ==============================
 Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('super-admin.')->group(function () {
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('dashboard');
+    // Roles & Permissions
+    Route::get('/roles', [SuperAdminController::class, 'roles'])->name('roles.index');
+    Route::get('/roles/{role}/edit', [SuperAdminController::class, 'editRole'])->name('roles.edit');
+    Route::put('/roles/{role}', [SuperAdminController::class, 'updateRole'])->name('roles.update');
 
     // User Management (Full Access - Super Admin Only)
     // These routes are protected by super_admin role middleware

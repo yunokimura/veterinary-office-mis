@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 
 class SpatieRoleSeeder extends Seeder
 {
@@ -18,31 +18,49 @@ class SpatieRoleSeeder extends Seeder
             [
                 'name' => 'super_admin',
                 'guard_name' => 'web',
+                'display_name' => 'Super Administrator',
+                'description' => 'Full system access',
+                'hierarchy_level' => 10,
             ],
             [
                 'name' => 'city_vet',
                 'guard_name' => 'web',
+                'display_name' => 'City Veterinarian',
+                'description' => 'Admin/office head access',
+                'hierarchy_level' => 8,
             ],
             [
                 'name' => 'assistant_vet',
                 'guard_name' => 'web',
+                'display_name' => 'Assistant Veterinarian',
+                'description' => 'Assistant vet access',
+                'hierarchy_level' => 5,
             ],
             [
                 'name' => 'admin_asst',
                 'guard_name' => 'web',
+                'display_name' => 'Administrative Assistant',
+                'description' => 'Admin assistant access',
+                'hierarchy_level' => 5,
             ],
             [
                 'name' => 'meat_inspector',
                 'guard_name' => 'web',
+                'display_name' => 'Meat Inspector',
+                'description' => 'Meat inspection access',
+                'hierarchy_level' => 4,
             ],
             [
                 'name' => 'pet_owner',
                 'guard_name' => 'web',
+                'display_name' => 'Pet Owner',
+                'description' => 'Pet owner / citizen portal',
+                'hierarchy_level' => 1,
             ],
         ];
 
         foreach ($roles as $role) {
-            Role::firstOrCreate(
+            \App\Models\Role::updateOrCreate(
                 ['name' => $role['name'], 'guard_name' => $role['guard_name']],
                 $role
             );
