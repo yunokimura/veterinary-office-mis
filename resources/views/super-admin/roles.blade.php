@@ -24,15 +24,15 @@
 
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
             <div>
-                <p class="text-xs font-medium text-gray-500">Highest Role</p>
-                <p class="text-lg font-bold text-gray-800 mt-1">{{ $roles->first()?->display_name ?? 'N/A' }}</p>
+                <p class="text-xs font-medium text-gray-500">Active Users</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $activeUsers }}</p>
             </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
             <div>
-                <p class="text-xs font-medium text-gray-500">Lowest Role</p>
-                <p class="text-lg font-bold text-gray-800 mt-1">{{ $roles->last()?->display_name ?? 'N/A' }}</p>
+                <p class="text-xs font-medium text-gray-500">Inactive Users</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $inactiveUsers }}</p>
             </div>
         </div>
     </div>

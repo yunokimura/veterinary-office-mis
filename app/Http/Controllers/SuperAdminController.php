@@ -152,13 +152,15 @@ class SuperAdminController extends Controller
     {
         $roles = Role::orderBy('hierarchy_level', 'desc')->get();
         $totalUsers = User::count();
+        $activeUsers = User::where('status', 'active')->count();
+        $inactiveUsers = User::where('status', 'inactive')->count();
 
         $roleUserCounts = User::selectRaw('role, COUNT(*) as count')
             ->groupBy('role')
             ->pluck('count', 'role')
             ->toArray();
 
-        return view('super-admin.roles', compact('roles', 'totalUsers', 'roleUserCounts'));
+        return view('super-admin.roles', compact('roles', 'totalUsers', 'activeUsers', 'inactiveUsers', 'roleUserCounts'));
     }
 
     /**
