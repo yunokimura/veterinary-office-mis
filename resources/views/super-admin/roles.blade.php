@@ -9,50 +9,30 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500">Total Roles</p>
-                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ $roles->count() }}</p>
-                </div>
-                <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-shield-check text-purple-600 text-xl"></i>
-                </div>
+            <div>
+                <p class="text-xs font-medium text-gray-500">Total Roles</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $roles->count() }}</p>
             </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500">Total Users</p>
-                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ $totalUsers }}</p>
-                </div>
-                <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-people text-blue-600 text-xl"></i>
-                </div>
+            <div>
+                <p class="text-xs font-medium text-gray-500">Total Users</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $totalUsers }}</p>
             </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500">Highest Role</p>
-                    <p class="text-lg font-bold text-gray-800 mt-1">{{ $roles->first()?->display_name ?? 'N/A' }}</p>
-                </div>
-                <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-trophy text-yellow-600 text-xl"></i>
-                </div>
+            <div>
+                <p class="text-xs font-medium text-gray-500">Highest Role</p>
+                <p class="text-lg font-bold text-gray-800 mt-1">{{ $roles->first()?->display_name ?? 'N/A' }}</p>
             </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500">Lowest Role</p>
-                    <p class="text-lg font-bold text-gray-800 mt-1">{{ $roles->last()?->display_name ?? 'N/A' }}</p>
-                </div>
-                <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
-                    <i class="bi bi-person text-gray-600 text-xl"></i>
-                </div>
+            <div>
+                <p class="text-xs font-medium text-gray-500">Lowest Role</p>
+                <p class="text-lg font-bold text-gray-800 mt-1">{{ $roles->last()?->display_name ?? 'N/A' }}</p>
             </div>
         </div>
     </div>

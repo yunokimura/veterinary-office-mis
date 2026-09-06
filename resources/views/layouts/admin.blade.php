@@ -198,7 +198,7 @@
 
             @if(auth()->check() && auth()->user()->hasRole('super_admin'))
 
-            <div x-data="{ open: @json(request()->routeIs('super-admin.users.*') || request()->routeIs('admin.users.*')) }">
+            <div x-data="{ open: @json(request()->routeIs('super-admin.users.*') || request()->routeIs('admin.users.*') || request()->routeIs('super-admin.roles.*')) }">
                 <button @click="open = !open"
                         class="nav-item w-full justify-between {{ request()->routeIs('super-admin.users.*') ? 'active-nav' : '' }}">
                     <span class="flex items-center gap-2 whitespace-nowrap">
