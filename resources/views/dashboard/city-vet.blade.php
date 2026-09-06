@@ -9,63 +9,30 @@
 
 
 <!-- KPI Cards Grid -->
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
     <!-- Confirmed Rabies Cases (Highest Priority) -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border-l-4 border-red-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-lg flex items-center justify-center mb-3">
-                <i class="bi bi-exclamation-triangle text-red-600 text-lg md:text-xl"></i>
-            </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Confirmed Rabies Cases</p>
-        </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $stats['confirmed_bite_cases'] ?? 0 }}</p>
-            <p class="text-xs text-red-600 font-medium">This Year</p>
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <p class="text-xs md:text-sm text-gray-500 mb-1">Confirmed Rabies Cases</p>
+        <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['confirmed_bite_cases'] ?? 0 }}</p>
     </div>
 
     <!-- Anti-Rabies Vaccinations -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border-l-4 border-blue-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
-                <i class="bi bi-eyedropper text-blue-600 text-lg md:text-xl"></i>
-            </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Anti-Rabies Vaccinations</p>
-        </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $stats['anti_rabies_vaccinations'] ?? 0 }}</p>
-            <p class="text-xs text-gray-500">This Year</p>
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <p class="text-xs md:text-sm text-gray-500 mb-1">Anti-Rabies Vaccinations</p>
+        <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['anti_rabies_vaccinations'] ?? 0 }}</p>
     </div>
 
     <!-- Adoption Reports -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border-l-4 border-green-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3">
-                <i class="bi bi-heart text-green-600 text-lg md:text-xl"></i>
-            </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Adoption Reports</p>
-        </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $stats['adoption_reports'] ?? 0 }}</p>
-            <p class="text-xs text-gray-500">This Year</p>
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <p class="text-xs md:text-sm text-gray-500 mb-1">Adoption Reports</p>
+        <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['adoption_reports'] ?? 0 }}</p>
     </div>
 
     <!-- Missing Pet Reports -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border-l-4 border-orange-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-3">
-                <i class="bi bi-search text-orange-600 text-lg md:text-xl"></i>
-            </div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Missing Pet Reports</p>
-        </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $stats['missing_pet_reports'] ?? 0 }}</p>
-            <p class="text-xs text-gray-500">This Year</p>
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <p class="text-xs md:text-sm text-gray-500 mb-1">Missing Pet Reports</p>
+        <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['missing_pet_reports'] ?? 0 }}</p>
     </div>
-
 </div>
 
 <!-- Quick Actions -->
