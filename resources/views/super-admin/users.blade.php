@@ -88,21 +88,16 @@
 
     <!-- Search and Filter Bar -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <form method="GET" action="{{ route('super-admin.users.index') }}" class="flex flex-wrap gap-4 items-end">
+        <div class="flex flex-wrap gap-4 items-end" id="usersFilterForm">
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                <div class="flex items-center relative">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Search by name or email..."
-                        class="flex-1 pl-3 pr-8 py-2 border border-gray-300 rounded-lg rounded-r-none outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 h-10">
-                    <button type="submit" class="px-3 py-2 border border-gray-300 border-l-0 rounded-lg rounded-l-none bg-gray-50 text-gray-500 hover:text-green-600 hover:bg-green-50 transition-colors h-10 flex items-center justify-center">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
+                <input type="text" id="userSearchInput" value="{{ $search }}" placeholder="Search by name or email..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 h-10">
             </div>
             <div class="relative min-w-max">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Roles</label>
-                <select name="role" onchange="this.closest('form').submit()" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
-                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+                <select id="userRoleSelect" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
+                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5%201.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
                     <option value="">All Roles</option>
                     @foreach($roles as $r)
                         <option value="{{ $r }}" {{ $role == $r ? 'selected' : '' }}>
@@ -113,89 +108,38 @@
             </div>
             <div class="relative w-48">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select name="status" onchange="this.closest('form').submit()" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
-                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+                <select id="userStatusSelect" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
+                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5%201.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
                      <option value="">All Status</option>
                      <option value="active" {{ $status == 'active' ? 'selected' : '' }}>Active</option>
                      <option value="deactivated" {{ $status == 'deactivated' ? 'selected' : '' }}>Deactivated</option>
                 </select>
             </div>
-        </form>
+        </div>
     </div>
 
     <!-- Users Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($users as $user)
-                    <tr class="hover:bg-gray-50" data-user-id="{{ $user->id }}">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <span class="text-blue-600 font-bold">{{ substr($user->name, 0, 1) }}</span>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                    <div class="text-sm text-gray-500">{{ $user->email }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                {{ $roleLabels[$user->getRoleAttribute()] ?? ucwords(str_replace('_', ' ', $user->getRoleAttribute())) }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColors[$user->status] ?? 'bg-gray-100 text-gray-800' }}">
-                                {{ ucfirst($user->status) }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $user->created_at->format('M d, Y') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            @can('update', $user)
-                            <button type="button" class="text-blue-600 hover:text-blue-900 mr-3" onclick="openEditModal({{ $user->id }}, '{{ $user->name }}')">View/Edit</button>
-                            @else
-                            <span class="text-gray-400 text-xs">Restricted</span>
-                            @endcan
-                            @can('toggleStatus', $user)
-                            <form action="{{ route('super-admin.users.toggle-status', $user) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to {{ $user->status === 'active' ? 'deactivate' : 'activate' }} this user?')">
-                                    {{ $user->status === 'active' ? 'Deactivate' : 'Activate' }}
-                                </button>
-                            </form>
-                            @else
-                            <span class="text-gray-400 text-xs">Restricted</span>
-                            @endcan
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No users found</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-
-        <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-200">
+        <div id="usersTableContainer">
+            @include('super-admin.partials.users-table', ['users' => $users, 'roleLabels' => $roleLabels, 'statusColors' => $statusColors])
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200" id="usersPagination">
             {{ $users->links() }}
         </div>
+        <div id="usersLoading" class="hidden px-6 py-4 border-t border-gray-200 text-center text-gray-500">
+            <span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-green-600 mr-2"></span>
+            Loading...
+        </div>
+        <div id="usersEmptyState" class="hidden p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-people text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">No Users Found</h3>
+            <p class="text-gray-500">Try adjusting your search or filter criteria.</p>
+        </div>
     </div>
-</div>
 
-<!-- Edit User Modal -->
+    <!-- Edit User Modal -->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -553,5 +497,96 @@ function disableAllSections() {
     });
     activeSectionId = null;
 }
+
+let searchDebounce;
+const userFilterUrl = `{{ route('super-admin.users.search') }}` || '/super-admin/users/search';
+
+function getUserFilterParams() {
+    return {
+        search: document.getElementById('userSearchInput')?.value || '',
+        role: document.getElementById('userRoleSelect')?.value || '',
+        status: document.getElementById('userStatusSelect')?.value || '',
+    };
+}
+
+function applyUserFilters() {
+    const params = getUserFilterParams();
+    const tableContainer = document.getElementById('usersTableContainer');
+    const paginationContainer = document.getElementById('usersPagination');
+    const loadingEl = document.getElementById('usersLoading');
+    const emptyState = document.getElementById('usersEmptyState');
+
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    if (tableContainer) tableContainer.style.opacity = '0.3';
+    if (paginationContainer) paginationContainer.style.opacity = '0.3';
+
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.append(key, value);
+    });
+
+    fetch(`${userFilterUrl}?${query.toString()}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (tableContainer) {
+                tableContainer.innerHTML = data.html;
+                tableContainer.style.opacity = '1';
+            }
+            if (paginationContainer) {
+                paginationContainer.innerHTML = data.pagination;
+                paginationContainer.style.opacity = '1';
+            }
+            if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error filtering users:', error);
+        if (tableContainer) tableContainer.style.opacity = '1';
+        if (paginationContainer) paginationContainer.style.opacity = '1';
+    })
+    .finally(() => {
+        if (loadingEl) loadingEl.classList.add('hidden');
+    });
+}
+
+document.getElementById('userSearchInput').addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(applyUserFilters, 300);
+});
+
+document.getElementById('userRoleSelect').addEventListener('change', applyUserFilters);
+document.getElementById('userStatusSelect').addEventListener('change', applyUserFilters);
+
+document.getElementById('usersPagination').addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    e.preventDefault();
+    const url = new URL(link.href);
+    const query = url.searchParams.toString();
+
+    fetch(`${userFilterUrl}?${query}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('usersTableContainer').innerHTML = data.html;
+            document.getElementById('usersPagination').innerHTML = data.pagination;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading users page:', error);
+    });
+});
 </script>
 @endsection

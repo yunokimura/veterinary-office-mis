@@ -540,11 +540,25 @@ class SuperAdminController extends Controller
         $query = User::query();
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('middle_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
+            $terms = array_values(array_filter(explode(' ', $search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('users.email', 'like', "%{$term}%")
+                            ->orWhereHas('adminProfile', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('middle_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%")
+                                    ->orWhere('suffix', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('petOwnerProfile', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('middle_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%")
+                                    ->orWhere('suffix', 'like', "%{$term}%");
+                            });
+                    });
+                }
             });
         }
 
@@ -575,6 +589,80 @@ class SuperAdminController extends Controller
             : collect();
 
         return view('super-admin.users', compact('users', 'roles', 'search', 'role', 'status', 'totalUsers', 'activeAccounts', 'cityVetStaff', 'petOwners', 'assignableRoles', 'facilities'));
+    }
+
+    /**
+     * Search users via AJAX.
+     */
+    public function searchUsers(Request $request)
+    {
+        $search = $request->get('search', '');
+        $role = $request->get('role', '');
+        $status = $request->get('status', '');
+
+        $query = User::query();
+
+        if ($search) {
+            $terms = array_values(array_filter(explode(' ', $search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('users.email', 'like', "%{$term}%")
+                            ->orWhereHas('adminProfile', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('middle_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%")
+                                    ->orWhere('suffix', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('petOwnerProfile', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('middle_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%")
+                                    ->orWhere('suffix', 'like', "%{$term}%");
+                            });
+                    });
+                }
+            });
+        }
+
+        if ($role) {
+            $query->whereHas('roles', function ($q) use ($role) {
+                $q->where('name', $role);
+            });
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $users = $query->latest()->paginate(20);
+        $roleLabels = [
+            'super_admin' => 'Super Admin',
+            'city_vet' => 'City Veterinary (Admin)',
+            'assistant_vet' => 'Assistant Veterinarian',
+            'admin_asst' => 'Administrative Assistant',
+            'meat_inspector' => 'Meat Inspector',
+            'pet_owner' => 'Pet Owner',
+        ];
+        $statusColors = [
+            'active' => 'bg-green-100 text-green-800',
+            'deactivated' => 'bg-gray-100 text-gray-800',
+        ];
+
+        try {
+            $html = view('super-admin.partials.users-table', compact('users', 'roleLabels', 'statusColors'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="5" class="px-6 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
+
+        $pagination = $users->links()->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'pagination' => $pagination,
+            'has_results' => $users->count() > 0,
+        ]);
     }
 
     /**

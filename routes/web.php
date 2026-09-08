@@ -180,6 +180,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
 
     // User Management (Full Access - Super Admin Only)
     // These routes are protected by super_admin role middleware
+    Route::get('/users/search', [SuperAdminController::class, 'searchUsers'])->name('users.search');
     Route::get('/users', [SuperAdminController::class, 'users'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
