@@ -36,21 +36,25 @@
                     {{ $user->created_at->format('M d, Y') }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    @can('update', $user)
-                    <button type="button" class="text-blue-600 hover:text-blue-900 mr-3" onclick="openEditModal({{ $user->id }}, '{{ $user->name }}')">View/Edit</button>
-                    @else
-                    <span class="text-gray-400 text-xs">Restricted</span>
-                    @endcan
-                    @can('toggleStatus', $user)
-                    <form action="{{ route('super-admin.users.toggle-status', $user) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="text-red-600 hover:text-red-800" onclick="return confirm('Are you sure you want to {{ $user->status === 'active' ? 'deactivate' : 'activate' }} this user?')">
-                            {{ $user->status === 'active' ? 'Deactivate' : 'Activate' }}
+                    <div class="flex items-center gap-2">
+                        @can('update', $user)
+                        <button type="button" class="p-1.5 text-green-700 hover:bg-gray-100 rounded-full transition" title="View / Edit" onclick="openEditModal({{ $user->id }}, '{{ $user->name }}')">
+                            <i class="bi bi-eye text-lg"></i>
                         </button>
-                    </form>
-                    @else
-                    <span class="text-gray-400 text-xs">Restricted</span>
-                    @endcan
+                        @else
+                        <span class="text-gray-400 text-xs">Restricted</span>
+                        @endcan
+                        @can('toggleStatus', $user)
+                        <form action="{{ route('super-admin.users.toggle-status', $user) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to {{ $user->status === 'active' ? 'deactivate' : 'activate' }} this user?')">
+                            @csrf
+                            <button type="submit" class="p-1.5 {{ $user->status === 'active' ? 'text-red-700 hover:bg-red-50' : 'text-green-700 hover:bg-green-50' }} rounded-full transition" title="{{ $user->status === 'active' ? 'Deactivate' : 'Activate' }}">
+                                <i class="bi {{ $user->status === 'active' ? 'bi-toggle-off' : 'bi-toggle-on' }} text-lg"></i>
+                            </button>
+                        </form>
+                        @else
+                        <span class="text-gray-400 text-xs">Restricted</span>
+                        @endcan
+                    </div>
                 </td>
             </tr>
         @empty
