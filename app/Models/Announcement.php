@@ -85,6 +85,10 @@ class Announcement extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $appends = [
+        'photo_url',
+    ];
+
     public static function getCategories(): array
     {
         return [

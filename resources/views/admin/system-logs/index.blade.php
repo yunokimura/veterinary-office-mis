@@ -132,10 +132,9 @@
             <colgroup>
                 <col class="w-[4%]">
                 <col class="w-[18%]">
-                <col class="w-[10%]">
+                <col class="w-[20%]">
                 <col class="w-[13%]">
-                <col class="w-[12%]">
-                <col class="w-[23%]">
+                <col class="w-[25%]">
                 <col class="w-[10%]">
                 <col class="w-[10%]">
             </colgroup>
@@ -145,7 +144,6 @@
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">User</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Date & Time</th>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Module</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Description</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">IP Address</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -163,9 +161,12 @@
                                 <span class="text-sm font-medium text-gray-800 leading-[1.5] whitespace-nowrap overflow-hidden text-ellipsis">{{ $log->user->name ?? 'System' }}</span>
                             </div>
                         </td>
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-700 leading-[1.5]">{{ $log->action }}</td>
+                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-700 leading-[1.5]">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                [{{ ucfirst($log->module) }}] {{ ucfirst($log->action) }}
+                            </span>
+                        </td>
                         <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 leading-[1.5] hidden md:table-cell">{{ $log->created_at }}</td>
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 leading-[1.5] hidden md:table-cell" title="{{ $log->module }}">{{ $log->module }}</td>
                         <td class="px-4 py-[18px] hidden md:table-cell">
                             <span class="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis block leading-[1.5]" title="{{ $log->description }}">{{ Str::limit($log->description, 50) }}</span>
                         </td>
@@ -184,7 +185,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                             <i class="bi bi-inbox text-4xl mb-3 block"></i>
                             No system logs found
                         </td>
@@ -281,20 +282,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             <hr class="border-gray-100">
                             <div class="grid grid-cols-2 gap-6">
                                 <div>
-                                    <p class="text-sm text-gray-500">Action</p>
-                                    <p class="font-medium text-gray-800 mt-1">${data.action}</p>
+                                    <p class="text-sm text-gray-500">Event</p>
+                                    <p class="font-medium text-gray-800 mt-1">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                            [${data.module}] ${data.action}
+                                        </span>
+                                    </p>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Module</p>
-                                    <p class="font-medium text-gray-800 mt-1">${data.module}</p>
-                                </div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
                                 <div>
                                     <p class="text-sm text-gray-500">Record ID</p>
                                     <p class="font-medium text-gray-800 mt-1">${data.record_id}</p>
                                 </div>
+                            </div>
+                            <hr class="border-gray-100">
+                            <div class="grid grid-cols-2 gap-6">
                                 <div>
                                     <p class="text-sm text-gray-500">Created At</p>
                                     <p class="font-medium text-gray-800 mt-1">${data.created_at}</p>

@@ -102,28 +102,24 @@
 
 <!-- Filter & Search Bar -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-    <form method="GET" action="{{ route($rolePrefix . '.announcements.index') }}" class="flex flex-wrap gap-4 items-center">
+    <form method="GET" action="{{ route($rolePrefix . '.announcements.index') }}" class="flex flex-wrap gap-4 items-center" onsubmit="event.preventDefault();">
         <!-- Search Input -->
         <div class="flex-1 min-w-[200px]">
             <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-            <div class="flex items-center relative">
-                <input
-                    type="text"
-                    name="search"
-                    value="{{ $currentSearch }}"
-                    placeholder="Search announcements..."
-                    class="flex-1 pl-3 pr-8 py-2 border border-gray-300 rounded-lg rounded-r-none outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 h-10"
-                >
-                <button type="submit" class="px-3 py-2 border border-gray-300 border-l-0 rounded-lg rounded-l-none bg-gray-50 text-gray-500 hover:text-green-600 hover:bg-green-50 transition-colors h-10 flex items-center justify-center">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
+            <input
+                type="text"
+                id="announcementSearchInput"
+                name="search"
+                value="{{ $currentSearch }}"
+                placeholder="Search announcements..."
+                class="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 h-10"
+            >
         </div>
 
         <!-- Category Filter -->
         <div class="relative w-48">
             <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-            <select name="category" class="w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
+            <select id="announcementCategorySelect" name="category" class="w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
                     style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 6px center; background-size: 12px 12px;">
                 <option value="">All Categories</option>
                 <option value="campaign" {{ $currentCategory === 'campaign' ? 'selected' : '' }}>Campaign</option>
@@ -134,7 +130,7 @@
         <!-- Status Filter -->
         <div class="relative w-48">
             <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select name="status" class="w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
+            <select id="announcementStatusSelect" name="status" class="w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
                     style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 6px center; background-size: 12px 12px;">
                 <option value="">All Status</option>
                 <option value="Published" {{ $currentStatus === 'Published' ? 'selected' : '' }}>Published</option>
@@ -147,7 +143,7 @@
         <!-- Sort -->
         <div class="relative w-40">
             <label class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
-            <select name="sort" class="w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10 text-sm"
+            <select id="announcementSortSelect" name="sort" class="w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10 text-sm"
                     style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 6px center; background-size: 12px 12px;">
                 <option value="newest" {{ $currentSort === 'newest' ? 'selected' : '' }}>Newest First</option>
                 <option value="oldest" {{ $currentSort === 'oldest' ? 'selected' : '' }}>Oldest First</option>
@@ -1181,10 +1177,10 @@ function updatePagination(pagination) {
 
 // Event Listeners for Real-time Filtering
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('input[name="search"]');
-    const categorySelect = document.querySelector('select[name="category"]');
-    const statusSelect = document.querySelector('select[name="status"]');
-    const sortSelect = document.querySelector('select[name="sort"]');
+    const searchInput = document.getElementById('announcementSearchInput');
+    const categorySelect = document.getElementById('announcementCategorySelect');
+    const statusSelect = document.getElementById('announcementStatusSelect');
+    const sortSelect = document.getElementById('announcementSortSelect');
 
     // Initialize view from localStorage
     const savedView = localStorage.getItem('announcementView') || 'table';
@@ -1196,7 +1192,7 @@ document.addEventListener('DOMContentLoaded', function() {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 applyFilters(1);
-            }, 500); // 500ms debounce
+            }, 300);
         });
     }
 
@@ -1215,30 +1211,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Sort filter
-        if (sortSelect) {
-            sortSelect.addEventListener('change', function() {
-                applyFilters(1);
-            });
-        }
-
-        // Category change handler for announcement form
-        const categoryElement = document.getElementById('category');
-        if (categoryElement) {
-            categoryElement.addEventListener('change', function() {
-                const eventFields = document.querySelector('.event-fields');
-                if (this.value === 'event') {
-                    eventFields.classList.remove('hidden');
-                    document.getElementById('event_date').setAttribute('required', 'required');
-                } else {
-                    eventFields.classList.add('hidden');
-                    document.getElementById('event_date').removeAttribute('required');
-                }
-            });
-            
-            // Trigger category change to set initial state
-            categoryElement.dispatchEvent(new Event('change'));
-        }
-    });
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            applyFilters(1);
+        });
+    }
+});
 
 // Image preview for create modal form
 function previewImage(event) {

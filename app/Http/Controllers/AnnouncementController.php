@@ -44,7 +44,10 @@ class AnnouncementController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%'.$request->search.'%')
+                  ->orWhere('organized_by', 'like', '%'.$request->search.'%');
+            });
         }
 
         $announcements = $query->orderBy('created_at', 'desc')->paginate(15);
@@ -274,7 +277,10 @@ class AnnouncementController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%'.$request->search.'%')
+                  ->orWhere('organized_by', 'like', '%'.$request->search.'%');
+            });
         }
 
         $sort = $request->get('sort', 'newest');
