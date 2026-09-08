@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BarangaySeeder::class,
             SpatieRoleSeeder::class,
+            PermissionSeeder::class,
             TestAccountsSeeder::class,
             UserRoleSeeder::class,
             AssignSpatieRolesSeeder::class,

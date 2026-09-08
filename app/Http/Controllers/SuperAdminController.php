@@ -154,13 +154,14 @@ class SuperAdminController extends Controller
         $totalUsers = User::count();
         $activeUsers = User::where('status', 'active')->count();
         $inactiveUsers = User::where('status', 'inactive')->count();
+        $totalPermissions = \Spatie\Permission\Models\Permission::count();
 
         $roleUserCounts = User::selectRaw('role, COUNT(*) as count')
             ->groupBy('role')
             ->pluck('count', 'role')
             ->toArray();
 
-        return view('super-admin.roles', compact('roles', 'totalUsers', 'activeUsers', 'inactiveUsers', 'roleUserCounts'));
+        return view('super-admin.roles', compact('roles', 'totalUsers', 'activeUsers', 'inactiveUsers', 'roleUserCounts', 'totalPermissions'));
     }
 
     /**
@@ -169,8 +170,13 @@ class SuperAdminController extends Controller
     public function editRole(Request $request, $id)
     {
         $role = Role::findOrFail($id);
+        $viewMode = $request->boolean('view');
 
         if ($request->ajax() || $request->wantsJson()) {
+            if ($viewMode) {
+                return view('super-admin.roles._view', compact('role', 'viewMode'));
+            }
+
             return view('super-admin.roles._form', compact('role'));
         }
 
@@ -201,6 +207,58 @@ class SuperAdminController extends Controller
         }
 
         return back()->with('success', 'Role updated successfully');
+    }
+
+    /**
+     * Show create role form via AJAX.
+     */
+    public function createRole(Request $request)
+    {
+        $role = new Role();
+        $viewMode = false;
+        $allRoles = Role::where('id', '!=', $role->id)->orderBy('hierarchy_level', 'desc')->get();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('super-admin.roles._form', compact('role', 'viewMode', 'allRoles'));
+        }
+
+        return view('super-admin.roles.create', compact('role', 'allRoles'));
+    }
+
+    /**
+     * Store a new role.
+     */
+    public function storeRole(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name',
+            'display_name' => 'nullable|string|max:255',
+            'hierarchy_level' => 'required|integer|min:0',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        $validated['guard_name'] = 'web';
+
+        $role = Role::create($validated);
+
+        if ($request->has('permissions') && is_array($request->input('permissions'))) {
+            $permissions = $request->input('permissions');
+            $validPermissions = app()->make(\Spatie\Permission\Models\Permission::class)
+                ->whereIn('name', $permissions)
+                ->pluck('name')
+                ->toArray();
+            $role->syncPermissions($validPermissions);
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Role created successfully',
+                'role' => $role,
+            ]);
+        }
+
+        return redirect()->route('super-admin.roles.index')->with('success', 'Role created successfully');
     }
 
     /**
@@ -554,5 +612,37 @@ class SuperAdminController extends Controller
         $statusText = $newStatus === 'active' ? 'activated' : 'deactivated';
 
         return back()->with('success', "User {$user->name} {$statusText} successfully.");
+    }
+
+    /**
+     * Sync permissions for a role.
+     */
+    public function syncPermissions(Request $request, $id)
+    {
+        $role = Role::findOrFail($id);
+
+        $validated = $request->validate([
+            'permissions' => 'array',
+            'permissions.*' => 'string',
+        ]);
+
+        $permissions = $validated['permissions'] ?? [];
+
+        $validPermissions = app()->make(\Spatie\Permission\Models\Permission::class)
+            ->whereIn('name', $permissions)
+            ->pluck('name')
+            ->toArray();
+
+        $role->syncPermissions($validPermissions);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Permissions updated successfully',
+                'permission_count' => $role->permissions()->count(),
+            ]);
+        }
+
+        return back()->with('success', 'Permissions updated successfully');
     }
 }

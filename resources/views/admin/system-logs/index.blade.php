@@ -9,12 +9,6 @@
 @endauth
 
 @section('content')
-<!-- Export CSV Button -->
-<div class="mb-6">
-    <a href="{{ route('admin.system-logs.export', request()->query()) }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
-        <i class="bi bi-download mr-2"></i> Export CSV
-    </a>
-</div>
 
 <!-- Summary Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -123,6 +117,11 @@
                 <i class="bi bi-arrow-clockwise"></i>
             </a>
         </div>
+
+        <!-- Export -->
+        <a href="{{ route('admin.system-logs.export', request()->query()) }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition self-end ml-auto">
+            <i class="bi bi-download mr-2"></i> Export CSV
+        </a>
     </form>
 </div>
 

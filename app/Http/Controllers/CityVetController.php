@@ -77,8 +77,20 @@ class CityVetController extends Controller
             ->pluck('year')
             ->toArray();
 
+        $adoptionDbYears = \App\Models\AdoptionApplication::selectRaw('DISTINCT YEAR(created_at) as year')
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->toArray();
+
+        $missingDbYears = \App\Models\MissingPetsReport::selectRaw('DISTINCT YEAR(created_at) as year')
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->toArray();
+
+        $allDbYears = array_unique(array_merge($dbYears, $adoptionDbYears, $missingDbYears));
+
         $requiredYears = [date('Y'), date('Y') - 1, 2024];
-        $availableYears = array_values(array_unique(array_merge($requiredYears, $dbYears)));
+        $availableYears = array_values(array_unique(array_merge($requiredYears, $allDbYears)));
         $availableYears = array_filter($availableYears, function ($y) {
             return $y >= 2024;
         });
@@ -86,19 +98,21 @@ class CityVetController extends Controller
         $availableYears = array_values($availableYears);
 
         $currentYear = (int) date('Y');
-        $chartViewMode = $request->chart_view_mode ?? 'month';
-        $compareYear1 = $request->compare_year1 ?? $currentYear;
-        $compareYear2 = $request->compare_year2 ?? ($currentYear - 1);
 
-        if ($compareYear2 === $currentYear || $compareYear2 === $compareYear1) {
-            $compareYear2 = $currentYear - 1;
-        }
+        $biteChartMode = $request->bite_chart_mode ?? 'months';
+        $biteChartTimeframe = $request->bite_chart_timeframe ?? $currentYear;
+        $biteMonthlyData = $this->getMonthlyCasesByYear($biteChartTimeframe);
+        $biteYearlyData = $this->getYearlyRabiesTotals();
 
-        $monthlyChartYear = $request->monthly_chart_year ?? $currentYear;
-        $monthlyChartMonth = $request->monthly_chart_month ?? date('m');
-        $monthlyCasesYear1 = $this->getMonthlyCasesByYear($compareYear1);
-        $monthlyCasesYear2 = $this->getMonthlyCasesByYear($compareYear2);
-        $monthlyCasesSingle = $this->getMonthlyCasesByYear($monthlyChartYear);
+        $adoptionChartMode = $request->adoption_chart_mode ?? 'months';
+        $adoptionChartTimeframe = $request->adoption_chart_timeframe ?? $currentYear;
+        $adoptionMonthlyData = $this->getMonthlyAdoptionByYear($adoptionChartTimeframe);
+        $adoptionYearlyData = $this->getYearlyAdoptionTotals();
+
+        $missingChartMode = $request->missing_chart_mode ?? 'months';
+        $missingChartTimeframe = $request->missing_chart_timeframe ?? $currentYear;
+        $missingMonthlyData = $this->getMonthlyMissingByYear($missingChartTimeframe);
+        $missingYearlyData = $this->getYearlyMissingTotals();
 
         // Get cases by type for the selected year
         $casesByType = BiteRabiesReport::whereYear('incident_date', $speciesYear)
@@ -170,14 +184,18 @@ class CityVetController extends Controller
             'lowestVaccination',
             'establishments',
             'availableYears',
-            'compareYear1',
-            'compareYear2',
-            'monthlyCasesYear1',
-            'monthlyCasesYear2',
-            'chartViewMode',
-            'monthlyChartYear',
-            'monthlyChartMonth',
-            'monthlyCasesSingle'
+            'biteChartMode',
+            'biteChartTimeframe',
+            'biteMonthlyData',
+            'biteYearlyData',
+            'adoptionChartMode',
+            'adoptionChartTimeframe',
+            'adoptionMonthlyData',
+            'adoptionYearlyData',
+            'missingChartMode',
+            'missingChartTimeframe',
+            'missingMonthlyData',
+            'missingYearlyData'
         ));
     }
 
@@ -342,6 +360,49 @@ class CityVetController extends Controller
             ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
             ->groupBy('month')
             ->pluck('count', 'month')
+            ->toArray();
+    }
+
+    private function getYearlyRabiesTotals(): array
+    {
+        return BiteRabiesReport::where('rabies_confirmed', true)
+            ->selectRaw('YEAR(incident_date) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+    }
+
+    private function getMonthlyAdoptionByYear(int $year): array
+    {
+        return \App\Models\AdoptionApplication::whereYear('created_at', $year)
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+    }
+
+    private function getYearlyAdoptionTotals(): array
+    {
+        return \App\Models\AdoptionApplication::selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+    }
+
+    private function getMonthlyMissingByYear(int $year): array
+    {
+        return \App\Models\MissingPetsReport::whereYear('created_at', $year)
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+    }
+
+    private function getYearlyMissingTotals(): array
+    {
+        return \App\Models\MissingPetsReport::selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
             ->toArray();
     }
 

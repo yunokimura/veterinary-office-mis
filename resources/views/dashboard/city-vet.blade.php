@@ -80,37 +80,25 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
             <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
             <div class="flex items-center gap-2 flex-wrap">
-                <select id="chartViewMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                    <option value="month" {{ $chartViewMode == 'month' ? 'selected' : '' }}>by month</option>
-                    <option value="year" {{ $chartViewMode == 'year' ? 'selected' : '' }}>by year</option>
+                <select id="biteChartMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                    <option value="months" {{ $biteChartMode == 'months' ? 'selected' : '' }}>by months</option>
+                    <option value="years" {{ $biteChartMode == 'years' ? 'selected' : '' }}>by years</option>
                 </select>
-                <div id="monthFilter" class="flex items-center gap-2">
-                    <select id="monthlyChartYear" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                <div id="biteMonthsFilter" class="flex items-center gap-2">
+                    <select id="biteChartTimeframe" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
                         @foreach($availableYears as $y)
-                            <option value="{{ $y }}" {{ $monthlyChartYear == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
-                    </select>
-                    <select id="monthlyChartMonth" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        @foreach(range(1, 12) as $m)
-                            <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $monthlyChartMonth == str_pad($m, 2, '0', STR_PAD_LEFT) ? 'selected' : '' }}>
-                                {{ date('M', mktime(0, 0, 0, $m, 1)) }}
-                            </option>
+                            <option value="{{ $y }}" {{ $biteChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div id="yearFilter" class="hidden items-center gap-2">
-                    <select id="compareYear1" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        @foreach($availableYears as $y)
-                            <option value="{{ $y }}" {{ $compareYear1 == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
-                    </select>
-                    <span class="text-xs text-gray-500">vs</span>
-                    <select id="compareYear2" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        @foreach($availableYears as $y)
-                            <option value="{{ $y }}" {{ $compareYear2 == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
+                <div id="biteYearsFilter" class="hidden items-center gap-2">
+                    <select id="biteChartRange" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        <option value="3" {{ $biteChartTimeframe == 3 ? 'selected' : '' }}>Last 3 Years</option>
+                        <option value="5" {{ $biteChartTimeframe == 5 ? 'selected' : '' }}>Last 5 Years</option>
+                        <option value="all" {{ $biteChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
                     </select>
                 </div>
+                <span id="biteLegend" class="text-xs text-gray-600 font-medium"></span>
             </div>
         </div>
         <div class="h-64 relative">
@@ -118,38 +106,62 @@
         </div>
     </div>
 
-    <!-- Adoption Reports by Month -->
+    <!-- Adoption Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Adoption Reports by Month</h3>
-            <select onchange="window.location.href='?adoption_month='+this.value" 
-                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                <option value="">All Months</option>
-                @for($m = 1; $m <= 12; $m++)
-                    <option value="{{ $m }}" {{ ($adoptionMonth ?? '') == $m ? 'selected' : '' }}>
-                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
-                    </option>
-                @endfor
-            </select>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Adoption Reports</h3>
+            <div class="flex items-center gap-2 flex-wrap">
+                <select id="adoptionChartMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                    <option value="months" {{ $adoptionChartMode == 'months' ? 'selected' : '' }}>by months</option>
+                    <option value="years" {{ $adoptionChartMode == 'years' ? 'selected' : '' }}>by years</option>
+                </select>
+                <div id="adoptionMonthsFilter" class="flex items-center gap-2">
+                    <select id="adoptionChartTimeframe" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $adoptionChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div id="adoptionYearsFilter" class="hidden items-center gap-2">
+                    <select id="adoptionChartRange" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        <option value="3" {{ $adoptionChartTimeframe == 3 ? 'selected' : '' }}>Last 3 Years</option>
+                        <option value="5" {{ $adoptionChartTimeframe == 5 ? 'selected' : '' }}>Last 5 Years</option>
+                        <option value="all" {{ $adoptionChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                    </select>
+                </div>
+                <span id="adoptionLegend" class="text-xs text-gray-600 font-medium"></span>
+            </div>
         </div>
         <div class="h-64">
             <canvas id="adoptionReportsChart"></canvas>
         </div>
     </div>
 
-    <!-- Missing Pet Reports by Month -->
+    <!-- Missing Pet Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Missing Pet Reports by Month</h3>
-            <select onchange="window.location.href='?missing_month='+this.value" 
-                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                <option value="">All Months</option>
-                @for($m = 1; $m <= 12; $m++)
-                    <option value="{{ $m }}" {{ ($missingMonth ?? '') == $m ? 'selected' : '' }}>
-                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
-                    </option>
-                @endfor
-            </select>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Missing Pet Reports</h3>
+            <div class="flex items-center gap-2 flex-wrap">
+                <select id="missingChartMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                    <option value="months" {{ $missingChartMode == 'months' ? 'selected' : '' }}>by months</option>
+                    <option value="years" {{ $missingChartMode == 'years' ? 'selected' : '' }}>by years</option>
+                </select>
+                <div id="missingMonthsFilter" class="flex items-center gap-2">
+                    <select id="missingChartTimeframe" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $missingChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div id="missingYearsFilter" class="hidden items-center gap-2">
+                    <select id="missingChartRange" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
+                        <option value="3" {{ $missingChartTimeframe == 3 ? 'selected' : '' }}>Last 3 Years</option>
+                        <option value="5" {{ $missingChartTimeframe == 5 ? 'selected' : '' }}>Last 5 Years</option>
+                        <option value="all" {{ $missingChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                    </select>
+                </div>
+                <span id="missingLegend" class="text-xs text-gray-600 font-medium"></span>
+            </div>
         </div>
         <div class="h-64">
             <canvas id="missingPetReportsChart"></canvas>
@@ -220,44 +232,30 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Chart data from PHP
-    const monthlyBiteCases = @json($monthlyCases ?? []);
-    const adoptionReportsByMonth = @json($adoptionReportsByMonth ?? []);
-    const missingPetReportsByMonth = @json($missingPetReportsByMonth ?? []);
-    const monthlyCasesYear1 = @json($monthlyCasesYear1 ?? []);
-    const monthlyCasesYear2 = @json($monthlyCasesYear2 ?? []);
     const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const biteData = monthLabels.map((_, i) => monthlyBiteCases[i + 1] || 0);
-    const adoptionData = monthLabels.map((_, i) => adoptionReportsByMonth[i + 1] || 0);
-    const missingData = monthLabels.map((_, i) => missingPetReportsByMonth[i + 1] || 0);
 
     // Barangay data for bar charts
     const vaccinationsByBarangay = @json($vaccinationsByBarangay ?? []);
     const biteCasesByBarangay = @json($biteCasesByBarangay ?? []);
     const barangays = @json($barangays ?? []);
 
-    const year1Select = document.getElementById('compareYear1');
-    const year2Select = document.getElementById('compareYear2');
-    const monthlyChartYear = document.getElementById('monthlyChartYear');
-    const chartViewMode = document.getElementById('chartViewMode');
-    const monthFilter = document.getElementById('monthFilter');
-    const yearFilter = document.getElementById('yearFilter');
+    const biteMonthlyRaw = @json($biteMonthlyData ?? []);
+    const biteYearlyRaw = @json($biteYearlyData ?? []);
+    const adoptionMonthlyRaw = @json($adoptionMonthlyData ?? []);
+    const adoptionYearlyRaw = @json($adoptionYearlyData ?? []);
+    const missingMonthlyRaw = @json($missingMonthlyData ?? []);
+    const missingYearlyRaw = @json($missingYearlyData ?? []);
     const currentMonth = new Date().getMonth() + 1;
 
-    function buildLineDataset(yearLabel, rawData, borderColor, backgroundColor) {
-        const isCurrentYear = parseInt(yearLabel, 10) === new Date().getFullYear();
-        const data = monthLabels.map((_, i) => {
-            const monthNum = i + 1;
-            if (isCurrentYear && monthNum > currentMonth) return null;
-            return rawData[monthNum] || 0;
-        });
+    function buildLineDataset(label, data, borderColor, backgroundColor) {
         return {
-            label: String(yearLabel),
+            label,
             data,
             borderColor,
             backgroundColor,
             borderWidth: 2,
             fill: true,
-            tension: 0.3,
+            tension: 0.4,
             pointRadius: 4,
             pointHoverRadius: 6,
             pointBackgroundColor: borderColor,
@@ -266,203 +264,284 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    function getBiteCasesDatasets() {
-        if (chartViewMode && chartViewMode.value === 'year') {
-            const y1 = year1Select ? year1Select.value : '{{ $compareYear1 }}';
-            const y2 = year2Select ? year2Select.value : '{{ $compareYear2 }}';
-            const ds1 = buildLineDataset(y1, monthlyCasesYear1, '#DC2626', 'rgba(220, 38, 38, 0.08)');
-            const ds2 = buildLineDataset(y2, monthlyCasesYear2, '#4B5563', 'rgba(75, 85, 99, 0.06)');
-            return [ds1, ds2];
+    function getBiteLabels(mode, timeframe) {
+        if (mode === 'years') {
+            const years = getYearRange(timeframe);
+            return years.map(String);
         }
-        const y1 = monthlyChartYear ? monthlyChartYear.value : '{{ $monthlyChartYear }}';
-        const ds1 = buildLineDataset(y1, @json($monthlyCasesSingle ?? []), '#DC2626', 'rgba(220, 38, 38, 0.08)');
-        return [ds1];
+        return monthLabels;
+    }
+
+    function getBiteDatasets(mode, timeframe) {
+        if (mode === 'years') {
+            const years = getYearRange(timeframe);
+            const data = years.map(y => biteYearlyRaw[y] || 0);
+            return [buildLineDataset('Confirmed Rabies Cases', data, '#DC2626', 'rgba(220, 38, 38, 0.08)')];
+        }
+        const selectedMonth = parseInt(document.getElementById('biteChartTimeframe')?.value || '12', 10);
+        const data = monthLabels.map((_, i) => {
+            const monthNum = i + 1;
+            if (monthNum > selectedMonth) return null;
+            return biteMonthlyRaw[monthNum] || 0;
+        });
+        return [buildLineDataset('Confirmed Rabies Cases', data, '#DC2626', 'rgba(220, 38, 38, 0.08)')];
+    }
+
+    function getAdoptionLabels(mode, timeframe) {
+        if (mode === 'years') {
+            const years = getYearRange(timeframe);
+            return years.map(String);
+        }
+        return monthLabels;
+    }
+
+    function getAdoptionDatasets(mode, timeframe) {
+        if (mode === 'years') {
+            const years = getYearRange(timeframe);
+            const data = years.map(y => adoptionYearlyRaw[y] || 0);
+            return [buildLineDataset('Adoption Reports', data, '#22c55e', 'rgba(34, 197, 94, 0.08)')];
+        }
+        const selectedMonth = parseInt(document.getElementById('adoptionChartTimeframe')?.value || '12', 10);
+        const data = monthLabels.map((_, i) => {
+            const monthNum = i + 1;
+            if (monthNum > selectedMonth) return null;
+            return adoptionMonthlyRaw[monthNum] || 0;
+        });
+        return [buildLineDataset('Adoption Reports', data, '#22c55e', 'rgba(34, 197, 94, 0.08)')];
+    }
+
+    function getMissingLabels(mode, timeframe) {
+        if (mode === 'years') {
+            const years = getYearRange(timeframe);
+            return years.map(String);
+        }
+        return monthLabels;
+    }
+
+    function getMissingDatasets(mode, timeframe) {
+        if (mode === 'years') {
+            const years = getYearRange(timeframe);
+            const data = years.map(y => missingYearlyRaw[y] || 0);
+            return [buildLineDataset('Missing Pet Reports', data, '#f97316', 'rgba(249, 115, 22, 0.08)')];
+        }
+        const selectedMonth = parseInt(document.getElementById('missingChartTimeframe')?.value || '12', 10);
+        const data = monthLabels.map((_, i) => {
+            const monthNum = i + 1;
+            if (monthNum > selectedMonth) return null;
+            return missingMonthlyRaw[monthNum] || 0;
+        });
+        return [buildLineDataset('Missing Pet Reports', data, '#f97316', 'rgba(249, 115, 22, 0.08)')];
+    }
+
+    function getYearRange(rangeValue) {
+        const years = @json($availableYears ?? []);
+        if (rangeValue === 'all') return years;
+        const count = parseInt(rangeValue, 10);
+        return years.slice(0, count);
+    }
+
+    function getLegendText(chart, mode, timeframe) {
+        if (mode === 'years') {
+            const years = getYearRange(timeframe);
+            if (years.length === 0) return '';
+            if (years.length === 1) return `● ${years[0]}`;
+            return `● ${years[years.length - 1]} - ${years[0]}`;
+        }
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const currentYear = new Date().getFullYear();
+        if (chart === 'bite') {
+            const selectedMonth = parseInt(document.getElementById('biteChartTimeframe')?.value || '12', 10);
+            const monthName = monthNames[selectedMonth - 1] || '';
+            return `● ${monthName} ${currentYear}`.trim();
+        }
+        if (chart === 'adoption') {
+            const selectedMonth = parseInt(document.getElementById('adoptionChartTimeframe')?.value || '12', 10);
+            const monthName = monthNames[selectedMonth - 1] || '';
+            return `● ${monthName} ${currentYear}`.trim();
+        }
+        if (chart === 'missing') {
+            const selectedMonth = parseInt(document.getElementById('missingChartTimeframe')?.value || '12', 10);
+            const monthName = monthNames[selectedMonth - 1] || '';
+            return `● ${monthName} ${currentYear}`.trim();
+        }
+        return '';
     }
 
     const biteCtx = document.getElementById('biteCasesByMonthChart').getContext('2d');
     const biteChart = new Chart(biteCtx, {
         type: 'line',
         data: {
-            labels: monthLabels,
-            datasets: getBiteCasesDatasets()
+            labels: getBiteLabels('{{ $biteChartMode }}', '{{ $biteChartTimeframe }}'),
+            datasets: getBiteDatasets('{{ $biteChartMode }}', '{{ $biteChartTimeframe }}')
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
+            interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    align: 'end',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        padding: 16,
-                        font: { size: 12 },
-                        color: '#374151'
-                    }
-                },
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: '#fff',
                     titleColor: '#111827',
                     bodyColor: '#374151',
                     borderColor: '#E5E7EB',
                     borderWidth: 1,
-                    padding: 10,
-                    callbacks: {
-                        title: function(context) {
-                            return context[0].label;
-                        },
-                        label: function(context) {
-                            const year = context.dataset.label;
-                            const value = context.parsed.y;
-                            const currentIdx = context.dataIndex;
-                            const lines = [`${year}: ${value} case${value !== 1 ? 's' : ''}`];
-                            if (parseInt(year, 10) === new Date().getFullYear() && currentIdx > 0) {
-                                const prevYear = String(new Date().getFullYear() - 1);
-                                const prevValue = monthLabels.map((_, i) => monthlyCasesYear2[i + 1] || 0)[currentIdx];
-                                if (prevValue > 0) {
-                                    const yoy = (((value || 0) - prevValue) / prevValue) * 100;
-                                    const sign = yoy > 0 ? '+' : '';
-                                    lines.push(`YoY: ${sign}${yoy.toFixed(1)}%`);
-                                }
-                            }
-                            return lines;
-                        }
-                    }
+                    padding: 10
                 }
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    min: 0,
-                    ticks: {
-                        stepSize: 2,
-                        callback: function(value) { return Number.isInteger(value) ? value : ''; }
-                    },
-                    grid: { color: '#f3f4f6' }
-                },
-                x: {
-                    grid: { display: false }
-                }
+                y: { beginAtZero: true, min: 0, ticks: { stepSize: 2 }, grid: { color: '#f3f4f6' } },
+                x: { grid: { display: false } }
             }
         }
     });
 
-    function updateChartView() {
-        if (chartViewMode && chartViewMode.value === 'year') {
-            monthFilter.classList.add('hidden');
-            yearFilter.classList.remove('hidden');
-            yearFilter.classList.add('flex');
-            biteChart.data.labels = monthLabels;
-        } else {
-            monthFilter.classList.remove('hidden');
-            yearFilter.classList.add('hidden');
-            yearFilter.classList.remove('flex');
-            biteChart.data.labels = monthLabels;
+    const adoptionCtx = document.getElementById('adoptionReportsChart').getContext('2d');
+    const adoptionChart = new Chart(adoptionCtx, {
+        type: 'line',
+        data: {
+            labels: getAdoptionLabels('{{ $adoptionChartMode }}', '{{ $adoptionChartTimeframe }}'),
+            datasets: getAdoptionDatasets('{{ $adoptionChartMode }}', '{{ $adoptionChartTimeframe }}')
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#111827',
+                    bodyColor: '#374151',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    padding: 10
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, min: 0, ticks: { stepSize: 1 }, grid: { color: '#f3f4f6' } },
+                x: { grid: { display: false } }
+            }
         }
-        biteChart.data.datasets = getBiteCasesDatasets();
+    });
+
+    const missingCtx = document.getElementById('missingPetReportsChart').getContext('2d');
+    const missingChart = new Chart(missingCtx, {
+        type: 'line',
+        data: {
+            labels: getMissingLabels('{{ $missingChartMode }}', '{{ $missingChartTimeframe }}'),
+            datasets: getMissingDatasets('{{ $missingChartMode }}', '{{ $missingChartTimeframe }}')
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#111827',
+                    bodyColor: '#374151',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    padding: 10
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, min: 0, ticks: { stepSize: 1 }, grid: { color: '#f3f4f6' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    function updateBiteChart() {
+        const mode = document.getElementById('biteChartMode')?.value || 'months';
+        const timeframe = document.getElementById('biteChartRange')?.value || document.getElementById('biteChartTimeframe')?.value || '{{ $biteChartTimeframe }}';
+        const monthsFilter = document.getElementById('biteMonthsFilter');
+        const yearsFilter = document.getElementById('biteYearsFilter');
+        if (mode === 'years') {
+            monthsFilter.classList.add('hidden');
+            yearsFilter.classList.remove('hidden');
+            yearsFilter.classList.add('flex');
+        } else {
+            monthsFilter.classList.remove('hidden');
+            yearsFilter.classList.add('hidden');
+            yearsFilter.classList.remove('flex');
+        }
+        biteChart.data.labels = getBiteLabels(mode, timeframe);
+        biteChart.data.datasets = getBiteDatasets(mode, timeframe);
+        document.getElementById('biteLegend').textContent = getLegendText('bite', mode, timeframe);
         biteChart.update();
     }
 
-    if (chartViewMode) {
-        chartViewMode.addEventListener('change', updateChartView);
-    }
-
-    if (year1Select && year2Select) {
-        [year1Select, year2Select].forEach(sel => {
-            sel.addEventListener('change', function() {
-                const v1 = year1Select.value;
-                const v2 = year2Select.value;
-                if (v1 === v2) {
-                    const availableYears = Array.from(year1Select.options).map(o => o.value);
-                    const other = sel === year1Select ? year2Select : year1Select;
-                    const currentOther = other.value;
-                    const replacement = availableYears.find(y => y !== currentOther) || currentOther;
-                    other.value = replacement;
-                }
-                if (chartViewMode && chartViewMode.value === 'year') {
-                    biteChart.data.datasets = getBiteCasesDatasets();
-                    biteChart.update();
-                }
-            });
-        });
-    }
-
-    if (monthlyChartYear) {
-        monthlyChartYear.addEventListener('change', function() {
-            if (chartViewMode && chartViewMode.value === 'month') {
-                biteChart.data.datasets = getBiteCasesDatasets();
-                biteChart.update();
-            }
-        });
-    }
-
-    // Adoption Reports by Month Chart
-    const adoptionCtx = document.getElementById('adoptionReportsChart').getContext('2d');
-    new Chart(adoptionCtx, {
-        type: 'line',
-        data: {
-            labels: monthLabels,
-            datasets: [{
-                label: 'Adoption Reports',
-                data: adoptionData,
-                borderColor: '#22c55e',
-                backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#22c55e',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-                x: { grid: { display: false } }
-            }
+    function updateAdoptionChart() {
+        const mode = document.getElementById('adoptionChartMode')?.value || 'months';
+        const timeframe = document.getElementById('adoptionChartRange')?.value || document.getElementById('adoptionChartTimeframe')?.value || '{{ $adoptionChartTimeframe }}';
+        const monthsFilter = document.getElementById('adoptionMonthsFilter');
+        const yearsFilter = document.getElementById('adoptionYearsFilter');
+        if (mode === 'years') {
+            monthsFilter.classList.add('hidden');
+            yearsFilter.classList.remove('hidden');
+            yearsFilter.classList.add('flex');
+        } else {
+            monthsFilter.classList.remove('hidden');
+            yearsFilter.classList.add('hidden');
+            yearsFilter.classList.remove('flex');
         }
-    });
+        adoptionChart.data.labels = getAdoptionLabels(mode, timeframe);
+        adoptionChart.data.datasets = getAdoptionDatasets(mode, timeframe);
+        document.getElementById('adoptionLegend').textContent = getLegendText('adoption', mode, timeframe);
+        adoptionChart.update();
+    }
 
-    // Missing Pet Reports by Month Chart
-    const missingCtx = document.getElementById('missingPetReportsChart').getContext('2d');
-    new Chart(missingCtx, {
-        type: 'line',
-        data: {
-            labels: monthLabels,
-            datasets: [{
-                label: 'Missing Pet Reports',
-                data: missingData,
-                borderColor: '#f97316',
-                backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#f97316',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-                x: { grid: { display: false } }
-            }
+    function updateMissingChart() {
+        const mode = document.getElementById('missingChartMode')?.value || 'months';
+        const timeframe = document.getElementById('missingChartRange')?.value || document.getElementById('missingChartTimeframe')?.value || '{{ $missingChartTimeframe }}';
+        const monthsFilter = document.getElementById('missingMonthsFilter');
+        const yearsFilter = document.getElementById('missingYearsFilter');
+        if (mode === 'years') {
+            monthsFilter.classList.add('hidden');
+            yearsFilter.classList.remove('hidden');
+            yearsFilter.classList.add('flex');
+        } else {
+            monthsFilter.classList.remove('hidden');
+            yearsFilter.classList.add('hidden');
+            yearsFilter.classList.remove('flex');
         }
-    });
+        missingChart.data.labels = getMissingLabels(mode, timeframe);
+        missingChart.data.datasets = getMissingDatasets(mode, timeframe);
+        document.getElementById('missingLegend').textContent = getLegendText('missing', mode, timeframe);
+        missingChart.update();
+    }
+
+    const biteChartMode = document.getElementById('biteChartMode');
+    if (biteChartMode) biteChartMode.addEventListener('change', updateBiteChart);
+    const biteChartTimeframe = document.getElementById('biteChartTimeframe');
+    if (biteChartTimeframe) biteChartTimeframe.addEventListener('change', updateBiteChart);
+    const biteChartRange = document.getElementById('biteChartRange');
+    if (biteChartRange) biteChartRange.addEventListener('change', updateBiteChart);
+
+    const adoptionChartMode = document.getElementById('adoptionChartMode');
+    if (adoptionChartMode) adoptionChartMode.addEventListener('change', updateAdoptionChart);
+    const adoptionChartTimeframe = document.getElementById('adoptionChartTimeframe');
+    if (adoptionChartTimeframe) adoptionChartTimeframe.addEventListener('change', updateAdoptionChart);
+    const adoptionChartRange = document.getElementById('adoptionChartRange');
+    if (adoptionChartRange) adoptionChartRange.addEventListener('change', updateAdoptionChart);
+
+    const missingChartMode = document.getElementById('missingChartMode');
+    if (missingChartMode) missingChartMode.addEventListener('change', updateMissingChart);
+    const missingChartTimeframe = document.getElementById('missingChartTimeframe');
+    if (missingChartTimeframe) missingChartTimeframe.addEventListener('change', updateMissingChart);
+    const missingChartRange = document.getElementById('missingChartRange');
+    if (missingChartRange) missingChartRange.addEventListener('change', updateMissingChart);
+
+    // Initialize legends
+    const biteMode = document.getElementById('biteChartMode')?.value || '{{ $biteChartMode }}';
+    const adoptionMode = document.getElementById('adoptionChartMode')?.value || '{{ $adoptionChartMode }}';
+    const missingMode = document.getElementById('missingChartMode')?.value || '{{ $missingChartMode }}';
+    document.getElementById('biteLegend').textContent = getLegendText('bite', biteMode, '{{ $biteChartTimeframe }}');
+    document.getElementById('adoptionLegend').textContent = getLegendText('adoption', adoptionMode, '{{ $adoptionChartTimeframe }}');
+    document.getElementById('missingLegend').textContent = getLegendText('missing', missingMode, '{{ $missingChartTimeframe }}');
 
     // Vaccinations per Barangay Chart (Horizontal Bar)
     const vaccCtx = document.getElementById('vaccinationsByBarangayChart').getContext('2d');

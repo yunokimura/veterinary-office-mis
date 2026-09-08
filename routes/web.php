@@ -172,8 +172,11 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('dashboard');
     // Roles & Permissions
     Route::get('/roles', [SuperAdminController::class, 'roles'])->name('roles.index');
+    Route::get('/roles/create', [SuperAdminController::class, 'createRole'])->name('roles.create');
+    Route::post('/roles', [SuperAdminController::class, 'storeRole'])->name('roles.store');
     Route::get('/roles/{role}/edit', [SuperAdminController::class, 'editRole'])->name('roles.edit');
     Route::put('/roles/{role}', [SuperAdminController::class, 'updateRole'])->name('roles.update');
+    Route::post('/roles/{role}/permissions', [SuperAdminController::class, 'syncPermissions'])->name('roles.permissions.sync');
 
     // User Management (Full Access - Super Admin Only)
     // These routes are protected by super_admin role middleware

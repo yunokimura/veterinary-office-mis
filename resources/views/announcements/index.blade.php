@@ -37,7 +37,7 @@
     $draftCount = Announcement::where('status', 'Draft')->count();
     $scheduledCount = Announcement::where('status', 'Scheduled')->count();
     $archivedCount = Announcement::where('status', 'Archived')->count();
-@endphp>
+@endphp
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
     <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
@@ -165,6 +165,17 @@
     </form>
 </div>
 
+<!-- View Switcher -->
+<div class="flex justify-end mb-4">
+    <div class="inline-flex rounded-lg shadow-sm" role="group">
+        <button type="button" id="tableViewBtn" onclick="switchView('table')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-green-500 focus:text-green-700">
+            <i class="bi bi-table mr-1"></i> Table
+        </button>
+        <button type="button" id="cardViewBtn" onclick="switchView('card')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-green-500 focus:text-green-700">
+            <i class="bi bi-grid mr-1"></i> Cards
+        </button>
+    </div>
+</div>
 
 
 <!-- Active Filter Tags -->
@@ -234,175 +245,275 @@
     </div>
 </div>
 
-<!-- Announcements Grid -->
-@if($announcements->count() > 0)
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        @foreach($announcements as $announcement)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group" data-id="{{ $announcement->id }}">
-                <!-- Card Header with Image -->
-                <div class="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-                    @if($announcement->photo_path)
-                        <img src="{{ $announcement->photo_url }}" alt="{{ $announcement->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
-                    @else
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="w-16 h-16 bg-white/50 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                <i class="bi bi-image text-3xl text-gray-400"></i>
+<!-- Announcements Card View -->
+<div id="card-view">
+    @if($announcements->count() > 0)
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            @foreach($announcements as $announcement)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group" data-id="{{ $announcement->id }}">
+                    <!-- Card Header with Image -->
+                    <div class="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                        @if($announcement->photo_path)
+                            <img src="{{ $announcement->photo_url }}" alt="{{ $announcement->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                        @else
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-white/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                    <i class="bi bi-image text-3xl text-gray-400"></i>
+                                </div>
                             </div>
+                        @endif
+                        
+                        <!-- Status Badge -->
+                        <div class="absolute top-3 right-3">
+                            @php
+                                $statusColors = [
+                                    'Published' => 'bg-green-500',
+                                    'Scheduled' => 'bg-yellow-500',
+                                    'Draft' => 'bg-gray-500',
+                                    'Archived' => 'bg-gray-500'
+                                ];
+                            @endphp
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white shadow-lg {{ $statusColors[$announcement->status] ?? 'bg-gray-500' }}">
+                                {{ $announcement->status }}
+                            </span>
                         </div>
-                    @endif
-                    
-                    <!-- Status Badge -->
-                    <div class="absolute top-3 right-3">
-                        @php
-                            $statusColors = [
-                                'Published' => 'bg-green-500',
-                                'Scheduled' => 'bg-yellow-500',
-                                'Draft' => 'bg-gray-500',
-                                'Archived' => 'bg-gray-500'
-                            ];
-                        @endphp
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white shadow-lg {{ $statusColors[$announcement->status] ?? 'bg-gray-500' }}">
-                            {{ $announcement->status }}
-                        </span>
-                    </div>
 
-                    <!-- Checkbox for Bulk Actions -->
-                    <div class="absolute top-3 left-3">
-                        <input 
-                            type="checkbox" 
-                            class="announcement-checkbox w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
-                            value="{{ $announcement->id }}"
-                            onchange="updateBulkActions()"
-                        >
-                    </div>
-                </div>
-
-                <!-- Card Body -->
-                <div class="p-6">
-                    <!-- Category Badge -->
-                    <div class="mb-2">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                            <i class="bi bi-tag mr-1"></i>
-                            {{ ucfirst($announcement->category) }}
-                        </span>
-                    </div>
-
-                    <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors line-clamp-2">{{ $announcement->title }}</h3>
-                    <p class="text-gray-600 mb-4 line-clamp-3 text-sm">{{ $announcement->content }}</p>
-
-                    <!-- Meta Info -->
-                    <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-4">
-                        @if($announcement->organized_by)
-                            <span class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 rounded-lg">
-                                <i class="bi bi-person mr-1.5 text-blue-500"></i>
-                                {{ $announcement->organized_by }}
-                            </span>
-                        @endif
-                        <span class="inline-flex items-center px-2.5 py-1.5 bg-green-50 rounded-lg">
-                            <i class="bi bi-calendar mr-1.5 text-green-500"></i>
-                            {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
-                        </span>
-                        @if($announcement->updated_at != $announcement->created_at)
-                            <span class="inline-flex items-center px-2.5 py-1.5 bg-gray-50 rounded-lg">
-                                <i class="bi bi-pencil mr-1.5 text-gray-500"></i>
-                                Updated {{ \Carbon\Carbon::parse($announcement->updated_at)->diffForHumans() }}
-                            </span>
-                        @endif
-                    </div>
-
-                    <!-- Quick Status Toggle -->
-                    <div class="mb-4">
-                        <label class="text-xs font-medium text-gray-600 mb-1.5 block">Quick Status Change:</label>
-                        <div class="relative">
-                            <select 
-                                onchange="quickStatusChange({{ $announcement->id }}, this.value)" 
-                                class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-600 focus:border-green-600 appearance-none"
+                        <!-- Checkbox for Bulk Actions -->
+                        <div class="absolute top-3 left-3">
+                            <input 
+                                type="checkbox" 
+                                class="announcement-checkbox w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
+                                value="{{ $announcement->id }}"
+                                onchange="updateBulkActions()"
                             >
-                                <option value="">-- Select Status --</option>
-                                <option value="Published" {{ $announcement->status === 'Published' ? 'selected' : '' }}>Published</option>
-                                <option value="Scheduled" {{ $announcement->status === 'Scheduled' ? 'selected' : '' }}>Scheduled</option>
-                                <option value="Draft" {{ $announcement->status === 'Draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="Archived" {{ $announcement->status === 'Archived' ? 'selected' : '' }}>Archived</option>
-                            </select>
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <i class="bi bi-chevron-down text-gray-400 text-sm"></i>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
-                        <button 
-                            onclick="previewAnnouncement({{ $announcement->id }})" 
-                            class="flex items-center gap-1.5 px-3 py-2 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg transition text-sm"
-                            title="Preview"
-                        >
-                            <i class="bi bi-eye"></i>
-                            <span class="font-medium">Preview</span>
-                        </button>
-                        <a 
-                            href="{{ route($rolePrefix . '.announcements.edit', $announcement) }}" 
-                            class="flex items-center gap-1.5 px-3 py-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition text-sm"
-                            title="Edit"
-                        >
-                            <i class="bi bi-pencil"></i>
-                            <span class="font-medium">Edit</span>
-                        </a>
-                        <button 
-                            onclick="duplicateAnnouncement({{ $announcement->id }})" 
-                            class="flex items-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition text-sm"
-                            title="Duplicate"
-                        >
-                            <i class="bi bi-copy"></i>
-                            <span class="font-medium">Duplicate</span>
-                        </button>
-                        <form action="{{ route($rolePrefix . '.announcements.destroy', $announcement) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this announcement? This action cannot be undone.');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="flex items-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition text-sm" title="Delete">
-                                <i class="bi bi-trash"></i>
-                                <span class="font-medium">Delete</span>
+                    <!-- Card Body -->
+                    <div class="p-6">
+                        <!-- Category Badge -->
+                        <div class="mb-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                <i class="bi bi-tag mr-1"></i>
+                                {{ ucfirst($announcement->category) }}
+                            </span>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors line-clamp-2">{{ $announcement->title }}</h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3 text-sm">{{ $announcement->content }}</p>
+
+                        <!-- Meta Info -->
+                        <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-4">
+                            @if($announcement->organized_by)
+                                <span class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 rounded-lg">
+                                    <i class="bi bi-person mr-1.5 text-blue-500"></i>
+                                    {{ $announcement->organized_by }}
+                                </span>
+                            @endif
+                            <span class="inline-flex items-center px-2.5 py-1.5 bg-green-50 rounded-lg">
+                                <i class="bi bi-calendar mr-1.5 text-green-500"></i>
+                                {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
+                            </span>
+                            @if($announcement->updated_at != $announcement->created_at)
+                                <span class="inline-flex items-center px-2.5 py-1.5 bg-gray-50 rounded-lg">
+                                    <i class="bi bi-pencil mr-1.5 text-gray-500"></i>
+                                    Updated {{ \Carbon\Carbon::parse($announcement->updated_at)->diffForHumans() }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <!-- Quick Status Toggle -->
+                        <div class="mb-4">
+                            <label class="text-xs font-medium text-gray-600 mb-1.5 block">Quick Status Change:</label>
+                            <div class="relative">
+                                <select 
+                                    onchange="quickStatusChange({{ $announcement->id }}, this.value)" 
+                                    class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-600 focus:border-green-600 appearance-none"
+                                >
+                                    <option value="">-- Select Status --</option>
+                                    <option value="Published" {{ $announcement->status === 'Published' ? 'selected' : '' }}>Published</option>
+                                    <option value="Scheduled" {{ $announcement->status === 'Scheduled' ? 'selected' : '' }}>Scheduled</option>
+                                    <option value="Draft" {{ $announcement->status === 'Draft' ? 'selected' : '' }}>Draft</option>
+                                    <option value="Archived" {{ $announcement->status === 'Archived' ? 'selected' : '' }}>Archived</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="bi bi-chevron-down text-gray-400 text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                            <button 
+                                onclick="previewAnnouncement({{ $announcement->id }})" 
+                                class="flex items-center gap-1.5 px-3 py-2 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg transition text-sm"
+                                title="Preview"
+                            >
+                                <i class="bi bi-eye"></i>
+                                <span class="font-medium">Preview</span>
                             </button>
-                        </form>
+                            <a 
+                                href="{{ route($rolePrefix . '.announcements.edit', $announcement) }}" 
+                                class="flex items-center gap-1.5 px-3 py-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition text-sm"
+                                title="Edit"
+                            >
+                                <i class="bi bi-pencil"></i>
+                                <span class="font-medium">Edit</span>
+                            </a>
+                            <button 
+                                onclick="duplicateAnnouncement({{ $announcement->id }})" 
+                                class="flex items-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition text-sm"
+                                title="Duplicate"
+                            >
+                                <i class="bi bi-copy"></i>
+                                <span class="font-medium">Duplicate</span>
+                            </button>
+                            <form action="{{ route($rolePrefix . '.announcements.destroy', $announcement) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this announcement? This action cannot be undone.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="flex items-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition text-sm" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                    <span class="font-medium">Delete</span>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
-    </div>
+            @endforeach
+        </div>
 
-    <!-- Pagination -->
-    <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="text-sm text-gray-600">
-            Showing <span class="font-semibold">{{ $announcements->count() }}</span> of <span class="font-semibold">{{ $announcements->total() }}</span> announcements
+        <!-- Pagination -->
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-gray-600">
+                Showing <span class="font-semibold">{{ $announcements->count() }}</span> of <span class="font-semibold">{{ $announcements->total() }}</span> announcements
+            </div>
+            <div class="flex gap-2">
+                {{ $announcements->links() }}
+            </div>
         </div>
-        <div class="flex gap-2">
-            {{ $announcements->links() }}
+    @else
+        <!-- Empty State -->
+        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-12 text-center border-2 border-dashed border-gray-200">
+            <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <i class="bi bi-megaphone text-5xl text-gray-300"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-700 mb-2">No Announcements Found</h3>
+            <p class="text-gray-500 mb-6 max-w-md mx-auto">
+                @if($currentSearch || $currentCategory || $currentStatus)
+                    No announcements match your current filters. Try adjusting your search criteria.
+                @else
+                    Create your first announcement to keep the public informed about campaigns, events, and important updates.
+                @endif
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                @if($currentSearch || $currentCategory || $currentStatus)
+                    <a href="{{ route($rolePrefix . '.announcements.index') }}" class="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
+                        <i class="bi bi-x-circle"></i>
+                        Clear Filters
+                    </a>
+                @endif
+            </div>
         </div>
-    </div>
-@else
-    <!-- Empty State -->
-    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-12 text-center border-2 border-dashed border-gray-200">
-        <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <i class="bi bi-megaphone text-5xl text-gray-300"></i>
+    @endif
+</div>
+
+<!-- Announcements Table View -->
+<div id="table-view" class="hidden">
+    @if($announcements->count() > 0)
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Announcement</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organized By</th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($announcements as $announcement)
+                            @php
+                                $statusColors = [
+                                    'Published' => 'bg-green-100 text-green-800',
+                                    'Scheduled' => 'bg-yellow-100 text-yellow-800',
+                                    'Draft' => 'bg-gray-100 text-gray-800',
+                                    'Archived' => 'bg-gray-100 text-gray-800'
+                                ];
+                            @endphp
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-lg overflow-hidden bg-gray-100">
+                                            @if($announcement->photo_path)
+                                                <img src="{{ $announcement->photo_url }}" alt="{{ $announcement->title }}" class="h-10 w-10 object-cover">
+                                            @else
+                                                <div class="h-10 w-10 flex items-center justify-center">
+                                                    <i class="bi bi-image text-gray-400"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">{{ $announcement->title }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        {{ ucfirst($announcement->category) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold {{ $statusColors[$announcement->status] ?? 'bg-gray-100 text-gray-800' }}">
+                                        {{ $announcement->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $announcement->organized_by ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button onclick="previewAnnouncement({{ $announcement->id }})" class="text-gray-600 hover:text-gray-900 p-1" title="Preview">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <a href="{{ route($rolePrefix . '.announcements.edit', $announcement) }}" class="text-green-600 hover:text-green-900 p-1" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button onclick="duplicateAnnouncement({{ $announcement->id }})" class="text-blue-600 hover:text-blue-900 p-1" title="Duplicate">
+                                            <i class="bi bi-copy"></i>
+                                        </button>
+                                        <form action="{{ route($rolePrefix . '.announcements.destroy', $announcement) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this announcement? This action cannot be undone.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900 p-1" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <h3 class="text-2xl font-bold text-gray-700 mb-2">No Announcements Found</h3>
-        <p class="text-gray-500 mb-6 max-w-md mx-auto">
-            @if($currentSearch || $currentCategory || $currentStatus)
-                No announcements match your current filters. Try adjusting your search criteria.
-            @else
-                Create your first announcement to keep the public informed about campaigns, events, and important updates.
-            @endif
-        </p>
-        <div class="flex flex-wrap items-center justify-center gap-3">
-            @if($currentSearch || $currentCategory || $currentStatus)
-                <a href="{{ route($rolePrefix . '.announcements.index') }}" class="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
-                    <i class="bi bi-x-circle"></i>
-                    Clear Filters
-                </a>
-            @endif
+
+        <!-- Pagination -->
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-gray-600">
+                Showing <span class="font-semibold">{{ $announcements->count() }}</span> of <span class="font-semibold">{{ $announcements->total() }}</span> announcements
+            </div>
+            <div class="flex gap-2">
+                {{ $announcements->links() }}
+            </div>
         </div>
-    </div>
-@endif
+    @endif
+</div>
 
 <!-- Preview Modal -->
 <div id="previewModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -712,6 +823,7 @@ function applyFilters(page = 1) {
         .then(response => response.json())
         .then(data => {
             updateAnnouncementsGrid(data.announcements);
+            updateAnnouncementsTable(data.announcements);
             updatePagination(data.pagination);
             
             // Restore grid state
@@ -743,19 +855,16 @@ function applyFilters(page = 1) {
 
 function updateAnnouncementsGrid(announcements) {
     const grid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2');
-    const emptyState = document.querySelector('.bg-gradient-to-br.from-gray-50');
+    const emptyState = document.querySelector('#card-view .bg-gradient-to-br.from-gray-50');
     
     if (announcements.length === 0) {
-        // Show empty state
         if (grid) grid.style.display = 'none';
         if (emptyState) emptyState.style.display = 'block';
         return;
     }
 
-    // Hide empty state
     if (emptyState) emptyState.style.display = 'none';
     
-    // Update grid
     if (grid) {
         grid.style.display = 'grid';
         grid.innerHTML = announcements.map(announcement => `
@@ -881,6 +990,107 @@ function updateAnnouncementsGrid(announcements) {
     }
 }
 
+function switchView(view) {
+    const cardView = document.getElementById('card-view');
+    const tableView = document.getElementById('table-view');
+    const tableViewBtn = document.getElementById('tableViewBtn');
+    const cardViewBtn = document.getElementById('cardViewBtn');
+    
+    if (!cardView || !tableView) return;
+    
+    if (view === 'table') {
+        cardView.classList.add('hidden');
+        tableView.classList.remove('hidden');
+        tableViewBtn.classList.add('bg-green-50', 'text-green-700', 'border-green-500', 'z-10');
+        tableViewBtn.classList.remove('text-gray-700', 'bg-white');
+        cardViewBtn.classList.remove('bg-green-50', 'text-green-700', 'border-green-500', 'z-10');
+        cardViewBtn.classList.add('text-gray-700', 'bg-white');
+    } else {
+        tableView.classList.add('hidden');
+        cardView.classList.remove('hidden');
+        cardViewBtn.classList.add('bg-green-50', 'text-green-700', 'border-green-500', 'z-10');
+        cardViewBtn.classList.remove('text-gray-700', 'bg-white');
+        tableViewBtn.classList.remove('bg-green-50', 'text-green-700', 'border-green-500', 'z-10');
+        tableViewBtn.classList.add('text-gray-700', 'bg-white');
+    }
+    
+    localStorage.setItem('announcementView', view);
+}
+
+function updateAnnouncementsTable(announcements) {
+    const tableBody = document.querySelector('#table-view tbody');
+    if (!tableBody) return;
+    
+    if (announcements.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-12 text-center">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="bi bi-megaphone text-3xl text-gray-400"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">No Announcements Found</h4>
+                        <p class="text-gray-500">No announcements match your current filters.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tableBody.innerHTML = announcements.map(announcement => `
+        <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 rounded-lg overflow-hidden bg-gray-100">
+                        ${announcement.photo_path ? 
+                            `<img src="${announcement.photo_url}" alt="${announcement.title}" class="h-10 w-10 object-cover">` :
+                            `<div class="h-10 w-10 flex items-center justify-center"><i class="bi bi-image text-gray-400"></i></div>`
+                        }
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">${announcement.title}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                    ${announcement.category.charAt(0).toUpperCase() + announcement.category.slice(1)}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                ${getTableStatusBadge(announcement.status)}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${new Date(announcement.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${announcement.organized_by || '-'}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                <div class="flex items-center justify-end gap-2">
+                    <button onclick="previewAnnouncement(${announcement.id})" class="text-gray-600 hover:text-gray-900 p-1" title="Preview">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <a href="{{ url($rolePrefix) }}/announcements/${announcement.id}/edit" class="text-green-600 hover:text-green-900 p-1" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <button onclick="duplicateAnnouncement(${announcement.id})" class="text-blue-600 hover:text-blue-900 p-1" title="Duplicate">
+                        <i class="bi bi-copy"></i>
+                    </button>
+                    <form action="{{ url($rolePrefix) }}/announcements/${announcement.id}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this announcement? This action cannot be undone.');">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="text-red-600 hover:text-red-900 p-1" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
 function getStatusBadge(status) {
     const colors = {
         'Published': 'bg-green-500',
@@ -889,6 +1099,18 @@ function getStatusBadge(status) {
         'Archived': 'bg-gray-500'
     };
     return `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold text-white shadow-lg ${colors[status] || 'bg-gray-500'}">
+        ${status}
+    </span>`;
+}
+
+function getTableStatusBadge(status) {
+    const colors = {
+        'Published': 'bg-green-100 text-green-800',
+        'Scheduled': 'bg-yellow-100 text-yellow-800',
+        'Draft': 'bg-gray-100 text-gray-800',
+        'Archived': 'bg-gray-100 text-gray-800'
+    };
+    return `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold ${colors[status] || 'bg-gray-100 text-gray-800'}">
         ${status}
     </span>`;
 }
@@ -963,6 +1185,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.querySelector('select[name="category"]');
     const statusSelect = document.querySelector('select[name="status"]');
     const sortSelect = document.querySelector('select[name="sort"]');
+
+    // Initialize view from localStorage
+    const savedView = localStorage.getItem('announcementView') || 'table';
+    switchView(savedView);
 
     // Search input with debounce
     if (searchInput) {

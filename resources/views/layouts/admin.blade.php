@@ -200,7 +200,7 @@
 
             <div x-data="{ open: @json(request()->routeIs('super-admin.users.*') || request()->routeIs('admin.users.*') || request()->routeIs('super-admin.roles.*')) }">
                 <button @click="open = !open"
-                        class="nav-item w-full justify-between {{ request()->routeIs('super-admin.users.*') ? 'active-nav' : '' }}">
+                        class="nav-item w-full justify-between {{ request()->routeIs('super-admin.users.*') || request()->routeIs('super-admin.roles.*') ? 'active-nav' : '' }}">
                     <span class="flex items-center gap-2 whitespace-nowrap">
                         <i class="bi bi-people"></i><span>User Management</span>
                     </span>
@@ -214,7 +214,7 @@
                     <a href="javascript:void(0)" @click="openGlobalCreateUserModal()" class="block text-sm text-white hover:bg-white/10 hover:text-white rounded-md px-2 py-1 transition-colors">
                         <i class="bi bi-person-plus mr-2 text-xs"></i>Add New User
                     </a>
-                    <a href="{{ route('super-admin.roles.index') }}" class="block text-sm text-white hover:bg-white/10 hover:text-white rounded-md px-2 py-1 transition-colors">
+                    <a href="{{ route('super-admin.roles.index') }}" class="block text-sm rounded-md px-2 py-1 transition-colors {{ request()->routeIs('super-admin.roles.*') ? 'text-white bg-white/10' : 'text-white hover:bg-white/10 hover:text-white' }}">
                         <i class="bi bi-shield-lock mr-2 text-xs"></i>Roles & Permissions
                     </a>
                 </div>

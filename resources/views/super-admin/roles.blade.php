@@ -2,7 +2,7 @@
 
 @section('title', 'Roles & Permissions')
 @section('header', 'Roles & Permissions')
-@section('subheader', 'Manage system roles and hierarchy levels')
+@section('subheader', 'Manage system roles, access levels, and permissions')
 
 @section('content')
 <div class="space-y-6">
@@ -17,8 +17,8 @@
 
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
             <div>
-                <p class="text-xs font-medium text-gray-500">Total Users</p>
-                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $totalUsers }}</p>
+                <p class="text-xs font-medium text-gray-500">Total Permissions</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $totalPermissions }}</p>
             </div>
         </div>
 
@@ -39,52 +39,128 @@
 
     <!-- Roles Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 class="text-lg font-semibold text-gray-800">System Roles</h3>
-            <p class="text-sm text-gray-500">Manage role display names, hierarchy levels, and descriptions</p>
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">System Roles</h3>
+                <p class="text-sm text-gray-500">Manage role display names, hierarchy levels, and permissions</p>
+            </div>
+            <button type="button" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition shadow-sm" onclick="openCreateRoleModal()">
+                <i class="bi bi-plus-lg mr-1"></i> Create New Role
+            </button>
         </div>
+
+        <!-- Search & Filters -->
+        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="roleSearch" placeholder="Search roles..." class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+            </div>
+            <div class="flex gap-2">
+                <select id="hierarchyFilter" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                    <option value="">All Hierarchy Levels</option>
+                    @foreach($roles->sortByDesc('hierarchy_level')->unique('hierarchy_level') as $role)
+                        <option value="{{ $role->hierarchy_level }}">Level {{ $role->hierarchy_level }}</option>
+                    @endforeach
+                </select>
+                <select id="permissionFilter" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                    <option value="">All Permission Counts</option>
+                    <option value="0">No Permissions</option>
+                    <option value="1-10">1 - 10 Permissions</option>
+                    <option value="11-50">11 - 50 Permissions</option>
+                    <option value="51+">51+ Permissions</option>
+                </select>
+            </div>
+        </div>
+
         <table class="w-full">
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Display Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hierarchy Level</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hierarchy</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Users</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permissions</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody class="divide-y divide-gray-200" id="rolesTableBody">
                 @forelse($roles as $role)
-                    <tr class="hover:bg-gray-50" data-role-id="{{ $role->id }}">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-gray-900">{{ $role->name }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm text-gray-700">{{ $role->display_name ?? '—' }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                                {{ $role->hierarchy_level }}
-                            </span>
-                        </td>
+                    <tr class="hover:bg-gray-50 role-row" data-role-name="{{ $role->name }}" data-display-name="{{ $role->display_name ?? '' }}" data-hierarchy="{{ $role->hierarchy_level }}" data-permissions="{{ $role->permissions()->count() }}" data-role-id="{{ $role->id }}">
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-500">{{ $role->description ?? '—' }}</span>
+                            <div>
+                                <span class="text-sm font-medium text-gray-900">{{ $role->display_name ?? '-' }}</span>
+                                <span class="block text-xs text-gray-400 font-mono">{{ $role->name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700" title="Higher number = more permissions. Super admin should have the highest level.">
+                                Level {{ $role->hierarchy_level }}
+                            </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-sm font-medium text-gray-900">{{ $roleUserCounts[$role->name] ?? 0 }}</span>
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs leading-5 font-semibold bg-green-100 text-green-800">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                {{ $role->permissions()->count() }}
+                            </span>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button type="button" class="text-blue-600 hover:text-blue-900" onclick="openEditRoleModal({{ $role->id }}, '{{ $role->name }}')">Edit</button>
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="p-1.5 text-green-700 hover:bg-gray-100 rounded-full transition" title="View" onclick="openViewRoleModal({{ $role->id }}, '{{ $role->name }}')">
+                                    <i class="bi bi-eye text-lg"></i>
+                                </button>
+                                <button type="button" class="p-1.5 text-green-700 hover:bg-gray-100 rounded-full transition" title="Edit" onclick="openEditRoleModal({{ $role->id }}, '{{ $role->name }}')">
+                                    <i class="bi bi-pencil text-lg"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No roles found</td>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No roles found</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
+    </div>
+</div>
+
+<!-- Create Role Modal -->
+<div class="modal fade" id="createRoleModal" tabindex="-1" aria-labelledby="createRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createRoleModalLabel">Create New Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="createRoleModalBody">
+                <div class="text-center py-12">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+                    <p class="mt-4 text-gray-600">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Role Modal -->
+<div class="modal fade" id="viewRoleModal" tabindex="-1" aria-labelledby="viewRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewRoleModalLabel">View Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="viewRoleModalBody">
+                <div class="text-center py-12">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+                    <p class="mt-4 text-gray-600">Loading...</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -108,7 +184,265 @@
 
 <script>
 let editRoleModal;
+let viewRoleModal;
+let createRoleModal;
 let currentRoleId = null;
+
+const hierarchyLabels = {
+    10: 'Super Admin',
+    8: 'City Veterinarian',
+    7: 'Senior Veterinarian',
+    6: 'Staff Veterinarian',
+    5: 'Assistant Veterinarian',
+    4: 'Meat Inspector',
+    3: 'Admin Staff',
+    2: 'Clinic Staff',
+    1: 'Pet Owner',
+    0: 'No Access'
+};
+
+function initPermissionMatrix() {
+    const totalPermissions = {{ $totalPermissions }};
+
+    function updatePermissionCounter() {
+        const counter = document.getElementById('permissionCounter');
+        if (counter) {
+            const modalBody = counter.closest('.modal-body');
+            const scope = modalBody || document;
+            const checked = scope.querySelectorAll('.permission-checkbox:checked').length;
+            counter.textContent = checked + ' of ' + totalPermissions + ' permissions assigned';
+        }
+    }
+
+    function updateGroupCounters() {
+        document.querySelectorAll('.permission-group').forEach(function(group) {
+            const checkboxes = group.querySelectorAll('.permission-checkbox');
+            const checked = group.querySelectorAll('.permission-checkbox:checked').length;
+            const total = checkboxes.length;
+            const counter = group.querySelector('.group-counter');
+            if (counter) {
+                counter.textContent = checked + ' / ' + total;
+            }
+        });
+    }
+
+    document.querySelectorAll('.select-all-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const groupName = this.getAttribute('data-group');
+            const group = document.querySelector(`.permission-group[data-group="${groupName}"]`);
+            if (group) {
+                group.querySelectorAll('.permission-checkbox').forEach(function(cb) {
+                    cb.checked = true;
+                });
+                updatePermissionCounter();
+                updateGroupCounters();
+            }
+        });
+    });
+
+    document.querySelectorAll('.clear-all-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const groupName = this.getAttribute('data-group');
+            const group = document.querySelector(`.permission-group[data-group="${groupName}"]`);
+            if (group) {
+                group.querySelectorAll('.permission-checkbox').forEach(function(cb) {
+                    cb.checked = false;
+                });
+                updatePermissionCounter();
+                updateGroupCounters();
+            }
+        });
+    });
+
+    document.querySelectorAll('.permission-checkbox').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            updatePermissionCounter();
+            updateGroupCounters();
+        });
+    });
+
+    const searchInput = document.getElementById('permissionSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            document.querySelectorAll('.permission-row').forEach(function(row) {
+                const name = row.getAttribute('data-permission-name').toLowerCase();
+                const label = row.getAttribute('data-permission-label').toLowerCase();
+                if (query === '' || name.includes(query) || label.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    updatePermissionCounter();
+    updateGroupCounters();
+}
+window.initPermissionMatrix = initPermissionMatrix;
+
+function initCreateForm() {
+    const hierarchyRange = document.getElementById('hierarchyRange');
+    const hierarchyNumber = document.getElementById('hierarchyNumber');
+    const hierarchyHelper = document.getElementById('hierarchyHelper');
+    const displayNameInput = document.getElementById('display_name');
+    const roleKeyInput = document.getElementById('name');
+    const descriptionTextarea = document.getElementById('description');
+    const descriptionCounter = document.getElementById('descriptionCounter');
+
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '_')
+            .replace(/^-+|-+$/g, '');
+    }
+
+    if (displayNameInput && roleKeyInput) {
+        roleKeyInput.value = slugify(displayNameInput.value || '');
+        displayNameInput.addEventListener('input', function() {
+            const slug = slugify(this.value);
+            roleKeyInput.value = slug;
+        });
+    }
+
+    function updateHierarchyHelper(value) {
+        const numVal = parseInt(value, 10) || 0;
+        const label = hierarchyLabels[numVal] !== undefined ? hierarchyLabels[numVal] : 'Custom level';
+        if (hierarchyHelper) {
+            hierarchyHelper.textContent = 'Level ' + numVal + ' - ' + label;
+        }
+    }
+
+    if (hierarchyRange && hierarchyNumber) {
+        updateHierarchyHelper(hierarchyRange.value);
+        hierarchyRange.addEventListener('input', function() {
+            hierarchyNumber.value = this.value;
+            updateHierarchyHelper(this.value);
+        });
+        hierarchyNumber.addEventListener('input', function() {
+            let val = parseInt(this.value, 10) || 0;
+            val = Math.max(0, Math.min(10, val));
+            hierarchyRange.value = val;
+            updateHierarchyHelper(val);
+        });
+    }
+
+    if (descriptionTextarea && descriptionCounter) {
+        descriptionCounter.textContent = descriptionTextarea.value.length + ' / 1000';
+        descriptionTextarea.addEventListener('input', function() {
+            const len = this.value.length;
+            descriptionCounter.textContent = len + ' / 1000';
+            if (len > 1000) {
+                descriptionCounter.classList.add('text-red-600');
+            } else {
+                descriptionCounter.classList.remove('text-red-600');
+            }
+        });
+    }
+
+    const copyFromSelect = document.getElementById('copyFromRole');
+    if (copyFromSelect) {
+        copyFromSelect.addEventListener('change', function() {
+            const roleId = this.value;
+            if (!roleId) return;
+
+            fetch('/super-admin/roles/' + roleId + '/edit', {
+                headers: {
+                    'Accept': 'text/html',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const checkboxes = doc.querySelectorAll('.permission-checkbox');
+                checkboxes.forEach(function(cb) {
+                    const val = cb.value;
+                    const localCb = document.querySelector(`.permission-checkbox[value="${val}"]`);
+                    if (localCb) {
+                        localCb.checked = cb.checked;
+                    }
+                });
+                if (typeof updatePermissionCounter === 'function') {
+                    updatePermissionCounter();
+                }
+                if (typeof updateGroupCounters === 'function') {
+                    updateGroupCounters();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading permissions:', error);
+            });
+        });
+    }
+}
+window.initCreateForm = initCreateForm;
+
+function openCreateRoleModal() {
+    currentRoleId = null;
+    const modalBody = document.getElementById('createRoleModalBody');
+    const modalTitle = document.getElementById('createRoleModalLabel');
+
+    modalTitle.textContent = 'Create New Role';
+    modalBody.innerHTML = `
+        <div class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+            <p class="mt-4 text-gray-600">Loading form...</p>
+        </div>
+    `;
+
+    fetch('/super-admin/roles/create', {
+        headers: {
+            'Accept': 'text/html',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        modalBody.innerHTML = html;
+        createRoleModal.show();
+        initCreateForm();
+        initPermissionMatrix();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        modalBody.innerHTML = '<p class="text-red-600 text-center py-8">Error loading form. Please try again.</p>';
+    });
+}
+window.openCreateRoleModal = openCreateRoleModal;
+
+function openViewRoleModal(roleId, roleName) {
+    currentRoleId = roleId;
+    const modalBody = document.getElementById('viewRoleModalBody');
+    const modalTitle = document.getElementById('viewRoleModalLabel');
+
+    modalTitle.textContent = 'View Role - ' + roleName;
+    modalBody.innerHTML = `
+        <div class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+            <p class="mt-4 text-gray-600">Loading...</p>
+        </div>
+    `;
+
+    fetch(`/super-admin/roles/${roleId}/edit?view=1`, {
+        headers: {
+            'Accept': 'text/html',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        modalBody.innerHTML = html;
+        viewRoleModal.show();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        modalBody.innerHTML = '<p class="text-red-600 text-center py-8">Error loading form. Please try again.</p>';
+    });
+}
+window.openViewRoleModal = openViewRoleModal;
 
 function openEditRoleModal(roleId, roleName) {
     currentRoleId = roleId;
@@ -133,12 +467,14 @@ function openEditRoleModal(roleId, roleName) {
     .then(html => {
         modalBody.innerHTML = html;
         editRoleModal.show();
+        initPermissionMatrix();
     })
     .catch(error => {
         console.error('Error:', error);
         modalBody.innerHTML = '<p class="text-red-600 text-center py-8">Error loading form. Please try again.</p>';
     });
 }
+window.openEditRoleModal = openEditRoleModal;
 
 function showToast(type, message) {
     const toast = document.createElement('div');
@@ -149,6 +485,7 @@ function showToast(type, message) {
         toast.remove();
     }, 3000);
 }
+window.showToast = showToast;
 
 document.addEventListener('submit', function(e) {
     if (e.target && e.target.id === 'editRoleForm') {
@@ -158,6 +495,7 @@ document.addEventListener('submit', function(e) {
         const formData = new FormData(form);
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
+        const isCreate = form.action.includes('/roles/create');
 
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span> Saving...';
@@ -179,14 +517,18 @@ document.addEventListener('submit', function(e) {
         })
         .then(data => {
             if (data.success) {
-                editRoleModal.hide();
+                if (isCreate) {
+                    createRoleModal.hide();
+                } else {
+                    editRoleModal.hide();
+                }
                 showToast('success', data.message);
                 location.reload();
             }
         })
         .catch(error => {
             if (error.errors) {
-                const modalBody = document.getElementById('editRoleModalBody');
+                const modalBody = isCreate ? document.getElementById('createRoleModalBody') : document.getElementById('editRoleModalBody');
                 modalBody.querySelectorAll('.text-red-600').forEach(el => el.remove());
                 modalBody.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
                 for (const [field, messages] of Object.entries(error.errors)) {
@@ -211,6 +553,54 @@ document.addEventListener('submit', function(e) {
 
 document.addEventListener('DOMContentLoaded', function() {
     editRoleModal = new bootstrap.Modal(document.getElementById('editRoleModal'));
+    viewRoleModal = new bootstrap.Modal(document.getElementById('viewRoleModal'));
+    createRoleModal = new bootstrap.Modal(document.getElementById('createRoleModal'));
+
+    const searchInput = document.getElementById('roleSearch');
+    const hierarchyFilter = document.getElementById('hierarchyFilter');
+    const permissionFilter = document.getElementById('permissionFilter');
+
+    function filterRoles() {
+        const query = searchInput.value.toLowerCase().trim();
+        const hierarchyValue = hierarchyFilter.value;
+        const permissionValue = permissionFilter.value;
+
+        document.querySelectorAll('.role-row').forEach(function(row) {
+            const name = row.getAttribute('data-role-name').toLowerCase();
+            const displayName = row.getAttribute('data-display-name').toLowerCase();
+            const hierarchy = row.getAttribute('data-hierarchy');
+            const permissions = parseInt(row.getAttribute('data-permissions'));
+
+            const matchesSearch = query === '' || name.includes(query) || displayName.includes(query);
+            const matchesHierarchy = hierarchyValue === '' || hierarchy === hierarchyValue;
+            let matchesPermission = true;
+            if (permissionValue === '0') {
+                matchesPermission = permissions === 0;
+            } else if (permissionValue === '1-10') {
+                matchesPermission = permissions >= 1 && permissions <= 10;
+            } else if (permissionValue === '11-50') {
+                matchesPermission = permissions >= 11 && permissions <= 50;
+            } else if (permissionValue === '51+') {
+                matchesPermission = permissions >= 51;
+            }
+
+            if (matchesSearch && matchesHierarchy && matchesPermission) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', filterRoles);
+    }
+    if (hierarchyFilter) {
+        hierarchyFilter.addEventListener('change', filterRoles);
+    }
+    if (permissionFilter) {
+        permissionFilter.addEventListener('change', filterRoles);
+    }
 });
 </script>
 @endsection
