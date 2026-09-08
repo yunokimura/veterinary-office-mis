@@ -12,122 +12,74 @@
 
 <!-- Summary Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center">
-        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-            <i class="bi bi-journal-text text-blue-600 text-base"></i>
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <div>
-            <p class="text-xs text-gray-500">Total Logs</p>
+            <p class="text-xs font-medium text-gray-500">Total Logs</p>
             <p class="text-xl font-semibold text-gray-800">{{ $totalLogs }}</p>
         </div>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center">
-        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
-            <i class="bi bi-check-circle text-green-600 text-base"></i>
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <div>
-            <p class="text-xs text-gray-500">Successful Actions</p>
+            <p class="text-xs font-medium text-gray-500">Successful Actions</p>
             <p class="text-xl font-semibold text-gray-800">{{ $successfulActions }}</p>
         </div>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center">
-        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
-            <i class="bi bi-x-circle text-red-600 text-base"></i>
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <div>
-            <p class="text-xs text-gray-500">Failed Actions</p>
+            <p class="text-xs font-medium text-gray-500">Failed Actions</p>
             <p class="text-xl font-semibold text-gray-800">{{ $failedActions }}</p>
         </div>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center">
-        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-            <i class="bi bi-people text-purple-600 text-base"></i>
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <div>
-            <p class="text-xs text-gray-500">Active Users Today</p>
+            <p class="text-xs font-medium text-gray-500">Active Users Today</p>
             <p class="text-xl font-semibold text-gray-800">{{ $activeUsersToday }}</p>
         </div>
     </div>
 </div>
 
-<!-- Filters -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-    <form method="GET" action="{{ route('admin.system-logs.index') }}" class="flex flex-wrap gap-4 items-end">
-        <!-- Search -->
-        <div class="flex-1 min-w-[200px]">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-            <div class="flex items-center relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="User or IP" class="flex-1 pl-3 pr-8 py-2 border border-gray-300 rounded-lg rounded-r-none text-sm outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 h-10">
-                <button type="submit" class="px-3 py-2 border border-gray-300 border-l-0 rounded-lg rounded-l-none bg-gray-50 text-gray-500 hover:text-green-600 hover:bg-green-50 transition-colors h-10 flex items-center justify-center">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
+<!-- Logs Table Card -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+        <div>
+            <h3 class="text-lg font-semibold text-gray-800">System Logs</h3>
+            <p class="text-sm text-gray-500">Track all user activities and system events</p>
         </div>
+        <a href="{{ route('admin.system-logs.export', request()->query()) }}" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition shadow-sm">
+            <i class="bi bi-download mr-2"></i> Export CSV
+        </a>
+    </div>
 
-        <!-- Module Filter -->
-        <div class="relative min-w-max w-48">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Module</label>
-            <select name="module" onchange="this.closest('form').submit()" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
-                    style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+    <form method="GET" action="{{ route('admin.system-logs.index') }}" class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by user or IP..."
+                   class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+        </div>
+        <div class="flex gap-2">
+            <select name="module" onchange="this.closest('form').submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <option value="">All Modules</option>
                 @foreach($modules as $module)
                     <option value="{{ $module }}" {{ request('module') == $module ? 'selected' : '' }}>{{ $module }}</option>
                 @endforeach
             </select>
-        </div>
-
-        <!-- Action Filter -->
-        <div class="relative min-w-max w-48">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Action</label>
-            <select name="action" onchange="this.closest('form').submit()" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
-                    style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
+            <select name="action" onchange="this.closest('form').submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <option value="">All Actions</option>
                 @foreach($actions as $action)
                     <option value="{{ $action }}" {{ request('action') == $action ? 'selected' : '' }}>{{ $action }}</option>
                 @endforeach
             </select>
+            <select name="status" onchange="this.closest('form').submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                <option value="">All Status</option>
+                <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success</option>
+                <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+            </select>
         </div>
-
-        <!-- Date Range -->
-        <div class="flex gap-4">
-            <div class="relative min-w-max w-48">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select name="status" onchange="this.closest('form').submit()" class="w-full px-3 py-2 pr-8 rounded-lg border border-gray-300 appearance-none bg-white outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500 h-10"
-                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px 12px;">
-                    <option value="">All Status</option>
-                    <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success</option>
-                    <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
-                </select>
-            </div>
-
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
-            </div>
-
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
-            </div>
-        </div>
-
-        <!-- Filter Buttons -->
-        <div class="flex items-end">
-            <a href="{{ route('admin.system-logs.index') }}" class="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-400 transition">
-                <i class="bi bi-arrow-clockwise"></i>
-            </a>
-        </div>
-
-        <!-- Export -->
-        <a href="{{ route('admin.system-logs.export', request()->query()) }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition self-end ml-auto">
-            <i class="bi bi-download mr-2"></i> Export CSV
-        </a>
     </form>
-</div>
 
-<!-- Logs Table -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="overflow-hidden">
+    <div class="overflow-x-auto">
         <table class="w-full table-fixed">
             <colgroup>
                 <col class="w-[4%]">
@@ -149,10 +101,10 @@
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-gray-200">
                 @forelse($logs as $log)
-                    <tr class="log-row hover:bg-gray-50 cursor-pointer group" data-log-id="{{ $log->id }}">
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 leading-[1.5] sticky left-0 z-10 border-r border-gray-200 bg-white group-hover:bg-gray-50">{{ $log->user_id ?? '-' }}</td>
+                    <tr class="log-row hover:bg-gray-50 cursor-pointer" data-log-id="{{ $log->id }}">
+                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 leading-[1.5] sticky left-0 z-10 border-r border-gray-200 bg-white hover:bg-gray-50">{{ $log->user_id ?? '-' }}</td>
                         <td class="px-4 py-[18px] whitespace-nowrap hidden md:table-cell">
                             <div class="flex items-center gap-2 whitespace-nowrap">
                                 <div class="inline-flex w-8 h-8 min-w-[32px] items-center justify-center rounded-full bg-[#e8f0fe]">
@@ -188,10 +140,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
-                            <i class="bi bi-inbox text-4xl mb-3 block"></i>
-                            No system logs found
-                        </td>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No system logs found</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -199,7 +148,7 @@
     </div>
 
     <!-- Pagination -->
-    <div class="px-6 py-4 border-t border-gray-100">
+    <div class="px-6 py-4 border-t border-gray-200">
         {{ $logs->onEachSide(2)->appends(request()->query())->links('vendor.pagination.custom') }}
     </div>
 </div>
