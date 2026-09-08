@@ -70,7 +70,7 @@
 
                     <div>
                         <p class="text-sm text-gray-500">Module</p>
-                        <p class="font-medium text-gray-800 mt-1">{{ $log->module }}</p>
+                        <p class="font-medium text-gray-800 mt-1">{{ $log->module_display }}</p>
                     </div>
                 </div>
 

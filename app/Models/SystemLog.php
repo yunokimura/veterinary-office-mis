@@ -112,11 +112,48 @@ class SystemLog extends Model
         $module = $this->module ?? '-';
 
         $map = [
-            'User Management' => 'Users',
             'Authentication' => 'Auth',
+            'users' => 'User Management',
+            'roles' => 'Role Management',
+            'system-logs' => 'System Logs',
+            'settings' => 'System Settings',
+            'stats' => 'Statistics',
+            'user-stats' => 'Statistics',
+            'system-activity' => 'Statistics',
+            'export' => 'Export',
+            'activity-logs' => 'Activity Logs',
+            'all-reports' => 'Reports',
+            'animal-bite-reports' => 'Animal Bite Reports',
+            'bite-rabies-reports' => 'Bite & Rabies Reports',
+            'vaccination-reports' => 'Vaccination Reports',
+            'meat-inspection-reports' => 'Meat Inspection Reports',
+            'vaccination-appointments' => 'Vaccination Appointments',
+            'missing-pet-reports' => 'Missing Pet Reports',
+            'adoption-reports' => 'Adoption Reports',
+            'announcements' => 'Announcements',
+            'notifications' => 'Notifications',
+            'pet-registrations' => 'Pet Registrations',
+            'adoption-applications' => 'Adoption Applications',
+            'missing-pets' => 'Missing Pets',
+            'owners' => 'Pet Owners',
+            'appointments' => 'Appointments',
+            'business-profiles' => 'Business Profiles',
+            'inventory' => 'Inventory',
+            'medical-records' => 'Medical Records',
+            'vaccinations' => 'Vaccinations',
+            'spay-neuter' => 'Spay/Neuter',
+            'rabies-cases' => 'Rabies Cases',
+            'rabies-geomap' => 'Rabies Geomap',
+            'meat-inspection' => 'Meat Inspection',
+            'reports' => 'Meat Inspection Reports',
+            'meat-shop' => 'Meat Shop Inspections',
+            'establishments' => 'Meat Establishments',
+            'establishments-overview' => 'Meat Establishments Overview',
+            'device-tokens' => 'Device Tokens',
+            'kapon' => 'Kapon Program',
         ];
 
-        return $map[$module] ?? $module;
+        return $map[$module] ?? ucfirst(str_replace('_', ' ', $module));
     }
 
     public function getActivityTextAttribute(): string

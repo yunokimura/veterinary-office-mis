@@ -21,10 +21,10 @@ class LogActivity
 
                 if ($routeName === 'login' || $request->is('login')) {
                     $action = 'login';
-                    $module = 'auth';
+                    $module = 'Authentication';
                 } elseif ($routeName === 'logout' || $request->is('logout')) {
                     $action = 'logout';
-                    $module = 'auth';
+                    $module = 'Authentication';
                 } else {
                     $action = $this->mapMethodToAction($request->method());
                     $module = $this->extractModuleFromRoute($routeName);
@@ -62,6 +62,33 @@ class LogActivity
         }
 
         $parts = explode('.', $routeName);
-        return $parts[0] ?? 'Unknown';
+
+        $portalPrefixes = ['super-admin', 'admin', 'city-vet', 'admin-asst', 'assistant-vet', 'api', 'password'];
+
+        $index = 0;
+        while ($index < count($parts) && in_array($parts[$index], $portalPrefixes)) {
+            $index++;
+        }
+
+        if ($index >= count($parts)) {
+            return 'Unknown';
+        }
+
+        $module = $parts[$index];
+
+        if ($module === 'meat-inspection' && isset($parts[$index + 1])) {
+            $meatInspectionSubModules = [
+                'reports',
+                'meat-shop',
+                'establishments',
+                'establishments-overview',
+            ];
+
+            if (in_array($parts[$index + 1], $meatInspectionSubModules)) {
+                return $parts[$index + 1];
+            }
+        }
+
+        return $module;
     }
 }
