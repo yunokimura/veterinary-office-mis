@@ -113,7 +113,7 @@ class SystemLog extends Model
 
         $map = [
             'Authentication' => 'Auth',
-            'users' => 'User Management',
+            'User Management' => 'Users',
             'roles' => 'Role Management',
             'system-logs' => 'System Logs',
             'settings' => 'System Settings',
