@@ -47,8 +47,8 @@
                         @can('toggleStatus', $user)
                         <form action="{{ route('super-admin.users.toggle-status', $user) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to {{ $user->status === 'active' ? 'deactivate' : 'activate' }} this user?')">
                             @csrf
-                            <button type="submit" class="p-1.5 {{ $user->status === 'active' ? 'text-red-700 hover:bg-red-50' : 'text-green-700 hover:bg-green-50' }} rounded-full transition" title="{{ $user->status === 'active' ? 'Deactivate' : 'Activate' }}">
-                                <i class="bi {{ $user->status === 'active' ? 'bi-toggle-off' : 'bi-toggle-on' }} text-lg"></i>
+                            <button type="submit" class="p-1.5 {{ $user->status === 'active' ? 'text-green-700 hover:bg-green-50' : 'text-gray-500 hover:bg-gray-100' }} rounded-full transition" title="{{ $user->status === 'active' ? 'Deactivate' : 'Activate' }}">
+                                <i class="bi {{ $user->status === 'active' ? 'bi-toggle-on' : 'bi-toggle-off' }} text-lg"></i>
                             </button>
                         </form>
                         @else
