@@ -693,6 +693,7 @@ class SuperAdminController extends Controller
             'user_id' => auth()->id(),
             'action' => 'toggle_user_status',
             'event' => 'update',
+            'module' => 'User Management',
             'description' => "Changed user {$user->name} status to {$newStatus}",
             'ip_address' => request()->ip(),
         ]);

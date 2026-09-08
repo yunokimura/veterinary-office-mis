@@ -96,6 +96,29 @@ class SystemLog extends Model
         };
     }
 
+    public function getActionDisplayAttribute(): string
+    {
+        $action = strtolower($this->action ?? '');
+
+        $map = [
+            'toggle_user_status' => 'Toggle Status',
+        ];
+
+        return $map[$action] ?? ucfirst(str_replace('_', ' ', $this->action));
+    }
+
+    public function getModuleDisplayAttribute(): string
+    {
+        $module = $this->module ?? '-';
+
+        $map = [
+            'User Management' => 'Users',
+            'Authentication' => 'Auth',
+        ];
+
+        return $map[$module] ?? $module;
+    }
+
     public function getActivityTextAttribute(): string
     {
         $name = $this->user->name ?? 'System';

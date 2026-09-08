@@ -65,7 +65,7 @@
                 <div class="grid grid-cols-2 gap-6">
                     <div>
                         <p class="text-sm text-gray-500">Action</p>
-                        <p class="font-medium text-gray-800 mt-1">{{ $log->action }}</p>
+                        <p class="font-medium text-gray-800 mt-1">{{ $log->action_display }}</p>
                     </div>
 
                     <div>

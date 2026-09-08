@@ -132,7 +132,7 @@
             <colgroup>
                 <col class="w-[4%]">
                 <col class="w-[18%]">
-                <col class="w-[20%]">
+                <col class="min-w-[220px]">
                 <col class="w-[13%]">
                 <col class="w-[25%]">
                 <col class="w-[10%]">
@@ -142,7 +142,7 @@
                 <tr>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 z-20 bg-gray-50 border-r border-gray-200">ID</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">User</th>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[220px]">Action</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Date & Time</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Description</th>
                     <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">IP Address</th>
@@ -161,9 +161,12 @@
                                 <span class="text-sm font-medium text-gray-800 leading-[1.5] whitespace-nowrap overflow-hidden text-ellipsis">{{ $log->user->name ?? 'System' }}</span>
                             </div>
                         </td>
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-700 leading-[1.5]">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                [{{ ucfirst($log->module) }}] {{ ucfirst($log->action) }}
+                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-700 leading-[1.5] min-w-[220px]">
+                            <span class="inline-flex items-center gap-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                    {{ $log->module_display }}
+                                </span>
+                                <span>{{ $log->action_display }}</span>
                             </span>
                         </td>
                         <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 leading-[1.5] hidden md:table-cell">{{ $log->created_at }}</td>
@@ -283,9 +286,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="grid grid-cols-2 gap-6">
                                 <div>
                                     <p class="text-sm text-gray-500">Event</p>
-                                    <p class="font-medium text-gray-800 mt-1">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                            [${data.module}] ${data.action}
+                                    <p class="font-medium text-gray-800 mt-1 whitespace-nowrap">
+                                        <span class="inline-flex items-center gap-2">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                                ${data.module_display}
+                                            </span>
+                                            <span>${data.action_display}</span>
                                         </span>
                                     </p>
                                 </div>
