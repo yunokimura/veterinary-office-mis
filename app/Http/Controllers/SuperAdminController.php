@@ -148,9 +148,49 @@ class SuperAdminController extends Controller
     /**
      * Show roles management page.
      */
-    public function roles()
+    public function roles(Request $request)
     {
-        $roles = Role::orderBy('hierarchy_level', 'desc')->get();
+        $search = $request->filled('search') ? $request->get('search') : '';
+        $hierarchyLevel = $request->filled('hierarchy_level') ? $request->get('hierarchy_level') : '';
+        $permissionRange = $request->filled('permission_range') ? $request->get('permission_range') : '';
+
+        $query = Role::query();
+
+        if ($search !== '') {
+            $nameSearch = str_replace(' ', '_', $search);
+            $displaySearch = str_replace('_', ' ', $search);
+
+            $query->where(function ($q) use ($nameSearch, $displaySearch) {
+                $q->where('name', 'like', "%{$nameSearch}%")
+                  ->orWhere('display_name', 'like', "%{$displaySearch}%");
+            });
+        }
+
+        if ($hierarchyLevel !== '') {
+            $query->where('hierarchy_level', $hierarchyLevel);
+        }
+
+        if ($permissionRange !== '') {
+            $query->withCount('permissions');
+
+            switch ($permissionRange) {
+                case '0':
+                    $query->having('permissions_count', '=', 0);
+                    break;
+                case '1-10':
+                    $query->havingBetween('permissions_count', [1, 10]);
+                    break;
+                case '11-50':
+                    $query->havingBetween('permissions_count', [11, 50]);
+                    break;
+                case '51+':
+                    $query->having('permissions_count', '>=', 51);
+                    break;
+            }
+        }
+
+        $roles = $query->orderBy('hierarchy_level', 'desc')->paginate(10);
+
         $totalUsers = User::count();
         $activeUsers = User::where('status', 'active')->count();
         $inactiveUsers = User::where('status', 'inactive')->count();
@@ -161,7 +201,9 @@ class SuperAdminController extends Controller
             ->pluck('count', 'role')
             ->toArray();
 
-        return view('super-admin.roles', compact('roles', 'totalUsers', 'activeUsers', 'inactiveUsers', 'roleUserCounts', 'totalPermissions'));
+        $allRoles = Role::orderBy('hierarchy_level', 'desc')->get();
+
+        return view('super-admin.roles', compact('roles', 'allRoles', 'totalUsers', 'activeUsers', 'inactiveUsers', 'roleUserCounts', 'totalPermissions', 'search', 'hierarchyLevel', 'permissionRange'));
     }
 
     /**
@@ -386,9 +428,12 @@ class SuperAdminController extends Controller
         $query = SystemLog::with('user');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('action', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+            $nameSearch = str_replace(' ', '_', $search);
+            $displaySearch = str_replace('_', ' ', $search);
+
+            $query->where(function ($q) use ($nameSearch, $displaySearch) {
+                $q->where('name', 'like', "%{$nameSearch}%")
+                  ->orWhere('display_name', 'like', "%{$displaySearch}%");
             });
         }
 
@@ -594,7 +639,7 @@ class SuperAdminController extends Controller
     /**
      * Search users via AJAX.
      */
-    public function searchUsers(Request $request)
+     public function searchUsers(Request $request)
     {
         $search = $request->get('search', '');
         $role = $request->get('role', '');
@@ -619,7 +664,12 @@ class SuperAdminController extends Controller
                                     ->orWhere('middle_name', 'like', "%{$term}%")
                                     ->orWhere('last_name', 'like', "%{$term}%")
                                     ->orWhere('suffix', 'like', "%{$term}%");
-                            });
+                            })
+                            ->orWhereHas('roles', function ($q2) use ($term) {
+                                $q2->where('name', 'like', "%{$term}%")
+                                    ->orWhere('display_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('users.status', 'like', "%{$term}%");
                     });
                 }
             });

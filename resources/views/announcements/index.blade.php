@@ -115,34 +115,37 @@
 
     <!-- Search & Filters -->
     <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
-        <div class="relative flex-[2] min-w-0">
+        <div class="relative w-96">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="text" id="announcementSearchInput" name="search" value="{{ $currentSearch }}" placeholder="Search announcements..."
+            <input type="text" id="announcementSearchInput" name="search" value="{{ $currentSearch }}" placeholder="Search by title, organizer, status, or category..."
                    class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+            <button type="button" id="searchHelpBtn"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                    data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus click"
+                    data-bs-html="true"
+                    data-bs-content="
+                        <div class='text-sm text-gray-700 space-y-1'>
+                            <div><strong>Examples:</strong></div>
+                            <div>Annual Vaccination <span class='text-gray-400'>(Title)</span></div>
+                            <div>Dr. Cruz <span class='text-gray-400'>(Organizer)</span></div>
+                            <div>Published <span class='text-gray-400'>(Status)</span></div>
+                            <div>Campaign <span class='text-gray-400'>(Category)</span></div>
+                        </div>
+                    ">
+                <i class="bi bi-info-circle"></i>
+            </button>
         </div>
         <div class="flex gap-2 items-center">
-            <select id="announcementCategorySelect" name="category" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
-                <option value="">All Categories</option>
-                <option value="campaign" {{ $currentCategory === 'campaign' ? 'selected' : '' }}>Campaign</option>
-                <option value="event" {{ $currentCategory === 'event' ? 'selected' : '' }}>Event</option>
-            </select>
-            <select id="announcementStatusSelect" name="status" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
-                <option value="">All Status</option>
-                <option value="Published" {{ $currentStatus === 'Published' ? 'selected' : '' }}>Published</option>
-                <option value="Scheduled" {{ $currentStatus === 'Scheduled' ? 'selected' : '' }}>Scheduled</option>
-                <option value="Draft" {{ $currentStatus === 'Draft' ? 'selected' : '' }}>Draft</option>
-                <option value="Archived" {{ $currentStatus === 'Archived' ? 'selected' : '' }}>Archived</option>
-            </select>
             <select id="announcementSortSelect" name="sort" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <option value="newest" {{ $currentSort === 'newest' ? 'selected' : '' }}>Newest First</option>
                 <option value="oldest" {{ $currentSort === 'oldest' ? 'selected' : '' }}>Oldest First</option>
                 <option value="title_asc" {{ $currentSort === 'title_asc' ? 'selected' : '' }}>Title A-Z</option>
                 <option value="title_desc" {{ $currentSort === 'title_desc' ? 'selected' : '' }}>Title Z-A</option>
             </select>
-            <button type="button" onclick="clearAnnouncementFilters()"
-                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap">
+            <button type="button" id="clearAnnouncementFiltersBtn" onclick="clearAnnouncementFilters()"
+                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap hidden">
                 <i class="bi bi-x-circle mr-1"></i>Clear Filters
             </button>
         </div>
@@ -395,14 +398,10 @@ const filterUrl = '{{ route($rolePrefix . '.announcements.filter') }}';
 
 function applyFilters(page = 1) {
     const search = document.getElementById('announcementSearchInput')?.value || '';
-    const category = document.getElementById('announcementCategorySelect')?.value || '';
-    const status = document.getElementById('announcementStatusSelect')?.value || '';
     const sort = document.getElementById('announcementSortSelect')?.value || '';
 
     const params = new URLSearchParams({
         search: search,
-        category: category,
-        status: status,
         sort: sort,
         page: page
     });
@@ -533,51 +532,58 @@ function getTableStatusBadge(status) {
 // Event Listeners for Real-time Filtering
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('announcementSearchInput');
-    const categorySelect = document.getElementById('announcementCategorySelect');
-    const statusSelect = document.getElementById('announcementStatusSelect');
     const sortSelect = document.getElementById('announcementSortSelect');
+
+    const searchHelpBtn = document.getElementById('searchHelpBtn');
+    if (searchHelpBtn) {
+        new bootstrap.Popover(searchHelpBtn);
+    }
 
     // Search input with debounce
     if (searchInput) {
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
+                updateClearFiltersVisibility();
                 applyFilters(1);
             }, 300);
-        });
-    }
-
-    // Category filter
-    if (categorySelect) {
-        categorySelect.addEventListener('change', function() {
-            applyFilters(1);
-        });
-    }
-
-    // Status filter
-    if (statusSelect) {
-        statusSelect.addEventListener('change', function() {
-            applyFilters(1);
         });
     }
 
     // Sort filter
     if (sortSelect) {
         sortSelect.addEventListener('change', function() {
+            updateClearFiltersVisibility();
             applyFilters(1);
         });
     }
 
+    updateClearFiltersVisibility();
+
     function clearAnnouncementFilters() {
         const searchInput = document.getElementById('announcementSearchInput');
-        const categorySelect = document.getElementById('announcementCategorySelect');
-        const statusSelect = document.getElementById('announcementStatusSelect');
         const sortSelect = document.getElementById('announcementSortSelect');
         if (searchInput) searchInput.value = '';
-        if (categorySelect) categorySelect.value = '';
-        if (statusSelect) statusSelect.value = '';
         if (sortSelect) sortSelect.value = 'newest';
+        updateClearFiltersVisibility();
         applyFilters(1);
+    }
+
+    function updateClearFiltersVisibility() {
+        const searchInput = document.getElementById('announcementSearchInput');
+        const sortSelect = document.getElementById('announcementSortSelect');
+        const clearBtn = document.getElementById('clearAnnouncementFiltersBtn');
+        
+        const hasFilters = (searchInput && searchInput.value.trim() !== '') || 
+                           (sortSelect && sortSelect.value !== 'newest');
+        
+        if (clearBtn) {
+            if (hasFilters) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+        }
     }
     window.clearAnnouncementFilters = clearAnnouncementFilters;
 });

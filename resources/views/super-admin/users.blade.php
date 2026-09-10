@@ -73,35 +73,35 @@
             </div>
         </div>
 
-        <!-- Search & Filters -->
-        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
-            <div class="relative flex-[2] min-w-0">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                    <i class="bi bi-search"></i>
-                </span>
-                <input type="text" id="userSearchInput" value="{{ $search }}" placeholder="Search users..."
-                    class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
-            </div>
-            <div class="flex gap-2 items-center">
-                <select id="userRoleSelect" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
-                    <option value="">All Roles</option>
-                    @foreach($roles as $r)
-                        <option value="{{ $r }}" {{ $role == $r ? 'selected' : '' }}>
-                            {{ $roleLabels[$r] ?? ucwords(str_replace('_', ' ', $r)) }}
-                        </option>
-                    @endforeach
-                </select>
-                <select id="userStatusSelect" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
-                    <option value="">All Status</option>
-                    <option value="active" {{ $status == 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="deactivated" {{ $status == 'deactivated' ? 'selected' : '' }}>Deactivated</option>
-                </select>
-                <button type="button" onclick="clearUserFilters()"
-                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap">
-                    <i class="bi bi-x-circle mr-1"></i>Clear Filters
-                </button>
-            </div>
+    <!-- Search & Filters -->
+    <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+        <div class="relative w-96">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" id="userSearchInput" value="{{ $search }}" placeholder="Search by name, email, role, or status..."
+                   class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+            <button type="button" id="searchHelpBtn"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                    data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="focus click"
+                    data-bs-html="true"
+                    data-bs-content="
+                        <div class='text-sm text-gray-700 space-y-1'>
+                            <div><strong>Examples:</strong></div>
+                            <div>Juan <span class='text-gray-400'>(Name)</span></div>
+                            <div>admin@vet.gov <span class='text-gray-400'>(Email)</span></div>
+                            <div>Super Admin <span class='text-gray-400'>(Role)</span></div>
+                            <div>Active <span class='text-gray-400'>(Status)</span></div>
+                        </div>
+                    ">
+                <i class="bi bi-info-circle"></i>
+            </button>
         </div>
+        <button type="button" id="clearUserFiltersBtn" onclick="clearUserFilters()"
+                class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap hidden">
+            <i class="bi bi-x-circle mr-1"></i>Clear Filters
+        </button>
+    </div>
 
         <div id="usersTableContainer">
             @include('super-admin.partials.users-table', ['users' => $users, 'roleLabels' => $roleLabels, 'statusColors' => $statusColors])
@@ -166,6 +166,11 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+
+        const searchHelpBtn = document.getElementById('searchHelpBtn');
+        if (searchHelpBtn) {
+            new bootstrap.Popover(searchHelpBtn);
+        }
 
         document.getElementById('editModalBody').addEventListener('click', function(e) {
             const cancelBtn = e.target.closest('.cancel-edit-btn');
@@ -487,8 +492,6 @@
     function getUserFilterParams() {
         return {
             search: document.getElementById('userSearchInput')?.value || '',
-            role: document.getElementById('userRoleSelect')?.value || '',
-            status: document.getElementById('userStatusSelect')?.value || '',
         };
     }
 
@@ -539,19 +542,34 @@
     }
 
     function clearUserFilters() {
-        document.getElementById('userSearchInput').value = '';
-        document.getElementById('userRoleSelect').value = '';
-        document.getElementById('userStatusSelect').value = '';
+        const searchInput = document.getElementById('userSearchInput');
+        if (searchInput) searchInput.value = '';
+        updateClearFiltersVisibility();
         applyUserFilters();
+    }
+
+    function updateClearFiltersVisibility() {
+        const searchInput = document.getElementById('userSearchInput');
+        const clearBtn = document.getElementById('clearUserFiltersBtn');
+        
+        const hasFilters = searchInput && searchInput.value.trim() !== '';
+        
+        if (clearBtn) {
+            if (hasFilters) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+        }
     }
 
     document.getElementById('userSearchInput').addEventListener('input', () => {
         clearTimeout(searchDebounce);
-        searchDebounce = setTimeout(applyUserFilters, 300);
+        searchDebounce = setTimeout(() => {
+            updateClearFiltersVisibility();
+            applyUserFilters();
+        }, 300);
     });
-
-    document.getElementById('userRoleSelect').addEventListener('change', applyUserFilters);
-    document.getElementById('userStatusSelect').addEventListener('change', applyUserFilters);
 
     document.getElementById('usersPagination').addEventListener('click', function(e) {
         const link = e.target.closest('a');
@@ -578,5 +596,7 @@
             console.error('Error loading users page:', error);
         });
     });
+
+    updateClearFiltersVisibility();
     </script>
 @endsection

@@ -124,108 +124,113 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+function openLogModal(logId) {
     const modalEl = document.getElementById('logDetailsModal');
     const modalBody = document.getElementById('logModalBody');
     const modal = new bootstrap.Modal(modalEl);
 
-    document.querySelectorAll('.log-row').forEach(row => {
-        row.addEventListener('click', function(e) {
-            const link = this.querySelector('a');
-            if (link && e.target.closest('a')) return;
+    const url = "{{ route('admin.system-logs.modal', ['log' => '__ID__']) }}".replace('__ID__', logId);
 
-            const logId = this.dataset.logId;
-            const url = "{{ route('admin.system-logs.modal', ['log' => '__ID__']) }}".replace('__ID__', logId);
+    modalBody.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-green-600" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    `;
+    modal.show();
+
+    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(response => response.json())
+        .then(data => {
+            const statusBadge = data.status === 'success'
+                ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"><i class="bi bi-check-circle mr-1"></i> Success</span>'
+                : '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"><i class="bi bi-x-circle mr-1"></i> Failed</span>';
 
             modalBody.innerHTML = `
-                <div class="text-center py-4">
-                    <div class="spinner-border text-green-600" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                <div class="space-y-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Log ID</p>
+                            <p class="text-lg font-semibold text-gray-800">#${data.log_id}</p>
+                        </div>
+                        <div>${statusBadge}</div>
                     </div>
-                </div>
-            `;
-            modal.show();
-
-            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(response => response.json())
-                .then(data => {
-                    const statusBadge = data.status === 'success'
-                        ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"><i class="bi bi-check-circle mr-1"></i> Success</span>'
-                        : '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"><i class="bi bi-x-circle mr-1"></i> Failed</span>';
-
-                    modalBody.innerHTML = `
-                        <div class="space-y-5">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-500">Log ID</p>
-                                    <p class="text-lg font-semibold text-gray-800">#${data.log_id}</p>
-                                </div>
-                                <div>${statusBadge}</div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-500">User</p>
-                                    <div class="flex items-center mt-1">
-                                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                            <i class="bi bi-person text-blue-600"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-gray-800">${data.user}</p>
-                                            <p class="text-sm text-gray-500">${data.role}</p>
-                                        </div>
-                                    </div>
+                    <hr class="border-gray-100">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-sm text-gray-500">User</p>
+                            <div class="flex items-center mt-1">
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                    <i class="bi bi-person text-blue-600"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-500">IP Address</p>
-                                    <p class="font-mono text-gray-800 mt-1">${data.ip_address}</p>
-                                </div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-500">Event</p>
-                                    <p class="font-medium text-gray-800 mt-1 whitespace-nowrap">
-                                        <span class="inline-flex items-center gap-2">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                                ${data.module_display}
-                                            </span>
-                                            <span>${data.action_display}</span>
-                                        </span>
-                                    </p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Record ID</p>
-                                    <p class="font-medium text-gray-800 mt-1">${data.record_id}</p>
-                                </div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-500">Created At</p>
-                                    <p class="font-medium text-gray-800 mt-1">${data.created_at}</p>
-                                </div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div>
-                                <p class="text-sm text-gray-500">Description</p>
-                                <p class="text-gray-800 mt-1">${data.description}</p>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-500">Time Elapsed</p>
-                                    <p class="font-medium text-gray-800 mt-1">${data.diff_for_humans}</p>
+                                    <p class="font-medium text-gray-800">${data.user}</p>
+                                    <p class="text-sm text-gray-500">${data.role}</p>
                                 </div>
                             </div>
                         </div>
-                    `;
-                })
-                .catch(() => {
-                    modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load log details.</div>';
-                });
+                        <div>
+                            <p class="text-sm text-gray-500">IP Address</p>
+                            <p class="font-mono text-gray-800 mt-1">${data.ip_address}</p>
+                        </div>
+                    </div>
+                    <hr class="border-gray-100">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-sm text-gray-500">Event</p>
+                            <p class="font-medium text-gray-800 mt-1 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                        ${data.module_display}
+                                    </span>
+                                    <span>${data.action_display}</span>
+                                </span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Record ID</p>
+                            <p class="font-medium text-gray-800 mt-1">${data.record_id}</p>
+                        </div>
+                    </div>
+                    <hr class="border-gray-100">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-sm text-gray-500">Created At</p>
+                            <p class="font-medium text-gray-800 mt-1">${data.created_at}</p>
+                        </div>
+                    </div>
+                    <hr class="border-gray-100">
+                    <div>
+                        <p class="text-sm text-gray-500">Description</p>
+                        <p class="text-gray-800 mt-1">${data.description}</p>
+                    </div>
+                    <hr class="border-gray-100">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-sm text-gray-500">Time Elapsed</p>
+                            <p class="font-medium text-gray-800 mt-1">${data.diff_for_humans}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(() => {
+            modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load log details.</div>';
         });
-    });
+}
+
+document.addEventListener('click', function(e) {
+    const row = e.target.closest('.log-row');
+    if (!row) return;
+
+    const link = row.querySelector('a');
+    if (link && e.target.closest('a')) return;
+
+    const logId = row.dataset.logId;
+    if (!logId) return;
+
+    openLogModal(logId);
 });
 
 let systemLogFilterDebounce;
@@ -300,112 +305,10 @@ function updateClearFiltersVisibility() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const modalEl = document.getElementById('logDetailsModal');
-    const modalBody = document.getElementById('logModalBody');
-    const modal = new bootstrap.Modal(modalEl);
-
     const searchHelpBtn = document.getElementById('searchHelpBtn');
     if (searchHelpBtn) {
         new bootstrap.Popover(searchHelpBtn);
     }
-
-    document.querySelectorAll('.log-row').forEach(row => {
-        row.addEventListener('click', function(e) {
-            const link = this.querySelector('a');
-            if (link && e.target.closest('a')) return;
-
-            const logId = this.dataset.logId;
-            const url = "{{ route('admin.system-logs.modal', ['log' => '__ID__']) }}".replace('__ID__', logId);
-
-            modalBody.innerHTML = `
-                <div class="text-center py-4">
-                    <div class="spinner-border text-green-600" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            `;
-            modal.show();
-
-            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(response => response.json())
-                .then(data => {
-                    const statusBadge = data.status === 'success'
-                        ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"><i class="bi bi-check-circle mr-1"></i> Success</span>'
-                        : '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"><i class="bi bi-x-circle mr-1"></i> Failed</span>';
-
-                    modalBody.innerHTML = `
-                        <div class="space-y-5">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-500">Log ID</p>
-                                    <p class="text-lg font-semibold text-gray-800">#${data.log_id}</p>
-                                </div>
-                                <div>${statusBadge}</div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-500">User</p>
-                                    <div class="flex items-center mt-1">
-                                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                            <i class="bi bi-person text-blue-600"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-gray-800">${data.user}</p>
-                                            <p class="text-sm text-gray-500">${data.role}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">IP Address</p>
-                                    <p class="font-mono text-gray-800 mt-1">${data.ip_address}</p>
-                                </div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-500">Event</p>
-                                    <p class="font-medium text-gray-800 mt-1 whitespace-nowrap">
-                                        <span class="inline-flex items-center gap-2">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                                ${data.module_display}
-                                            </span>
-                                            <span>${data.action_display}</span>
-                                        </span>
-                                    </p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Record ID</p>
-                                    <p class="font-medium text-gray-800 mt-1">${data.record_id}</p>
-                                </div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-500">Created At</p>
-                                    <p class="font-medium text-gray-800 mt-1">${data.created_at}</p>
-                                </div>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div>
-                                <p class="text-sm text-gray-500">Description</p>
-                                <p class="text-gray-800 mt-1">${data.description}</p>
-                            </div>
-                            <hr class="border-gray-100">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-500">Time Elapsed</p>
-                                    <p class="font-medium text-gray-800 mt-1">${data.diff_for_humans}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                })
-                .catch(() => {
-                    modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load log details.</div>';
-                });
-        });
-    });
 
     const searchInput = document.getElementById('systemLogSearch');
     const timeFilterSelect = document.getElementById('systemLogTimeFilter');

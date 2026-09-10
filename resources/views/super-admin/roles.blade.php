@@ -50,85 +50,43 @@
         </div>
 
         <!-- Search & Filters -->
-        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
-            <div class="relative flex-[2] min-w-0">
+        <form method="GET" action="{{ route('super-admin.roles.index') }}" class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+            <div class="relative w-96">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" id="roleSearch" placeholder="Search roles..." class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                <input type="text" name="search" value="{{ $search ?? request('search') }}" placeholder="Search by role name or display name..."
+                       class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
             <div class="flex gap-2 items-center">
-                <select id="hierarchyFilter" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                <select name="hierarchy_level" onchange="this.form.submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                     <option value="">All Hierarchy Levels</option>
-                    @foreach($roles->sortByDesc('hierarchy_level')->unique('hierarchy_level') as $role)
-                        <option value="{{ $role->hierarchy_level }}">Level {{ $role->hierarchy_level }}</option>
+                    @foreach($allRoles->sortByDesc('hierarchy_level')->unique('hierarchy_level') as $role)
+                        <option value="{{ $role->hierarchy_level }}" {{ ($hierarchyLevel ?? request('hierarchy_level')) == $role->hierarchy_level ? 'selected' : '' }}>Level {{ $role->hierarchy_level }}</option>
                     @endforeach
                 </select>
-                <select id="permissionFilter" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                <select name="permission_range" onchange="this.form.submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                     <option value="">All Permission Counts</option>
-                    <option value="0">No Permissions</option>
-                    <option value="1-10">1 - 10 Permissions</option>
-                    <option value="11-50">11 - 50 Permissions</option>
-                    <option value="51+">51+ Permissions</option>
+                    <option value="0" {{ ($permissionRange ?? request('permission_range')) == '0' ? 'selected' : '' }}>No Permissions</option>
+                    <option value="1-10" {{ ($permissionRange ?? request('permission_range')) == '1-10' ? 'selected' : '' }}>1 - 10 Permissions</option>
+                    <option value="11-50" {{ ($permissionRange ?? request('permission_range')) == '11-50' ? 'selected' : '' }}>11 - 50 Permissions</option>
+                    <option value="51+" {{ ($permissionRange ?? request('permission_range')) == '51+' ? 'selected' : '' }}>51+ Permissions</option>
                 </select>
-                <button type="button" onclick="clearRoleFilters()"
-                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap">
-                    <i class="bi bi-x-circle mr-1"></i>Clear Filters
-                </button>
+                @if(request()->filled('search') || request()->filled('hierarchy_level') || request()->filled('permission_range'))
+                    <a href="{{ route('super-admin.roles.index') }}" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap">
+                        <i class="bi bi-x-circle mr-1"></i>Clear Filters
+                    </a>
+                @endif
             </div>
-        </div>
+            <button type="submit" class="hidden">Apply</button>
+        </form>
 
-        <table class="w-full">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hierarchy</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Users</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permissions</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200" id="rolesTableBody">
-                @forelse($roles as $role)
-                    <tr class="hover:bg-gray-50 role-row" data-role-name="{{ $role->name }}" data-display-name="{{ $role->display_name ?? '' }}" data-hierarchy="{{ $role->hierarchy_level }}" data-permissions="{{ $role->permissions()->count() }}" data-role-id="{{ $role->id }}">
-                        <td class="px-6 py-4">
-                            <div>
-                                <span class="text-sm font-medium text-gray-900">{{ $role->display_name ?? '-' }}</span>
-                                <span class="block text-xs text-gray-400 font-mono">{{ $role->name }}</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700" title="Higher number = more permissions. Super admin should have the highest level.">
-                                Level {{ $role->hierarchy_level }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-gray-900">{{ $roleUserCounts[$role->name] ?? 0 }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs leading-5 font-semibold bg-green-100 text-green-800">
-                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                                {{ $role->permissions()->count() }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex items-center gap-2">
-                                <button type="button" class="p-1.5 text-green-700 hover:bg-gray-100 rounded-full transition" title="View" onclick="openViewRoleModal({{ $role->id }}, '{{ $role->name }}')">
-                                    <i class="bi bi-eye text-lg"></i>
-                                </button>
-                                <button type="button" class="p-1.5 text-green-700 hover:bg-gray-100 rounded-full transition" title="Edit" onclick="openEditRoleModal({{ $role->id }}, '{{ $role->name }}')">
-                                    <i class="bi bi-pencil text-lg"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No roles found</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+        <div class="overflow-x-auto">
+            @include('super-admin.partials.roles-table', ['roles' => $roles, 'roleUserCounts' => $roleUserCounts])
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200">
+            {{ $roles->links() }}
+        </div>
     </div>
 </div>
 
@@ -559,63 +517,6 @@ document.addEventListener('DOMContentLoaded', function() {
     editRoleModal = new bootstrap.Modal(document.getElementById('editRoleModal'));
     viewRoleModal = new bootstrap.Modal(document.getElementById('viewRoleModal'));
     createRoleModal = new bootstrap.Modal(document.getElementById('createRoleModal'));
-
-    const searchInput = document.getElementById('roleSearch');
-    const hierarchyFilter = document.getElementById('hierarchyFilter');
-    const permissionFilter = document.getElementById('permissionFilter');
-
-    function filterRoles() {
-        const query = searchInput.value.toLowerCase().trim();
-        const hierarchyValue = hierarchyFilter.value;
-        const permissionValue = permissionFilter.value;
-
-        document.querySelectorAll('.role-row').forEach(function(row) {
-            const name = row.getAttribute('data-role-name').toLowerCase();
-            const displayName = row.getAttribute('data-display-name').toLowerCase();
-            const hierarchy = row.getAttribute('data-hierarchy');
-            const permissions = parseInt(row.getAttribute('data-permissions'));
-
-            const matchesSearch = query === '' || name.includes(query) || displayName.includes(query);
-            const matchesHierarchy = hierarchyValue === '' || hierarchy === hierarchyValue;
-            let matchesPermission = true;
-            if (permissionValue === '0') {
-                matchesPermission = permissions === 0;
-            } else if (permissionValue === '1-10') {
-                matchesPermission = permissions >= 1 && permissions <= 10;
-            } else if (permissionValue === '11-50') {
-                matchesPermission = permissions >= 11 && permissions <= 50;
-            } else if (permissionValue === '51+') {
-                matchesPermission = permissions >= 51;
-            }
-
-            if (matchesSearch && matchesHierarchy && matchesPermission) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', filterRoles);
-    }
-    if (hierarchyFilter) {
-        hierarchyFilter.addEventListener('change', filterRoles);
-    }
-    if (permissionFilter) {
-        permissionFilter.addEventListener('change', filterRoles);
-    }
-
-    function clearRoleFilters() {
-        const searchInput = document.getElementById('roleSearch');
-        const hierarchyFilter = document.getElementById('hierarchyFilter');
-        const permissionFilter = document.getElementById('permissionFilter');
-        if (searchInput) searchInput.value = '';
-        if (hierarchyFilter) hierarchyFilter.value = '';
-        if (permissionFilter) permissionFilter.value = '';
-        filterRoles();
-    }
-    window.clearRoleFilters = clearRoleFilters;
 });
 </script>
 @endsection
