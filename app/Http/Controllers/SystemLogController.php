@@ -47,28 +47,30 @@ class SystemLogController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
 
-        // Search in user name or IP
+        // Quick time filter
+        if ($request->has('time_filter') && $request->time_filter) {
+            $timeFilter = $request->time_filter;
+            $now = now();
+
+            switch ($timeFilter) {
+                case 'today':
+                    $query->whereDate('created_at', $now->toDateString());
+                    break;
+                case 'yesterday':
+                    $query->whereDate('created_at', $now->subDay()->toDateString());
+                    break;
+                case 'week':
+                    $query->whereDate('created_at', '>=', $now->startOfWeek()->toDateString());
+                    break;
+                case 'month':
+                    $query->whereDate('created_at', '>=', $now->startOfMonth()->toDateString());
+                    break;
+            }
+        }
+
+        // Search in user name, IP, or date/time
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('ip_address', 'like', "%{$search}%")
-                    ->orWhereIn('user_id', function ($sub) use ($search) {
-                        $sub->select('user_id')
-                            ->from('admins')
-                            ->where(function ($s) use ($search) {
-                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
-                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"]);
-                            });
-                    })
-                    ->orWhereIn('user_id', function ($sub) use ($search) {
-                        $sub->select('user_id')
-                            ->from('pet_owners')
-                            ->where(function ($s) use ($search) {
-                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
-                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"]);
-                            });
-                    });
-            });
+            $query->search($request->search);
         }
 
         $logs = $query->orderBy('created_at', 'desc')
@@ -167,27 +169,29 @@ class SystemLogController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
 
+        // Quick time filter
+        if ($request->has('time_filter') && $request->time_filter) {
+            $timeFilter = $request->time_filter;
+            $now = now();
+
+            switch ($timeFilter) {
+                case 'today':
+                    $query->whereDate('created_at', $now->toDateString());
+                    break;
+                case 'yesterday':
+                    $query->whereDate('created_at', $now->subDay()->toDateString());
+                    break;
+                case 'week':
+                    $query->whereDate('created_at', '>=', $now->startOfWeek()->toDateString());
+                    break;
+                case 'month':
+                    $query->whereDate('created_at', '>=', $now->startOfMonth()->toDateString());
+                    break;
+            }
+        }
+
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('ip_address', 'like', "%{$search}%")
-                    ->orWhereIn('user_id', function ($sub) use ($search) {
-                        $sub->select('user_id')
-                            ->from('admins')
-                            ->where(function ($s) use ($search) {
-                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
-                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"]);
-                            });
-                    })
-                    ->orWhereIn('user_id', function ($sub) use ($search) {
-                        $sub->select('user_id')
-                            ->from('pet_owners')
-                            ->where(function ($s) use ($search) {
-                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$search}%"])
-                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"]);
-                            });
-                    });
-            });
+            $query->search($request->search);
         }
 
         $logs = $query->orderBy('created_at', 'desc')->get();

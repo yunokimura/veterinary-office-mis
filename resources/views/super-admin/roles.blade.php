@@ -50,14 +50,14 @@
         </div>
 
         <!-- Search & Filters -->
-        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3">
-            <div class="relative flex-1">
+        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+            <div class="relative flex-[2] min-w-0">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                     <i class="bi bi-search"></i>
                 </span>
                 <input type="text" id="roleSearch" placeholder="Search roles..." class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
                 <select id="hierarchyFilter" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                     <option value="">All Hierarchy Levels</option>
                     @foreach($roles->sortByDesc('hierarchy_level')->unique('hierarchy_level') as $role)
@@ -71,6 +71,10 @@
                     <option value="11-50">11 - 50 Permissions</option>
                     <option value="51+">51+ Permissions</option>
                 </select>
+                <button type="button" onclick="clearRoleFilters()"
+                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap">
+                    <i class="bi bi-x-circle mr-1"></i>Clear Filters
+                </button>
             </div>
         </div>
 
@@ -601,6 +605,17 @@ document.addEventListener('DOMContentLoaded', function() {
     if (permissionFilter) {
         permissionFilter.addEventListener('change', filterRoles);
     }
+
+    function clearRoleFilters() {
+        const searchInput = document.getElementById('roleSearch');
+        const hierarchyFilter = document.getElementById('hierarchyFilter');
+        const permissionFilter = document.getElementById('permissionFilter');
+        if (searchInput) searchInput.value = '';
+        if (hierarchyFilter) hierarchyFilter.value = '';
+        if (permissionFilter) permissionFilter.value = '';
+        filterRoles();
+    }
+    window.clearRoleFilters = clearRoleFilters;
 });
 </script>
 @endsection

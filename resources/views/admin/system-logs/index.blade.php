@@ -55,7 +55,7 @@
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by user or IP..."
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="John 127.0.0.1, 14:30, 2026-09-08"
                    class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
         </div>
         <div class="flex gap-2">
@@ -75,6 +75,13 @@
                 <option value="">All Status</option>
                 <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success</option>
                 <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+            </select>
+            <select name="time_filter" onchange="this.closest('form').submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                <option value="">All Time</option>
+                <option value="today" {{ request('time_filter') == 'today' ? 'selected' : '' }}>Today</option>
+                <option value="yesterday" {{ request('time_filter') == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                <option value="week" {{ request('time_filter') == 'week' ? 'selected' : '' }}>This Week</option>
+                <option value="month" {{ request('time_filter') == 'month' ? 'selected' : '' }}>This Month</option>
             </select>
         </div>
     </form>

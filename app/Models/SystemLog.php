@@ -244,6 +244,58 @@ class SystemLog extends Model
     }
 
     /**
+     * Scope for flexible search across IP, user names, and date/time.
+     */
+    public function scopeSearch($query, string $search)
+    {
+        if (!trim($search)) {
+            return $query;
+        }
+
+        $terms = \App\Helpers\LogSearchParser::parseSearchTerms($search);
+
+        foreach ($terms['textTerms'] as $term) {
+            $query->where(function ($q) use ($term) {
+                $q->where('ip_address', 'like', "%{$term}%")
+                    ->orWhereIn('user_id', function ($sub) use ($term) {
+                        $sub->select('user_id')
+                            ->from('admins')
+                            ->where(function ($s) use ($term) {
+                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$term}%"])
+                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$term}%"]);
+                            });
+                    })
+                    ->orWhereIn('user_id', function ($sub) use ($term) {
+                        $sub->select('user_id')
+                            ->from('pet_owners')
+                            ->where(function ($s) use ($term) {
+                                $s->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?", ["%{$term}%"])
+                                  ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$term}%"]);
+                            });
+                    });
+            });
+        }
+
+        foreach ($terms['dateTerms'] as $dateTerm) {
+            switch ($dateTerm['type']) {
+                case 'year':
+                    $query->whereYear('created_at', $dateTerm['value']->year);
+                    break;
+                case 'date':
+                    $query->whereDate('created_at', $dateTerm['date']->toDateString());
+                    break;
+                case 'datetime':
+                    $start = $dateTerm['value']->copy()->startOfMinute();
+                    $end = $dateTerm['value']->copy()->endOfMinute();
+                    $query->whereBetween('created_at', [$start, $end]);
+                    break;
+            }
+        }
+
+        return $query;
+    }
+
+    /**
      * Log an activity.
      */
     public static function log($userId, $role, $action, $module, $recordId = null, $description = null, $ipAddress = null, $status = 'success')

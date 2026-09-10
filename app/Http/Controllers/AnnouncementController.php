@@ -46,7 +46,9 @@ class AnnouncementController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%'.$request->search.'%')
-                  ->orWhere('organized_by', 'like', '%'.$request->search.'%');
+                  ->orWhere('organized_by', 'like', '%'.$request->search.'%')
+                  ->orWhere('status', 'like', '%'.$request->search.'%')
+                  ->orWhere('category', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -279,7 +281,9 @@ class AnnouncementController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%'.$request->search.'%')
-                  ->orWhere('organized_by', 'like', '%'.$request->search.'%');
+                  ->orWhere('organized_by', 'like', '%'.$request->search.'%')
+                  ->orWhere('status', 'like', '%'.$request->search.'%')
+                  ->orWhere('category', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -299,17 +303,16 @@ class AnnouncementController extends Controller
         }
 
         $announcements = $query->paginate(15);
+        $rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'city-vet');
+
+        $tableHtml = view('announcements.partials.table', compact('announcements', 'rolePrefix'))->render();
+        $paginationHtml = $announcements->links()->render();
 
         return response()->json([
-            'announcements' => $announcements->items(),
-            'pagination' => [
-                'current_page' => $announcements->currentPage(),
-                'last_page' => $announcements->lastPage(),
-                'per_page' => $announcements->perPage(),
-                'total' => $announcements->total(),
-                'from' => $announcements->firstItem(),
-                'to' => $announcements->lastItem(),
-            ]
+            'success' => true,
+            'table_html' => $tableHtml,
+            'pagination' => $paginationHtml,
+            'has_results' => $announcements->count() > 0,
         ]);
     }
 }
