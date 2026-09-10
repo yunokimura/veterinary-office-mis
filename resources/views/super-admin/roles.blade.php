@@ -81,11 +81,15 @@
             <button type="submit" class="hidden">Apply</button>
         </form>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" id="rolesTableContainer">
             @include('super-admin.partials.roles-table', ['roles' => $roles, 'roleUserCounts' => $roleUserCounts])
         </div>
-        <div class="px-6 py-4 border-t border-gray-200">
+        <div class="px-6 py-4 border-t border-gray-200" id="rolesPagination">
             {{ $roles->links() }}
+        </div>
+        <div id="rolesLoading" class="hidden px-6 py-4 border-t border-gray-200 text-center text-gray-500">
+            <span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-green-600 mr-2"></span>
+            Loading...
         </div>
     </div>
 </div>
@@ -517,6 +521,136 @@ document.addEventListener('DOMContentLoaded', function() {
     editRoleModal = new bootstrap.Modal(document.getElementById('editRoleModal'));
     viewRoleModal = new bootstrap.Modal(document.getElementById('viewRoleModal'));
     createRoleModal = new bootstrap.Modal(document.getElementById('createRoleModal'));
+
+    const filterForm = document.querySelector('form[action="{{ route('super-admin.roles.index') }}"]');
+    const rolesFilterUrl = '{{ route('super-admin.roles.filter') }}';
+    let searchDebounce;
+    let lastKnownTableHtml = null;
+    let lastKnownPaginationHtml = null;
+    let currentController = null;
+
+    function applyRoleFilters(params) {
+        const tableContainer = document.getElementById('rolesTableContainer');
+        const paginationContainer = document.getElementById('rolesPagination');
+        const loadingEl = document.getElementById('rolesLoading');
+
+        if (loadingEl) loadingEl.classList.remove('hidden');
+        if (tableContainer) tableContainer.style.opacity = '0.3';
+        if (paginationContainer) paginationContainer.style.opacity = '0.3';
+
+        if (currentController) {
+            currentController.abort();
+        }
+        currentController = new AbortController();
+
+        fetch(`${rolesFilterUrl}?${params.toString()}`, {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            signal: currentController.signal
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (tableContainer) {
+                        lastKnownTableHtml = data.table_html;
+                        tableContainer.innerHTML = data.table_html;
+                        tableContainer.style.opacity = '1';
+                    }
+                    if (paginationContainer) {
+                        lastKnownPaginationHtml = data.pagination;
+                        paginationContainer.innerHTML = data.pagination;
+                        paginationContainer.style.opacity = '1';
+                    }
+                }
+            })
+            .catch(error => {
+                if (error.name === 'AbortError') {
+                    return;
+                }
+                console.error('Error filtering roles:', error);
+                if (tableContainer) {
+                    if (lastKnownTableHtml) {
+                        tableContainer.innerHTML = lastKnownTableHtml;
+                    }
+                    tableContainer.style.opacity = '1';
+                }
+                if (paginationContainer) {
+                    if (lastKnownPaginationHtml) {
+                        paginationContainer.innerHTML = lastKnownPaginationHtml;
+                    }
+                    paginationContainer.style.opacity = '1';
+                }
+            })
+            .finally(() => {
+                if (loadingEl) loadingEl.classList.add('hidden');
+            });
+    }
+
+    if (filterForm) {
+        const searchInput = filterForm.querySelector('input[name="search"]');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchDebounce);
+                searchDebounce = setTimeout(() => {
+                    const formData = new FormData(filterForm);
+                    const params = new URLSearchParams();
+                    formData.forEach((value, key) => {
+                        if (value) params.append(key, value);
+                    });
+                    applyRoleFilters(params);
+                }, 300);
+            });
+        }
+
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(filterForm);
+            const params = new URLSearchParams();
+            formData.forEach((value, key) => {
+                if (value) params.append(key, value);
+            });
+
+            applyRoleFilters(params);
+        });
+    }
+
+    const paginationContainer = document.getElementById('rolesPagination');
+    if (paginationContainer) {
+        paginationContainer.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (!link) return;
+
+            e.preventDefault();
+            const url = new URL(link.href);
+            const query = url.searchParams.toString();
+
+            fetch(`${rolesFilterUrl}?${query}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('rolesTableContainer').innerHTML = data.table_html;
+                        document.getElementById('rolesPagination').innerHTML = data.pagination;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading roles page:', error);
+                });
+        });
+    }
 });
 </script>
 @endsection

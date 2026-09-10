@@ -207,6 +207,68 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Filter roles via AJAX.
+     */
+    public function filterRoles(Request $request)
+    {
+        $search = $request->filled('search') ? $request->get('search') : '';
+        $hierarchyLevel = $request->filled('hierarchy_level') ? $request->get('hierarchy_level') : '';
+        $permissionRange = $request->filled('permission_range') ? $request->get('permission_range') : '';
+
+        $query = Role::query();
+
+        if ($search !== '') {
+            $nameSearch = str_replace(' ', '_', $search);
+            $displaySearch = str_replace('_', ' ', $search);
+
+            $query->where(function ($q) use ($nameSearch, $displaySearch) {
+                $q->where('name', 'like', "%{$nameSearch}%")
+                  ->orWhere('display_name', 'like', "%{$displaySearch}%");
+            });
+        }
+
+        if ($hierarchyLevel !== '') {
+            $query->where('hierarchy_level', $hierarchyLevel);
+        }
+
+        if ($permissionRange !== '') {
+            $query->withCount('permissions');
+
+            switch ($permissionRange) {
+                case '0':
+                    $query->having('permissions_count', '=', 0);
+                    break;
+                case '1-10':
+                    $query->havingBetween('permissions_count', [1, 10]);
+                    break;
+                case '11-50':
+                    $query->havingBetween('permissions_count', [11, 50]);
+                    break;
+                case '51+':
+                    $query->having('permissions_count', '>=', 51);
+                    break;
+            }
+        }
+
+        $roles = $query->orderBy('hierarchy_level', 'desc')->paginate(10);
+
+        $roleUserCounts = User::selectRaw('role, COUNT(*) as count')
+            ->groupBy('role')
+            ->pluck('count', 'role')
+            ->toArray();
+
+        $tableHtml = view('super-admin.partials.roles-table', compact('roles', 'roleUserCounts'))->render();
+        $paginationHtml = $roles->links()->render();
+
+        return response()->json([
+            'success' => true,
+            'table_html' => $tableHtml,
+            'pagination' => $paginationHtml,
+            'has_results' => $roles->count() > 0,
+        ]);
+    }
+
+    /**
      * Show edit form for a role via AJAX.
      */
     public function editRole(Request $request, $id)
