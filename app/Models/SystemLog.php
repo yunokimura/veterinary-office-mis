@@ -257,6 +257,9 @@ class SystemLog extends Model
         foreach ($terms['textTerms'] as $term) {
             $query->where(function ($q) use ($term) {
                 $q->where('ip_address', 'like', "%{$term}%")
+                    ->orWhere('module', 'like', "%{$term}%")
+                    ->orWhere('action', 'like', "%{$term}%")
+                    ->orWhere('status', 'like', "%{$term}%")
                     ->orWhereIn('user_id', function ($sub) use ($term) {
                         $sub->select('user_id')
                             ->from('admins')

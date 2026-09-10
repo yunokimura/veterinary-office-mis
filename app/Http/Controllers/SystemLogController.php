@@ -118,6 +118,62 @@ class SystemLogController extends Controller
     }
 
     /**
+     * Filter logs for AJAX requests.
+     */
+    public function filter(Request $request)
+    {
+        $query = SystemLog::with('user');
+
+        if ($request->filled('module')) {
+            $query->where('module', $request->module);
+        }
+
+        if ($request->filled('action')) {
+            $query->where('action', $request->action);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        if ($request->filled('time_filter')) {
+            $timeFilter = $request->time_filter;
+            $now = now();
+
+            switch ($timeFilter) {
+                case 'today':
+                    $query->whereDate('created_at', $now->toDateString());
+                    break;
+                case 'yesterday':
+                    $query->whereDate('created_at', $now->subDay()->toDateString());
+                    break;
+                case 'week':
+                    $query->whereDate('created_at', '>=', $now->startOfWeek()->toDateString());
+                    break;
+                case 'month':
+                    $query->whereDate('created_at', '>=', $now->startOfMonth()->toDateString());
+                    break;
+            }
+        }
+
+        $logs = $query->orderBy('created_at', 'desc')->paginate(7);
+
+        $tableHtml = view('admin.system-logs.partials.table', compact('logs'))->render();
+        $paginationHtml = $logs->links()->render();
+
+        return response()->json([
+            'success' => true,
+            'table_html' => $tableHtml,
+            'pagination' => $paginationHtml,
+            'has_results' => $logs->count() > 0,
+        ]);
+    }
+
+    /**
      * Show a single log entry.
      */
     public function show($id)

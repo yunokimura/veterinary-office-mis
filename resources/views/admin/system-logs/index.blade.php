@@ -50,113 +50,58 @@
         </a>
     </div>
 
-    <form method="GET" action="{{ route('admin.system-logs.index') }}" class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3">
-        <div class="relative flex-1">
+    <!-- Search & Filters -->
+    <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+        <div class="relative flex-[2] min-w-0">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="John 127.0.0.1, 14:30, 2026-09-08"
+            <input type="text" id="systemLogSearch" value="{{ request('search') }}" placeholder="John 127.0.0.1, 14:30, 2026-09-08"
                    class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
         </div>
-        <div class="flex gap-2">
-            <select name="module" onchange="this.closest('form').submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+        <div class="flex gap-2 items-center">
+            <select id="systemLogModule" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <option value="">All Modules</option>
                 @foreach($modules as $module)
                     <option value="{{ $module }}" {{ request('module') == $module ? 'selected' : '' }}>{{ $module }}</option>
                 @endforeach
             </select>
-            <select name="action" onchange="this.closest('form').submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+            <select id="systemLogAction" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <option value="">All Actions</option>
                 @foreach($actions as $action)
                     <option value="{{ $action }}" {{ request('action') == $action ? 'selected' : '' }}>{{ $action }}</option>
                 @endforeach
             </select>
-            <select name="status" onchange="this.closest('form').submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+            <select id="systemLogStatus" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <option value="">All Status</option>
                 <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success</option>
                 <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
             </select>
-            <select name="time_filter" onchange="this.closest('form').submit()" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+            <select id="systemLogTimeFilter" class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <option value="">All Time</option>
                 <option value="today" {{ request('time_filter') == 'today' ? 'selected' : '' }}>Today</option>
                 <option value="yesterday" {{ request('time_filter') == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
                 <option value="week" {{ request('time_filter') == 'week' ? 'selected' : '' }}>This Week</option>
                 <option value="month" {{ request('time_filter') == 'month' ? 'selected' : '' }}>This Month</option>
             </select>
+            <button type="button" onclick="clearSystemLogFilters()"
+                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap">
+                <i class="bi bi-x-circle mr-1"></i>Clear Filters
+            </button>
         </div>
-    </form>
+    </div>
 
-    <div class="overflow-x-auto">
-        <table class="w-full table-fixed">
-            <colgroup>
-                <col class="w-[4%]">
-                <col class="w-[18%]">
-                <col class="min-w-[220px]">
-                <col class="w-[13%]">
-                <col class="w-[25%]">
-                <col class="w-[10%]">
-                <col class="w-[10%]">
-            </colgroup>
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 z-20 bg-gray-50 border-r border-gray-200">ID</th>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">User</th>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[220px]">Action</th>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Date & Time</th>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Description</th>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">IP Address</th>
-                    <th class="px-4 py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($logs as $log)
-                    <tr class="log-row hover:bg-gray-50 cursor-pointer" data-log-id="{{ $log->id }}">
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 leading-[1.5] sticky left-0 z-10 border-r border-gray-200 bg-white hover:bg-gray-50">{{ $log->user_id ?? '-' }}</td>
-                        <td class="px-4 py-[18px] whitespace-nowrap hidden md:table-cell">
-                            <div class="flex items-center gap-2 whitespace-nowrap">
-                                <div class="inline-flex w-8 h-8 min-w-[32px] items-center justify-center rounded-full bg-[#e8f0fe]">
-                                    <i class="bi bi-person text-blue-600"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-800 leading-[1.5] whitespace-nowrap overflow-hidden text-ellipsis">{{ $log->user->name ?? 'System' }}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-700 leading-[1.5] min-w-[220px]">
-                            <span class="inline-flex items-center gap-2">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                    {{ $log->module_display }}
-                                </span>
-                                <span>{{ $log->action_display }}</span>
-                            </span>
-                        </td>
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 leading-[1.5] hidden md:table-cell">{{ $log->created_at }}</td>
-                        <td class="px-4 py-[18px] hidden md:table-cell">
-                            <span class="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis block leading-[1.5]" title="{{ $log->description }}">{{ Str::limit($log->description, 50) }}</span>
-                        </td>
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm text-gray-600 font-mono leading-[1.5] hidden md:table-cell">{{ $log->ip_address ?? 'N/A' }}</td>
-                        <td class="px-4 py-[18px] whitespace-nowrap text-sm leading-[1.5]">
-                            @if($log->status == 'success')
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <i class="bi bi-check-circle mr-1"></i> Success
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                    <i class="bi bi-x-circle mr-1"></i> Failed
-                                </span>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No system logs found</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="overflow-x-auto" id="systemLogsTableContainer">
+        @include('admin.system-logs.partials.table', ['logs' => $logs])
     </div>
 
     <!-- Pagination -->
-    <div class="px-6 py-4 border-t border-gray-200">
+    <div class="px-6 py-4 border-t border-gray-200" id="systemLogsPagination">
         {{ $logs->onEachSide(2)->appends(request()->query())->links('vendor.pagination.custom') }}
+    </div>
+    <div id="systemLogsLoading" class="hidden px-6 py-4 border-t border-gray-200 text-center text-gray-500">
+        <span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-green-600 mr-2"></span>
+        Loading...
     </div>
 </div>
 
@@ -283,6 +228,118 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         });
     });
+});
+
+let systemLogFilterDebounce;
+const systemLogFilterUrl = window.location.pathname + '/filter';
+
+function applySystemLogFilters(page = 1) {
+    const search = document.getElementById('systemLogSearch')?.value || '';
+    const module = document.getElementById('systemLogModule')?.value || '';
+    const action = document.getElementById('systemLogAction')?.value || '';
+    const status = document.getElementById('systemLogStatus')?.value || '';
+    const timeFilter = document.getElementById('systemLogTimeFilter')?.value || '';
+
+    const params = new URLSearchParams({
+        search: search,
+        module: module,
+        action: action,
+        status: status,
+        time_filter: timeFilter,
+        page: page
+    });
+
+    const tableContainer = document.getElementById('systemLogsTableContainer');
+    const paginationContainer = document.getElementById('systemLogsPagination');
+    const loadingEl = document.getElementById('systemLogsLoading');
+
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    if (tableContainer) tableContainer.style.opacity = '0.3';
+    if (paginationContainer) paginationContainer.style.opacity = '0.3';
+
+    fetch(`${systemLogFilterUrl}?${params.toString()}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (tableContainer) {
+                    tableContainer.innerHTML = data.table_html;
+                    tableContainer.style.opacity = '1';
+                }
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = data.pagination;
+                    paginationContainer.style.opacity = '1';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error filtering system logs:', error);
+            if (tableContainer) tableContainer.style.opacity = '1';
+            if (paginationContainer) paginationContainer.style.opacity = '1';
+        })
+        .finally(() => {
+            if (loadingEl) loadingEl.classList.add('hidden');
+        });
+}
+
+function clearSystemLogFilters() {
+    const searchInput = document.getElementById('systemLogSearch');
+    const moduleSelect = document.getElementById('systemLogModule');
+    const actionSelect = document.getElementById('systemLogAction');
+    const statusSelect = document.getElementById('systemLogStatus');
+    const timeFilterSelect = document.getElementById('systemLogTimeFilter');
+    if (searchInput) searchInput.value = '';
+    if (moduleSelect) moduleSelect.value = '';
+    if (actionSelect) actionSelect.value = '';
+    if (statusSelect) statusSelect.value = '';
+    if (timeFilterSelect) timeFilterSelect.value = '';
+    applySystemLogFilters(1);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('systemLogSearch');
+    const moduleSelect = document.getElementById('systemLogModule');
+    const actionSelect = document.getElementById('systemLogAction');
+    const statusSelect = document.getElementById('systemLogStatus');
+    const timeFilterSelect = document.getElementById('systemLogTimeFilter');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(systemLogFilterDebounce);
+            systemLogFilterDebounce = setTimeout(() => applySystemLogFilters(1), 300);
+        });
+    }
+
+    [moduleSelect, actionSelect, statusSelect, timeFilterSelect].forEach(select => {
+        if (select) {
+            select.addEventListener('change', function() {
+                applySystemLogFilters(1);
+            });
+        }
+    });
+
+    const paginationContainer = document.getElementById('systemLogsPagination');
+    if (paginationContainer) {
+        paginationContainer.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (!link) return;
+
+            e.preventDefault();
+            const url = new URL(link.href);
+            const query = url.searchParams.toString();
+
+            fetch(`${systemLogFilterUrl}?${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('systemLogsTableContainer').innerHTML = data.table_html;
+                        document.getElementById('systemLogsPagination').innerHTML = data.pagination;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading system logs page:', error);
+                });
+        });
+    }
 });
 </script>
 @endpush
