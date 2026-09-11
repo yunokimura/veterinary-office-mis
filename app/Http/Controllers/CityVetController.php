@@ -32,6 +32,20 @@ class CityVetController extends Controller
             'registered_meat_establishments' => \App\Models\MeatEstablishment::count(),
         ];
 
+        $kpiSecondary = [
+            'rabies_active' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->whereYear('incident_date', $year)->count(),
+            'rabies_resolved' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $year)->count(),
+            'vaccination_target' => 50,
+            'adoption_dogs' => \App\Models\AdoptionApplication::whereYear('created_at', $year)->whereHas('pet', function ($q) {
+                $q->where('species', 'Dog');
+            })->count(),
+            'adoption_cats' => \App\Models\AdoptionApplication::whereYear('created_at', $year)->whereHas('pet', function ($q) {
+                $q->where('species', 'Cat');
+            })->count(),
+            'missing_reunited' => \App\Models\MissingPetsReport::where('status', 'reunited')->count(),
+            'missing_pending' => \App\Models\MissingPetsReport::whereIn('status', ['missing', 'found'])->count(),
+        ];
+
         // Get recent confirmed rabies cases only from current year
         $recentCases = BiteRabiesReport::where('rabies_confirmed', true)
             ->whereYear('incident_date', date('Y'))
@@ -195,7 +209,8 @@ class CityVetController extends Controller
             'missingChartMode',
             'missingChartTimeframe',
             'missingMonthlyData',
-            'missingYearlyData'
+            'missingYearlyData',
+            'kpiSecondary'
         ));
     }
 

@@ -12,26 +12,40 @@
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
     <!-- Confirmed Rabies Cases (Highest Priority) -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-        <p class="text-xs md:text-sm text-gray-500 mb-1">Confirmed Rabies Cases</p>
-        <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['confirmed_bite_cases'] ?? 0 }}</p>
+        <p class="text-xs md:text-sm text-gray-800 mb-1">Confirmed Rabies Cases</p>
+        <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{{ $stats['confirmed_bite_cases'] ?? 0 }}</p>
+        <p class="text-xs text-gray-800 mb-1">As of {{ $year }}</p>
+        <p class="text-xs md:text-sm text-gray-500">
+            {{ ($kpiSecondary['rabies_active'] ?? 0) }} active, {{ ($kpiSecondary['rabies_resolved'] ?? 0) }} resolved
+        </p>
     </div>
 
     <!-- Anti-Rabies Vaccinations -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-        <p class="text-xs md:text-sm text-gray-500 mb-1">Anti-Rabies Vaccinations</p>
-        <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['anti_rabies_vaccinations'] ?? 0 }}</p>
+        <p class="text-xs md:text-sm text-gray-800 mb-1">Anti-Rabies Vaccinations</p>
+        <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{{ $stats['anti_rabies_vaccinations'] ?? 0 }}</p>
+        <p class="text-xs text-gray-800 mb-1">As of {{ now()->format('F Y') }}</p>
+        <p class="text-xs md:text-sm text-gray-500">Target: {{ $kpiSecondary['vaccination_target'] ?? 50 }} doses/mo</p>
     </div>
 
     <!-- Adoption Reports -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-        <p class="text-xs md:text-sm text-gray-500 mb-1">Adoption Reports</p>
-        <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['adoption_reports'] ?? 0 }}</p>
+        <p class="text-xs md:text-sm text-gray-800 mb-1">Adoption Reports</p>
+        <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{{ $stats['adoption_reports'] ?? 0 }}</p>
+        <p class="text-xs text-gray-800 mb-1">As of {{ now()->format('F Y') }}</p>
+        <p class="text-xs md:text-sm text-gray-500">
+            {{ ($kpiSecondary['adoption_dogs'] ?? 0) }} dogs, {{ ($kpiSecondary['adoption_cats'] ?? 0) }} cats
+        </p>
     </div>
 
     <!-- Missing Pet Reports -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-        <p class="text-xs md:text-sm text-gray-500 mb-1">Missing Pet Reports</p>
-        <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['missing_pet_reports'] ?? 0 }}</p>
+        <p class="text-xs md:text-sm text-gray-800 mb-1">Missing Pet Reports</p>
+        <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{{ $stats['missing_pet_reports'] ?? 0 }}</p>
+        <p class="text-xs text-gray-800 mb-1">As of {{ $year }}</p>
+        <p class="text-xs md:text-sm text-gray-500">
+            {{ ($kpiSecondary['missing_reunited'] ?? 0) }} reunited, {{ ($kpiSecondary['missing_pending'] ?? 0) }} pending
+        </p>
     </div>
 </div>
 
@@ -77,30 +91,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
     <!-- Confirmed Rabies Cases -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
-            <div class="flex items-center gap-2 flex-wrap">
-                <select id="biteChartMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                    <option value="months" {{ $biteChartMode == 'months' ? 'selected' : '' }}>by months</option>
-                    <option value="years" {{ $biteChartMode == 'years' ? 'selected' : '' }}>by years</option>
-                </select>
-                <div id="biteMonthsFilter" class="flex items-center gap-2">
-                    <select id="biteChartTimeframe" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        @foreach($availableYears as $y)
-                            <option value="{{ $y }}" {{ $biteChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div id="biteYearsFilter" class="hidden items-center gap-2">
-                    <select id="biteChartRange" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        <option value="3" {{ $biteChartTimeframe == 3 ? 'selected' : '' }}>Last 3 Years</option>
-                        <option value="5" {{ $biteChartTimeframe == 5 ? 'selected' : '' }}>Last 5 Years</option>
-                        <option value="all" {{ $biteChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
-                    </select>
-                </div>
-                <span id="biteLegend" class="text-xs text-gray-600 font-medium"></span>
-            </div>
-        </div>
+        <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
         <div class="h-64 relative">
             <canvas id="biteCasesByMonthChart"></canvas>
         </div>
@@ -108,30 +99,7 @@
 
     <!-- Adoption Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Adoption Reports</h3>
-            <div class="flex items-center gap-2 flex-wrap">
-                <select id="adoptionChartMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                    <option value="months" {{ $adoptionChartMode == 'months' ? 'selected' : '' }}>by months</option>
-                    <option value="years" {{ $adoptionChartMode == 'years' ? 'selected' : '' }}>by years</option>
-                </select>
-                <div id="adoptionMonthsFilter" class="flex items-center gap-2">
-                    <select id="adoptionChartTimeframe" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        @foreach($availableYears as $y)
-                            <option value="{{ $y }}" {{ $adoptionChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div id="adoptionYearsFilter" class="hidden items-center gap-2">
-                    <select id="adoptionChartRange" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        <option value="3" {{ $adoptionChartTimeframe == 3 ? 'selected' : '' }}>Last 3 Years</option>
-                        <option value="5" {{ $adoptionChartTimeframe == 5 ? 'selected' : '' }}>Last 5 Years</option>
-                        <option value="all" {{ $adoptionChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
-                    </select>
-                </div>
-                <span id="adoptionLegend" class="text-xs text-gray-600 font-medium"></span>
-            </div>
-        </div>
+        <h3 class="text-base font-semibold text-gray-800">Adoption Reports</h3>
         <div class="h-64">
             <canvas id="adoptionReportsChart"></canvas>
         </div>
@@ -139,30 +107,7 @@
 
     <!-- Missing Pet Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Missing Pet Reports</h3>
-            <div class="flex items-center gap-2 flex-wrap">
-                <select id="missingChartMode" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                    <option value="months" {{ $missingChartMode == 'months' ? 'selected' : '' }}>by months</option>
-                    <option value="years" {{ $missingChartMode == 'years' ? 'selected' : '' }}>by years</option>
-                </select>
-                <div id="missingMonthsFilter" class="flex items-center gap-2">
-                    <select id="missingChartTimeframe" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        @foreach($availableYears as $y)
-                            <option value="{{ $y }}" {{ $missingChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div id="missingYearsFilter" class="hidden items-center gap-2">
-                    <select id="missingChartRange" class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        <option value="3" {{ $missingChartTimeframe == 3 ? 'selected' : '' }}>Last 3 Years</option>
-                        <option value="5" {{ $missingChartTimeframe == 5 ? 'selected' : '' }}>Last 5 Years</option>
-                        <option value="all" {{ $missingChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
-                    </select>
-                </div>
-                <span id="missingLegend" class="text-xs text-gray-600 font-medium"></span>
-            </div>
-        </div>
+        <h3 class="text-base font-semibold text-gray-800">Missing Pet Reports</h3>
         <div class="h-64">
             <canvas id="missingPetReportsChart"></canvas>
         </div>
@@ -240,12 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const barangays = @json($barangays ?? []);
 
     const biteMonthlyRaw = @json($biteMonthlyData ?? []);
-    const biteYearlyRaw = @json($biteYearlyData ?? []);
     const adoptionMonthlyRaw = @json($adoptionMonthlyData ?? []);
-    const adoptionYearlyRaw = @json($adoptionYearlyData ?? []);
     const missingMonthlyRaw = @json($missingMonthlyData ?? []);
-    const missingYearlyRaw = @json($missingYearlyData ?? []);
-    const currentMonth = new Date().getMonth() + 1;
 
     function buildLineDataset(label, data, borderColor, backgroundColor) {
         return {
@@ -264,115 +205,27 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    function getBiteLabels(mode, timeframe) {
-        if (mode === 'years') {
-            const years = getYearRange(timeframe);
-            return years.map(String);
-        }
-        return monthLabels;
-    }
-
-    function getBiteDatasets(mode, timeframe) {
-        if (mode === 'years') {
-            const years = getYearRange(timeframe);
-            const data = years.map(y => biteYearlyRaw[y] || 0);
-            return [buildLineDataset('Confirmed Rabies Cases', data, '#DC2626', 'rgba(220, 38, 38, 0.08)')];
-        }
-        const selectedMonth = parseInt(document.getElementById('biteChartTimeframe')?.value || '12', 10);
-        const data = monthLabels.map((_, i) => {
-            const monthNum = i + 1;
-            if (monthNum > selectedMonth) return null;
-            return biteMonthlyRaw[monthNum] || 0;
-        });
+    function getBiteDatasets() {
+        const data = monthLabels.map((_, i) => biteMonthlyRaw[i + 1] || 0);
         return [buildLineDataset('Confirmed Rabies Cases', data, '#DC2626', 'rgba(220, 38, 38, 0.08)')];
     }
 
-    function getAdoptionLabels(mode, timeframe) {
-        if (mode === 'years') {
-            const years = getYearRange(timeframe);
-            return years.map(String);
-        }
-        return monthLabels;
-    }
-
-    function getAdoptionDatasets(mode, timeframe) {
-        if (mode === 'years') {
-            const years = getYearRange(timeframe);
-            const data = years.map(y => adoptionYearlyRaw[y] || 0);
-            return [buildLineDataset('Adoption Reports', data, '#22c55e', 'rgba(34, 197, 94, 0.08)')];
-        }
-        const selectedMonth = parseInt(document.getElementById('adoptionChartTimeframe')?.value || '12', 10);
-        const data = monthLabels.map((_, i) => {
-            const monthNum = i + 1;
-            if (monthNum > selectedMonth) return null;
-            return adoptionMonthlyRaw[monthNum] || 0;
-        });
+    function getAdoptionDatasets() {
+        const data = monthLabels.map((_, i) => adoptionMonthlyRaw[i + 1] || 0);
         return [buildLineDataset('Adoption Reports', data, '#22c55e', 'rgba(34, 197, 94, 0.08)')];
     }
 
-    function getMissingLabels(mode, timeframe) {
-        if (mode === 'years') {
-            const years = getYearRange(timeframe);
-            return years.map(String);
-        }
-        return monthLabels;
-    }
-
-    function getMissingDatasets(mode, timeframe) {
-        if (mode === 'years') {
-            const years = getYearRange(timeframe);
-            const data = years.map(y => missingYearlyRaw[y] || 0);
-            return [buildLineDataset('Missing Pet Reports', data, '#f97316', 'rgba(249, 115, 22, 0.08)')];
-        }
-        const selectedMonth = parseInt(document.getElementById('missingChartTimeframe')?.value || '12', 10);
-        const data = monthLabels.map((_, i) => {
-            const monthNum = i + 1;
-            if (monthNum > selectedMonth) return null;
-            return missingMonthlyRaw[monthNum] || 0;
-        });
+    function getMissingDatasets() {
+        const data = monthLabels.map((_, i) => missingMonthlyRaw[i + 1] || 0);
         return [buildLineDataset('Missing Pet Reports', data, '#f97316', 'rgba(249, 115, 22, 0.08)')];
-    }
-
-    function getYearRange(rangeValue) {
-        const years = @json($availableYears ?? []);
-        if (rangeValue === 'all') return years;
-        const count = parseInt(rangeValue, 10);
-        return years.slice(0, count);
-    }
-
-    function getLegendText(chart, mode, timeframe) {
-        if (mode === 'years') {
-            const years = getYearRange(timeframe);
-            if (years.length === 0) return '';
-            if (years.length === 1) return `● ${years[0]}`;
-            return `● ${years[years.length - 1]} - ${years[0]}`;
-        }
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const currentYear = new Date().getFullYear();
-        if (chart === 'bite') {
-            const selectedMonth = parseInt(document.getElementById('biteChartTimeframe')?.value || '12', 10);
-            const monthName = monthNames[selectedMonth - 1] || '';
-            return `● ${monthName} ${currentYear}`.trim();
-        }
-        if (chart === 'adoption') {
-            const selectedMonth = parseInt(document.getElementById('adoptionChartTimeframe')?.value || '12', 10);
-            const monthName = monthNames[selectedMonth - 1] || '';
-            return `● ${monthName} ${currentYear}`.trim();
-        }
-        if (chart === 'missing') {
-            const selectedMonth = parseInt(document.getElementById('missingChartTimeframe')?.value || '12', 10);
-            const monthName = monthNames[selectedMonth - 1] || '';
-            return `● ${monthName} ${currentYear}`.trim();
-        }
-        return '';
     }
 
     const biteCtx = document.getElementById('biteCasesByMonthChart').getContext('2d');
     const biteChart = new Chart(biteCtx, {
         type: 'line',
         data: {
-            labels: getBiteLabels('{{ $biteChartMode }}', '{{ $biteChartTimeframe }}'),
-            datasets: getBiteDatasets('{{ $biteChartMode }}', '{{ $biteChartTimeframe }}')
+            labels: monthLabels,
+            datasets: getBiteDatasets()
         },
         options: {
             responsive: true,
@@ -400,8 +253,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const adoptionChart = new Chart(adoptionCtx, {
         type: 'line',
         data: {
-            labels: getAdoptionLabels('{{ $adoptionChartMode }}', '{{ $adoptionChartTimeframe }}'),
-            datasets: getAdoptionDatasets('{{ $adoptionChartMode }}', '{{ $adoptionChartTimeframe }}')
+            labels: monthLabels,
+            datasets: getAdoptionDatasets()
         },
         options: {
             responsive: true,
@@ -429,8 +282,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const missingChart = new Chart(missingCtx, {
         type: 'line',
         data: {
-            labels: getMissingLabels('{{ $missingChartMode }}', '{{ $missingChartTimeframe }}'),
-            datasets: getMissingDatasets('{{ $missingChartMode }}', '{{ $missingChartTimeframe }}')
+            labels: monthLabels,
+            datasets: getMissingDatasets()
         },
         options: {
             responsive: true,
@@ -453,95 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-
-    function updateBiteChart() {
-        const mode = document.getElementById('biteChartMode')?.value || 'months';
-        const timeframe = document.getElementById('biteChartRange')?.value || document.getElementById('biteChartTimeframe')?.value || '{{ $biteChartTimeframe }}';
-        const monthsFilter = document.getElementById('biteMonthsFilter');
-        const yearsFilter = document.getElementById('biteYearsFilter');
-        if (mode === 'years') {
-            monthsFilter.classList.add('hidden');
-            yearsFilter.classList.remove('hidden');
-            yearsFilter.classList.add('flex');
-        } else {
-            monthsFilter.classList.remove('hidden');
-            yearsFilter.classList.add('hidden');
-            yearsFilter.classList.remove('flex');
-        }
-        biteChart.data.labels = getBiteLabels(mode, timeframe);
-        biteChart.data.datasets = getBiteDatasets(mode, timeframe);
-        document.getElementById('biteLegend').textContent = getLegendText('bite', mode, timeframe);
-        biteChart.update();
-    }
-
-    function updateAdoptionChart() {
-        const mode = document.getElementById('adoptionChartMode')?.value || 'months';
-        const timeframe = document.getElementById('adoptionChartRange')?.value || document.getElementById('adoptionChartTimeframe')?.value || '{{ $adoptionChartTimeframe }}';
-        const monthsFilter = document.getElementById('adoptionMonthsFilter');
-        const yearsFilter = document.getElementById('adoptionYearsFilter');
-        if (mode === 'years') {
-            monthsFilter.classList.add('hidden');
-            yearsFilter.classList.remove('hidden');
-            yearsFilter.classList.add('flex');
-        } else {
-            monthsFilter.classList.remove('hidden');
-            yearsFilter.classList.add('hidden');
-            yearsFilter.classList.remove('flex');
-        }
-        adoptionChart.data.labels = getAdoptionLabels(mode, timeframe);
-        adoptionChart.data.datasets = getAdoptionDatasets(mode, timeframe);
-        document.getElementById('adoptionLegend').textContent = getLegendText('adoption', mode, timeframe);
-        adoptionChart.update();
-    }
-
-    function updateMissingChart() {
-        const mode = document.getElementById('missingChartMode')?.value || 'months';
-        const timeframe = document.getElementById('missingChartRange')?.value || document.getElementById('missingChartTimeframe')?.value || '{{ $missingChartTimeframe }}';
-        const monthsFilter = document.getElementById('missingMonthsFilter');
-        const yearsFilter = document.getElementById('missingYearsFilter');
-        if (mode === 'years') {
-            monthsFilter.classList.add('hidden');
-            yearsFilter.classList.remove('hidden');
-            yearsFilter.classList.add('flex');
-        } else {
-            monthsFilter.classList.remove('hidden');
-            yearsFilter.classList.add('hidden');
-            yearsFilter.classList.remove('flex');
-        }
-        missingChart.data.labels = getMissingLabels(mode, timeframe);
-        missingChart.data.datasets = getMissingDatasets(mode, timeframe);
-        document.getElementById('missingLegend').textContent = getLegendText('missing', mode, timeframe);
-        missingChart.update();
-    }
-
-    const biteChartMode = document.getElementById('biteChartMode');
-    if (biteChartMode) biteChartMode.addEventListener('change', updateBiteChart);
-    const biteChartTimeframe = document.getElementById('biteChartTimeframe');
-    if (biteChartTimeframe) biteChartTimeframe.addEventListener('change', updateBiteChart);
-    const biteChartRange = document.getElementById('biteChartRange');
-    if (biteChartRange) biteChartRange.addEventListener('change', updateBiteChart);
-
-    const adoptionChartMode = document.getElementById('adoptionChartMode');
-    if (adoptionChartMode) adoptionChartMode.addEventListener('change', updateAdoptionChart);
-    const adoptionChartTimeframe = document.getElementById('adoptionChartTimeframe');
-    if (adoptionChartTimeframe) adoptionChartTimeframe.addEventListener('change', updateAdoptionChart);
-    const adoptionChartRange = document.getElementById('adoptionChartRange');
-    if (adoptionChartRange) adoptionChartRange.addEventListener('change', updateAdoptionChart);
-
-    const missingChartMode = document.getElementById('missingChartMode');
-    if (missingChartMode) missingChartMode.addEventListener('change', updateMissingChart);
-    const missingChartTimeframe = document.getElementById('missingChartTimeframe');
-    if (missingChartTimeframe) missingChartTimeframe.addEventListener('change', updateMissingChart);
-    const missingChartRange = document.getElementById('missingChartRange');
-    if (missingChartRange) missingChartRange.addEventListener('change', updateMissingChart);
-
-    // Initialize legends
-    const biteMode = document.getElementById('biteChartMode')?.value || '{{ $biteChartMode }}';
-    const adoptionMode = document.getElementById('adoptionChartMode')?.value || '{{ $adoptionChartMode }}';
-    const missingMode = document.getElementById('missingChartMode')?.value || '{{ $missingChartMode }}';
-    document.getElementById('biteLegend').textContent = getLegendText('bite', biteMode, '{{ $biteChartTimeframe }}');
-    document.getElementById('adoptionLegend').textContent = getLegendText('adoption', adoptionMode, '{{ $adoptionChartTimeframe }}');
-    document.getElementById('missingLegend').textContent = getLegendText('missing', missingMode, '{{ $missingChartTimeframe }}');
 
     // Vaccinations per Barangay Chart (Horizontal Bar)
     const vaccCtx = document.getElementById('vaccinationsByBarangayChart').getContext('2d');
