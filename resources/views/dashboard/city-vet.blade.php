@@ -98,25 +98,21 @@
             </div>
             <div class="flex items-center gap-2">
                 <div class="flex bg-gray-100 rounded-md p-0.5">
-                    <a href="?bite_chart_mode=months&bite_chart_timeframe={{ date('Y') }}" 
-                       class="px-2.5 py-1 text-xs rounded {{ $biteChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                    <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="bite-mode-btn px-2.5 py-1 text-xs rounded {{ $biteChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
                         Months
-                    </a>
-                    <a href="?bite_chart_mode=years&bite_chart_timeframe=5" 
-                       class="px-2.5 py-1 text-xs rounded {{ $biteChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                    </button>
+                    <button type="button" data-mode="years" data-timeframe="3" class="bite-mode-btn px-2.5 py-1 text-xs rounded {{ $biteChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
                         Years
-                    </a>
+                    </button>
                 </div>
                 @if($biteChartMode === 'months')
-                    <select onchange="window.location.href='?bite_chart_mode=months&bite_chart_timeframe='+this.value" 
-                            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                    <select id="biteChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
                         @foreach($availableYears as $y)
                             <option value="{{ $y }}" {{ $biteChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endforeach
                     </select>
                 @else
-                    <select onchange="window.location.href='?bite_chart_mode=years&bite_chart_timeframe='+this.value" 
-                            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                    <select id="biteChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
                         <option value="3" {{ $biteChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
                         <option value="5" {{ $biteChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
                         <option value="all" {{ $biteChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
@@ -141,7 +137,49 @@
 
     <!-- Adoption Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <h3 class="text-base font-semibold text-gray-800">Adoption Reports</h3>
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-base font-semibold text-gray-800">Adoption Reports</h3>
+                <p class="text-xs text-gray-500">By Status</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="flex bg-gray-100 rounded-md p-0.5">
+                    <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="adoption-mode-btn px-2.5 py-1 text-xs rounded {{ $adoptionChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Months
+                    </button>
+                    <button type="button" data-mode="years" data-timeframe="3" class="adoption-mode-btn px-2.5 py-1 text-xs rounded {{ $adoptionChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Years
+                    </button>
+                </div>
+                @if($adoptionChartMode === 'months')
+                    <select id="adoptionChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $adoptionChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                @else
+                    <select id="adoptionChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        <option value="3" {{ $adoptionChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
+                        <option value="5" {{ $adoptionChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
+                        <option value="all" {{ $adoptionChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                    </select>
+                @endif
+            </div>
+        </div>
+        <div class="flex gap-4 mb-4">
+            <button type="button" id="adoptionLegendPending" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
+                <span class="w-3 h-3 rounded bg-amber-500"></span>
+                <span class="text-xs text-gray-600">Pending Review: <span class="font-semibold">{{ ($chartPendingCount ?? 0) }}</span></span>
+            </button>
+            <button type="button" id="adoptionLegendApproved" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
+                <span class="w-3 h-3 rounded bg-green-500"></span>
+                <span class="text-xs text-gray-600">Approved: <span class="font-semibold">{{ ($chartApprovedCount ?? 0) }}</span></span>
+            </button>
+            <button type="button" id="adoptionLegendRejected" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
+                <span class="w-3 h-3 rounded bg-red-500"></span>
+                <span class="text-xs text-gray-600">Rejected: <span class="font-semibold">{{ ($chartRejectedCount ?? 0) }}</span></span>
+            </button>
+        </div>
         <div class="h-64">
             <canvas id="adoptionReportsChart"></canvas>
         </div>
@@ -233,8 +271,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const yearlyActiveData = @json($yearlyActiveData ?? []);
     const yearlyResolvedData = @json($yearlyResolvedData ?? []);
     const adoptionMonthlyRaw = @json($adoptionMonthlyData ?? []);
+    const adoptionMonthlyPendingRaw = @json($adoptionMonthlyPendingData ?? []);
+    const adoptionMonthlyApprovedRaw = @json($adoptionMonthlyApprovedData ?? []);
+    const adoptionMonthlyRejectedRaw = @json($adoptionMonthlyRejectedData ?? []);
+    const yearlyAdoptionLabels = @json($yearlyAdoptionLabels ?? []);
+    const yearlyAdoptionPendingData = @json($yearlyAdoptionPendingData ?? []);
+    const yearlyAdoptionApprovedData = @json($yearlyAdoptionApprovedData ?? []);
+    const yearlyAdoptionRejectedData = @json($yearlyAdoptionRejectedData ?? []);
     const missingMonthlyRaw = @json($missingMonthlyData ?? []);
     const biteChartMode = '{{ $biteChartMode ?? 'months' }}';
+    const adoptionChartMode = '{{ $adoptionChartMode ?? 'months' }}';
+    const availableYears = @json($availableYears ?? []);
 
     function buildLineDataset(label, data, borderColor, backgroundColor) {
         return {
@@ -281,8 +328,41 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getAdoptionDatasets() {
-        const data = monthLabels.map((_, i) => adoptionMonthlyRaw[i + 1] || 0);
-        return [buildLineDataset('Adoption Reports', data, '#22c55e', 'rgba(34, 197, 94, 0.08)')];
+        let pendingData, approvedData, rejectedData, labels;
+        if (adoptionChartMode === 'years') {
+            labels = yearlyAdoptionLabels.map(String);
+            pendingData = yearlyAdoptionPendingData;
+            approvedData = yearlyAdoptionApprovedData;
+            rejectedData = yearlyAdoptionRejectedData;
+        } else {
+            labels = monthLabels;
+            pendingData = monthLabels.map((_, i) => adoptionMonthlyPendingRaw[i + 1] || 0);
+            approvedData = monthLabels.map((_, i) => adoptionMonthlyApprovedRaw[i + 1] || 0);
+            rejectedData = monthLabels.map((_, i) => adoptionMonthlyRejectedRaw[i + 1] || 0);
+        }
+        return [
+            {
+                label: 'Pending Review',
+                data: pendingData,
+                backgroundColor: '#f59e0b',
+                borderRadius: 4,
+                stack: 'adoptions'
+            },
+            {
+                label: 'Approved',
+                data: approvedData,
+                backgroundColor: '#22c55e',
+                borderRadius: 4,
+                stack: 'adoptions'
+            },
+            {
+                label: 'Rejected',
+                data: rejectedData,
+                backgroundColor: '#ef4444',
+                borderRadius: 4,
+                stack: 'adoptions'
+            }
+        ];
     }
 
     function getMissingDatasets() {
@@ -353,11 +433,75 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const loadBiteChart = async (mode, timeframe) => {
+        const url = new URL('{{ route('city-vet.dashboard.chart-data') }}', window.location.origin);
+        url.searchParams.set('mode', mode);
+        url.searchParams.set('timeframe', timeframe);
+
+        try {
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const data = await response.json();
+
+            biteChart.data.labels = data.labels.map(String);
+            biteChart.data.datasets[0].data = data.active;
+            biteChart.data.datasets[1].data = data.resolved;
+            biteChart.update();
+
+            activeToggle.querySelector('.font-semibold').textContent = data.activeCount;
+            resolvedToggle.querySelector('.font-semibold').textContent = data.resolvedCount;
+        } catch (error) {
+            console.error('Failed to load chart data:', error);
+        }
+    };
+
+    document.querySelectorAll('.bite-mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mode = btn.dataset.mode;
+            const timeframe = btn.dataset.timeframe;
+            const timeframeSelect = document.getElementById('biteChartTimeframe');
+
+            document.querySelectorAll('.bite-mode-btn').forEach(b => {
+                b.classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+                b.classList.add('text-gray-500', 'hover:text-gray-700');
+            });
+            btn.classList.remove('text-gray-500', 'hover:text-gray-700');
+            btn.classList.add('bg-white', 'shadow-sm', 'text-gray-900');
+
+            if (timeframeSelect) {
+                if (mode === 'months') {
+                    timeframeSelect.innerHTML = availableYears.map(y => `<option value="${y}">${y}</option>`).join('');
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                } else {
+                    timeframeSelect.innerHTML = `
+                        <option value="3">Last 3 Years</option>
+                        <option value="5">Last 5 Years</option>
+                        <option value="all">All Years</option>
+                    `;
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                }
+            }
+
+            loadBiteChart(mode, timeframeSelect ? timeframeSelect.value : timeframe);
+        });
+    });
+
+    const biteChartTimeframe = document.getElementById('biteChartTimeframe');
+    if (biteChartTimeframe) {
+        biteChartTimeframe.addEventListener('change', () => {
+            const activeModeBtn = document.querySelector('.bite-mode-btn.bg-white');
+            const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'months';
+            loadBiteChart(mode, biteChartTimeframe.value);
+        });
+    }
+
     const adoptionCtx = document.getElementById('adoptionReportsChart').getContext('2d');
     const adoptionChart = new Chart(adoptionCtx, {
-        type: 'line',
+        type: 'bar',
         data: {
-            labels: monthLabels,
+            labels: adoptionChartMode === 'years' ? yearlyAdoptionLabels.map(String) : monthLabels,
             datasets: getAdoptionDatasets()
         },
         options: {
@@ -365,7 +509,19 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { display: false },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'rect',
+                        padding: 16,
+                        font: { size: 12 },
+                        color: '#374151',
+                        useBorderRadius: true,
+                        borderRadius: 4
+                    }
+                },
                 tooltip: {
                     backgroundColor: '#fff',
                     titleColor: '#111827',
@@ -376,11 +532,121 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             scales: {
-                y: { beginAtZero: true, min: 0, ticks: { stepSize: 1 }, grid: { color: '#f3f4f6' } },
-                x: { grid: { display: false } }
+                y: { 
+                    stacked: true,
+                    beginAtZero: true, 
+                    min: 0, 
+                    ticks: { stepSize: 2, color: '#374151' }, 
+                    grid: { color: '#f3f4f6' },
+                    title: {
+                        display: true,
+                        text: 'Number of Cases',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                },
+                x: { stacked: true, grid: { display: false }, ticks: { color: '#374151' } }
             }
         }
     });
+
+    const adoptionPendingToggle = document.getElementById('adoptionLegendPending');
+    const adoptionApprovedToggle = document.getElementById('adoptionLegendApproved');
+    const adoptionRejectedToggle = document.getElementById('adoptionLegendRejected');
+    if (adoptionPendingToggle && adoptionApprovedToggle && adoptionRejectedToggle && adoptionChart) {
+        const updateToggleVisual = (el, visible) => {
+            el.style.opacity = visible ? '1' : '0.5';
+            el.style.textDecoration = visible ? 'none' : 'line-through';
+        };
+        adoptionPendingToggle.addEventListener('click', () => {
+            const idx = 0;
+            const next = !adoptionChart.isDatasetVisible(idx);
+            adoptionChart.setDatasetVisibility(idx, next);
+            adoptionChart.update();
+            updateToggleVisual(adoptionPendingToggle, next);
+        });
+        adoptionApprovedToggle.addEventListener('click', () => {
+            const idx = 1;
+            const next = !adoptionChart.isDatasetVisible(idx);
+            adoptionChart.setDatasetVisibility(idx, next);
+            adoptionChart.update();
+            updateToggleVisual(adoptionApprovedToggle, next);
+        });
+        adoptionRejectedToggle.addEventListener('click', () => {
+            const idx = 2;
+            const next = !adoptionChart.isDatasetVisible(idx);
+            adoptionChart.setDatasetVisibility(idx, next);
+            adoptionChart.update();
+            updateToggleVisual(adoptionRejectedToggle, next);
+        });
+    }
+
+    const loadAdoptionChart = async (mode, timeframe) => {
+        const url = new URL('{{ route('city-vet.dashboard.chart-data') }}', window.location.origin);
+        url.searchParams.set('mode', 'adoptions');
+        url.searchParams.set('view', mode);
+        url.searchParams.set('timeframe', timeframe);
+
+        try {
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const data = await response.json();
+
+            adoptionChart.data.labels = data.labels.map(String);
+            adoptionChart.data.datasets[0].data = data.pending;
+            adoptionChart.data.datasets[1].data = data.approved;
+            adoptionChart.data.datasets[2].data = data.rejected;
+            adoptionChart.update();
+
+            adoptionPendingToggle.querySelector('.font-semibold').textContent = data.pendingCount;
+            adoptionApprovedToggle.querySelector('.font-semibold').textContent = data.approvedCount;
+            adoptionRejectedToggle.querySelector('.font-semibold').textContent = data.rejectedCount;
+        } catch (error) {
+            console.error('Failed to load adoption chart data:', error);
+        }
+    };
+
+    document.querySelectorAll('.adoption-mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mode = btn.dataset.mode;
+            const timeframe = btn.dataset.timeframe;
+            const timeframeSelect = document.getElementById('adoptionChartTimeframe');
+
+            document.querySelectorAll('.adoption-mode-btn').forEach(b => {
+                b.classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+                b.classList.add('text-gray-500', 'hover:text-gray-700');
+            });
+            btn.classList.remove('text-gray-500', 'hover:text-gray-700');
+            btn.classList.add('bg-white', 'shadow-sm', 'text-gray-900');
+
+            if (timeframeSelect) {
+                if (mode === 'months') {
+                    timeframeSelect.innerHTML = availableYears.map(y => `<option value="${y}">${y}</option>`).join('');
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                } else {
+                    timeframeSelect.innerHTML = `
+                        <option value="3">Last 3 Years</option>
+                        <option value="5">Last 5 Years</option>
+                        <option value="all">All Years</option>
+                    `;
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                }
+            }
+
+            loadAdoptionChart(mode, timeframeSelect ? timeframeSelect.value : timeframe);
+        });
+    });
+
+    const adoptionChartTimeframe = document.getElementById('adoptionChartTimeframe');
+    if (adoptionChartTimeframe) {
+        adoptionChartTimeframe.addEventListener('change', () => {
+            const activeModeBtn = document.querySelector('.adoption-mode-btn.bg-white');
+            const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'months';
+            loadAdoptionChart(mode, adoptionChartTimeframe.value);
+        });
+    }
 
     const missingCtx = document.getElementById('missingPetReportsChart').getContext('2d');
     const missingChart = new Chart(missingCtx, {

@@ -96,17 +96,14 @@
                 </div>
                 <div class="card-body text-center">
                     @switch($application->status)
-                        @case('pending')
-                            <span class="badge bg-warning fs-5">Pending</span>
+                        @case('pending_review')
+                            <span class="badge bg-warning fs-5">Pending Review</span>
                             @break
                         @case('approved')
                             <span class="badge bg-success fs-5">Approved</span>
                             @break
                         @case('rejected')
                             <span class="badge bg-danger fs-5">Rejected</span>
-                            @break
-                        @case('completed')
-                            <span class="badge bg-info fs-5">Completed</span>
                             @break
                         @default
                             <span class="badge bg-secondary fs-5">{{ $application->status }}</span>
@@ -119,7 +116,7 @@
                     <h5 class="mb-0">Actions</h5>
                 </div>
                 <div class="card-body">
-                    @if($application->status == 'pending')
+                    @if($application->status == 'pending_review')
                     <form action="{{ route('admin-asst.adoption-applications.approve', $application) }}" method="POST" class="mb-2">
                         @csrf
                         <button type="submit" class="btn btn-success w-100">
@@ -132,31 +129,11 @@
                             <i class="fas fa-times me-1"></i> Reject
                         </button>
                     </form>
-                    @elseif($application->status == 'approved')
-                    <form action="{{ route('admin-asst.adoption-applications.complete', $application) }}" method="POST" class="mb-2">
-                        @csrf
-                        <button type="submit" class="btn btn-info w-100">
-                            <i class="fas fa-check-double me-1"></i> Mark Completed
-                        </button>
-                    </form>
-                    <form action="{{ route('admin-asst.adoption-applications.reject', $application) }}" method="POST" class="mb-2">
-                        @csrf
-                        <button type="submit" class="btn btn-danger w-100">
-                            <i class="fas fa-times me-1"></i> Reject
-                        </button>
-                    </form>
                     @elseif($application->status == 'rejected')
                     <form action="{{ route('admin-asst.adoption-applications.pending', $application) }}" method="POST" class="mb-2">
                         @csrf
                         <button type="submit" class="btn btn-warning w-100">
-                            <i class="fas fa-undo me-1"></i> Reset to Pending
-                        </button>
-                    </form>
-                    @elseif($application->status == 'completed')
-                    <form action="{{ route('admin-asst.adoption-applications.pending', $application) }}" method="POST" class="mb-2">
-                        @csrf
-                        <button type="submit" class="btn btn-secondary w-100">
-                            <i class="fas fa-undo me-1"></i> Reset to Pending
+                            <i class="fas fa-undo me-1"></i> Reset to Pending Review
                         </button>
                     </form>
                     @endif

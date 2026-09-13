@@ -173,7 +173,7 @@ class CityVetDashboardSeeder extends Seeder
             $users = User::limit(5)->get();
         }
 
-        $statuses = ['pending', 'approved', 'rejected'];
+        $statuses = ['pending_review', 'approved', 'rejected'];
         $pets = Pet::where('source_module', 'adoption_pets')->get();
 
         if ($pets->isEmpty()) {

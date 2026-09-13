@@ -116,9 +116,8 @@ class AdminController extends Controller
         $adoptionReports = AdoptionApplication::with(['user', 'pet'])->latest()->paginate(10);
         $adoptionStats = [
             'total' => AdoptionApplication::count(),
-            'pending' => AdoptionApplication::where('status', 'pending')->count(),
+            'pending_review' => AdoptionApplication::where('status', 'pending_review')->count(),
             'approved' => AdoptionApplication::where('status', 'approved')->count(),
-            'completed' => AdoptionApplication::where('status', 'completed')->count(),
             'rejected' => AdoptionApplication::where('status', 'rejected')->count(),
         ];
 

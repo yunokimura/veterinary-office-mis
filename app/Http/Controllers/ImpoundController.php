@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\ImpoundRecord;
 use App\Models\ImpoundStatusHistory;
 use App\Models\Barangay;
-use App\Models\AdoptionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +39,7 @@ class ImpoundController extends Controller
 
     public function show(ImpoundRecord $impound)
     {
-        $impound->load(['barangay', 'recordedBy', 'approvedBy', 'strayReport', 'statusHistory', 'adoptionRequests']);
+        $impound->load(['barangay', 'recordedBy', 'approvedBy', 'strayReport', 'statusHistory']);
 
         return view('admin-staff.impounds.show', compact('impound'));
     }

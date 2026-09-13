@@ -24,7 +24,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Pending</p>
-                <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $pendingCount }}</p>
+                <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $pendingReviewCount }}</p>
             </div>
             <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="bi bi-clock text-amber-600 text-xl"></i>
@@ -70,10 +70,9 @@
             <label class="block text-xs font-medium text-gray-700 mb-1.5">Status</label>
             <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                 <option value="">All Status</option>
-                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="pending_review" {{ request('status') == 'pending_review' ? 'selected' : '' }}>Pending Review</option>
                 <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
             </select>
         </div>
         <div>

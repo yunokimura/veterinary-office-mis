@@ -37,8 +37,8 @@ class DashboardController extends Controller
         $recentMissingPets = MissingPetsReport::with('pet')->latest()->take(5)->get();
 
         // Adoption Module - Operational Metrics
-        $pendingAdoptions = AdoptionApplication::where('status', 'pending')->count();
-        $pendingAdoptionsLastWeek = AdoptionApplication::where('status', 'pending')
+        $pendingAdoptions = AdoptionApplication::where('status', 'pending_review')->count();
+        $pendingAdoptionsLastWeek = AdoptionApplication::where('status', 'pending_review')
             ->whereDate('created_at', '<=', now()->subWeek())
             ->count();
         $pendingAdoptionsTrend = $this->calculateTrend($pendingAdoptions, $pendingAdoptionsLastWeek);
@@ -56,7 +56,7 @@ class DashboardController extends Controller
         $recentOwners = PetOwner::with('user')->latest()->take(5)->get();
 
         // Urgent Tasks Summary
-        $pendingAdoptionReviews = AdoptionApplication::where('status', 'pending')->count();
+        $pendingAdoptionReviews = AdoptionApplication::where('status', 'pending_review')->count();
         $missingPetReportsWaitingVerification = MissingPetsReport::where('status', 'missing')->count();
         $newPetRegistrationsCount = Pet::whereDate('created_at', today())->count();
         $ownersMissingContactInfo = PetOwner::where(function($query) {
@@ -76,7 +76,7 @@ class DashboardController extends Controller
 
         // Recent Items Requiring Action
         $recentPendingAdoptions = AdoptionApplication::with(['owner', 'user'])
-            ->where('status', 'pending')
+            ->where('status', 'pending_review')
             ->latest()
             ->take(3)
             ->get();

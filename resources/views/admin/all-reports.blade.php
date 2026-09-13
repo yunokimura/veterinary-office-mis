@@ -421,13 +421,13 @@
                     </h5>
                     <div class="flex gap-2">
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-pink-600">
-                            {{ $adoptionStats['pending'] }} Pending
+                            {{ $adoptionStats['pending_review'] }} Pending Review
                         </span>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-pink-600">
                             {{ $adoptionStats['approved'] }} Approved
                         </span>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-pink-600">
-                            {{ $adoptionStats['completed'] }} Completed
+                            {{ $adoptionStats['rejected'] }} Rejected
                         </span>
                     </div>
                 </div>

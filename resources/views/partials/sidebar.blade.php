@@ -254,8 +254,8 @@
                 <span>Pet Registrations</span>
             </a>
 
-            <a href="{{ route('admin-asst.adoptions.index') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin-asst.adoptions.*') ? 'bg-green-600 text-white' : '' }}">
+            <a href="{{ route('admin-asst.adoption-applications.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin-asst.adoption-applications.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-heart-fill text-lg w-6"></i>
                 <span>Adoptions</span>
             </a>

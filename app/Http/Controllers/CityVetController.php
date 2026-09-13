@@ -114,7 +114,7 @@ class CityVetController extends Controller
         $currentYear = (int) date('Y');
 
         $biteChartMode = $request->bite_chart_mode ?? 'months';
-        $biteChartTimeframe = $request->bite_chart_timeframe ?? ($biteChartMode === 'years' ? '5' : $currentYear);
+        $biteChartTimeframe = $request->bite_chart_timeframe ?? ($biteChartMode === 'years' ? '3' : $currentYear);
 
         $biteMonthlyData = [];
         $biteMonthlyActiveData = [];
@@ -143,6 +143,34 @@ class CityVetController extends Controller
 
         $adoptionChartMode = $request->adoption_chart_mode ?? 'months';
         $adoptionChartTimeframe = $request->adoption_chart_timeframe ?? $currentYear;
+
+        $adoptionMonthlyPendingData = [];
+        $adoptionMonthlyApprovedData = [];
+        $adoptionMonthlyRejectedData = [];
+        $yearlyAdoptionLabels = [];
+        $yearlyAdoptionPendingData = [];
+        $yearlyAdoptionApprovedData = [];
+        $yearlyAdoptionRejectedData = [];
+
+        if ($adoptionChartMode === 'months') {
+            $adoptionMonthlyPendingData = $this->getMonthlyAdoptionStatusByYear((int)$adoptionChartTimeframe, 'pending_review');
+            $adoptionMonthlyApprovedData = $this->getMonthlyAdoptionStatusByYear((int)$adoptionChartTimeframe, 'approved');
+            $adoptionMonthlyRejectedData = $this->getMonthlyAdoptionStatusByYear((int)$adoptionChartTimeframe, 'rejected');
+            $chartPendingCount = \App\Models\AdoptionApplication::where('status', 'pending_review')->whereYear('created_at', $adoptionChartTimeframe)->count();
+            $chartApprovedCount = \App\Models\AdoptionApplication::where('status', 'approved')->whereYear('created_at', $adoptionChartTimeframe)->count();
+            $chartRejectedCount = \App\Models\AdoptionApplication::where('status', 'rejected')->whereYear('created_at', $adoptionChartTimeframe)->count();
+        } else {
+            $yearsBack = $adoptionChartTimeframe === 'all' ? 50 : (int)$adoptionChartTimeframe;
+            $yearlyRaw = $this->getYearlyAdoptionStatusCases($yearsBack);
+            $yearlyAdoptionLabels = array_column($yearlyRaw, 'year');
+            $yearlyAdoptionPendingData = array_column($yearlyRaw, 'pending_review');
+            $yearlyAdoptionApprovedData = array_column($yearlyRaw, 'approved');
+            $yearlyAdoptionRejectedData = array_column($yearlyRaw, 'rejected');
+            $chartPendingCount = \App\Models\AdoptionApplication::where('status', 'pending_review')->count();
+            $chartApprovedCount = \App\Models\AdoptionApplication::where('status', 'approved')->count();
+            $chartRejectedCount = \App\Models\AdoptionApplication::where('status', 'rejected')->count();
+        }
+
         $adoptionMonthlyData = $this->getMonthlyAdoptionByYear($adoptionChartTimeframe);
         $adoptionYearlyData = $this->getYearlyAdoptionTotals();
 
@@ -235,7 +263,17 @@ class CityVetController extends Controller
             'adoptionChartMode',
             'adoptionChartTimeframe',
             'adoptionMonthlyData',
+            'adoptionMonthlyPendingData',
+            'adoptionMonthlyApprovedData',
+            'adoptionMonthlyRejectedData',
+            'chartPendingCount',
+            'chartApprovedCount',
+            'chartRejectedCount',
             'adoptionYearlyData',
+            'yearlyAdoptionLabels',
+            'yearlyAdoptionPendingData',
+            'yearlyAdoptionApprovedData',
+            'yearlyAdoptionRejectedData',
             'missingChartMode',
             'missingChartTimeframe',
             'missingMonthlyData',
@@ -481,6 +519,55 @@ class CityVetController extends Controller
             ->groupBy('year')
             ->pluck('count', 'year')
             ->toArray();
+    }
+
+    private function getMonthlyAdoptionStatusByYear(int $year, string $status): array
+    {
+        return \App\Models\AdoptionApplication::whereYear('created_at', $year)
+            ->where('status', $status)
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+    }
+
+    private function getYearlyAdoptionStatusCases(int $yearsBack = 50): array
+    {
+        $currentYear = (int) date('Y');
+        $startYear = $currentYear - $yearsBack + 1;
+
+        $pending = \App\Models\AdoptionApplication::where('status', 'pending_review')
+            ->whereYear('created_at', '>=', $startYear)
+            ->selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $approved = \App\Models\AdoptionApplication::where('status', 'approved')
+            ->whereYear('created_at', '>=', $startYear)
+            ->selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $rejected = \App\Models\AdoptionApplication::where('status', 'rejected')
+            ->whereYear('created_at', '>=', $startYear)
+            ->selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $result = [];
+        for ($y = $startYear; $y <= $currentYear; $y++) {
+            $result[] = [
+                'year' => $y,
+                'pending_review' => $pending[$y] ?? 0,
+                'approved' => $approved[$y] ?? 0,
+                'rejected' => $rejected[$y] ?? 0,
+            ];
+        }
+
+        return $result;
     }
 
     private function getMonthlyMissingByYear(int $year): array
@@ -970,9 +1057,8 @@ class CityVetController extends Controller
         // Get statistics
         $stats = [
             'total' => \App\Models\AdoptionApplication::count(),
-            'pending' => \App\Models\AdoptionApplication::where('status', 'pending')->count(),
+            'pending_review' => \App\Models\AdoptionApplication::where('status', 'pending_review')->count(),
             'approved' => \App\Models\AdoptionApplication::where('status', 'approved')->count(),
-            'completed' => \App\Models\AdoptionApplication::where('status', 'completed')->count(),
             'rejected' => \App\Models\AdoptionApplication::where('status', 'rejected')->count(),
             'this_month' => \App\Models\AdoptionApplication::whereMonth('created_at', date('m'))
                 ->whereYear('created_at', date('Y'))
@@ -1124,12 +1210,8 @@ class CityVetController extends Controller
         $totalAdoptions = \App\Models\AdoptionApplication::count();
         $approvedCount = \App\Models\AdoptionApplication::where('status', 'approved')->count();
         $adoptionStats = [
-            'pending' => \App\Models\AdoptionApplication::where('status', 'pending')->count(),
+            'pending' => \App\Models\AdoptionApplication::where('status', 'pending_review')->count(),
             'approved' => $approvedCount,
-            'completed_this_month' => \App\Models\AdoptionApplication::where('status', 'completed')
-                ->whereMonth('updated_at', date('m'))
-                ->whereYear('updated_at', $year)
-                ->count(),
             'adoption_rate' => $totalAdoptions > 0 ? round(($approvedCount / $totalAdoptions) * 100, 1) : 0,
         ];
 
@@ -1158,5 +1240,67 @@ class CityVetController extends Controller
             'missing_pet_recovery' => $missingPetStats,
             'meat_establishment_monitoring' => $meatEstablishmentStats,
         ];
+    }
+
+    public function chartData(Request $request)
+    {
+        $mode = $request->query('mode', 'months');
+        $timeframe = $request->query('timeframe');
+
+        if ($mode === 'adoptions') {
+            if ($request->query('view') === 'years') {
+                $yearsBack = $timeframe === 'all' ? 50 : (int) $timeframe;
+                $yearlyRaw = $this->getYearlyAdoptionStatusCases($yearsBack);
+
+                return response()->json([
+                    'mode' => 'years',
+                    'labels' => array_column($yearlyRaw, 'year'),
+                    'pending' => array_column($yearlyRaw, 'pending_review'),
+                    'approved' => array_column($yearlyRaw, 'approved'),
+                    'rejected' => array_column($yearlyRaw, 'rejected'),
+                    'pendingCount' => \App\Models\AdoptionApplication::where('status', 'pending_review')->count(),
+                    'approvedCount' => \App\Models\AdoptionApplication::where('status', 'approved')->count(),
+                    'rejectedCount' => \App\Models\AdoptionApplication::where('status', 'rejected')->count(),
+                ]);
+            }
+
+            $year = (int) ($timeframe ?? date('Y'));
+
+            return response()->json([
+                'mode' => 'months',
+                'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                'pending' => array_values(array_map(fn($m) => $this->getMonthlyAdoptionStatusByYear($year, 'pending_review')[$m] ?? 0, range(1, 12))),
+                'approved' => array_values(array_map(fn($m) => $this->getMonthlyAdoptionStatusByYear($year, 'approved')[$m] ?? 0, range(1, 12))),
+                'rejected' => array_values(array_map(fn($m) => $this->getMonthlyAdoptionStatusByYear($year, 'rejected')[$m] ?? 0, range(1, 12))),
+                'pendingCount' => \App\Models\AdoptionApplication::where('status', 'pending_review')->whereYear('created_at', $year)->count(),
+                'approvedCount' => \App\Models\AdoptionApplication::where('status', 'approved')->whereYear('created_at', $year)->count(),
+                'rejectedCount' => \App\Models\AdoptionApplication::where('status', 'rejected')->whereYear('created_at', $year)->count(),
+            ]);
+        }
+
+        if ($mode === 'years') {
+            $yearsBack = $timeframe === 'all' ? 50 : (int) $timeframe;
+            $yearlyRaw = $this->getYearlyActiveResolvedCases($yearsBack);
+
+            return response()->json([
+                'mode' => 'years',
+                'labels' => array_column($yearlyRaw, 'year'),
+                'active' => array_column($yearlyRaw, 'active'),
+                'resolved' => array_column($yearlyRaw, 'resolved'),
+                'activeCount' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->count(),
+                'resolvedCount' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->count(),
+            ]);
+        }
+
+        $year = (int) ($timeframe ?? date('Y'));
+
+        return response()->json([
+            'mode' => 'months',
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'active' => array_values(array_map(fn($m) => $this->getMonthlyActiveResolvedCasesByYear($year, 'active')[$m] ?? 0, range(1, 12))),
+            'resolved' => array_values(array_map(fn($m) => $this->getMonthlyActiveResolvedCasesByYear($year, 'resolved')[$m] ?? 0, range(1, 12))),
+            'activeCount' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->whereYear('incident_date', $year)->count(),
+            'resolvedCount' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $year)->count(),
+        ]);
     }
 }

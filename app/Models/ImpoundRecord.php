@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @deprecated Scheduled for deletion 2026-05-24
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AdoptionRequest> $adoptionRequests
- * @property-read int|null $adoption_requests_count
  * @property-read \App\Models\User|null $approvedBy
  * @property-read \App\Models\Barangay|null $barangay
  * @property-read \App\Models\User|null $recordedBy
@@ -85,11 +83,6 @@ class ImpoundRecord extends Model
     public function statusHistory(): HasMany
     {
         return $this->hasMany(ImpoundStatusHistory::class, 'impound_id', 'impound_id');
-    }
-
-    public function adoptionRequests(): HasMany
-    {
-        return $this->hasMany(AdoptionRequest::class, 'impound_id', 'impound_id');
     }
 
     public function scopeImpounded(Builder $query): Builder

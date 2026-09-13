@@ -66,7 +66,7 @@ class AdoptionFormController extends Controller
             'company' => $validated['company'],
             'social_media' => $validated['social_media'] ?? null,
             'adopted_before' => $validated['adopted_before'],
-            'status' => 'pending',
+            'status' => 'pending_review',
             'questionnaire' => $validated['questionnaire'] ?? null,
             'zoom_interview' => $validated['zoom_interview'],
             'zoom_date' => $interviewDate,

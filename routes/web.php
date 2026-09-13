@@ -58,7 +58,6 @@ require __DIR__.'/auth.php';
 
 use App\Exceptions\AppointmentSlotTakenException;
 use App\Http\Controllers\AdminAsst\AdoptionApplicationController;
-use App\Http\Controllers\AdminAsst\AdoptionController;
 use App\Http\Controllers\AdminAsst\AppointmentController;
 use App\Http\Controllers\AdminAsst\BusinessProfileController;
 use App\Http\Controllers\AdminAsst\ClinicalActionController;
@@ -329,6 +328,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
 // ==============================
 Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet.')->group(function () {
     Route::get('/dashboard', [CityVetController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [CityVetController::class, 'chartData'])->name('dashboard.chart-data');
 
     // Vaccination Reports
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
@@ -397,16 +397,6 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     Route::get('/impounds/{impound}', [ImpoundController::class, 'show'])->name('impounds.show');
     Route::put('/impounds/{impound}', [ImpoundController::class, 'updateDisposition'])->name('impounds.update');
 
-    // Adoptions (merged with city-pound)
-    Route::get('/adoptions', [AdoptionController::class, 'index'])->name('adoptions.index');
-    Route::get('/adoptions/create', [AdoptionController::class, 'create'])->name('adoptions.create');
-    Route::post('/adoptions', [AdoptionController::class, 'store'])->name('adoptions.store');
-    Route::get('/adoptions/{adoption}', [AdoptionController::class, 'show'])->name('adoptions.show');
-    Route::post('/adoptions/{adoption}/approve', [AdoptionController::class, 'approve'])->name('adoptions.approve');
-    Route::post('/adoptions/{adoption}/reject', [AdoptionController::class, 'reject'])->name('adoptions.reject');
-    Route::post('/adoptions/{adoption}/complete', [AdoptionController::class, 'complete'])->name('adoptions.complete');
-    Route::post('/adoptions/{adoption}/reset', [AdoptionController::class, 'reset'])->name('adoptions.reset');
-
     // Clinical Actions
     Route::get('/clinical-actions', [ClinicalActionController::class, 'index'])->name('clinical-actions.index');
     Route::get('/clinical-actions/create', [ClinicalActionController::class, 'create'])->name('clinical-actions.create');
@@ -464,7 +454,6 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
     Route::get('/adoption-applications/{application}', [AdoptionApplicationController::class, 'show'])->name('adoption-applications.show');
     Route::post('/adoption-applications/{application}/approve', [AdoptionApplicationController::class, 'approve'])->name('adoption-applications.approve');
     Route::post('/adoption-applications/{application}/reject', [AdoptionApplicationController::class, 'reject'])->name('adoption-applications.reject');
-    Route::post('/adoption-applications/{application}/complete', [AdoptionApplicationController::class, 'complete'])->name('adoption-applications.complete');
     Route::post('/adoption-applications/{application}/pending', [AdoptionApplicationController::class, 'pending'])->name('adoption-applications.pending');
 
     // Missing Pets

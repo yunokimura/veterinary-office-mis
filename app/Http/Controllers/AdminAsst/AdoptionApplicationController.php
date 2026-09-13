@@ -12,12 +12,10 @@ class AdoptionApplicationController extends Controller
     {
         $query = AdoptionApplication::with(['owner', 'address', 'user']);
 
-        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Search across owner name, email, and phone via relationships
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -34,13 +32,13 @@ class AdoptionApplicationController extends Controller
 
         $applications = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        $pendingCount = AdoptionApplication::where('status', 'pending')->count();
+        $pendingReviewCount = AdoptionApplication::where('status', 'pending_review')->count();
         $approvedCount = AdoptionApplication::where('status', 'approved')->count();
         $rejectedCount = AdoptionApplication::where('status', 'rejected')->count();
 
         return view('admin-asst.adoption-applications.index', compact(
             'applications',
-            'pendingCount',
+            'pendingReviewCount',
             'approvedCount',
             'rejectedCount'
         ));
@@ -71,21 +69,12 @@ class AdoptionApplicationController extends Controller
         return redirect()->back()->with('success', 'Application rejected.');
     }
 
-    public function complete(Request $request, AdoptionApplication $application)
-    {
-        $application->update([
-            'status' => 'completed',
-        ]);
-
-        return redirect()->back()->with('success', 'Application marked as completed.');
-    }
-
     public function pending(AdoptionApplication $application)
     {
         $application->update([
-            'status' => 'pending',
+            'status' => 'pending_review',
         ]);
 
-        return redirect()->back()->with('success', 'Application status reset to pending.');
+        return redirect()->back()->with('success', 'Application status reset to pending review.');
     }
 }

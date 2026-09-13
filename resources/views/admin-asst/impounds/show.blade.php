@@ -103,56 +103,7 @@
                     @else
                         <p class="text-gray-500">No status history available.</p>
                     @endif
-                </div>
             </div>
-
-            <!-- Adoption Requests -->
-            @if($impound->adoptionRequests && $impound->adoptionRequests->count() > 0)
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                    <div class="px-6 py-4 border-b border-gray-100">
-                        <h4 class="font-semibold text-gray-800"><i class="bi bi-heart me-2"></i>Adoption Requests</h4>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adopter</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Request Date</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @foreach($impound->adoptionRequests as $adoption)
-                                    <tr>
-                                        <td class="px-4 py-3">{{ $adoption->adopter_name }}</td>
-                                        <td class="px-4 py-3">{{ $adoption->adopter_contact }}</td>
-                                        <td class="px-4 py-3">{{ $adoption->requested_at ? $adoption->requested_at->format('M d, Y') : 'N/A' }}</td>
-                                        <td class="px-4 py-3">
-                                            @php
-                                                $statusBadge = match($adoption->request_status) {
-                                                    'approved' => 'bg-green-100 text-green-800',
-                                                    'rejected' => 'bg-red-100 text-red-800',
-                                                    default => 'bg-yellow-100 text-yellow-800'
-                                                };
-                                            @endphp
-                                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ $statusBadge }}">
-                                                {{ ucfirst($adoption->request_status) }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-right">
-                                            <a href="{{ route('admin-asst.adoptions.show', $adoption) }}" class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
-                                                <i class="bi bi-eye me-1"></i>View
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            @endif
         </div>
 
         <!-- Sidebar Actions -->
@@ -204,10 +155,6 @@
                         <tr class="border-b border-gray-100">
                             <td class="py-2 text-gray-500">Days in Shelter:</td>
                             <td class="py-2 text-right">{{ $impound->intake_date ? $impound->intake_date->diffInDays(now()) : 'N/A' }} days</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-gray-500">Adoption Requests:</td>
-                            <td class="py-2 text-right">{{ $impound->adoptionRequests ? $impound->adoptionRequests->count() : 0 }}</td>
                         </tr>
                     </table>
                 </div>

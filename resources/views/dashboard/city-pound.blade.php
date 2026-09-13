@@ -39,7 +39,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500">Adoptions</p>
-                <p class="text-2xl font-bold text-green-600">{{ \App\Models\AdoptionRequest::where('status', 'approved')->count() }}</p>
+                <p class="text-2xl font-bold text-green-600">{{ \App\Models\AdoptionApplication::where('status', 'approved')->count() }}</p>
             </div>
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <i class="bi bi-heart text-green-600"></i>
@@ -143,35 +143,28 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Adoption Requests</h3>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Adoption Applications</h3>
         <div class="space-y-4">
             <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                 <div class="flex items-center gap-3">
                     <i class="bi bi-clock text-yellow-600"></i>
-                    <span class="text-sm text-gray-700">Pending</span>
+                    <span class="text-sm text-gray-700">Pending Review</span>
                 </div>
-                <span class="font-semibold text-gray-800">{{ \App\Models\AdoptionRequest::where('status', 'pending')->count() }}</span>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                <div class="flex items-center gap-3">
-                    <i class="bi bi-arrow-repeat text-blue-600"></i>
-                    <span class="text-sm text-gray-700">Processing</span>
-                </div>
-                <span class="font-semibold text-gray-800">{{ \App\Models\AdoptionRequest::where('status', 'processing')->count() }}</span>
+                <span class="font-semibold text-gray-800">{{ \App\Models\AdoptionApplication::where('status', 'pending_review')->count() }}</span>
             </div>
             <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                 <div class="flex items-center gap-3">
                     <i class="bi bi-check-circle text-green-600"></i>
                     <span class="text-sm text-gray-700">Approved</span>
                 </div>
-                <span class="font-semibold text-gray-800">{{ \App\Models\AdoptionRequest::where('status', 'approved')->count() }}</span>
+                <span class="font-semibold text-gray-800">{{ \App\Models\AdoptionApplication::where('status', 'approved')->count() }}</span>
             </div>
             <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                 <div class="flex items-center gap-3">
                     <i class="bi bi-x-circle text-red-600"></i>
                     <span class="text-sm text-gray-700">Rejected</span>
                 </div>
-                <span class="font-semibold text-gray-800">{{ \App\Models\AdoptionRequest::where('status', 'rejected')->count() }}</span>
+                <span class="font-semibold text-gray-800">{{ \App\Models\AdoptionApplication::where('status', 'rejected')->count() }}</span>
             </div>
         </div>
     </div>

@@ -472,18 +472,14 @@
             @php
                 $totalAdoptionApps = array_sum($adoptionStatusDistribution);
                 $adoptionColors = [
-                    'pending' => 'bg-yellow-500',
+                    'pending_review' => 'bg-yellow-500',
                     'approved' => 'bg-green-500',
                     'rejected' => 'bg-red-500',
-                    'completed' => 'bg-blue-500',
-                    'cancelled' => 'bg-gray-500'
                 ];
                 $adoptionIcons = [
-                    'pending' => 'bi-clock',
+                    'pending_review' => 'bi-clock',
                     'approved' => 'bi-check-circle',
                     'rejected' => 'bi-x-circle',
-                    'completed' => 'bi-check-all',
-                    'cancelled' => 'bi-x-octagon'
                 ];
             @endphp
             
