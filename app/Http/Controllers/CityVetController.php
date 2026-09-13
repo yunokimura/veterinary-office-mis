@@ -118,6 +118,8 @@ class CityVetController extends Controller
         $biteMonthlyData = $this->getMonthlyCasesByYear($biteChartTimeframe);
         $biteMonthlyActiveData = $this->getMonthlyActiveResolvedCasesByYear($biteChartTimeframe, 'active');
         $biteMonthlyResolvedData = $this->getMonthlyActiveResolvedCasesByYear($biteChartTimeframe, 'resolved');
+        $chartActiveCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->whereYear('incident_date', $biteChartTimeframe)->count();
+        $chartResolvedCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $biteChartTimeframe)->count();
         $biteYearlyData = $this->getYearlyRabiesTotals();
 
         $adoptionChartMode = $request->adoption_chart_mode ?? 'months';
@@ -205,6 +207,8 @@ class CityVetController extends Controller
             'biteMonthlyData',
             'biteMonthlyActiveData',
             'biteMonthlyResolvedData',
+            'chartActiveCount',
+            'chartResolvedCount',
             'biteYearlyData',
             'adoptionChartMode',
             'adoptionChartTimeframe',

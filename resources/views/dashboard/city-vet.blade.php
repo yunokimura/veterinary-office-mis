@@ -91,16 +91,28 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
     <!-- Confirmed Rabies Cases -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
-        <p class="text-xs text-gray-500 mb-3">Active vs Resolved Cases</p>
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
+                <p class="text-xs text-gray-500">Active vs Resolved Cases</p>
+            </div>
+            <select onchange="window.location.href='?bite_chart_timeframe='+this.value" 
+                    class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                @foreach($availableYears as $y)
+                    <option value="{{ $y }}" {{ ($biteChartTimeframe ?? date('Y')) == $y ? 'selected' : '' }}>
+                        {{ $y }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
         <div class="flex gap-4 mb-4">
             <button type="button" id="biteLegendActive" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
                 <span class="w-3 h-3 rounded bg-amber-500"></span>
-                <span class="text-xs text-gray-600">Active: <span class="font-semibold">{{ ($kpiSecondary['rabies_active'] ?? 0) }}</span></span>
+                <span class="text-xs text-gray-600">Active: <span class="font-semibold">{{ ($chartActiveCount ?? 0) }}</span></span>
             </button>
             <button type="button" id="biteLegendResolved" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
                 <span class="w-3 h-3 rounded bg-green-500"></span>
-                <span class="text-xs text-gray-600">Resolved: <span class="font-semibold">{{ ($kpiSecondary['rabies_resolved'] ?? 0) }}</span></span>
+                <span class="text-xs text-gray-600">Resolved: <span class="font-semibold">{{ ($chartResolvedCount ?? 0) }}</span></span>
             </button>
         </div>
         <div class="h-64 relative">
