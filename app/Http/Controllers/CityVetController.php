@@ -114,12 +114,31 @@ class CityVetController extends Controller
         $currentYear = (int) date('Y');
 
         $biteChartMode = $request->bite_chart_mode ?? 'months';
-        $biteChartTimeframe = $request->bite_chart_timeframe ?? $currentYear;
-        $biteMonthlyData = $this->getMonthlyCasesByYear($biteChartTimeframe);
-        $biteMonthlyActiveData = $this->getMonthlyActiveResolvedCasesByYear($biteChartTimeframe, 'active');
-        $biteMonthlyResolvedData = $this->getMonthlyActiveResolvedCasesByYear($biteChartTimeframe, 'resolved');
-        $chartActiveCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->whereYear('incident_date', $biteChartTimeframe)->count();
-        $chartResolvedCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $biteChartTimeframe)->count();
+        $biteChartTimeframe = $request->bite_chart_timeframe ?? ($biteChartMode === 'years' ? '5' : $currentYear);
+
+        $biteMonthlyData = [];
+        $biteMonthlyActiveData = [];
+        $biteMonthlyResolvedData = [];
+        $yearlyLabels = [];
+        $yearlyActiveData = [];
+        $yearlyResolvedData = [];
+
+        if ($biteChartMode === 'months') {
+            $biteMonthlyData = $this->getMonthlyCasesByYear((int)$biteChartTimeframe);
+            $biteMonthlyActiveData = $this->getMonthlyActiveResolvedCasesByYear((int)$biteChartTimeframe, 'active');
+            $biteMonthlyResolvedData = $this->getMonthlyActiveResolvedCasesByYear((int)$biteChartTimeframe, 'resolved');
+            $chartActiveCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->whereYear('incident_date', $biteChartTimeframe)->count();
+            $chartResolvedCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $biteChartTimeframe)->count();
+        } else {
+            $yearsBack = $biteChartTimeframe === 'all' ? 50 : (int)$biteChartTimeframe;
+            $yearlyRaw = $this->getYearlyActiveResolvedCases($yearsBack);
+            $yearlyLabels = array_column($yearlyRaw, 'year');
+            $yearlyActiveData = array_column($yearlyRaw, 'active');
+            $yearlyResolvedData = array_column($yearlyRaw, 'resolved');
+            $chartActiveCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->count();
+            $chartResolvedCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->count();
+        }
+
         $biteYearlyData = $this->getYearlyRabiesTotals();
 
         $adoptionChartMode = $request->adoption_chart_mode ?? 'months';
@@ -210,6 +229,9 @@ class CityVetController extends Controller
             'chartActiveCount',
             'chartResolvedCount',
             'biteYearlyData',
+            'yearlyLabels',
+            'yearlyActiveData',
+            'yearlyResolvedData',
             'adoptionChartMode',
             'adoptionChartTimeframe',
             'adoptionMonthlyData',
@@ -409,6 +431,39 @@ class CityVetController extends Controller
             ->groupBy('year')
             ->pluck('count', 'year')
             ->toArray();
+    }
+
+    private function getYearlyActiveResolvedCases(int $yearsBack = 50): array
+    {
+        $currentYear = (int) date('Y');
+        $startYear = $currentYear - $yearsBack + 1;
+
+        $active = BiteRabiesReport::where('rabies_confirmed', true)
+            ->whereIn('status', ['Pending Review', 'Under Review'])
+            ->whereYear('incident_date', '>=', $startYear)
+            ->selectRaw('YEAR(incident_date) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $resolved = BiteRabiesReport::where('rabies_confirmed', true)
+            ->whereIn('status', ['Resolved', 'Closed'])
+            ->whereYear('incident_date', '>=', $startYear)
+            ->selectRaw('YEAR(incident_date) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $result = [];
+        for ($y = $startYear; $y <= $currentYear; $y++) {
+            $result[] = [
+                'year' => $y,
+                'active' => $active[$y] ?? 0,
+                'resolved' => $resolved[$y] ?? 0,
+            ];
+        }
+
+        return $result;
     }
 
     private function getMonthlyAdoptionByYear(int $year): array

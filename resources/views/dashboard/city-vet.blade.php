@@ -96,14 +96,33 @@
                 <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
                 <p class="text-xs text-gray-500">Active vs Resolved Cases</p>
             </div>
-            <select onchange="window.location.href='?bite_chart_timeframe='+this.value" 
-                    class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                @foreach($availableYears as $y)
-                    <option value="{{ $y }}" {{ ($biteChartTimeframe ?? date('Y')) == $y ? 'selected' : '' }}>
-                        {{ $y }}
-                    </option>
-                @endforeach
-            </select>
+            <div class="flex items-center gap-2">
+                <div class="flex bg-gray-100 rounded-md p-0.5">
+                    <a href="?bite_chart_mode=months&bite_chart_timeframe={{ date('Y') }}" 
+                       class="px-2.5 py-1 text-xs rounded {{ $biteChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Months
+                    </a>
+                    <a href="?bite_chart_mode=years&bite_chart_timeframe=5" 
+                       class="px-2.5 py-1 text-xs rounded {{ $biteChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Years
+                    </a>
+                </div>
+                @if($biteChartMode === 'months')
+                    <select onchange="window.location.href='?bite_chart_mode=months&bite_chart_timeframe='+this.value" 
+                            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $biteChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                @else
+                    <select onchange="window.location.href='?bite_chart_mode=years&bite_chart_timeframe='+this.value" 
+                            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        <option value="3" {{ $biteChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
+                        <option value="5" {{ $biteChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
+                        <option value="all" {{ $biteChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                    </select>
+                @endif
+            </div>
         </div>
         <div class="flex gap-4 mb-4">
             <button type="button" id="biteLegendActive" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
@@ -210,8 +229,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const biteMonthlyRaw = @json($biteMonthlyData ?? []);
     const biteMonthlyActiveRaw = @json($biteMonthlyActiveData ?? []);
     const biteMonthlyResolvedRaw = @json($biteMonthlyResolvedData ?? []);
+    const yearlyLabels = @json($yearlyLabels ?? []);
+    const yearlyActiveData = @json($yearlyActiveData ?? []);
+    const yearlyResolvedData = @json($yearlyResolvedData ?? []);
     const adoptionMonthlyRaw = @json($adoptionMonthlyData ?? []);
     const missingMonthlyRaw = @json($missingMonthlyData ?? []);
+    const biteChartMode = '{{ $biteChartMode ?? 'months' }}';
 
     function buildLineDataset(label, data, borderColor, backgroundColor) {
         return {
@@ -231,8 +254,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getBiteDatasets() {
-        const activeData = monthLabels.map((_, i) => biteMonthlyActiveRaw[i + 1] || 0);
-        const resolvedData = monthLabels.map((_, i) => biteMonthlyResolvedRaw[i + 1] || 0);
+        let activeData, resolvedData, labels;
+        if (biteChartMode === 'years') {
+            labels = yearlyLabels.map(String);
+            activeData = yearlyActiveData;
+            resolvedData = yearlyResolvedData;
+        } else {
+            labels = monthLabels;
+            activeData = monthLabels.map((_, i) => biteMonthlyActiveRaw[i + 1] || 0);
+            resolvedData = monthLabels.map((_, i) => biteMonthlyResolvedRaw[i + 1] || 0);
+        }
         return [
             {
                 label: 'Active Cases',
@@ -263,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const biteChart = new Chart(biteCtx, {
         type: 'bar',
         data: {
-            labels: monthLabels,
+            labels: biteChartMode === 'years' ? yearlyLabels.map(String) : monthLabels,
             datasets: getBiteDatasets()
         },
         options: {
