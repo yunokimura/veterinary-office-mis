@@ -94,11 +94,11 @@
         <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
         <p class="text-xs text-gray-500 mb-3">Active vs Resolved Cases</p>
         <div class="flex gap-4 mb-4">
-            <button type="button" id="biteLegendActive" class="flex items-center gap-2 text-left">
+            <button type="button" id="biteLegendActive" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
                 <span class="w-3 h-3 rounded bg-amber-500"></span>
                 <span class="text-xs text-gray-600">Active: <span class="font-semibold">{{ ($kpiSecondary['rabies_active'] ?? 0) }}</span></span>
             </button>
-            <button type="button" id="biteLegendResolved" class="flex items-center gap-2 text-left">
+            <button type="button" id="biteLegendResolved" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
                 <span class="w-3 h-3 rounded bg-green-500"></span>
                 <span class="text-xs text-gray-600">Resolved: <span class="font-semibold">{{ ($kpiSecondary['rabies_resolved'] ?? 0) }}</span></span>
             </button>
@@ -259,6 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: '#fff',
                     titleColor: '#111827',
