@@ -94,14 +94,14 @@
         <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
         <p class="text-xs text-gray-500 mb-3">Active vs Resolved Cases</p>
         <div class="flex gap-4 mb-4">
-            <div class="flex items-center gap-2">
+            <button type="button" id="biteLegendActive" class="flex items-center gap-2 text-left">
                 <span class="w-3 h-3 rounded bg-amber-500"></span>
                 <span class="text-xs text-gray-600">Active: <span class="font-semibold">{{ ($kpiSecondary['rabies_active'] ?? 0) }}</span></span>
-            </div>
-            <div class="flex items-center gap-2">
+            </button>
+            <button type="button" id="biteLegendResolved" class="flex items-center gap-2 text-left">
                 <span class="w-3 h-3 rounded bg-green-500"></span>
                 <span class="text-xs text-gray-600">Resolved: <span class="font-semibold">{{ ($kpiSecondary['rabies_resolved'] ?? 0) }}</span></span>
-            </div>
+            </button>
         </div>
         <div class="h-64 relative">
             <canvas id="biteCasesByMonthChart"></canvas>
@@ -259,19 +259,6 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'rect',
-                        padding: 16,
-                        font: { size: 12 },
-                        color: '#374151',
-                        useBorderRadius: true,
-                        borderRadius: 4
-                    }
-                },
                 tooltip: {
                     backgroundColor: '#fff',
                     titleColor: '#111827',
@@ -298,6 +285,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    const activeToggle = document.getElementById('biteLegendActive');
+    const resolvedToggle = document.getElementById('biteLegendResolved');
+    if (activeToggle && resolvedToggle && biteChart) {
+        const updateToggleVisual = (el, visible) => {
+            el.style.opacity = visible ? '1' : '0.5';
+            el.style.textDecoration = visible ? 'none' : 'line-through';
+        };
+        activeToggle.addEventListener('click', () => {
+            const idx = 0;
+            const next = !biteChart.isDatasetVisible(idx);
+            biteChart.setDatasetVisibility(idx, next);
+            biteChart.update();
+            updateToggleVisual(activeToggle, next);
+        });
+        resolvedToggle.addEventListener('click', () => {
+            const idx = 1;
+            const next = !biteChart.isDatasetVisible(idx);
+            biteChart.setDatasetVisibility(idx, next);
+            biteChart.update();
+            updateToggleVisual(resolvedToggle, next);
+        });
+    }
 
     const adoptionCtx = document.getElementById('adoptionReportsChart').getContext('2d');
     const adoptionChart = new Chart(adoptionCtx, {
