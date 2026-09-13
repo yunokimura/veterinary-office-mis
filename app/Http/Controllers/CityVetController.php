@@ -116,6 +116,8 @@ class CityVetController extends Controller
         $biteChartMode = $request->bite_chart_mode ?? 'months';
         $biteChartTimeframe = $request->bite_chart_timeframe ?? $currentYear;
         $biteMonthlyData = $this->getMonthlyCasesByYear($biteChartTimeframe);
+        $biteMonthlyActiveData = $this->getMonthlyActiveResolvedCasesByYear($biteChartTimeframe, 'active');
+        $biteMonthlyResolvedData = $this->getMonthlyActiveResolvedCasesByYear($biteChartTimeframe, 'resolved');
         $biteYearlyData = $this->getYearlyRabiesTotals();
 
         $adoptionChartMode = $request->adoption_chart_mode ?? 'months';
@@ -201,6 +203,8 @@ class CityVetController extends Controller
             'biteChartMode',
             'biteChartTimeframe',
             'biteMonthlyData',
+            'biteMonthlyActiveData',
+            'biteMonthlyResolvedData',
             'biteYearlyData',
             'adoptionChartMode',
             'adoptionChartTimeframe',
@@ -376,6 +380,22 @@ class CityVetController extends Controller
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
+    }
+
+    private function getMonthlyActiveResolvedCasesByYear(int $year, string $type): array
+    {
+        $query = BiteRabiesReport::where('rabies_confirmed', true)
+            ->whereYear('incident_date', $year)
+            ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
+            ->groupBy('month');
+
+        if ($type === 'active') {
+            $query->whereIn('status', ['Pending Review', 'Under Review']);
+        } else {
+            $query->whereIn('status', ['Resolved', 'Closed']);
+        }
+
+        return $query->pluck('count', 'month')->toArray();
     }
 
     private function getYearlyRabiesTotals(): array

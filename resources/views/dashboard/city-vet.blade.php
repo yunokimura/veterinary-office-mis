@@ -92,6 +92,17 @@
     <!-- Confirmed Rabies Cases -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
+        <p class="text-xs text-gray-500 mb-3">Active vs Resolved Cases</p>
+        <div class="flex gap-4 mb-4">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded bg-amber-500"></span>
+                <span class="text-xs text-gray-600">Active: <span class="font-semibold">{{ ($kpiSecondary['rabies_active'] ?? 0) }}</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded bg-green-500"></span>
+                <span class="text-xs text-gray-600">Resolved: <span class="font-semibold">{{ ($kpiSecondary['rabies_resolved'] ?? 0) }}</span></span>
+            </div>
+        </div>
         <div class="h-64 relative">
             <canvas id="biteCasesByMonthChart"></canvas>
         </div>
@@ -185,6 +196,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const barangays = @json($barangays ?? []);
 
     const biteMonthlyRaw = @json($biteMonthlyData ?? []);
+    const biteMonthlyActiveRaw = @json($biteMonthlyActiveData ?? []);
+    const biteMonthlyResolvedRaw = @json($biteMonthlyResolvedData ?? []);
     const adoptionMonthlyRaw = @json($adoptionMonthlyData ?? []);
     const missingMonthlyRaw = @json($missingMonthlyData ?? []);
 
@@ -206,8 +219,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getBiteDatasets() {
-        const data = monthLabels.map((_, i) => biteMonthlyRaw[i + 1] || 0);
-        return [buildLineDataset('Confirmed Rabies Cases', data, '#DC2626', 'rgba(220, 38, 38, 0.08)')];
+        const activeData = monthLabels.map((_, i) => biteMonthlyActiveRaw[i + 1] || 0);
+        const resolvedData = monthLabels.map((_, i) => biteMonthlyResolvedRaw[i + 1] || 0);
+        return [
+            {
+                label: 'Active Cases',
+                data: activeData,
+                backgroundColor: '#f59e0b',
+                borderRadius: 4
+            },
+            {
+                label: 'Resolved Cases',
+                data: resolvedData,
+                backgroundColor: '#22c55e',
+                borderRadius: 4
+            }
+        ];
     }
 
     function getAdoptionDatasets() {
@@ -222,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const biteCtx = document.getElementById('biteCasesByMonthChart').getContext('2d');
     const biteChart = new Chart(biteCtx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: monthLabels,
             datasets: getBiteDatasets()
@@ -232,7 +259,19 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { display: false },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'rect',
+                        padding: 16,
+                        font: { size: 12 },
+                        color: '#374151',
+                        useBorderRadius: true,
+                        borderRadius: 4
+                    }
+                },
                 tooltip: {
                     backgroundColor: '#fff',
                     titleColor: '#111827',
@@ -243,8 +282,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             scales: {
-                y: { beginAtZero: true, min: 0, ticks: { stepSize: 2 }, grid: { color: '#f3f4f6' } },
-                x: { grid: { display: false } }
+                y: { 
+                    beginAtZero: true, 
+                    min: 0, 
+                    ticks: { stepSize: 2, color: '#374151' }, 
+                    grid: { color: '#f3f4f6' },
+                    title: {
+                        display: true,
+                        text: 'Number of Cases',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                },
+                x: { grid: { display: false }, ticks: { color: '#374151' } }
             }
         }
     });
