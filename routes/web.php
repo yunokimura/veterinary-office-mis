@@ -111,11 +111,9 @@ Route::get('/', function () {
     }
     // Get missing pets for the landing page
     $missingPets = Pet::where('pet_status', 'missing')
-        ->where('is_missing', true)
         ->with(['missingReport' => function ($query) {
             $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
         }])
-        ->orderBy('missing_since', 'desc')
         ->limit(5)
         ->get();
 
@@ -132,11 +130,9 @@ Route::get('/', function () {
 Route::get('/home', function () {
     // Get missing pets for the landing page
     $missingPets = Pet::where('pet_status', 'missing')
-        ->where('is_missing', true)
         ->with(['missingReport' => function ($query) {
             $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
         }])
-        ->orderBy('missing_since', 'desc')
         ->limit(5)
         ->get();
 
@@ -693,11 +689,9 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
 // Landing page for client portal
 Route::get('/client', function () {
     $missingPets = Pet::where('pet_status', 'missing')
-        ->where('is_missing', true)
         ->with(['missingReport' => function ($query) {
             $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
         }])
-        ->orderBy('missing_since', 'desc')
         ->limit(5)
         ->get();
 
@@ -1142,15 +1136,12 @@ Route::post('/adoption', [AdoptionPetController::class, 'store'])->name('adoptio
 // Missing Pets Page Route - Public
 Route::get('/missing-pets', function () {
     $missingPets = Pet::where('pet_status', 'missing')
-        ->where('is_missing', true)
         ->with(['missingReport' => function ($query) {
             $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
         }])
-        ->orderBy('missing_since', 'desc')
         ->paginate(12);
 
     $availableBreeds = Pet::where('pet_status', 'missing')
-        ->where('is_missing', true)
         ->whereNotNull('breed')
         ->where('breed', '!=', '')
         ->distinct()
@@ -1158,7 +1149,7 @@ Route::get('/missing-pets', function () {
         ->pluck('breed');
 
     $availableLocations = \App\Models\Barangay::whereHas('pets', function ($query) {
-        $query->where('pet_status', 'missing')->where('is_missing', true);
+        $query->where('pet_status', 'missing');
     })
         ->orderBy('barangay_name')
         ->pluck('barangay_name');
@@ -1172,7 +1163,6 @@ Route::get('/missing-pets', function () {
 
 Route::get('/missing-pets/paginate', function (Request $request) {
     $query = Pet::where('pet_status', 'missing')
-        ->where('is_missing', true)
         ->with(['missingReport' => function ($query) {
             $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
         }]);
@@ -1197,7 +1187,7 @@ Route::get('/missing-pets/paginate', function (Request $request) {
         });
     }
 
-    $missingPets = $query->orderBy('missing_since', 'desc')->paginate(12);
+    $missingPets = $query->paginate(12);
 
     $pets = $missingPets->map(function ($pet) {
         $report = $pet->missingReport->first();
@@ -1213,10 +1203,9 @@ Route::get('/missing-pets/paginate', function (Request $request) {
             'description' => $pet->notes,
             'location_barangay' => $report ? $report->location_barangay : null,
             'location_description' => $report ? $report->location_description : null,
-            'last_seen_at' => $report ? $report->last_seen_at : $pet->missing_since,
+            'last_seen_at' => $report ? $report->last_seen_at : null,
             'pet_image' => $pet->pet_image ? asset('storage/'.$pet->pet_image) : null,
             'pet_status' => $pet->pet_status,
-            'missing_since' => $pet->missing_since,
         ];
     });
 

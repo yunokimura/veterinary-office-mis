@@ -582,8 +582,6 @@
                                 <p class="text-gray-700 font-medium text-xs">
                                     @if($pet->missingReport->first() && $pet->missingReport->first()->last_seen_at)
                                         {{ $pet->missingReport->first()->last_seen_at->format('M d, Y - h:i A') }}
-                                    @elseif($pet->missing_since)
-                                        {{ $pet->missing_since->format('M d, Y - h:i A') }}
                                     @else
                                         N/A
                                     @endif
@@ -985,7 +983,7 @@ document.addEventListener('click', function(event) {
                 'description' => $pet->notes,
                 'location_barangay' => $report ? $report->location_barangay : null,
                 'location_description' => $report ? $report->location_description : null,
-                'last_seen_at' => $report ? $report->last_seen_at : $pet->missing_since,
+                'last_seen_at' => $report ? $report->last_seen_at : null,
                 'pet_image' => $pet->pet_image,
                 'pet_status' => $pet->pet_status,
             ];

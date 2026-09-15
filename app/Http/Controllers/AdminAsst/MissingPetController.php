@@ -71,8 +71,6 @@ class MissingPetController extends Controller
             'gender' => $validated['gender'],
             'color' => $validated['color'],
             'pet_status' => 'missing',
-            'is_missing' => true,
-            'missing_since' => $validated['last_seen_at'],
         ]);
 
         $photoPath = null;
@@ -169,8 +167,6 @@ class MissingPetController extends Controller
         if ($missingPet->pet) {
             $missingPet->pet->update([
                 'pet_status' => 'missing',
-                'is_missing' => true,
-                'missing_since' => $missingPet->last_seen_at,
             ]);
         }
 
@@ -191,8 +187,6 @@ class MissingPetController extends Controller
         if ($missingPet->pet) {
             $missingPet->pet->update([
                 'pet_status' => 'owned',
-                'is_missing' => false,
-                'missing_since' => null,
             ]);
         }
 
@@ -207,8 +201,6 @@ class MissingPetController extends Controller
         if ($missingPet->pet) {
             $missingPet->pet->update([
                 'pet_status' => 'in shelter/intake',
-                'is_missing' => false,
-                'missing_since' => null,
             ]);
         }
 
@@ -223,8 +215,6 @@ class MissingPetController extends Controller
         if ($missingPet->pet) {
             $missingPet->pet->update([
                 'pet_status' => 'for adoption',
-                'is_missing' => false,
-                'missing_since' => null,
             ]);
         }
 
@@ -239,8 +229,6 @@ class MissingPetController extends Controller
         if ($missingPet->pet) {
             $missingPet->pet->update([
                 'pet_status' => 'owned',
-                'is_missing' => false,
-                'missing_since' => null,
             ]);
         }
 
