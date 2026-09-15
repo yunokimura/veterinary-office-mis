@@ -6,17 +6,6 @@
 @section('subheader', 'Operations Manager - Daily Operations Overview')
 
 @section('content')
-<!-- Welcome Banner (force visible) -->
-<div class="relative z-10 bg-green-700 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 text-white">
-    <h2 class="text-xl md:text-2xl font-bold mb-2">
-        Welcome back, {{ auth()->user()->name ?? 'Admin' }}!
-    </h2>
-    <p class="text-green-100 text-sm md:text-base">
-        Manage daily operations, staff accounts, and monitor department reports.
-    </p>
-</div>
-
-
 <!-- Quick Stats -->
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6 mb-6">
     <!-- Pending Reports -->

@@ -12,68 +12,22 @@ $rolePrefix = 'admin';
 
 @section('content')
 <div class="max-w-7xl mx-auto">
-    <!-- Page Header -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Confirmed Rabies Reports</h1>
-                <p class="text-gray-500 mt-1">View and manage all confirmed rabies cases</p>
-            </div>
-            <div class="flex items-center gap-3">
-            </div>
-        </div>
-    </div>
-
     <!-- Stats Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <!-- Total Confirmed Cases -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        <!-- Total Confirmed Rabies Cases -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Total Confirmed Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800" id="statTotal">{{ $stats['total'] ?? 0 }}</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-virus text-red-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
-        </div>
-        <!-- Confirmed Rabies Cases This Year -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Confirmed Rabies Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800" id="statConfirmedThisYear">{{ $stats['confirmed_this_year'] ?? 0 }}</p>
-                    <p class="text-xs text-gray-400 mt-1">This Year</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-calendar-check text-red-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
+            <p class="text-xs md:text-sm text-gray-700 mb-1">Total Confirmed Rabies Cases</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-900" id="statTotal">{{ $stats['total'] ?? 0 }}</p>
         </div>
         <!-- Dog Cases -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Dog Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800" id="statDogCases">{{ $stats['dog_cases'] ?? 0 }}</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-briefcase text-orange-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
+            <p class="text-xs md:text-sm text-gray-700 mb-1">Dog Cases</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-900" id="statDogCases">{{ $stats['dog_cases'] ?? 0 }}</p>
         </div>
         <!-- Cat Cases -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex items-start justify-between gap-3">
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Cat Cases</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-800" id="statCatCases">{{ $stats['cat_cases'] ?? 0 }}</p>
-                </div>
-                <div class="w-10 h-10 md:w-11 md:h-11 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-briefcase text-purple-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
+            <p class="text-xs md:text-sm text-gray-700 mb-1">Cat Cases</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-900" id="statCatCases">{{ $stats['cat_cases'] ?? 0 }}</p>
         </div>
     </div>
 
@@ -540,7 +494,6 @@ function applyBiteFilters() {
             if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
 
             document.getElementById('statTotal').textContent = data.stats.total ?? 0;
-            document.getElementById('statConfirmedThisYear').textContent = data.stats.confirmed_this_year ?? 0;
             document.getElementById('statDogCases').textContent = data.stats.dog_cases ?? 0;
             document.getElementById('statCatCases').textContent = data.stats.cat_cases ?? 0;
         }
