@@ -1428,6 +1428,13 @@ class CityVetController extends Controller
             'average' => $biteCasesByBarangayAnalytics->avg('count') ?? 0,
         ];
 
+        $totalConfirmedCases = BiteRabiesReport::where('rabies_confirmed', true)->whereYear('incident_date', $year)->count();
+        $resolvedCases = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $year)->count();
+        $resolutionRate = $totalConfirmedCases > 0 ? round(($resolvedCases / $totalConfirmedCases) * 100, 1) : 0;
+        $biteCasesStats['resolution_rate'] = $resolutionRate;
+        $biteCasesStats['resolved_cases'] = $resolvedCases;
+        $biteCasesStats['total_confirmed_cases'] = $totalConfirmedCases;
+
         // Adoption Performance
         $totalAdoptions = \App\Models\AdoptionApplication::count();
         $approvedCount = \App\Models\AdoptionApplication::where('status', 'approved')->count();
@@ -1446,8 +1453,17 @@ class CityVetController extends Controller
         ];
         $totalMissing = $missingPetActive + $missingPetResolved;
         $missingPetStats['recovery_rate'] = $totalMissing > 0 ? round(($missingPetResolved / $totalMissing) * 100, 1) : 0;
+        // Vaccination Performance
+        $actualVaccinations = RabiesVaccinationReport::whereYear('vaccination_date', $year)->count();
+        $vaccinationTarget = 600; // 50 doses/month × 12 months
+        $vaccinationStats = [
+            'actual' => $actualVaccinations,
+            'target' => $vaccinationTarget,
+            'percentage' => $vaccinationTarget > 0 ? round(($actualVaccinations / $vaccinationTarget) * 100, 1) : 0,
+        ];
 
         // Meat Establishment Monitoring
+
         $meatEstablishmentStats = [
             'active' => \App\Models\MeatEstablishment::where('status', 'Active')->count(),
             'expired' => \App\Models\MeatEstablishment::where('status', 'Expired')->count(),
@@ -1460,6 +1476,7 @@ class CityVetController extends Controller
         return [
             'monthly_trend' => $monthlyTrend,
             'bite_cases_by_barangay' => $biteCasesStats,
+            'vaccination_performance' => $vaccinationStats,
             'adoption_performance' => $adoptionStats,
             'missing_pet_recovery' => $missingPetStats,
             'meat_establishment_monitoring' => $meatEstablishmentStats,

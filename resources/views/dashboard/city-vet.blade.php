@@ -7,66 +7,32 @@
 
 @section('content')
 
-
-<!-- KPI Cards Grid -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
-    <!-- Confirmed Rabies Cases (Highest Priority) -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-        <p class="text-xs md:text-sm text-gray-800 mb-1">Confirmed Rabies Cases</p>
-        <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{{ $stats['confirmed_bite_cases'] ?? 0 }}</p>
-        <p class="text-xs text-gray-800 mb-1">As of {{ $year }}</p>
-        <p class="text-xs md:text-sm text-gray-500">
-            {{ ($kpiSecondary['rabies_active'] ?? 0) }} active, {{ ($kpiSecondary['rabies_resolved'] ?? 0) }} resolved
-        </p>
-    </div>
-
-    <!-- Anti-Rabies Vaccinations -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-        <p class="text-xs md:text-sm text-gray-800 mb-1">Anti-Rabies Vaccinations</p>
-        <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{{ $stats['anti_rabies_vaccinations'] ?? 0 }}</p>
-        <p class="text-xs text-gray-800 mb-1">As of {{ now()->format('F Y') }}</p>
-        <p class="text-xs md:text-sm text-gray-500">Target: {{ $kpiSecondary['vaccination_target'] ?? 50 }} doses/mo</p>
-    </div>
-
-    <!-- Adoption Reports -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-        <p class="text-xs md:text-sm text-gray-800 mb-1">Adoption Reports</p>
-        <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{{ $stats['adoption_reports'] ?? 0 }}</p>
-        <p class="text-xs text-gray-800 mb-1">As of {{ now()->format('F Y') }}</p>
-        <p class="text-xs md:text-sm text-gray-500">
-            {{ ($kpiSecondary['adoption_dogs'] ?? 0) }} dogs, {{ ($kpiSecondary['adoption_cats'] ?? 0) }} cats
-        </p>
-    </div>
-
-    <!-- Missing Pet Reports -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-        <p class="text-xs md:text-sm text-gray-800 mb-1">Missing Pet Reports</p>
-        <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{{ $stats['missing_pet_reports'] ?? 0 }}</p>
-        <p class="text-xs text-gray-800 mb-1">As of {{ $year }}</p>
-        <p class="text-xs md:text-sm text-gray-500">
-            {{ ($kpiSecondary['missing_reunited'] ?? 0) }} reunited, {{ ($kpiSecondary['missing_pending'] ?? 0) }} pending
-        </p>
-    </div>
-</div>
-
-
 <!-- Analytics Section -->
 <div class="mb-6">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Analytics Overview</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
 
         <!-- Bite Cases by Barangay -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <p class="text-xs font-medium text-gray-500 mb-2">Rabies Cases by Barangay</p>
-            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['bite_cases_by_barangay']['highest']->count ?? 0 }}</p>
-            <p class="text-xs text-gray-500 mb-3">Peak Cases</p>
-            <p class="text-xs text-gray-400">Avg: {{ round($analytics['bite_cases_by_barangay']['average'] ?? 0, 1) }} per barangay</p>
+            <p class="text-xs font-medium text-gray-500 mb-2">Confirmed Rabies Cases by Barangay</p>
+            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['bite_cases_by_barangay']['resolution_rate'] ?? 0 }}%</p>
+            <p class="text-xs text-gray-500 mb-3">Resolution Rate</p>
+            <p class="text-xs text-gray-400">Resolved: {{ $analytics['bite_cases_by_barangay']['resolved_cases'] ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-1">Total Confirmed: {{ $analytics['bite_cases_by_barangay']['total_confirmed_cases'] ?? 0 }}</p>
+        </div>
+
+        <!-- Anti-Rabies Vaccination -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <p class="text-xs font-medium text-gray-500 mb-2">Anti-Rabies Vaccination</p>
+            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['vaccination_performance']['percentage'] ?? 0 }}%</p>
+            <p class="text-xs text-gray-500 mb-3">Vaccination Performance</p>
+            <p class="text-xs text-gray-400">Target: {{ $analytics['vaccination_performance']['target'] ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-1">Output: {{ $analytics['vaccination_performance']['actual'] ?? 0 }}</p>
         </div>
 
         <!-- Adoption Performance -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
             <p class="text-xs font-medium text-gray-500 mb-2">Adoption Performance</p>
-            <p class="text-2xl font-bold text-gray-800 mb-1">{{ $analytics['adoption_performance']['adoption_rate'] ?? 0 }}%</p>
+            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['adoption_performance']['adoption_rate'] ?? 0 }}%</p>
             <p class="text-xs text-gray-500 mb-3">Adoption Rate</p>
             <div class="flex gap-2">
                 <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['adoption_performance']['approved'] ?? 0 }} Approved</span>
@@ -77,7 +43,7 @@
         <!-- Missing Pet Recovery -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
             <p class="text-xs font-medium text-gray-500 mb-2">Missing Pet Recovery</p>
-            <p class="text-2xl font-bold text-gray-800 mb-1">{{ $analytics['missing_pet_recovery']['recovery_rate'] ?? 0 }}%</p>
+            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['missing_pet_recovery']['recovery_rate'] ?? 0 }}%</p>
             <p class="text-xs text-gray-500 mb-3">Recovery Rate</p>
             <div class="flex gap-2">
                 <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['missing_pet_recovery']['resolved'] ?? 0 }} Resolved</span>
