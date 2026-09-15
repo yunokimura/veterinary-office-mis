@@ -187,63 +187,94 @@
 
     <!-- Missing Pet Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <h3 class="text-base font-semibold text-gray-800">Missing Pet Reports</h3>
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-base font-semibold text-gray-800">Missing Pet Reports</h3>
+                <p class="text-xs text-gray-500">By Status</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="flex bg-gray-100 rounded-md p-0.5">
+                    <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="missing-mode-btn px-2.5 py-1 text-xs rounded {{ $missingChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Months
+                    </button>
+                    <button type="button" data-mode="years" data-timeframe="3" class="missing-mode-btn px-2.5 py-1 text-xs rounded {{ $missingChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Years
+                    </button>
+                </div>
+                @if($missingChartMode === 'months')
+                    <select id="missingChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $missingChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                @else
+                    <select id="missingChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        <option value="3" {{ $missingChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
+                        <option value="5" {{ $missingChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
+                        <option value="all" {{ $missingChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                    </select>
+                @endif
+            </div>
+        </div>
+        <div class="flex gap-4 mb-4">
+            <button type="button" id="missingLegendPending" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
+                <span class="w-3 h-3 rounded bg-amber-500"></span>
+                <span class="text-xs text-gray-600">Pending Review: <span class="font-semibold">{{ ($chartMissingPendingCount ?? 0) }}</span></span>
+            </button>
+            <button type="button" id="missingLegendApproved" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
+                <span class="w-3 h-3 rounded bg-blue-500"></span>
+                <span class="text-xs text-gray-600">Missing: <span class="font-semibold">{{ ($chartMissingApprovedCount ?? 0) }}</span></span>
+            </button>
+            <button type="button" id="missingLegendResolved" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
+                <span class="w-3 h-3 rounded bg-green-500"></span>
+                <span class="text-xs text-gray-600">Resolved: <span class="font-semibold">{{ ($chartMissingResolvedCount ?? 0) }}</span></span>
+            </button>
+            <button type="button" id="missingLegendClosed" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
+                <span class="w-3 h-3 rounded bg-red-500"></span>
+                <span class="text-xs text-gray-600">Closed/Rejected: <span class="font-semibold">{{ ($chartMissingClosedCount ?? 0) }}</span></span>
+            </button>
+        </div>
         <div class="h-64">
             <canvas id="missingPetReportsChart"></canvas>
         </div>
     </div>
 
-    <!-- Anti-Rabies Vaccinations per Barangay -->
+    <!-- Confirmed Rabies Cases vs Vaccinations per Barangay -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Anti-Rabies Vaccinations per Barangay</h3>
-            <select onchange="window.location.href='?vaccination_barangay='+this.value" 
-                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                <option value="">All Barangays</option>
-                @foreach($barangays as $id => $name)
-                    <option value="{{ $id }}" {{ ($vaccinationBarangay ?? '') == $id ? 'selected' : '' }}>
-                        {{ $name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="h-64">
-            <canvas id="vaccinationsByBarangayChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Confirmed Rabies Cases per Barangay -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases per Barangay</h3>
-            <select onchange="window.location.href='?bite_barangay='+this.value" 
-                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                <option value="">All Barangays</option>
-                @foreach($barangays as $id => $name)
-                    <option value="{{ $id }}" {{ ($biteBarangay ?? '') == $id ? 'selected' : '' }}>
-                        {{ $name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="h-64">
-            <canvas id="biteCasesByBarangayChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Rabies Cases vs Vaccinations per Barangay -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Rabies Cases vs Vaccinations per Barangay</h3>
-            <select onchange="window.location.href='?compare_barangay='+this.value" 
-                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                <option value="">All Barangays</option>
-                @foreach($barangays as $id => $name)
-                    <option value="{{ $id }}" {{ ($compareBarangay ?? '') == $id ? 'selected' : '' }}>
-                        {{ $name }}
-                    </option>
-                @endforeach
-            </select>
+            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases vs Vaccinations per Barangay</h3>
+            <div class="flex items-center gap-2">
+                <div class="flex bg-gray-100 rounded-md p-0.5">
+                    <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Months
+                    </button>
+                    <button type="button" data-mode="years" data-timeframe="3" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Years
+                    </button>
+                </div>
+                @if($compareChartMode === 'months')
+                    <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $compareChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                @else
+                    <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        <option value="3" {{ $compareChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
+                        <option value="5" {{ $compareChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
+                        <option value="all" {{ $compareChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                    </select>
+                @endif
+                <select id="compareBarangaySelect" onchange="window.location.href='?compare_barangay='+this.value" 
+                        class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                    <option value="">All Barangays</option>
+                    @foreach($barangays as $id => $name)
+                        <option value="{{ $id }}" {{ ($compareBarangayId ?? '') == $id ? 'selected' : '' }}>
+                            {{ $name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
         </div>
         <div class="h-64">
             <canvas id="biteVsVaccinationChart"></canvas>
@@ -279,8 +310,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const yearlyAdoptionApprovedData = @json($yearlyAdoptionApprovedData ?? []);
     const yearlyAdoptionRejectedData = @json($yearlyAdoptionRejectedData ?? []);
     const missingMonthlyRaw = @json($missingMonthlyData ?? []);
+    const missingMonthlyPendingRaw = @json($missingMonthlyPendingData ?? []);
+    const missingMonthlyApprovedRaw = @json($missingMonthlyApprovedData ?? []);
+    const missingMonthlyResolvedRaw = @json($missingMonthlyResolvedData ?? []);
+    const missingMonthlyClosedRaw = @json($missingMonthlyClosedData ?? []);
+    const yearlyMissingLabels = @json($yearlyMissingLabels ?? []);
+    const yearlyMissingPendingData = @json($yearlyMissingPendingData ?? []);
+    const yearlyMissingApprovedData = @json($yearlyMissingApprovedData ?? []);
+    const yearlyMissingResolvedData = @json($yearlyMissingResolvedData ?? []);
+    const yearlyMissingClosedData = @json($yearlyMissingClosedData ?? []);
+    const compareChartMode = '{{ $compareChartMode ?? 'months' }}';
+    const compareChartTimeframe = '{{ $compareChartTimeframe ?? date('Y') }}';
+    const compareBarangayId = '{{ $compareBarangayId ?? '' }}';
+    const compareLabels = @json($compareLabels ?? []);
+    const compareBiteData = @json($compareBiteData ?? []);
+    const compareVaccData = @json($compareVaccData ?? []);
     const biteChartMode = '{{ $biteChartMode ?? 'months' }}';
     const adoptionChartMode = '{{ $adoptionChartMode ?? 'months' }}';
+    const missingChartMode = '{{ $missingChartMode ?? 'months' }}';
     const availableYears = @json($availableYears ?? []);
 
     function buildLineDataset(label, data, borderColor, backgroundColor) {
@@ -366,8 +413,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getMissingDatasets() {
-        const data = monthLabels.map((_, i) => missingMonthlyRaw[i + 1] || 0);
-        return [buildLineDataset('Missing Pet Reports', data, '#f97316', 'rgba(249, 115, 22, 0.08)')];
+        let pendingData, approvedData, resolvedData, closedData, labels;
+        if (missingChartMode === 'years') {
+            labels = yearlyMissingLabels.map(String);
+            pendingData = yearlyMissingPendingData;
+            approvedData = yearlyMissingApprovedData;
+            resolvedData = yearlyMissingResolvedData;
+            closedData = yearlyMissingClosedData;
+        } else {
+            labels = monthLabels;
+            pendingData = monthLabels.map((_, i) => missingMonthlyPendingRaw[i + 1] || 0);
+            approvedData = monthLabels.map((_, i) => missingMonthlyApprovedRaw[i + 1] || 0);
+            resolvedData = monthLabels.map((_, i) => missingMonthlyResolvedRaw[i + 1] || 0);
+            closedData = monthLabels.map((_, i) => missingMonthlyClosedRaw[i + 1] || 0);
+        }
+        return [
+            {
+                label: 'Pending Review',
+                data: pendingData,
+                backgroundColor: '#f59e0b',
+                borderRadius: 4,
+                stack: 'missing'
+            },
+            {
+                label: 'Missing',
+                data: approvedData,
+                backgroundColor: '#3b82f6',
+                borderRadius: 4,
+                stack: 'missing'
+            },
+            {
+                label: 'Resolved',
+                data: resolvedData,
+                backgroundColor: '#22c55e',
+                borderRadius: 4,
+                stack: 'missing'
+            },
+            {
+                label: 'Closed/Rejected',
+                data: closedData,
+                backgroundColor: '#ef4444',
+                borderRadius: 4,
+                stack: 'missing'
+            }
+        ];
     }
 
     const biteCtx = document.getElementById('biteCasesByMonthChart').getContext('2d');
@@ -650,9 +739,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const missingCtx = document.getElementById('missingPetReportsChart').getContext('2d');
     const missingChart = new Chart(missingCtx, {
-        type: 'line',
+        type: 'bar',
         data: {
-            labels: monthLabels,
+            labels: missingChartMode === 'years' ? yearlyMissingLabels.map(String) : monthLabels,
             datasets: getMissingDatasets()
         },
         options: {
@@ -660,7 +749,19 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { display: false },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'rect',
+                        padding: 16,
+                        font: { size: 12 },
+                        color: '#374151',
+                        useBorderRadius: true,
+                        borderRadius: 4
+                    }
+                },
                 tooltip: {
                     backgroundColor: '#fff',
                     titleColor: '#111827',
@@ -671,89 +772,138 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             scales: {
-                y: { beginAtZero: true, min: 0, ticks: { stepSize: 1 }, grid: { color: '#f3f4f6' } },
-                x: { grid: { display: false } }
+                y: { 
+                    stacked: true,
+                    beginAtZero: true, 
+                    min: 0, 
+                    ticks: { stepSize: 2, color: '#374151' }, 
+                    grid: { color: '#f3f4f6' },
+                    title: {
+                        display: true,
+                        text: 'Number of Cases',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                },
+                x: { stacked: true, grid: { display: false }, ticks: { color: '#374151' } }
             }
         }
     });
 
-    // Vaccinations per Barangay Chart (Horizontal Bar)
-    const vaccCtx = document.getElementById('vaccinationsByBarangayChart').getContext('2d');
-    const vaccLabels = vaccinationsByBarangay.map(item => barangays[item.barangay_id] || 'Unknown');
-    const vaccData = vaccinationsByBarangay.map(item => item.count);
-    new Chart(vaccCtx, {
-        type: 'bar',
-        data: {
-            labels: vaccLabels,
-            datasets: [{
-                label: 'Vaccinations',
-                data: vaccData,
-                backgroundColor: '#3b82f6',
-                borderRadius: 4
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-                y: { grid: { display: false } }
-            }
+    const missingPendingToggle = document.getElementById('missingLegendPending');
+    const missingApprovedToggle = document.getElementById('missingLegendApproved');
+    const missingResolvedToggle = document.getElementById('missingLegendResolved');
+    const missingClosedToggle = document.getElementById('missingLegendClosed');
+    if (missingPendingToggle && missingApprovedToggle && missingResolvedToggle && missingClosedToggle && missingChart) {
+        const updateToggleVisual = (el, visible) => {
+            el.style.opacity = visible ? '1' : '0.5';
+            el.style.textDecoration = visible ? 'none' : 'line-through';
+        };
+        missingPendingToggle.addEventListener('click', () => {
+            const idx = 0;
+            const next = !missingChart.isDatasetVisible(idx);
+            missingChart.setDatasetVisibility(idx, next);
+            missingChart.update();
+            updateToggleVisual(missingPendingToggle, next);
+        });
+        missingApprovedToggle.addEventListener('click', () => {
+            const idx = 1;
+            const next = !missingChart.isDatasetVisible(idx);
+            missingChart.setDatasetVisibility(idx, next);
+            missingChart.update();
+            updateToggleVisual(missingApprovedToggle, next);
+        });
+        missingResolvedToggle.addEventListener('click', () => {
+            const idx = 2;
+            const next = !missingChart.isDatasetVisible(idx);
+            missingChart.setDatasetVisibility(idx, next);
+            missingChart.update();
+            updateToggleVisual(missingResolvedToggle, next);
+        });
+        missingClosedToggle.addEventListener('click', () => {
+            const idx = 3;
+            const next = !missingChart.isDatasetVisible(idx);
+            missingChart.setDatasetVisibility(idx, next);
+            missingChart.update();
+            updateToggleVisual(missingClosedToggle, next);
+        });
+    }
+
+    const loadMissingChart = async (mode, timeframe) => {
+        const url = new URL('{{ route('city-vet.dashboard.chart-data') }}', window.location.origin);
+        url.searchParams.set('mode', 'missing');
+        url.searchParams.set('view', mode);
+        url.searchParams.set('timeframe', timeframe);
+
+        try {
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const data = await response.json();
+
+            missingChart.data.labels = data.labels.map(String);
+            missingChart.data.datasets[0].data = data.pending;
+            missingChart.data.datasets[1].data = data.approved;
+            missingChart.data.datasets[2].data = data.resolved;
+            missingChart.data.datasets[3].data = data.closed;
+            missingChart.update();
+
+            missingPendingToggle.querySelector('.font-semibold').textContent = data.pendingCount;
+            missingApprovedToggle.querySelector('.font-semibold').textContent = data.approvedCount;
+            missingResolvedToggle.querySelector('.font-semibold').textContent = data.resolvedCount;
+            missingClosedToggle.querySelector('.font-semibold').textContent = data.closedCount;
+        } catch (error) {
+            console.error('Failed to load missing chart data:', error);
         }
+    };
+
+    document.querySelectorAll('.missing-mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mode = btn.dataset.mode;
+            const timeframe = btn.dataset.timeframe;
+            const timeframeSelect = document.getElementById('missingChartTimeframe');
+
+            document.querySelectorAll('.missing-mode-btn').forEach(b => {
+                b.classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+                b.classList.add('text-gray-500', 'hover:text-gray-700');
+            });
+            btn.classList.remove('text-gray-500', 'hover:text-gray-700');
+            btn.classList.add('bg-white', 'shadow-sm', 'text-gray-900');
+
+            if (timeframeSelect) {
+                if (mode === 'months') {
+                    timeframeSelect.innerHTML = availableYears.map(y => `<option value="${y}">${y}</option>`).join('');
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                } else {
+                    timeframeSelect.innerHTML = `
+                        <option value="3">Last 3 Years</option>
+                        <option value="5">Last 5 Years</option>
+                        <option value="all">All Years</option>
+                    `;
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                }
+            }
+
+            loadMissingChart(mode, timeframeSelect ? timeframeSelect.value : timeframe);
+        });
     });
 
-    // Bite Cases per Barangay Chart (Horizontal Bar)
-    const biteBarangayCtx = document.getElementById('biteCasesByBarangayChart').getContext('2d');
-    const biteBarangayLabels = biteCasesByBarangay.map(item => barangays[item.barangay_id] || 'Unknown');
-    const biteBarangayData = biteCasesByBarangay.map(item => item.count);
-    new Chart(biteBarangayCtx, {
-        type: 'bar',
-        data: {
-            labels: biteBarangayLabels,
-            datasets: [{
-                label: 'Bite Cases',
-                data: biteBarangayData,
-                backgroundColor: '#ef4444',
-                borderRadius: 4
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-                y: { grid: { display: false } }
-            }
-        }
-    });
+    const missingChartTimeframe = document.getElementById('missingChartTimeframe');
+    if (missingChartTimeframe) {
+        missingChartTimeframe.addEventListener('change', () => {
+            const activeModeBtn = document.querySelector('.missing-mode-btn.bg-white');
+            const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'months';
+            loadMissingChart(mode, missingChartTimeframe.value);
+        });
+    }
 
-    // Bite Cases vs Vaccinations per Barangay (Clustered Bar)
+    // Confirmed Rabies Cases vs Vaccinations per Barangay (Clustered Bar)
     const compareCtx = document.getElementById('biteVsVaccinationChart').getContext('2d');
-    
-    // Get all unique barangays from both datasets
-    const allBarangayIds = [...new Set([
-        ...vaccinationsByBarangay.map(item => item.barangay_id),
-        ...biteCasesByBarangay.map(item => item.barangay_id)
-    ])].slice(0, 10); // Limit to top 10
-    
-    const compareLabels = allBarangayIds.map(id => barangays[id] || 'Unknown');
-    const compareBiteData = allBarangayIds.map(id => {
-        const found = biteCasesByBarangay.find(item => item.barangay_id == id);
-        return found ? found.count : 0;
-    });
-    const compareVaccData = allBarangayIds.map(id => {
-        const found = vaccinationsByBarangay.find(item => item.barangay_id == id);
-        return found ? found.count : 0;
-    });
-    
-    new Chart(compareCtx, {
+    const compareChart = new Chart(compareCtx, {
         type: 'bar',
         data: {
-            labels: compareLabels,
+            labels: compareLabels.map(String),
             datasets: [
                 {
                     label: 'Bite Cases',
@@ -772,13 +922,120 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: true, position: 'top' } },
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'rect',
+                        padding: 16,
+                        font: { size: 12 },
+                        color: '#374151',
+                        useBorderRadius: true,
+                        borderRadius: 4
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#111827',
+                    bodyColor: '#374151',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    padding: 10
+                }
+            },
             scales: {
-                y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-                x: { grid: { display: false } }
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { stepSize: 2, color: '#374151' }, 
+                    grid: { color: '#f3f4f6' },
+                    title: {
+                        display: true,
+                        text: 'Number of Cases',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                },
+                x: { grid: { display: false }, ticks: { color: '#374151' } }
             }
         }
     });
+
+    const loadCompareChart = async (mode, timeframe, barangayId) => {
+        const url = new URL('{{ route('city-vet.dashboard.chart-data') }}', window.location.origin);
+        url.searchParams.set('mode', 'compare');
+        url.searchParams.set('view', mode);
+        url.searchParams.set('timeframe', timeframe);
+        if (barangayId) {
+            url.searchParams.set('barangay_id', barangayId);
+        }
+
+        try {
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const data = await response.json();
+
+            compareChart.data.labels = data.labels.map(String);
+            compareChart.data.datasets[0].data = data.bite;
+            compareChart.data.datasets[1].data = data.vacc;
+            compareChart.update();
+        } catch (error) {
+            console.error('Failed to load compare chart data:', error);
+        }
+    };
+
+    document.querySelectorAll('.compare-mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mode = btn.dataset.mode;
+            const timeframe = btn.dataset.timeframe;
+            const timeframeSelect = document.getElementById('compareChartTimeframe');
+            const barangaySelect = document.getElementById('compareBarangaySelect');
+
+            document.querySelectorAll('.compare-mode-btn').forEach(b => {
+                b.classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+                b.classList.add('text-gray-500', 'hover:text-gray-700');
+            });
+            btn.classList.remove('text-gray-500', 'hover:text-gray-700');
+            btn.classList.add('bg-white', 'shadow-sm', 'text-gray-900');
+
+            if (timeframeSelect) {
+                if (mode === 'months') {
+                    timeframeSelect.innerHTML = availableYears.map(y => `<option value="${y}">${y}</option>`).join('');
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                } else {
+                    timeframeSelect.innerHTML = `
+                        <option value="3">Last 3 Years</option>
+                        <option value="5">Last 5 Years</option>
+                        <option value="all">All Years</option>
+                    `;
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                }
+            }
+
+            loadCompareChart(mode, timeframeSelect ? timeframeSelect.value : timeframe, barangaySelect ? barangaySelect.value : '');
+        });
+    });
+
+    const compareChartTimeframe = document.getElementById('compareChartTimeframe');
+    const compareBarangaySelect = document.getElementById('compareBarangaySelect');
+    if (compareChartTimeframe) {
+        compareChartTimeframe.addEventListener('change', () => {
+            const activeModeBtn = document.querySelector('.compare-mode-btn.bg-white');
+            const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'months';
+            loadCompareChart(mode, compareChartTimeframe.value, compareBarangaySelect ? compareBarangaySelect.value : '');
+        });
+    }
+    if (compareBarangaySelect) {
+        compareBarangaySelect.addEventListener('change', () => {
+            const activeModeBtn = document.querySelector('.compare-mode-btn.bg-white');
+            const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'months';
+            loadCompareChart(mode, compareChartTimeframe ? compareChartTimeframe.value : '{{ date('Y') }}', compareBarangaySelect.value);
+        });
+    }
 });
 </script>
 @endpush

@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             AssignSpatieRolesSeeder::class,
             AdoptionTraitsSeeder::class,
             AdoptionPetsSeeder::class,
-            MissingPetsSeeder::class,
             AnnouncementSeeder::class,
             AnimalBiteReportSeeder::class,
             InventorySeeder::class,

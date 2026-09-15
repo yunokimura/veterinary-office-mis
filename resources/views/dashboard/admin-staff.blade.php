@@ -62,7 +62,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500">Missing Pets</p>
-                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\MissingPet::count() }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\MissingPetsReport::count() }}</p>
             </div>
             <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                 <i class="bi bi-exclamation-triangle text-red-600"></i>

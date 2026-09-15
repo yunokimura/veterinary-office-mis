@@ -42,8 +42,8 @@ class CityVetController extends Controller
             'adoption_cats' => \App\Models\AdoptionApplication::whereYear('created_at', $year)->whereHas('pet', function ($q) {
                 $q->where('species', 'Cat');
             })->count(),
-            'missing_reunited' => \App\Models\MissingPetsReport::where('status', 'reunited')->count(),
-            'missing_pending' => \App\Models\MissingPetsReport::whereIn('status', ['missing', 'found'])->count(),
+            'missing_reunited' => \App\Models\MissingPetsReport::where('status', 'resolved - reunited')->count(),
+            'missing_pending' => \App\Models\MissingPetsReport::whereIn('status', ['pending review', 'approved'])->count(),
         ];
 
         // Get recent confirmed rabies cases only from current year
@@ -175,9 +175,60 @@ class CityVetController extends Controller
         $adoptionYearlyData = $this->getYearlyAdoptionTotals();
 
         $missingChartMode = $request->missing_chart_mode ?? 'months';
-        $missingChartTimeframe = $request->missing_chart_timeframe ?? $currentYear;
+        $missingChartTimeframe = $request->missing_chart_timeframe ?? ($missingChartMode === 'years' ? '3' : $currentYear);
+
+        $missingMonthlyPendingData = [];
+        $missingMonthlyApprovedData = [];
+        $missingMonthlyResolvedData = [];
+        $missingMonthlyClosedData = [];
+        $yearlyMissingLabels = [];
+        $yearlyMissingPendingData = [];
+        $yearlyMissingApprovedData = [];
+        $yearlyMissingResolvedData = [];
+        $yearlyMissingClosedData = [];
+
+        if ($missingChartMode === 'months') {
+            $missingMonthlyPendingData = $this->getMonthlyMissingStatusByYear((int)$missingChartTimeframe, 'pending review');
+            $missingMonthlyApprovedData = $this->getMonthlyMissingStatusByYear((int)$missingChartTimeframe, 'approved');
+            $missingMonthlyResolvedData = $this->getMonthlyMissingResolvedByYear((int)$missingChartTimeframe);
+            $missingMonthlyClosedData = $this->getMonthlyMissingClosedByYear((int)$missingChartTimeframe);
+            $chartMissingPendingCount = \App\Models\MissingPetsReport::where('status', 'pending review')->whereYear('created_at', $missingChartTimeframe)->count();
+            $chartMissingApprovedCount = \App\Models\MissingPetsReport::where('status', 'approved')->whereYear('created_at', $missingChartTimeframe)->count();
+            $chartMissingResolvedCount = \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->whereYear('created_at', $missingChartTimeframe)->count();
+            $chartMissingClosedCount = \App\Models\MissingPetsReport::whereIn('status', ['rejected', 'closed - expired', 'closed - cancelled', 'closed - duplicate'])->whereYear('created_at', $missingChartTimeframe)->count();
+        } else {
+            $yearsBack = $missingChartTimeframe === 'all' ? 50 : (int)$missingChartTimeframe;
+            $yearlyRaw = $this->getYearlyMissingStatusCases($yearsBack);
+            $yearlyMissingLabels = array_column($yearlyRaw, 'year');
+            $yearlyMissingPendingData = array_column($yearlyRaw, 'pending_review');
+            $yearlyMissingApprovedData = array_column($yearlyRaw, 'approved');
+            $yearlyMissingResolvedData = array_column($yearlyRaw, 'resolved');
+            $yearlyMissingClosedData = array_column($yearlyRaw, 'closed');
+            $chartMissingPendingCount = \App\Models\MissingPetsReport::where('status', 'pending review')->count();
+            $chartMissingApprovedCount = \App\Models\MissingPetsReport::where('status', 'approved')->count();
+            $chartMissingResolvedCount = \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->count();
+            $chartMissingClosedCount = \App\Models\MissingPetsReport::whereIn('status', ['rejected', 'closed - expired', 'closed - cancelled', 'closed - duplicate'])->count();
+        }
+
         $missingMonthlyData = $this->getMonthlyMissingByYear($missingChartTimeframe);
         $missingYearlyData = $this->getYearlyMissingTotals();
+
+        $compareChartMode = $request->compare_chart_mode ?? 'months';
+        $compareChartTimeframe = $request->compare_chart_timeframe ?? ($compareChartMode === 'years' ? '3' : $currentYear);
+        $compareBarangayId = $request->compare_barangay ?? null;
+
+        if ($compareChartMode === 'months') {
+            $compareMonthlyRaw = $this->getMonthlyCompareData((int)$compareChartTimeframe, $compareBarangayId ? (int)$compareBarangayId : null);
+            $compareLabels = $compareMonthlyRaw['labels'];
+            $compareBiteData = $compareMonthlyRaw['bite'];
+            $compareVaccData = $compareMonthlyRaw['vacc'];
+        } else {
+            $yearsBack = $compareChartTimeframe === 'all' ? 50 : (int)$compareChartTimeframe;
+            $compareYearlyRaw = $this->getYearlyCompareData($yearsBack, $compareBarangayId ? (int)$compareBarangayId : null);
+            $compareLabels = $compareYearlyRaw['labels'];
+            $compareBiteData = $compareYearlyRaw['bite'];
+            $compareVaccData = $compareYearlyRaw['vacc'];
+        }
 
         // Get cases by type for the selected year
         $casesByType = BiteRabiesReport::whereYear('incident_date', $speciesYear)
@@ -277,7 +328,26 @@ class CityVetController extends Controller
             'missingChartMode',
             'missingChartTimeframe',
             'missingMonthlyData',
+            'missingMonthlyPendingData',
+            'missingMonthlyApprovedData',
+            'missingMonthlyResolvedData',
+            'missingMonthlyClosedData',
+            'chartMissingPendingCount',
+            'chartMissingApprovedCount',
+            'chartMissingResolvedCount',
+            'chartMissingClosedCount',
             'missingYearlyData',
+            'yearlyMissingLabels',
+            'yearlyMissingPendingData',
+            'yearlyMissingApprovedData',
+            'yearlyMissingResolvedData',
+            'yearlyMissingClosedData',
+            'compareChartMode',
+            'compareChartTimeframe',
+            'compareBarangayId',
+            'compareLabels',
+            'compareBiteData',
+            'compareVaccData',
             'kpiSecondary'
         ));
     }
@@ -585,6 +655,158 @@ class CityVetController extends Controller
             ->groupBy('year')
             ->pluck('count', 'year')
             ->toArray();
+    }
+
+    private function getMonthlyMissingStatusByYear(int $year, string $status): array
+    {
+        return \App\Models\MissingPetsReport::whereYear('created_at', $year)
+            ->where('status', $status)
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+    }
+
+    private function getMonthlyMissingResolvedByYear(int $year): array
+    {
+        return \App\Models\MissingPetsReport::whereYear('created_at', $year)
+            ->whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+    }
+
+    private function getMonthlyMissingClosedByYear(int $year): array
+    {
+        return \App\Models\MissingPetsReport::whereYear('created_at', $year)
+            ->whereIn('status', ['rejected', 'closed - expired', 'closed - cancelled', 'closed - duplicate'])
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+    }
+
+    private function getYearlyMissingStatusCases(int $yearsBack = 50): array
+    {
+        $currentYear = (int) date('Y');
+        $startYear = $currentYear - $yearsBack + 1;
+
+        $pending = \App\Models\MissingPetsReport::where('status', 'pending review')
+            ->whereYear('created_at', '>=', $startYear)
+            ->selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $approved = \App\Models\MissingPetsReport::where('status', 'approved')
+            ->whereYear('created_at', '>=', $startYear)
+            ->selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $resolved = \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])
+            ->whereYear('created_at', '>=', $startYear)
+            ->selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $closed = \App\Models\MissingPetsReport::whereIn('status', ['rejected', 'closed - expired', 'closed - cancelled', 'closed - duplicate'])
+            ->whereYear('created_at', '>=', $startYear)
+            ->selectRaw('YEAR(created_at) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $result = [];
+        for ($y = $startYear; $y <= $currentYear; $y++) {
+            $result[] = [
+                'year' => $y,
+                'pending_review' => $pending[$y] ?? 0,
+                'approved' => $approved[$y] ?? 0,
+                'resolved' => $resolved[$y] ?? 0,
+                'closed' => $closed[$y] ?? 0,
+            ];
+        }
+
+        return $result;
+    }
+
+    private function getMonthlyCompareData(int $year, ?int $barangayId = null): array
+    {
+        $biteQuery = BiteRabiesReport::whereYear('incident_date', $year)
+            ->where('rabies_confirmed', true);
+        $vaccQuery = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', $year);
+
+        if ($barangayId) {
+            $biteQuery->where('barangay_id', $barangayId);
+            $vaccQuery->where('barangay_id', $barangayId);
+        }
+
+        $biteMonthly = $biteQuery->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        $vaccMonthly = $vaccQuery->selectRaw('MONTH(vaccination_date) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        $biteData = [];
+        $vaccData = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $biteData[] = $biteMonthly[$m] ?? 0;
+            $vaccData[] = $vaccMonthly[$m] ?? 0;
+        }
+
+        return [
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'bite' => $biteData,
+            'vacc' => $vaccData,
+        ];
+    }
+
+    private function getYearlyCompareData(int $yearsBack = 50, ?int $barangayId = null): array
+    {
+        $currentYear = (int) date('Y');
+        $startYear = $currentYear - $yearsBack + 1;
+
+        $biteQuery = BiteRabiesReport::where('rabies_confirmed', true)
+            ->whereYear('incident_date', '>=', $startYear);
+        $vaccQuery = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', '>=', $startYear);
+
+        if ($barangayId) {
+            $biteQuery->where('barangay_id', $barangayId);
+            $vaccQuery->where('barangay_id', $barangayId);
+        }
+
+        $biteYearly = $biteQuery->selectRaw('YEAR(incident_date) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $vaccYearly = $vaccQuery->selectRaw('YEAR(vaccination_date) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $labels = [];
+        $biteData = [];
+        $vaccData = [];
+        for ($y = $startYear; $y <= $currentYear; $y++) {
+            $labels[] = $y;
+            $biteData[] = $biteYearly[$y] ?? 0;
+            $vaccData[] = $vaccYearly[$y] ?? 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'bite' => $biteData,
+            'vacc' => $vaccData,
+        ];
     }
 
     /**
@@ -895,8 +1117,8 @@ class CityVetController extends Controller
         // Get statistics
         $stats = [
             'total' => \App\Models\MissingPetsReport::count(),
-            'active' => \App\Models\MissingPetsReport::where('status', 'missing')->count(),
-            'resolved' => \App\Models\MissingPetsReport::whereIn('status', ['found', 'reunited'])->count(),
+            'active' => \App\Models\MissingPetsReport::whereIn('status', ['pending review', 'approved'])->count(),
+            'resolved' => \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->count(),
             'this_month' => \App\Models\MissingPetsReport::whereMonth('last_seen_at', date('m'))
                 ->whereYear('last_seen_at', date('Y'))
                 ->count(),
@@ -1216,12 +1438,14 @@ class CityVetController extends Controller
         ];
 
         // Missing Pet Recovery
+        $missingPetActive = \App\Models\MissingPetsReport::whereIn('status', ['pending review', 'approved'])->count();
+        $missingPetResolved = \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->count();
         $missingPetStats = [
-            'active' => \App\Models\MissingPetsReport::where('status', 'missing')->count(),
-            'resolved' => \App\Models\MissingPetsReport::whereIn('status', ['found', 'reunited'])->count(),
+            'active' => $missingPetActive,
+            'resolved' => $missingPetResolved,
         ];
-        $totalMissing = $missingPetStats['active'] + $missingPetStats['resolved'];
-        $missingPetStats['recovery_rate'] = $totalMissing > 0 ? round(($missingPetStats['resolved'] / $totalMissing) * 100, 1) : 0;
+        $totalMissing = $missingPetActive + $missingPetResolved;
+        $missingPetStats['recovery_rate'] = $totalMissing > 0 ? round(($missingPetResolved / $totalMissing) * 100, 1) : 0;
 
         // Meat Establishment Monitoring
         $meatEstablishmentStats = [
@@ -1246,6 +1470,67 @@ class CityVetController extends Controller
     {
         $mode = $request->query('mode', 'months');
         $timeframe = $request->query('timeframe');
+
+        if ($mode === 'compare') {
+            $barangayId = $request->query('barangay_id');
+
+            if ($request->query('view') === 'years') {
+                $yearsBack = $timeframe === 'all' ? 50 : (int) $timeframe;
+                $yearlyRaw = $this->getYearlyCompareData($yearsBack, $barangayId);
+
+                return response()->json([
+                    'mode' => 'years',
+                    'labels' => $yearlyRaw['labels'],
+                    'bite' => $yearlyRaw['bite'],
+                    'vacc' => $yearlyRaw['vacc'],
+                ]);
+            }
+
+            $year = (int) ($timeframe ?? date('Y'));
+            $monthlyRaw = $this->getMonthlyCompareData($year, $barangayId);
+
+            return response()->json([
+                'mode' => 'months',
+                'labels' => $monthlyRaw['labels'],
+                'bite' => $monthlyRaw['bite'],
+                'vacc' => $monthlyRaw['vacc'],
+            ]);
+        }
+
+        if ($mode === 'missing') {
+            if ($request->query('view') === 'years') {
+                $yearsBack = $timeframe === 'all' ? 50 : (int) $timeframe;
+                $yearlyRaw = $this->getYearlyMissingStatusCases($yearsBack);
+
+                return response()->json([
+                    'mode' => 'years',
+                    'labels' => array_column($yearlyRaw, 'year'),
+                    'pending' => array_column($yearlyRaw, 'pending_review'),
+                    'approved' => array_column($yearlyRaw, 'approved'),
+                    'resolved' => array_column($yearlyRaw, 'resolved'),
+                    'closed' => array_column($yearlyRaw, 'closed'),
+                    'pendingCount' => \App\Models\MissingPetsReport::where('status', 'pending review')->count(),
+                    'approvedCount' => \App\Models\MissingPetsReport::where('status', 'approved')->count(),
+                    'resolvedCount' => \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->count(),
+                    'closedCount' => \App\Models\MissingPetsReport::whereIn('status', ['rejected', 'closed - expired', 'closed - cancelled', 'closed - duplicate'])->count(),
+                ]);
+            }
+
+            $year = (int) ($timeframe ?? date('Y'));
+
+            return response()->json([
+                'mode' => 'months',
+                'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                'pending' => array_values(array_map(fn($m) => $this->getMonthlyMissingStatusByYear($year, 'pending review')[$m] ?? 0, range(1, 12))),
+                'approved' => array_values(array_map(fn($m) => $this->getMonthlyMissingStatusByYear($year, 'approved')[$m] ?? 0, range(1, 12))),
+                'resolved' => array_values(array_map(fn($m) => $this->getMonthlyMissingResolvedByYear($year)[$m] ?? 0, range(1, 12))),
+                'closed' => array_values(array_map(fn($m) => $this->getMonthlyMissingClosedByYear($year)[$m] ?? 0, range(1, 12))),
+                'pendingCount' => \App\Models\MissingPetsReport::where('status', 'pending review')->whereYear('created_at', $year)->count(),
+                'approvedCount' => \App\Models\MissingPetsReport::where('status', 'approved')->whereYear('created_at', $year)->count(),
+                'resolvedCount' => \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->whereYear('created_at', $year)->count(),
+                'closedCount' => \App\Models\MissingPetsReport::whereIn('status', ['rejected', 'closed - expired', 'closed - cancelled', 'closed - duplicate'])->whereYear('created_at', $year)->count(),
+            ]);
+        }
 
         if ($mode === 'adoptions') {
             if ($request->query('view') === 'years') {

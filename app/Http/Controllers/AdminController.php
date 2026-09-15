@@ -15,7 +15,6 @@ use App\Models\User;
 use App\Models\Announcement;
 use App\Models\StrayReport;
 use App\Models\SystemLog;
-use App\Models\MissingPet;
 use App\Models\MissingPetsReport;
 use App\Models\AdoptionApplication;
 
@@ -102,14 +101,15 @@ class AdminController extends Controller
         $totalMeatEstablishments = MeatEstablishment::count();
         $meatEstablishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
 
-        // Missing Pet Reports (from both tables) - paginated 10 per page
-        $missingPetReports = MissingPet::latest()->paginate(10);
-        $missingPetsReportRecords = MissingPetsReport::with(['pet', 'user'])->latest()->paginate(10);
+        // Missing Pet Reports (from reports table) - paginated 10 per page
+        $missingPetReports = MissingPetsReport::with(['pet', 'user'])->latest()->paginate(10);
         $missingPetStats = [
-            'total' => MissingPet::count() + MissingPetsReport::count(),
-            'pending' => MissingPet::where('status', 'pending')->count() + MissingPetsReport::where('status', 'pending')->count(),
-            'approved' => MissingPet::where('status', 'approved')->count(),
-            'resolved' => MissingPetsReport::where('status', 'resolved')->count(),
+            'total' => MissingPetsReport::count(),
+            'pending' => MissingPetsReport::where('status', 'pending review')->count(),
+            'approved' => MissingPetsReport::where('status', 'approved')->count(),
+            'rejected' => MissingPetsReport::where('status', 'rejected')->count(),
+            'resolved' => MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->count(),
+            'closed' => MissingPetsReport::whereIn('status', ['closed - expired', 'closed - cancelled', 'closed - duplicate'])->count(),
         ];
 
         // Adoption Reports - paginated 10 per page

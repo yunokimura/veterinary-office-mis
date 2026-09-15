@@ -199,7 +199,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="#" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('missing-pets.report.store') }}" enctype="multipart/form-data">
                 @csrf
 
                 <!-- PART 1: OWNER'S INFO -->

@@ -26,14 +26,14 @@ class DashboardController extends Controller
         $recentPetRegistrations = Pet::with('owner')->latest()->take(5)->get();
 
         // Missing Pets Module - Operational Metrics
-        $activeMissingPets = MissingPetsReport::where('status', 'missing')->count();
-        $activeMissingPetsLastWeek = MissingPetsReport::where('status', 'missing')
+        $activeMissingPets = MissingPetsReport::where('status', 'approved')->count();
+        $activeMissingPetsLastWeek = MissingPetsReport::where('status', 'approved')
             ->whereDate('created_at', '<=', now()->subWeek())
             ->count();
         $activeMissingPetsTrend = $this->calculateTrend($activeMissingPets, $activeMissingPetsLastWeek);
         
         $totalMissingPets = MissingPetsReport::count();
-        $foundMissingPets = MissingPetsReport::whereIn('status', ['found', 'reunited'])->count();
+        $foundMissingPets = MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->count();
         $recentMissingPets = MissingPetsReport::with('pet')->latest()->take(5)->get();
 
         // Adoption Module - Operational Metrics
@@ -57,7 +57,7 @@ class DashboardController extends Controller
 
         // Urgent Tasks Summary
         $pendingAdoptionReviews = AdoptionApplication::where('status', 'pending_review')->count();
-        $missingPetReportsWaitingVerification = MissingPetsReport::where('status', 'missing')->count();
+        $missingPetReportsWaitingVerification = MissingPetsReport::where('status', 'pending review')->count();
         $newPetRegistrationsCount = Pet::whereDate('created_at', today())->count();
         $ownersMissingContactInfo = PetOwner::where(function($query) {
             $query->whereNull('phone_number')
@@ -69,7 +69,7 @@ class DashboardController extends Controller
         // Additional Operational Metrics
         $pendingAppointments = FormSubmission::where('status', 'pending')->count();
         $todayAppointments = FormSubmission::whereDate('submitted_at', today())->count();
-        $missingPetReportsPending = MissingPetsReport::where('status', 'pending')->count();
+        $missingPetReportsPending = MissingPetsReport::where('status', 'pending review')->count();
         $adoptionPetsAvailable = Pet::where('source_module', 'adoption_pets')
             ->where('pet_status', '!=', 'adopted')
             ->count();
@@ -82,7 +82,7 @@ class DashboardController extends Controller
             ->get();
 
         $recentMissingPetsPending = MissingPetsReport::with('pet')
-            ->where('status', 'pending')
+            ->where('status', 'pending review')
             ->latest()
             ->take(3)
             ->get();

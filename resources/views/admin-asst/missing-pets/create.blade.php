@@ -98,35 +98,67 @@
                     @enderror
                 </div>
 
-                <!-- Last Seen Location -->
+                <!-- Location Barangay -->
                 <div>
-                    <label for="last_seen_location" class="block text-sm font-medium text-gray-700 mb-1">Last Seen Location <span class="text-red-500">*</span></label>
-                    <input type="text" name="last_seen_location" id="last_seen_location" value="{{ old('last_seen_location') }}" required
+                    <label for="location_barangay" class="block text-sm font-medium text-gray-700 mb-1">Location (Barangay) <span class="text-red-500">*</span></label>
+                    <input type="text" name="location_barangay" id="location_barangay" value="{{ old('location_barangay') }}" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Barangay, street, landmark">
-                    @error('last_seen_location')
+                        placeholder="Barangay">
+                    @error('location_barangay')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Contact Info -->
+                <!-- Location Description -->
                 <div>
-                    <label for="contact_info" class="block text-sm font-medium text-gray-700 mb-1">Contact Info <span class="text-red-500">*</span></label>
-                    <input type="text" name="contact_info" id="contact_info" value="{{ old('contact_info') }}" required
+                    <label for="location_description" class="block text-sm font-medium text-gray-700 mb-1">Specific Location Description</label>
+                    <textarea name="location_description" id="location_description" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
+                        placeholder="Describe the specific location where the pet was last seen">{{ old('location_description') }}</textarea>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div>
+                    <label for="emergency_contact" class="block text-sm font-medium text-gray-700 mb-1">Emergency Contact</label>
+                    <input type="text" name="emergency_contact" id="emergency_contact" value="{{ old('emergency_contact') }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Phone number or contact details">
-                    @error('contact_info')
+                </div>
+
+                <!-- Eye Color -->
+                <div>
+                    <label for="eye_color" class="block text-sm font-medium text-gray-700 mb-1">Eye Color <span class="text-red-500">*</span></label>
+                    <input type="text" name="eye_color" id="eye_color" value="{{ old('eye_color') }}" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="e.g., Brown, Black, Hazel, Blue">
+                    @error('eye_color')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
+                </div>
+
+                <!-- Body Marks -->
+                <div>
+                    <label for="body_marks" class="block text-sm font-medium text-gray-700 mb-1">Body Marks</label>
+                    <textarea name="body_marks" id="body_marks" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
+                        placeholder="Describe any distinctive physical marks">{{ old('body_marks') }}</textarea>
+                </div>
+
+                <!-- Collar/Harness -->
+                <div>
+                    <label for="collar_harness" class="block text-sm font-medium text-gray-700 mb-1">Collar/Harness</label>
+                    <input type="text" name="collar_harness" id="collar_harness" value="{{ old('collar_harness') }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="e.g., Red collar with bells, Blue harness, None">
                 </div>
 
                 <!-- Photo -->
-                <div>
+                <div class="md:col-span-2">
                     <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Photo</label>
                     <input type="file" name="image" id="image" accept="image/*"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     <p class="text-gray-500 text-xs mt-1">Max 2MB. JPG, PNG, GIF</p>
-                    @error('photo')
+                    @error('image')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>

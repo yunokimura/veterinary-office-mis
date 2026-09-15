@@ -561,10 +561,10 @@
             
             <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
                 @forelse($missingPets as $pet)
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->missing_id }})">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->pet_id }})">
                     <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                         <img src="{{ $pet->photo_img ? asset('storage/'.$pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->status) }}</span>
+                         <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
+                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->pet_status) }}</span>
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
@@ -579,11 +579,28 @@
                             </div>
                             <div class="border-t pt-2 mt-2">
                                 <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                                <p class="text-gray-700 font-medium text-xs">{{ $pet->last_seen_at->format('M d, Y - h:i A') }}</p>
+                                <p class="text-gray-700 font-medium text-xs">
+                                    @if($pet->missingReport->first() && $pet->missingReport->first()->last_seen_at)
+                                        {{ $pet->missingReport->first()->last_seen_at->format('M d, Y - h:i A') }}
+                                    @elseif($pet->missing_since)
+                                        {{ $pet->missing_since->format('M d, Y - h:i A') }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </p>
                             </div>
                             <div>
                                 <p class="text-gray-500 text-xs mb-1">Location:</p>
-                                <p class="text-gray-700 font-medium text-xs">{{ $pet->location }}</p>
+                                <p class="text-gray-700 font-medium text-xs">
+                                    @if($pet->missingReport->first())
+                                        {{ $pet->missingReport->first()->location_barangay }}
+                                        @if($pet->missingReport->first()->location_description)
+                                            - {{ $pet->missingReport->first()->location_description }}
+                                        @endif
+                                    @else
+                                        N/A
+                                    @endif
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -954,14 +971,32 @@ document.addEventListener('click', function(event) {
     
     <script>
         // Missing Pet Data
-        const missingPetsData = @json($missingPets->toArray());
+        const missingPetsData = {!! json_encode($missingPets->map(function($pet) {
+            $report = $pet->missingReport->first();
+            return [
+                'pet_id' => $pet->pet_id,
+                'pet_name' => $pet->pet_name,
+                'species' => $pet->species,
+                'breed' => $pet->breed,
+                'gender' => $pet->gender,
+                'age' => $pet->age,
+                'weight' => $pet->weight,
+                'color' => $pet->color,
+                'description' => $pet->notes,
+                'location_barangay' => $report ? $report->location_barangay : null,
+                'location_description' => $report ? $report->location_description : null,
+                'last_seen_at' => $report ? $report->last_seen_at : $pet->missing_since,
+                'pet_image' => $pet->pet_image,
+                'pet_status' => $pet->pet_status,
+            ];
+        })->toArray()) !!};
         
         function showPetModal(petId) {
-            const pet = missingPetsData.find(p => p.missing_id === petId);
+            const pet = missingPetsData.find(p => p.pet_id === petId);
             if (!pet) return;
             
-            const imageUrl = pet.photo_img 
-                ? "{{ asset('storage') }}/" + pet.photo_img
+            const imageUrl = pet.pet_image
+                ? "{{ asset('storage') }}/" + pet.pet_image
                 : "https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image";
             
             document.getElementById('modalPetImage').src = imageUrl;
@@ -972,8 +1007,8 @@ document.addEventListener('click', function(event) {
             document.getElementById('modalPetWeight').textContent = pet.weight;
             document.getElementById('modalPetColor').textContent = pet.color || 'Unknown';
             document.getElementById('modalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
-            document.getElementById('modalLastSeen').textContent = new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
-            document.getElementById('modalLocation').textContent = pet.location;
+            document.getElementById('modalLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : 'N/A';
+            document.getElementById('modalLocation').textContent = pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A';
             document.getElementById('modalDescription').textContent = pet.description || 'No description available.';
             
             // Show modal

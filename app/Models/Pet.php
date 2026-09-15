@@ -142,6 +142,8 @@ class Pet extends Model
         'pet_status',
         'estimated_age',
         'pet_weight',
+        'is_missing',
+        'missing_since',
     ];
 
     protected $casts = [
