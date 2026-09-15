@@ -43,17 +43,20 @@ class AdoptionPetController extends Controller
             'breed' => $validated['breed'] ?? null,
             'gender' => $validated['gender'],
             'birthdate' => $validated['date_of_birth'] ?? null,
-            'pet_weight' => $validated['weight'] ?? null,
             'notes' => $validated['description'] ?? null,
             'pet_image' => $imagePath,
             'source_module' => 'adoption_pets',
             'source_module_id' => null,
             'is_approved' => false,
             'pet_status' => 'pending',
-            'estimated_age' => $estimatedAge,
-            'is_neutered' => false,
             'created_at' => $now,
             'updated_at' => $now,
+        ]);
+
+        $pet->petInfo()->create([
+            'pet_weight' => $validated['weight'] ?? null,
+            'estimated_age' => $estimatedAge,
+            'is_neutered' => false,
         ]);
 
         // Link source_module_id to self

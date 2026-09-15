@@ -213,7 +213,7 @@
                 <!-- Neutered Checkbox -->
                 <div class="mb-6">
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="isNeutered" name="is_neutered" class="form-checkbox h-5 w-5 text-primary rounded" {{ $pet->is_neutered == 'yes' ? 'checked' : '' }}>
+                        <input type="checkbox" id="isNeutered" name="is_neutered" class="form-checkbox h-5 w-5 text-primary rounded" {{ ($pet->petInfo?->is_neutered ?? '') == 'yes' ? 'checked' : '' }}>
                         <span class="ml-3 text-gray-700 font-medium">My pet is neutered</span>
                     </label>
                 </div>
@@ -223,7 +223,7 @@
                 <!-- Crossbreed Checkbox -->
                 <div class="mb-6">
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="isCrossbreed" name="is_crossbreed" class="form-checkbox h-5 w-5 text-primary rounded" onchange="toggleCrossbreed()" {{ $pet->is_crossbreed == 'yes' ? 'checked' : '' }}>
+                        <input type="checkbox" id="isCrossbreed" name="is_crossbreed" class="form-checkbox h-5 w-5 text-primary rounded" onchange="toggleCrossbreed()" {{ ($pet->petInfo?->is_crossbreed ?? '') == 'yes' ? 'checked' : '' }}>
                         <span class="ml-3 text-gray-700 font-medium">My pet is a crossbreed</span>
                     </label>
                 </div>
@@ -281,10 +281,10 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Pet Age <span class="text-red-500">*</span></label>
                     <select id="estimatedAge" name="estimated_age" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
                         <option value="">Select estimated age</option>
-                        <option value="less_than_3_months" {{ $pet->estimated_age == 'less_than_3_months' ? 'selected' : '' }}>Less than 3 months old</option>
-                        <option value="3_to_12_months" {{ $pet->estimated_age == '3_to_12_months' ? 'selected' : '' }}>3 to 12 months old</option>
+                        <option value="less_than_3_months" {{ ($pet->petInfo?->estimated_age ?? '') == 'less_than_3_months' ? 'selected' : '' }}>Less than 3 months old</option>
+                        <option value="3_to_12_months" {{ ($pet->petInfo?->estimated_age ?? '') == '3_to_12_months' ? 'selected' : '' }}>3 to 12 months old</option>
                         @for($i = 1; $i <= 20; $i++)
-                        <option value="{{ $i }}_years" {{ $pet->estimated_age == $i . '_years' ? 'selected' : '' }}>{{ $i }} year{{ $i > 1 ? 's' : '' }} old</option>
+                        <option value="{{ $i }}_years" {{ ($pet->petInfo?->estimated_age ?? '') == $i . '_years' ? 'selected' : '' }}>{{ $i }} year{{ $i > 1 ? 's' : '' }} old</option>
                         @endfor
                     </select>
                 </div>
@@ -293,7 +293,7 @@
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Pet's Weight <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input type="text" id="petWeight" name="pet_weight" value="{{ $pet->pet_weight }}" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" oninput="updateWeightSuffix()">
+                        <input type="text" id="petWeight" name="pet_weight" value="{{ $pet->petInfo?->pet_weight ?? '' }}" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" oninput="updateWeightSuffix()">
                         <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none"></span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">If you do not know, type "N/A"</p>
@@ -763,13 +763,13 @@
         // Populate pet attributes based on type
         function populatePetAttributes(petTypeOverride) {
             // Get existing values from the pet
-            var existingTraining = {!! json_encode($pet->training ?? []) !!};
-            var existingInsurance = {!! json_encode($pet->insurance ?? []) !!};
-            var existingBehavior = {!! json_encode($pet->behavior ?? []) !!};
-            var existingLikes = {!! json_encode($pet->likes ?? []) !!};
-            var existingDislikes = {!! json_encode($pet->dislikes ?? []) !!};
-            var existingDiet = {!! json_encode($pet->diet ?? []) !!};
-            var existingAllergy = {!! json_encode($pet->allergy ?? []) !!};
+            var existingTraining = {!! json_encode($pet->petInfo?->training ?? []) !!};
+            var existingInsurance = {!! json_encode($pet->petInfo?->insurance ?? []) !!};
+            var existingBehavior = {!! json_encode($pet->petInfo?->behavior ?? []) !!};
+            var existingLikes = {!! json_encode($pet->petInfo?->likes ?? []) !!};
+            var existingDislikes = {!! json_encode($pet->petInfo?->dislikes ?? []) !!};
+            var existingDiet = {!! json_encode($pet->petInfo?->diet ?? []) !!};
+            var existingAllergy = {!! json_encode($pet->petInfo?->allergy ?? []) !!};
             
             // Reset selections
             selectedLikes = [];

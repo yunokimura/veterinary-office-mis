@@ -288,7 +288,7 @@
                                 <p><strong>Gender:</strong> {{ ucfirst($pet->gender) }}</p>
                                 @php
                                     $ageDisplay = 'Unknown';
-                                    if ($pet->estimated_age) {
+                                    if ($pet->petInfo?->estimated_age) {
                                         $ageMap = [
                                             'less_than_3_months' => 'Less than 3 months',
                                             '3_to_12_months' => '3 to 12 months',
@@ -313,7 +313,7 @@
                                             '19_years' => '19 years old',
                                             '20_years' => '20 years old',
                                         ];
-                                        $ageDisplay = $ageMap[$pet->estimated_age] ?? $pet->estimated_age;
+                                        $ageDisplay = $ageMap[$pet->petInfo?->estimated_age] ?? $pet->petInfo?->estimated_age;
                                     } elseif ($pet->birthdate) {
                                         $birthYear = date('Y', strtotime($pet->birthdate));
                                         $age = date('Y') - $birthYear;
@@ -321,9 +321,9 @@
                                     }
                                 @endphp
                                 <p><strong>Age:</strong> {{ $ageDisplay }}</p>
-                                <p><strong>Neutered:</strong> {{ $pet->is_neutered === 'yes' ? 'Yes' : 'No' }}</p>
-                                @if($pet->pet_weight)
-                                    <p><strong>Weight:</strong> {{ $pet->pet_weight }} kg</p>
+                                <p><strong>Neutered:</strong> {{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Yes' : 'No' }}</p>
+                                @if($pet->petInfo?->pet_weight)
+                                    <p><strong>Weight:</strong> {{ $pet->petInfo?->pet_weight }} kg</p>
                                 @endif
                             </div>
                         </div>

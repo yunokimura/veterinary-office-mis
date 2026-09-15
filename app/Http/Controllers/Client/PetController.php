@@ -136,17 +136,32 @@ class PetController extends Controller
             \Log::warning('Body mark image upload failed: ' . $e->getMessage());
         }
 
-        // Update pet - map fields to match Pet model schema
         $pet->update([
             'pet_name' => $validated['pet_name'],
             'species' => $validated['pet_type'],
             'breed' => $validated['pet_breed'],
-            'sex' => $validated['gender'],
-            'age' => $validated['estimated_age'] ?? null,
-            'weight' => $validated['pet_weight'] ?? null,
-            'body_mark_details' => $validated['body_mark_details'] ?? null,
             'birthdate' => $validated['pet_birthdate'] ?? null,
         ]);
+
+        $petInfoData = [
+            'estimated_age' => $validated['estimated_age'] ?? null,
+            'pet_weight' => $validated['pet_weight'] ?? null,
+            'is_neutered' => $request->has('is_neutered') ? 'yes' : 'no',
+            'is_crossbreed' => $request->has('is_crossbreed') ? 'yes' : 'no',
+            'training' => json_encode($request->input('training', [])),
+            'insurance' => json_encode($request->input('insurance', [])),
+            'behavior' => json_encode($request->input('behavior', [])),
+            'likes' => json_encode($request->input('likes', [])),
+            'dislikes' => json_encode($request->input('dislikes', [])),
+            'diet' => json_encode($request->input('diet', [])),
+            'allergy' => json_encode($request->input('allergy', [])),
+        ];
+
+        if ($pet->petInfo) {
+            $pet->petInfo->update($petInfoData);
+        } else {
+            $pet->petInfo()->create($petInfoData);
+        }
 
         return redirect()->route('owner.pets')->with('success', 'Pet updated successfully!');
     }

@@ -752,11 +752,11 @@ Route::get('/kapon/form', function () {
             'name' => $pet->pet_name,
             'species' => $pet->species,
             'breed' => $pet->breed,
-            'age' => $pet->estimated_age,
-            'weight' => $pet->pet_weight,
+            'age' => $pet->age,
+            'weight' => $pet->weight,
             'sex' => $pet->sex ?? $pet->gender, // Use sex or gender (either may be populated)
             'image' => $pet->pet_image,
-            'is_neutered' => $pet->is_neutered,
+            'is_neutered' => $pet->petInfo?->is_neutered,
         ];
     })->toArray();
 
@@ -1232,8 +1232,8 @@ Route::get('/missing-pets/form', function () {
             'species' => $pet->species,
             'breed' => $pet->breed,
             'gender' => $pet->gender,
-            'is_neutered' => $pet->is_neutered,
-            'age' => $pet->estimated_age,
+            'is_neutered' => $pet->petInfo?->is_neutered,
+            'age' => $pet->age,
             'weight' => $pet->weight,
             'image' => $pet->pet_image,
         ];
@@ -1278,8 +1278,8 @@ Route::get('/vaccination/form', function () {
             'name' => $pet->pet_name,
             'species' => $pet->species,
             'breed' => $pet->breed,
-            'age' => $pet->estimated_age ?? $pet->age,
-            'weight' => $pet->pet_weight ?? $pet->weight,
+            'age' => $pet->age,
+            'weight' => $pet->weight,
             'image' => $pet->pet_image,
         ];
     })->toArray();

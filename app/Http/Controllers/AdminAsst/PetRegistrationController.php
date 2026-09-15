@@ -99,7 +99,14 @@ class PetRegistrationController extends Controller
 
         $validated['pet_image'] = $photoPath;
 
-        Pet::create($validated);
+        $pet = Pet::create($validated);
+
+        if ($request->filled('age') || $request->filled('weight')) {
+            $pet->petInfo()->create([
+                'estimated_age' => $request->input('age'),
+                'pet_weight' => $request->input('weight'),
+            ]);
+        }
 
         return redirect()->route('admin-asst.pet-registrations.index')
             ->with('success', 'Pet registered successfully!');
@@ -158,6 +165,22 @@ class PetRegistrationController extends Controller
         }
 
         $pet->update($validated);
+
+        $petInfoData = [];
+        if ($request->filled('age')) {
+            $petInfoData['estimated_age'] = $request->input('age');
+        }
+        if ($request->filled('weight')) {
+            $petInfoData['pet_weight'] = $request->input('weight');
+        }
+
+        if (! empty($petInfoData)) {
+            if ($pet->petInfo) {
+                $pet->petInfo->update($petInfoData);
+            } else {
+                $pet->petInfo()->create($petInfoData);
+            }
+        }
 
         return redirect()->route('admin-asst.pet-registrations.show', $pet)
             ->with('success', 'Pet registration updated successfully!');

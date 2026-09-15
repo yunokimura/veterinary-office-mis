@@ -144,7 +144,7 @@
     <section class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @php
-                $pets = \App\Models\Pet::where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
+                $pets = \App\Models\Pet::with('petInfo')->where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
             @endphp
             
             @if($pets->count() > 0)
@@ -421,7 +421,7 @@
             
             // Calculate age
             let ageDisplay = 'Unknown';
-            if (pet.estimated_age) {
+            if (pet.petInfo?.estimated_age) {
                 const ageMap = {
                     'less_than_3_months': 'Less than 3 months',
                     '3_to_12_months': '3 to 12 months',
@@ -436,7 +436,7 @@
                     '9_years': '9 years old',
                     '10_years': '10 years old',
                 };
-                ageDisplay = ageMap[pet.estimated_age] || pet.estimated_age;
+                ageDisplay = ageMap[pet.petInfo?.estimated_age] || pet.petInfo?.estimated_age;
             } else if (pet.birthdate) {
                 const birthYear = new Date(pet.birthdate).getFullYear();
                 const age = new Date().getFullYear() - birthYear;
@@ -444,9 +444,9 @@
             }
             document.getElementById('modalPetAge').textContent = ageDisplay;
             
-            document.getElementById('modalPetWeight').textContent = pet.pet_weight ? pet.pet_weight + ' kg' : 'N/A';
-            document.getElementById('modalPetNeutered').textContent = pet.is_neutered === 'yes' ? 'Yes' : 'No';
-            document.getElementById('modalPetCrossbreed').textContent = pet.is_crossbreed === 'yes' ? 'Yes' : 'No';
+            document.getElementById('modalPetWeight').textContent = pet.petInfo?.pet_weight ? pet.petInfo?.pet_weight + ' kg' : 'N/A';
+            document.getElementById('modalPetNeutered').textContent = pet.petInfo?.is_neutered === 'yes' ? 'Yes' : 'No';
+            document.getElementById('modalPetCrossbreed').textContent = pet.petInfo?.is_crossbreed === 'yes' ? 'Yes' : 'No';
             
             // Body mark
             const bodyMarkSection = document.getElementById('bodyMarkSection');
@@ -460,8 +460,8 @@
             // Additional Information - Training
             const trainingSection = document.getElementById('trainingSection');
             const trainingContainer = document.getElementById('modalPetTraining');
-            if (pet.training) {
-                const training = typeof pet.training === 'string' ? JSON.parse(pet.training) : pet.training;
+            if (pet.petInfo?.training) {
+                const training = typeof pet.petInfo?.training === 'string' ? JSON.parse(pet.petInfo?.training) : pet.petInfo?.training;
                 if (training && training.length > 0) {
                     trainingContainer.innerHTML = training.map(t => `<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">${t}</span>`).join('');
                     trainingSection.classList.remove('hidden');
@@ -475,8 +475,8 @@
             // Insurance
             const insuranceSection = document.getElementById('insuranceSection');
             const insuranceContainer = document.getElementById('modalPetInsurance');
-            if (pet.insurance) {
-                const insurance = typeof pet.insurance === 'string' ? JSON.parse(pet.insurance) : pet.insurance;
+            if (pet.petInfo?.insurance) {
+                const insurance = typeof pet.petInfo?.insurance === 'string' ? JSON.parse(pet.petInfo?.insurance) : pet.petInfo?.insurance;
                 if (insurance && insurance.length > 0) {
                     insuranceContainer.innerHTML = insurance.map(i => `<span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">${i}</span>`).join('');
                     insuranceSection.classList.remove('hidden');
@@ -490,8 +490,8 @@
             // Behavior
             const behaviorSection = document.getElementById('behaviorSection');
             const behaviorContainer = document.getElementById('modalPetBehavior');
-            if (pet.behavior) {
-                const behavior = typeof pet.behavior === 'string' ? JSON.parse(pet.behavior) : pet.behavior;
+            if (pet.petInfo?.behavior) {
+                const behavior = typeof pet.petInfo?.behavior === 'string' ? JSON.parse(pet.petInfo?.behavior) : pet.petInfo?.behavior;
                 if (behavior && behavior.length > 0) {
                     behaviorContainer.innerHTML = behavior.map(b => `<span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">${b}</span>`).join('');
                     behaviorSection.classList.remove('hidden');
@@ -505,8 +505,8 @@
             // Likes
             const likesSection = document.getElementById('likesSection');
             const likesContainer = document.getElementById('modalPetLikes');
-            if (pet.likes) {
-                const likes = typeof pet.likes === 'string' ? JSON.parse(pet.likes) : pet.likes;
+            if (pet.petInfo?.likes) {
+                const likes = typeof pet.petInfo?.likes === 'string' ? JSON.parse(pet.petInfo?.likes) : pet.petInfo?.likes;
                 if (likes && likes.length > 0) {
                     likesContainer.innerHTML = likes.map(l => `<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">${l}</span>`).join('');
                     likesSection.classList.remove('hidden');
@@ -520,8 +520,8 @@
             // Dislikes
             const dislikesSection = document.getElementById('dislikesSection');
             const dislikesContainer = document.getElementById('modalPetDislikes');
-            if (pet.dislikes) {
-                const dislikes = typeof pet.dislikes === 'string' ? JSON.parse(pet.dislikes) : pet.dislikes;
+            if (pet.petInfo?.dislikes) {
+                const dislikes = typeof pet.petInfo?.dislikes === 'string' ? JSON.parse(pet.petInfo?.dislikes) : pet.petInfo?.dislikes;
                 if (dislikes && dislikes.length > 0) {
                     dislikesContainer.innerHTML = dislikes.map(d => `<span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">${d}</span>`).join('');
                     dislikesSection.classList.remove('hidden');
@@ -535,8 +535,8 @@
             // Diet
             const dietSection = document.getElementById('dietSection');
             const dietContainer = document.getElementById('modalPetDiet');
-            if (pet.diet) {
-                const diet = typeof pet.diet === 'string' ? JSON.parse(pet.diet) : pet.diet;
+            if (pet.petInfo?.diet) {
+                const diet = typeof pet.petInfo?.diet === 'string' ? JSON.parse(pet.petInfo?.diet) : pet.petInfo?.diet;
                 if (diet && diet.length > 0) {
                     dietContainer.innerHTML = diet.map(d => `<span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">${d}</span>`).join('');
                     dietSection.classList.remove('hidden');
@@ -550,8 +550,8 @@
             // Allergy
             const allergySection = document.getElementById('allergySection');
             const allergyContainer = document.getElementById('modalPetAllergy');
-            if (pet.allergy) {
-                const allergy = typeof pet.allergy === 'string' ? JSON.parse(pet.allergy) : pet.allergy;
+            if (pet.petInfo?.allergy) {
+                const allergy = typeof pet.petInfo?.allergy === 'string' ? JSON.parse(pet.petInfo?.allergy) : pet.petInfo?.allergy;
                 if (allergy && allergy.length > 0) {
                     allergyContainer.innerHTML = allergy.map(a => `<span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm">${a}</span>`).join('');
                     allergySection.classList.remove('hidden');

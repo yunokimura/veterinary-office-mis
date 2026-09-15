@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -21,19 +22,8 @@ use Illuminate\Support\Carbon;
  * @property string $vaccination_status
  * @property string|null $vaccination_date
  * @property string|null $next_vaccination_date
- * @property string|null $is_neutered
- * @property string|null $is_crossbreed
- * @property string|null $estimated_age
- * @property string|null $pet_weight
  * @property string|null $body_mark_image
  * @property string|null $body_mark_details
- * @property string|null $training
- * @property string|null $insurance
- * @property string|null $behavior
- * @property string|null $likes
- * @property string|null $dislikes
- * @property string|null $diet
- * @property string|null $allergy
  * @property string|null $source_module
  * @property int|null $source_module_id
  * @property bool $is_approved
@@ -48,6 +38,7 @@ use Illuminate\Support\Carbon;
  * @property-read mixed $image
  * @property-read mixed $is_age_estimated
  * @property-read mixed $weight
+ * @property-read PetInfo|null $petInfo
  * @property-read Collection<int, MedicalRecord> $medicalRecords
  * @property-read int|null $medical_records_count
  * @property-read Collection<int, MissingPetsReport> $missingReport
@@ -58,43 +49,31 @@ use Illuminate\Support\Carbon;
  * @property-read User|null $userOwner
  * @property-read Collection<int, Vaccination> $vaccinations
  * @property-read int|null $vaccinations_count
- *
+ * *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet availableForAdoption()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereAllergy($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereBehavior($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereBirthdate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereBodyMarkDetails($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereBodyMarkImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereBreed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereConsolidatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereDiet($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereDislikes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereEstimatedAge($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereGender($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereInsurance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereIsApproved($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereIsCrossbreed($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereIsNeutered($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereLikes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereNextVaccinationDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet wherePetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet wherePetImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet wherePetName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet wherePetStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet wherePetWeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereSourceModule($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereSourceModuleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereSpecies($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereTraining($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereVaccinationDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereVaccinationStatus($value)
- *
+ * *
  * @mixin \Eloquent
  */
 class Pet extends Model
@@ -113,7 +92,6 @@ class Pet extends Model
         'breed',
         'gender',
         'color',
-        'weight',
         'vaccination_status',
         'vaccination_date',
         'next_vaccination_date',
@@ -126,22 +104,11 @@ class Pet extends Model
         'body_mark_details',
         'body_mark_image',
         'additional_photos',
-        'is_neutered',
-        'is_crossbreed',
-        'training',
-        'insurance',
-        'behavior',
-        'likes',
-        'dislikes',
-        'diet',
-        'allergy',
         'source_module',
         'source_module_id',
         'is_approved',
         'consolidated_at',
         'pet_status',
-        'estimated_age',
-        'pet_weight',
     ];
 
     protected $casts = [
@@ -152,6 +119,11 @@ class Pet extends Model
         'updated_at' => 'datetime',
         'additional_photos' => 'array',
     ];
+
+    public function petInfo(): HasOne
+    {
+        return $this->hasOne(PetInfo::class, 'pet_id', 'pet_id');
+    }
 
     public function owner(): BelongsTo
     {
@@ -215,8 +187,10 @@ class Pet extends Model
         if ($this->birthdate) {
             return (int) $this->birthdate->diffInYears(now());
         }
-        if ($this->estimated_age) {
-            $num = preg_replace('/\D/', '', $this->estimated_age);
+
+        $info = $this->petInfo?->estimated_age;
+        if ($info) {
+            $num = preg_replace('/\D/', '', $info);
 
             return is_numeric($num) ? (int) $num : null;
         }
@@ -231,7 +205,7 @@ class Pet extends Model
 
     public function getWeightAttribute()
     {
-        return $this->pet_weight;
+        return $this->petInfo?->pet_weight;
     }
 
     public function getDateOfBirthAttribute($value)
@@ -241,6 +215,6 @@ class Pet extends Model
 
     public function getIsAgeEstimatedAttribute()
     {
-        return ! empty($this->estimated_age);
+        return ! empty($this->petInfo?->estimated_age);
     }
 }

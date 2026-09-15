@@ -72,16 +72,19 @@ class AdoptionPetController extends Controller
             'breed' => $validated['breed'] ?? null,
             'gender' => $validated['gender'],
             'birthdate' => $validated['date_of_birth'] ?? null,
-            'pet_weight' => $validated['weight'] ?? null,
             'notes' => $validated['description'] ?? null,
             'pet_image' => $imagePath,
             'source_module' => 'adoption_pets',
             'source_module_id' => null, // will be set after pet is created via pet_id
             'is_approved' => false,
             'pet_status' => 'pending', // pending approval
-            'is_neutered' => false,
             'created_at' => $now,
             'updated_at' => $now,
+        ]);
+
+        $pet->petInfo()->create([
+            'pet_weight' => $validated['weight'] ?? null,
+            'is_neutered' => false,
         ]);
 
         // Link source_module_id to self (pet_id)
@@ -143,7 +146,6 @@ class AdoptionPetController extends Controller
             'breed' => $validated['breed'] ?? null,
             'gender' => $validated['gender'],
             'birthdate' => $validated['date_of_birth'] ?? null,
-            'pet_weight' => $validated['weight'] ?? null,
             'notes' => $validated['description'] ?? null,
         ];
 
@@ -156,6 +158,16 @@ class AdoptionPetController extends Controller
 
         $updateData['updated_at'] = now();
         $pet->update($updateData);
+
+        $petInfoData = [
+            'pet_weight' => $validated['weight'] ?? null,
+        ];
+
+        if ($pet->petInfo) {
+            $pet->petInfo->update($petInfoData);
+        } else {
+            $pet->petInfo()->create($petInfoData);
+        }
 
         if (isset($validated['traits'])) {
             $pet->traits()->sync($validated['traits']);

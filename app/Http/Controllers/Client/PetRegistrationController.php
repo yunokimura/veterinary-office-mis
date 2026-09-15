@@ -155,14 +155,16 @@ class PetRegistrationController extends Controller
                 'breed' => $validated['pet_breed'],
                 'gender' => $validated['gender'],
                 'birthdate' => $birthdate,
-                'estimated_age' => $validated['estimated_age'] ?? null,
-                'pet_weight' => $validated['pet_weight'] ?? null,
                 'body_mark_details' => $validated['body_mark_details'] ?? null,
                 'pet_image' => $petImagePath,
                 'body_mark_image' => $bodyMarkImagePath,
+            ]);
+
+            $pet->petInfo()->create([
                 'is_neutered' => $request->has('is_neutered') ? 'yes' : 'no',
                 'is_crossbreed' => $request->has('is_crossbreed') ? 'yes' : 'no',
-                // JSON fields - encode arrays
+                'estimated_age' => $validated['estimated_age'] ?? null,
+                'pet_weight' => $validated['pet_weight'] ?? null,
                 'training' => json_encode($request->input('training', [])),
                 'insurance' => json_encode($request->input('insurance', [])),
                 'behavior' => json_encode($request->input('behavior', [])),

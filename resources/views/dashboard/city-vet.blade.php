@@ -243,37 +243,41 @@
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases vs Vaccinations per Barangay</h3>
-            <div class="flex items-center gap-2">
-                <div class="flex bg-gray-100 rounded-md p-0.5">
-                    <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
-                        Months
-                    </button>
-                    <button type="button" data-mode="years" data-timeframe="3" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
-                        Years
-                    </button>
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                    <div class="flex bg-gray-100 rounded-md p-0.5">
+                        <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                            Months
+                        </button>
+                        <button type="button" data-mode="years" data-timeframe="3" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                            Years
+                        </button>
+                    </div>
+                    @if($compareChartMode === 'months')
+                        <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                            @foreach($availableYears as $y)
+                                <option value="{{ $y }}" {{ $compareChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                            <option value="3" {{ $compareChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
+                            <option value="5" {{ $compareChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
+                            <option value="all" {{ $compareChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                        </select>
+                    @endif
                 </div>
-                @if($compareChartMode === 'months')
-                    <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                        @foreach($availableYears as $y)
-                            <option value="{{ $y }}" {{ $compareChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                <div class="flex items-center gap-2">
+                    <select id="compareBarangaySelect" onchange="window.location.href='?compare_barangay='+this.value" 
+                            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        <option value="">All Barangays</option>
+                        @foreach($barangays as $id => $name)
+                            <option value="{{ $id }}" {{ ($compareBarangayId ?? '') == $id ? 'selected' : '' }}>
+                                {{ $name }}
+                            </option>
                         @endforeach
                     </select>
-                @else
-                    <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                        <option value="3" {{ $compareChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
-                        <option value="5" {{ $compareChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
-                        <option value="all" {{ $compareChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
-                    </select>
-                @endif
-                <select id="compareBarangaySelect" onchange="window.location.href='?compare_barangay='+this.value" 
-                        class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                    <option value="">All Barangays</option>
-                    @foreach($barangays as $id => $name)
-                        <option value="{{ $id }}" {{ ($compareBarangayId ?? '') == $id ? 'selected' : '' }}>
-                            {{ $name }}
-                        </option>
-                    @endforeach
-                </select>
+                </div>
             </div>
         </div>
         <div class="h-64">
@@ -320,7 +324,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const yearlyMissingResolvedData = @json($yearlyMissingResolvedData ?? []);
     const yearlyMissingClosedData = @json($yearlyMissingClosedData ?? []);
     const compareChartMode = '{{ $compareChartMode ?? 'months' }}';
-    const compareChartTimeframe = '{{ $compareChartTimeframe ?? date('Y') }}';
     const compareBarangayId = '{{ $compareBarangayId ?? '' }}';
     const compareLabels = @json($compareLabels ?? []);
     const compareBiteData = @json($compareBiteData ?? []);

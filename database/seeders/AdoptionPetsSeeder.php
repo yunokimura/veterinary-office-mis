@@ -212,7 +212,12 @@ class AdoptionPetsSeeder extends Seeder
         $now = now();
 
         foreach ($pets as $petData) {
-            // Use updateOrCreate to ensure existing pets get updated with correct data
+            $infoData = [
+                'pet_weight' => $petData['pet_weight'] ?? null,
+                'is_neutered' => $petData['is_neutered'] ?? null,
+            ];
+            unset($petData['pet_weight'], $petData['is_neutered']);
+
             $pet = Pet::updateOrCreate(
                 ['pet_name' => $petData['pet_name'], 'species' => $petData['species']],
                 array_merge($petData, [
@@ -225,6 +230,12 @@ class AdoptionPetsSeeder extends Seeder
                     'updated_at' => $now,
                 ])
             );
+
+            if ($pet->petInfo) {
+                $pet->petInfo->update($infoData);
+            } else {
+                $pet->petInfo()->create($infoData);
+            }
 
             // Attach 2–3 random traits
             $traitCount = rand(2, 3);
