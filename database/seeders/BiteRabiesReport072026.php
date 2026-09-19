@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Barangay;
 use App\Models\BiteRabiesReport;
+use App\Models\Patient;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
@@ -23,7 +24,7 @@ class BiteRabiesReport072026 extends Seeder
         }
 
         // Sample data for seeding
-        $animalTypes = ['dog', 'cat', 'others'];
+        $animalTypes = ['dog', 'cat'];
         $animalStatuses = ['stray', 'owned', 'wild'];
         $vaccinationStatuses = ['vaccinated', 'unvaccinated', 'unknown'];
         $exposureTypes = ['bite', 'scratch', 'lick'];
@@ -41,7 +42,7 @@ class BiteRabiesReport072026 extends Seeder
         ];
 
         // Generate 30 records for July 2026
-        $records = [];
+        $count = 0;
         $reportCounter = 1;
 
         for ($i = 0; $i < 30; $i++) {
@@ -57,18 +58,23 @@ class BiteRabiesReport072026 extends Seeder
             $lastName = $lastNames[array_rand($lastNames)];
             $middleName = fake()->randomElement(['Dela', 'Del', 'De', 'D', '']);
             
-            $records[] = [
+            $patient = Patient::create([
+                'first_name' => $firstName,
+                'middle_name' => $middleName,
+                'last_name' => $lastName,
+                'suffix' => fake()->randomElement(['Jr.', 'Sr.', 'III', '']),
+                'gender' => $genders[array_rand($genders)],
+                'contact_number' => fake()->numerify('09#########'),
+                'address' => fake()->streetAddress(),
+                'barangay_id' => $barangay->barangay_id,
+                'age' => rand(5, 85),
+            ]);
+
+            BiteRabiesReport::create([
                 'report_number' => $reportNumber,
                 'status' => 'Resolved',
-                'rabies_confirmed' => rand(0, 1) == 1, // Random true/false (50% chance)
-                'patient_first_name' => $firstName,
-                'patient_middle_name' => $middleName,
-                'patient_last_name' => $lastName,
-                'patient_suffix' => fake()->randomElement(['Jr.', 'Sr.', 'III', '']),
-                'age' => rand(5, 85),
-                'gender' => $genders[array_rand($genders)],
-                'patient_address' => fake()->streetAddress(),
-                'patient_contact' => fake()->numerify('09#########'),
+                'rabies_confirmed' => true,
+                'patient_id' => $patient->id,
                 'barangay_id' => $barangay->barangay_id,
                 'incident_date' => $incidentDate,
                 'exact_location' => fake()->streetAddress(),
@@ -89,13 +95,8 @@ class BiteRabiesReport072026 extends Seeder
                 'action_taken' => fake()->sentence(),
                 'created_at' => $incidentDate,
                 'updated_at' => $incidentDate->addDays(rand(1, 30)),
-            ];
-        }
+            ]);
 
-        // Insert records one by one to ensure unique report numbers
-        $count = 0;
-        foreach ($records as $record) {
-            BiteRabiesReport::create($record);
             $count++;
         }
 

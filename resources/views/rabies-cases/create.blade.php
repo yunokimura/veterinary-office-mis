@@ -22,7 +22,7 @@
     <div class="alert alert-info mb-4">
         <h5><i class="fas fa-info-circle"></i> Creating case from Rabies Bite Report</h5>
         <p class="mb-0">Report Number: <strong>{{ $rabiesReport->report_number }}</strong></p>
-        <p class="mb-0">Patient: <strong>{{ $rabiesReport->patient_name }}</strong></p>
+        <p class="mb-0">Patient: <strong>{{ $rabiesReport->patient->full_name ?? 'N/A' }}</strong></p>
         <p class="mb-0">Incident Date: <strong>{{ \Carbon\Carbon::parse($rabiesReport->incident_date)->format('M d, Y') }}</strong></p>
     </div>
     @endif

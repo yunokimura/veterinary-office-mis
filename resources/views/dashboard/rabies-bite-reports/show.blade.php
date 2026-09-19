@@ -110,23 +110,23 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Patient Name</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient_name }}</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->full_name ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Age</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->age }} years old</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->age ?? 'N/A' }} years old</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Gender</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->gender }}</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->gender ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Address (Barangay)</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->barangay->barangay_name ?? ($rabiesReport->patient_barangay ?? 'N/A') }}</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->barangay->barangay_name ?? ($rabiesReport->patient->barangay->barangay_name ?? 'N/A') }}</p>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-500 mb-1">Contact Number</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient_contact ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->contact_number ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>

@@ -9,19 +9,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $status
  * @property string $report_number
- * @property string $patient_name
- * @property string|null $patient_first_name
- * @property string|null $patient_middle_name
- * @property string|null $patient_suffix
- * @property int $age
- * @property string $gender
- * @property string|null $patient_address
- * @property string|null $patient_contact
- * @property string|null $patient_barangay
+ * @property int|null $patient_id
  * @property int|null $barangay_id
- * @property string|null $incident_barangay
+ * @property Carbon $incident_date
  * @property string|null $exact_location
- * @property \Illuminate\Support\Carbon $incident_date
  * @property string $exposure_type
  * @property string|null $bite_site
  * @property string $category
@@ -36,13 +27,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $wound_management
  * @property string|null $post_exposure_prophylaxis
  * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $user_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read \App\Models\Barangay|null $barangay
  * @property-read \App\Models\Owner|null $owner
  * @property-read \App\Models\BiteRabiesReport|null $rabiesReport
  * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\Patient|null $patient
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase query()
@@ -85,17 +76,15 @@ class RabiesCase extends Model
 {
     use HasFactory;
 
-    protected $table = 'bite_rabies_reports';
+    protected $table = 'rabies_reports';
 
     protected $fillable = [
         'report_number',
-        'patient_name',
-        'age',
-        'gender',
-        'patient_address',
-        'patient_contact',
+        'status',
+        'patient_id',
         'barangay_id',
         'incident_date',
+        'exact_location',
         'exposure_type',
         'bite_site',
         'category',
@@ -105,11 +94,11 @@ class RabiesCase extends Model
         'animal_owner_name',
         'animal_owner_contact',
         'reported_by',
-        'user_id',
+        'reporting_facility',
+        'date_reported',
         'wound_management',
         'post_exposure_prophylaxis',
         'notes',
-        'status',
     ];
 
     protected $casts = [
@@ -123,9 +112,9 @@ class RabiesCase extends Model
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
     }
 
-    public function user()
+    public function patient()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Patient::class);
     }
 
     public function rabiesReport()

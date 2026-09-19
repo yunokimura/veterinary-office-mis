@@ -42,39 +42,39 @@ $backRoute = $rolePrefix . '.bite-reports.index';
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
                     <p class="text-xs text-gray-500">Last Name</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->patient_name ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->last_name ?? 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">First Name</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->patient_first_name ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->first_name ?? 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Middle Name</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->patient_middle_name ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->middle_name ?? 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Suffix</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->patient_suffix ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->suffix ?? 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Age</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->age ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->age ?? 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Gender</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->gender ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->gender ?? 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Contact Number</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->patient_contact ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->contact_number ?? 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Barangay</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->patient_barangay ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->barangay->barangay_name ?? 'N/A' }}</p>
                 </div>
                 <div class="col-span-2">
                     <p class="text-xs text-gray-500">Address</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->patient_address ?? 'N/A' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $report->patient->address ?? 'N/A' }}</p>
                 </div>
             </div>
         </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\BiteRabiesReport;
 use App\Models\Barangay;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -56,7 +57,7 @@ class BiteRabiesReportController extends Controller
             'nature_of_incident' => 'required|in:Bitten,Scratched,Licked (Open Wound)',
             'bite_site' => 'required|in:Head/Neck,Upper Extremities,Trunk,Lower Extremities',
             'exposure_category' => 'required|in:Category I (Lick),Category II (Scratch),Category III (Bite / Deep)',
-            'animal_species' => 'required|in:Dog,Cat,Others',
+            'animal_species' => 'required|in:Dog,Cat',
             'animal_status' => 'required|in:Stray,Owned,Wild',
             'animal_owner_name' => 'nullable|string|max:200',
             'animal_vaccination_status' => 'required|in:Vaccinated,Unvaccinated,Unknown',
@@ -85,11 +86,21 @@ class BiteRabiesReportController extends Controller
         
         $woundManagement = $request->input('wound_management', []);
 
-        // Map client field names to standard field names
+        $patientNameParts = explode(' ', $request->input('patient_name', ''), 2);
+        $firstName = $patientNameParts[0] ?? '';
+        $lastName = $patientNameParts[1] ?? '';
+
+        $patient = Patient::create([
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'gender' => $request->input('patient_gender'),
+            'contact_number' => $request->input('patient_contact'),
+            'barangay_id' => $request->input('patient_barangay_id'),
+        ]);
+
         $animalTypeMap = [
             'Dog' => 'dog',
             'Cat' => 'cat',
-            'Others' => 'others',
         ];
 
         $animalStatusMap = [
@@ -106,23 +117,19 @@ class BiteRabiesReportController extends Controller
             'reporting_facility' => $request->input('reporting_facility'),
             'facility_name' => $request->input('facility_name'),
             'date_reported' => $request->input('date_reported'),
-            'patient_name' => $request->input('patient_name'),
-            'age' => $request->input('patient_age'),
-            'gender' => $request->input('patient_gender'),
-            'patient_barangay' => $request->input('patient_barangay_id'), // Store name as patient_barangay
-            'patient_contact' => $request->input('patient_contact'),
+            'patient_id' => $patient->id,
+            'barangay_id' => $barangayId,
             'incident_date' => $request->input('incident_date'),
             'exposure_type' => strtolower($request->input('nature_of_incident')),
             'bite_site' => $request->input('bite_site'),
             'category' => $request->input('exposure_category'),
-            'animal_type' => $animalTypeMap[$request->input('animal_species')] ?? 'others',
+            'animal_type' => $animalTypeMap[$request->input('animal_species')] ?? 'dog',
             'animal_status' => $animalStatusMap[$request->input('animal_status')] ?? 'stray',
             'animal_owner_name' => $request->input('animal_owner_name'),
             'vaccination_status' => strtolower($request->input('animal_vaccination_status')),
             'wound_management' => $woundManagement,
             'post_exposure_prophylaxis' => $request->input('post_exposure_prophylaxis'),
             'notes' => $request->input('notes'),
-            'barangay_id' => $barangayId, // Now properly set from patient_barangay_id if empty
         ]);
     }
 }

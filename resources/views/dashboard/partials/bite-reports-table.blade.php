@@ -22,14 +22,14 @@
                         </div>
                         <div class="ml-4">
                             <div class="text-sm font-medium text-gray-900">
-                                {{ trim(($report->patient_first_name ?? '') . ' ' . ($report->patient_middle_name ?? '') . ' ' . ($report->patient_last_name ?? '') . ' ' . ($report->patient_suffix ?? '')) ?: 'Unknown' }}
-                            </div>
-                            <div class="text-sm text-gray-500">{{ $report->age ?? 'N/A' }} yrs old</div>
+                                {{ $report->patient?->full_name ?? 'Unknown' }}
+                             </div>
+                             <div class="text-sm text-gray-500">{{ $report->patient?->age ?? 'N/A' }} yrs old</div>
                         </div>
                     </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <p class="text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A') }}</p>
+                    <p class="text-gray-800">{{ $report->barangay?->barangay_name ?? $report->patient?->barangay?->barangay_name ?? 'N/A' }}</p>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}

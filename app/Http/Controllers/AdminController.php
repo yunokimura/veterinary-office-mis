@@ -190,22 +190,36 @@ class AdminController extends Controller
         ];
 
         $query = BiteRabiesReport::where('rabies_confirmed', true)
-            ->with(['barangay']);
+            ->with(['barangay', 'patient']);
 
         if ($request->filled('search')) {
             $terms = array_values(array_filter(explode(' ', $request->search)));
-            $query->where(function ($q) use ($terms) {
+            $ageTerm = null;
+
+            foreach ($terms as $term) {
+                $normalized = strtolower($term);
+                $normalized = preg_replace('/\b(yrs?|years?|old)\b/i', '', $normalized);
+                $normalized = trim($normalized);
+
+                if (is_numeric($normalized)) {
+                    $ageTerm = (int) $normalized;
+                    break;
+                }
+            }
+
+            $query->where(function ($q) use ($terms, $ageTerm) {
                 foreach ($terms as $term) {
                     $q->where(function ($sub) use ($term) {
                         $sub->where('report_number', 'like', "%{$term}%")
-                            ->orWhere('patient_first_name', 'like', "%{$term}%")
-                            ->orWhere('patient_middle_name', 'like', "%{$term}%")
-                            ->orWhere('patient_last_name', 'like', "%{$term}%")
-                            ->orWhere('patient_suffix', 'like', "%{$term}%")
+                            ->orWhereHas('patient', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('middle_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%")
+                                    ->orWhere('suffix', 'like', "%{$term}%");
+                            })
                             ->orWhereHas('barangay', function ($q2) use ($term) {
                                 $q2->where('barangay_name', 'like', "%{$term}%");
                             })
-                            ->orWhere('patient_barangay', 'like', "%{$term}%")
                             ->orWhere('animal_type', 'like', "%{$term}%")
                             ->orWhere('animal_status', 'like', "%{$term}%")
                             ->orWhere('category', 'like', "%{$term}%")
@@ -215,6 +229,13 @@ class AdminController extends Controller
                             ->orWhere('status', 'like', "%{$term}%")
                             ->orWhere('animal_owner_name', 'like', "%{$term}%")
                             ->orWhere('reporting_facility', 'like', "%{$term}%");
+                    });
+                }
+
+                if ($ageTerm !== null) {
+                    $q->orWhereHas('patient', function ($q2) use ($ageTerm) {
+                        $q2->whereDate('date_of_birth', '<=', now()->subYears($ageTerm)->startOfDay())
+                            ->whereDate('date_of_birth', '>', now()->subYears($ageTerm + 1)->startOfDay());
                     });
                 }
             });
@@ -234,22 +255,36 @@ class AdminController extends Controller
     public function filterBiteReports(Request $request)
     {
         $query = BiteRabiesReport::where('rabies_confirmed', true)
-            ->with(['barangay']);
+            ->with(['barangay', 'patient']);
 
         if ($request->filled('search')) {
             $terms = array_values(array_filter(explode(' ', $request->search)));
-            $query->where(function ($q) use ($terms) {
+            $ageTerm = null;
+
+            foreach ($terms as $term) {
+                $normalized = strtolower($term);
+                $normalized = preg_replace('/\b(yrs?|years?|old)\b/i', '', $normalized);
+                $normalized = trim($normalized);
+
+                if (is_numeric($normalized)) {
+                    $ageTerm = (int) $normalized;
+                    break;
+                }
+            }
+
+            $query->where(function ($q) use ($terms, $ageTerm) {
                 foreach ($terms as $term) {
                     $q->where(function ($sub) use ($term) {
                         $sub->where('report_number', 'like', "%{$term}%")
-                            ->orWhere('patient_first_name', 'like', "%{$term}%")
-                            ->orWhere('patient_middle_name', 'like', "%{$term}%")
-                            ->orWhere('patient_last_name', 'like', "%{$term}%")
-                            ->orWhere('patient_suffix', 'like', "%{$term}%")
+                            ->orWhereHas('patient', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('middle_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%")
+                                    ->orWhere('suffix', 'like', "%{$term}%");
+                            })
                             ->orWhereHas('barangay', function ($q2) use ($term) {
                                 $q2->where('barangay_name', 'like', "%{$term}%");
                             })
-                            ->orWhere('patient_barangay', 'like', "%{$term}%")
                             ->orWhere('animal_type', 'like', "%{$term}%")
                             ->orWhere('animal_status', 'like', "%{$term}%")
                             ->orWhere('category', 'like', "%{$term}%")
@@ -259,6 +294,13 @@ class AdminController extends Controller
                             ->orWhere('status', 'like', "%{$term}%")
                             ->orWhere('animal_owner_name', 'like', "%{$term}%")
                             ->orWhere('reporting_facility', 'like', "%{$term}%");
+                    });
+                }
+
+                if ($ageTerm !== null) {
+                    $q->orWhereHas('patient', function ($q2) use ($ageTerm) {
+                        $q2->whereDate('date_of_birth', '<=', now()->subYears($ageTerm)->startOfDay())
+                            ->whereDate('date_of_birth', '>', now()->subYears($ageTerm + 1)->startOfDay());
                     });
                 }
             });
@@ -293,7 +335,7 @@ class AdminController extends Controller
     public function showBiteReportJson(BiteRabiesReport $report)
     
     {
-        $report->load(['barangay', 'patientBarangay', 'reportedBy']);
+        $report->load(['barangay', 'patient', 'reportedBy']);
         
         return response()->json([
             'success' => true,
@@ -301,12 +343,12 @@ class AdminController extends Controller
                 'id' => $report->id,
                 'report_number' => $report->report_number,
                 'status' => $report->status,
-                'patient_name' => trim(($report->patient_first_name ?? '') . ' ' . ($report->patient_middle_name ?? '') . ' ' . ($report->patient_last_name ?? '') . ' ' . ($report->patient_suffix ?? '')),
-                'age' => $report->age,
-                'gender' => $report->gender,
-                'patient_address' => $report->patient_address,
-                'patient_contact' => $report->patient_contact,
-                'barangay' => $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A'),
+                'patient_name' => $report->patient?->full_name ?? 'N/A',
+                'age' => $report->patient?->age ?? 'N/A',
+                'gender' => $report->patient?->gender ?? 'N/A',
+                'patient_address' => $report->patient?->address ?? 'N/A',
+                'patient_contact' => $report->patient?->contact_number ?? 'N/A',
+                'barangay' => $report->barangay?->barangay_name ?? $report->patient?->barangay?->barangay_name ?? 'N/A',
                 'incident_date' => \Carbon\Carbon::parse($report->incident_date)->format('M d, Y'),
                 'exact_location' => $report->exact_location,
                 'exposure_type' => $report->exposure_type,
@@ -333,7 +375,7 @@ class AdminController extends Controller
     public function showBiteReport(BiteRabiesReport $report)
     {
         $user = Auth::user();
-        $report->load(['patientBarangay', 'user']);
+        $report->load(['patient', 'reportedBy']);
         return view('dashboard.bite-reports.show', compact('report', 'user'));
     }
 

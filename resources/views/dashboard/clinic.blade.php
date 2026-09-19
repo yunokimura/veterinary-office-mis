@@ -99,7 +99,7 @@ $user = Auth::user();
                 @foreach($biteReports as $report)
                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div>
-                            <p class="font-medium text-gray-800">{{ $report->patient_name }}</p>
+                            <p class="font-medium text-gray-800">{{ $report->patient->full_name ?? 'N/A' }}</p>
                             <p class="text-sm text-gray-500">{{ $report->incident_date?->format('M d, Y') }}</p>
                         </div>
                     </div>

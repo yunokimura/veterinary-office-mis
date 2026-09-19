@@ -131,8 +131,8 @@
                                 <td class="px-4 py-3 text-sm font-medium">#{{ $report->id }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}</td>
                                 <td class="px-4 py-3 text-sm">{{ $report->reportedBy?->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay?->barangay_name ?? $report->patient_barangay ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 text-sm">{{ $report->patient_name }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay?->barangay_name ?? ($report->patient?->barangay?->barangay_name ?? 'N/A') }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $report->patient?->full_name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ ucfirst($report->animal_type) }}</td>
                                 <td class="px-4 py-3">
                                     @if($report->category == 'I')

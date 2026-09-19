@@ -43,7 +43,7 @@
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" id="biteSearch" value="{{ request('search') }}" placeholder="Search reports..."
+                <input type="text" id="biteSearch" value="{{ request('search') }}" placeholder="Search reports, patient, age..."
                        class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <button type="button" id="searchHelpBtn"
                         class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
@@ -57,6 +57,7 @@
                                 <div>Dog <span class='text-gray-400'>(Animal Type)</span></div>
                                 <div>Category I <span class='text-gray-400'>(Category)</span></div>
                                 <div>Poblacion <span class='text-gray-400'>(Barangay)</span></div>
+                                <div>39 yrs old <span class='text-gray-400'>(Age)</span></div>
                             </div>
                         ">
                     <i class="bi bi-info-circle"></i>
@@ -101,24 +102,20 @@
 </div>
 
 <!-- Report Details Modal -->
-<div id="reportModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-lg bg-white max-h-[80vh] overflow-y-auto">
-        <div class="flex items-center justify-between pb-4 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-800">Report Details</h3>
-            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 focus:outline-none">
-                <i class="bi bi-x-lg text-2xl"></i>
-            </button>
-        </div>
-        <div id="modalContent" class="mt-4">
-            <div class="text-center py-12">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
-                <p class="mt-4 text-gray-600">Loading report details...</p>
+<div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Report Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 mt-4">
-            <button onclick="closeModal()" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition">
-                Close
-            </button>
+            <div class="modal-body" id="reportModalBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-green-600" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -253,16 +250,18 @@ document.getElementById('reportsPagination').addEventListener('click', function(
 });
 
 function openReportModal(reportId) {
-    const modal = document.getElementById('reportModal');
-    const modalContent = document.getElementById('modalContent');
+    const modalEl = document.getElementById('reportDetailsModal');
+    const modalBody = document.getElementById('reportModalBody');
+    const modal = new bootstrap.Modal(modalEl);
 
-    modal.classList.remove('hidden');
-    modalContent.innerHTML = `
-        <div class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
-            <p class="mt-4 text-gray-600">Loading report details...</p>
+    modalBody.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-green-600" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
     `;
+    modal.show();
 
     fetch(`{{ route('admin.bite-reports.show-json', ':id') }}`.replace(':id', reportId))
         .then(response => response.json())
@@ -270,152 +269,156 @@ function openReportModal(reportId) {
             if (data.success) {
                 displayReportDetails(data.report);
             } else {
-                modalContent.innerHTML = '<p class="text-red-600 text-center py-8">Error loading report details.</p>';
+                modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load report details.</div>';
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            modalContent.innerHTML = '<p class="text-red-600 text-center py-8">Error loading report details.</p>';
+        .catch(() => {
+            modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load report details.</div>';
         });
 }
 
 function displayReportDetails(report) {
-    const modalContent = document.getElementById('modalContent');
+    const modalBody = document.getElementById('reportModalBody');
 
-    modalContent.innerHTML = `
-        <div class="space-y-6">
+    modalBody.innerHTML = `
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Report Number</p>
+                    <p class="text-lg font-semibold text-gray-800">${report.report_number}</p>
+                </div>
+                <div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${report.rabies_confirmed === 'Yes' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
+                        <i class="bi bi-virus mr-1"></i> ${report.rabies_confirmed}
+                    </span>
+                </div>
+            </div>
+            <hr class="border-gray-100">
             <div class="bg-gray-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Report Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <p class="text-sm text-gray-600">Report Number</p>
-                        <p class="font-medium text-gray-800">${report.report_number}</p>
+                        <p class="text-sm text-gray-500">Status</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.status}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Status</p>
-                        <p class="font-medium text-gray-800">${report.status}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Rabies Confirmed</p>
-                        <p class="font-medium ${report.rabies_confirmed === 'Yes' ? 'text-red-600' : 'text-gray-800'}">${report.rabies_confirmed}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Created At</p>
-                        <p class="font-medium text-gray-800">${report.created_at}</p>
+                        <p class="text-sm text-gray-500">Created At</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.created_at}</p>
                     </div>
                 </div>
             </div>
+            <hr class="border-gray-100">
             <div class="bg-blue-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Patient Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Patient Information</h4>
+                <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <p class="text-sm text-gray-600">Full Name</p>
-                        <p class="font-medium text-gray-800">${report.patient_name}</p>
+                        <p class="text-sm text-gray-500">Patient Name</p>
+                        <div class="flex items-center mt-1">
+                            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                                <i class="bi bi-person text-red-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800">${report.patient_name}</p>
+                                <p class="text-sm text-gray-500">${report.age} yrs old / ${report.gender}</p>
+                            </div>
+                        </div>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Age / Gender</p>
-                        <p class="font-medium text-gray-800">${report.age} yrs old / ${report.gender}</p>
+                        <p class="text-sm text-gray-500">Contact</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.patient_contact || 'N/A'}</p>
                     </div>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Address</p>
-                        <p class="font-medium text-gray-800">${report.patient_address || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Barangay</p>
-                        <p class="font-medium text-gray-800">${report.barangay}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div class="col-span-2">
+                        <p class="text-sm text-gray-500">Address</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.patient_address || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Contact</p>
-                        <p class="font-medium text-gray-800">${report.patient_contact || 'N/A'}</p>
+                        <p class="text-sm text-gray-500">Barangay</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.barangay}</p>
                     </div>
                 </div>
             </div>
+            <hr class="border-gray-100">
             <div class="bg-yellow-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Incident Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Incident Information</h4>
+                <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <p class="text-sm text-gray-600">Incident Date</p>
-                        <p class="font-medium text-gray-800">${report.incident_date}</p>
+                        <p class="text-sm text-gray-500">Incident Date</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.incident_date}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Exact Location</p>
-                        <p class="font-medium text-gray-800">${report.exact_location || 'N/A'}</p>
+                        <p class="text-sm text-gray-500">Exposure Type</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.exposure_type || 'N/A'}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Exact Location</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.exact_location || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Exposure Type</p>
-                        <p class="font-medium text-gray-800">${report.exposure_type || 'N/A'}</p>
+                        <p class="text-sm text-gray-500">Bite Site</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.bite_site || 'N/A'}</p>
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
                     <div>
-                        <p class="text-sm text-gray-600">Bite Site</p>
-                        <p class="font-medium text-gray-800">${report.bite_site || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Category</p>
-                        <p class="font-medium text-gray-800">${report.category || 'N/A'}</p>
+                        <p class="text-sm text-gray-500">Category</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.category || 'N/A'}</p>
                     </div>
                 </div>
             </div>
+            <hr class="border-gray-100">
             <div class="bg-green-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Animal Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Animal Information</h4>
+                <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <p class="text-sm text-gray-600">Animal Type</p>
-                        <p class="font-medium text-gray-800">${report.animal_type}</p>
+                        <p class="text-sm text-gray-500">Animal Type</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.animal_type}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Animal Status</p>
-                        <p class="font-medium text-gray-800">${report.animal_status}</p>
+                        <p class="text-sm text-gray-500">Animal Status</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.animal_status}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Vaccination Status</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.vaccination_status || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Vaccination Status</p>
-                        <p class="font-medium text-gray-800">${report.vaccination_status || 'N/A'}</p>
+                        <p class="text-sm text-gray-500">Owner Name</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.animal_owner_name || 'N/A'}</p>
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
                     <div>
-                        <p class="text-sm text-gray-600">Owner Name</p>
-                        <p class="font-medium text-gray-800">${report.animal_owner_name || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Owner Contact</p>
-                        <p class="font-medium text-gray-800">${report.animal_owner_contact || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Reporting Facility</p>
-                        <p class="font-medium text-gray-800">${report.reporting_facility || 'N/A'}</p>
+                        <p class="text-sm text-gray-500">Reporting Facility</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.reporting_facility || 'N/A'}</p>
                     </div>
                 </div>
             </div>
+            <hr class="border-gray-100">
             <div class="bg-purple-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Treatment Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Wound Management</p>
-                        <p class="font-medium text-gray-800">${report.wound_management}</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Post Exposure Prophylaxis</p>
-                        <p class="font-medium text-gray-800">${report.post_exposure_prophylaxis || 'N/A'}</p>
-                    </div>
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Treatment Information</h4>
+                <div>
+                    <p class="text-sm text-gray-500">Wound Management</p>
+                    <p class="font-medium text-gray-800 mt-1">${report.wound_management}</p>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-500">Post Exposure Prophylaxis</p>
+                    <p class="font-medium text-gray-800 mt-1">${report.post_exposure_prophylaxis || 'N/A'}</p>
                 </div>
             </div>
             ${report.notes ? `
+            <hr class="border-gray-100">
             <div class="bg-gray-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Notes</h4>
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Notes</h4>
                 <p class="text-gray-800 whitespace-pre-wrap">${report.notes}</p>
             </div>
             ` : ''}
         </div>
     `;
-}
-
-function closeModal() {
-    document.getElementById('reportModal').classList.add('hidden');
-}
-
-window.onclick = function(event) {
-    const modal = document.getElementById('reportModal');
-    if (event.target == modal) {
-        closeModal();
-    }
 }
 
 updateClearFiltersVisibility();

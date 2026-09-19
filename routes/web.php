@@ -9,6 +9,7 @@ use App\Http\Controllers\Client\OtpController;
 use App\Http\Controllers\Client\PetController;
 use App\Http\Controllers\Client\PetRegistrationController;
 use App\Http\Controllers\Client\ProfileController;
+use App\Http\Controllers\DiseaseControlController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LivestockCensusController;

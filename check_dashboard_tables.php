@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 $tables = [
     'barangays',
-    'bite_rabies_reports',
+    'rabies_reports',
     'rabies_vaccination_reports',
     'vaccination_reports',
     'addresses',

@@ -12,29 +12,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bite_rabies_reports', function (Blueprint $table) {
+        Schema::table('rabies_reports', function (Blueprint $table) {
             // Remove redundant patient_name (we have first_name, middle_name, suffix)
-            if (Schema::hasColumn('bite_rabies_reports', 'patient_name')) {
+            if (Schema::hasColumn('rabies_reports', 'patient_name')) {
                 $table->dropColumn('patient_name');
             }
             
             // Remove redundant patient_age (we have age)
-            if (Schema::hasColumn('bite_rabies_reports', 'patient_age')) {
+            if (Schema::hasColumn('rabies_reports', 'patient_age')) {
                 $table->dropColumn('patient_age');
             }
             
             // Remove redundant patient_gender (we have gender)
-            if (Schema::hasColumn('bite_rabies_reports', 'patient_gender')) {
+            if (Schema::hasColumn('rabies_reports', 'patient_gender')) {
                 $table->dropColumn('patient_gender');
             }
             
             // Remove redundant patient_barangay string (we have barangay_id FK)
-            if (Schema::hasColumn('bite_rabies_reports', 'patient_barangay')) {
+            if (Schema::hasColumn('rabies_reports', 'patient_barangay')) {
                 $table->dropColumn('patient_barangay');
             }
             
             // Remove redundant incident_barangay string (we have barangay_id FK)
-            if (Schema::hasColumn('bite_rabies_reports', 'incident_barangay')) {
+            if (Schema::hasColumn('rabies_reports', 'incident_barangay')) {
                 $table->dropColumn('incident_barangay');
             }
         });
@@ -46,7 +46,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('bite_rabies_reports', function (Blueprint $table) {
+        Schema::table('rabies_reports', function (Blueprint $table) {
             // Add back patient_name
             $table->string('patient_name')->after('report_number');
             

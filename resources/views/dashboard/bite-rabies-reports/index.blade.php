@@ -157,13 +157,13 @@ $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
                                             <i class="bi bi-person text-red-600"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $report->patient_name }}</p>
-                                            <p class="text-sm text-gray-500">Age: {{ $report->age ?? 'N/A' }}, {{ $report->gender ?? 'N/A' }}</p>
+                                            <p class="font-medium text-gray-800">{{ $report->patient->full_name ?? 'N/A' }}</p>
+                                            <p class="text-sm text-gray-500">Age: {{ $report->patient->age ?? 'N/A' }}, {{ $report->patient->gender ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <p class="text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A') }}</p>
+                                    <p class="text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient->barangay->barangay_name ?? 'N/A') }}</p>
                                 </td>
                                 <td class="px-6 py-4">
                                     <p class="text-gray-600">{{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}</p>

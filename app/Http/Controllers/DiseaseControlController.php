@@ -77,7 +77,7 @@ class DiseaseControlController extends Controller
     public function indexCases(Request $request)
     {
         $user = Auth::user();
-        $query = BiteRabiesReport::with(['barangay', 'user']);
+        $query = BiteRabiesReport::with(['barangay', 'patient']);
 
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
@@ -354,11 +354,11 @@ class DiseaseControlController extends Controller
         $prefill = [
             'case_type' => 'suspect',
             'species' => $this->mapSpecies($rabiesReport->animal_type),
-            'animal_name' => $rabiesReport->patient_name, // Use patient name as identifier
+            'animal_name' => $rabiesReport->patient->full_name ?? $rabiesReport->report_number,
             'owner_name' => $rabiesReport->animal_owner_name,
             'incident_date' => $rabiesReport->incident_date,
-            'incident_location' => $rabiesReport->patientBarangay->barangay_name ?? '',
-            'barangay_id' => $rabiesReport->patient_barangay_id,
+            'incident_location' => $rabiesReport->patient->barangay->barangay_name ?? '',
+            'barangay_id' => $rabiesReport->patient->barangay_id ?? null,
             'remarks' => $this->generateRemarksFromReport($rabiesReport),
         ];
 
@@ -386,7 +386,6 @@ class DiseaseControlController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
-        $validated['user_id'] = Auth::id();
         $validated['status'] = $validated['status'] ?? 'open';
         $validated['rabies_report_id'] = $rabiesReport->id;
 
@@ -435,8 +434,8 @@ class DiseaseControlController extends Controller
         $remarks[] = "Wound Management: " . (is_array($report->wound_management) ? implode(', ', $report->wound_management) : 'None');
         $remarks[] = "PEP: {$report->post_exposure_prophylaxis}";
 
-        if ($report->patient_contact) {
-            $remarks[] = "Patient Contact: {$report->patient_contact}";
+        if ($report->patient->contact_number) {
+            $remarks[] = "Patient Contact: {$report->patient->contact_number}";
         }
 
         return implode('\n', $remarks);

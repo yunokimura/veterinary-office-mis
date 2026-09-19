@@ -8,14 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('bite_rabies_reports', function (Blueprint $table) {
+        Schema::table('rabies_reports', function (Blueprint $table) {
             $table->foreignId('user_id')->nullable()->constrained('admin_users')->onDelete('set null')->after('reported_by');
         });
     }
 
     public function down(): void
     {
-        Schema::table('bite_rabies_reports', function (Blueprint $table) {
+        Schema::table('rabies_reports', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropColumn('user_id');
         });

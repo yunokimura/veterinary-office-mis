@@ -37,69 +37,69 @@
         </div>
 
         <!-- Patient Information -->
-        <div class="form-section bg-gray-50 rounded-lg p-4 mb-4">
-            <div class="flex items-center justify-between mb-3">
-                <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Patient Information</h4>
-                <button type="button" class="edit-section-btn text-xs text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+            <div class="form-section bg-gray-50 rounded-lg p-4 mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Patient Information</h4>
+                    <button type="button" class="edit-section-btn text-xs text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">First Name</label>
+                        <input type="text" name="first_name" value="{{ $report->patient->first_name ?? '' }}" readonly
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Middle Name</label>
+                        <input type="text" name="middle_name" value="{{ $report->patient->middle_name ?? '' }}" readonly
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Last Name</label>
+                        <input type="text" name="last_name" value="{{ $report->patient->last_name ?? '' }}" readonly
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Suffix</label>
+                        <input type="text" name="suffix" value="{{ $report->patient->suffix ?? '' }}" readonly
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Age</label>
+                        <input type="number" name="age" value="{{ $report->patient->age ?? '' }}" readonly
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Gender</label>
+                        <select name="gender" disabled
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                            <option value="Male" {{ ($report->patient->gender ?? '') === 'Male' ? 'selected' : '' }}>Male</option>
+                            <option value="Female" {{ ($report->patient->gender ?? '') === 'Female' ? 'selected' : '' }}>Female</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Address</label>
+                        <input type="text" name="address" value="{{ $report->patient->address ?? '' }}" readonly
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Barangay</label>
+                        <select name="barangay_id" disabled
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                            <option value="">Select Barangay</option>
+                            @foreach($barangays as $barangay)
+                                <option value="{{ $barangay->barangay_id }}" {{ ($report->patient->barangay_id ?? '') == $barangay->barangay_id ? 'selected' : '' }}>
+                                    {{ $barangay->barangay_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Contact</label>
+                        <input type="text" name="contact_number" value="{{ $report->patient->contact_number ?? '' }}" readonly
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
+                    </div>
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">First Name</label>
-                    <input type="text" name="patient_first_name" value="{{ $report->patient_first_name }}" readonly
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Middle Name</label>
-                    <input type="text" name="patient_middle_name" value="{{ $report->patient_middle_name }}" readonly
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Last Name</label>
-                    <input type="text" name="patient_last_name" value="{{ $report->patient_last_name }}" readonly
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Suffix</label>
-                    <input type="text" name="patient_suffix" value="{{ $report->patient_suffix }}" readonly
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Age</label>
-                    <input type="number" name="age" value="{{ $report->age }}" readonly
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Gender</label>
-                    <select name="gender" disabled
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                        <option value="Male" {{ $report->gender === 'Male' ? 'selected' : '' }}>Male</option>
-                        <option value="Female" {{ $report->gender === 'Female' ? 'selected' : '' }}>Female</option>
-                    </select>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Address</label>
-                    <input type="text" name="patient_address" value="{{ $report->patient_address }}" readonly
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Barangay</label>
-                    <select name="barangay_id" disabled
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                        <option value="">Select Barangay</option>
-                        @foreach($barangays as $barangay)
-                            <option value="{{ $barangay->barangay_id }}" {{ $report->barangay_id == $barangay->barangay_id ? 'selected' : '' }}>
-                                {{ $barangay->barangay_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Contact</label>
-                    <input type="text" name="patient_contact" value="{{ $report->patient_contact }}" readonly
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm">
-                </div>
-            </div>
-        </div>
 
         <!-- Incident Information -->
         <div class="form-section bg-gray-50 rounded-lg p-4 mb-4">

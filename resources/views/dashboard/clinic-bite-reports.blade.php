@@ -40,7 +40,7 @@
                     @forelse($reports as $report)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-4 py-3 font-medium text-gray-900">{{ $report->report_number }}</td>
-                            <td class="px-4 py-3">{{ $report->patient_name }}</td>
+                            <td class="px-4 py-3">{{ $report->patient->full_name ?? 'N/A' }}</td>
                             <td class="px-4 py-3">
                                 {{ $report->animal_type }}
                                 <span class="text-gray-500 text-xs">({{ $report->animal_status }})</span>

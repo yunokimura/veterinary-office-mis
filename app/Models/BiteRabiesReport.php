@@ -13,19 +13,15 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $status
  * @property string $report_number
- * @property string $patient_name
- * @property string|null $patient_first_name
- * @property string|null $patient_middle_name
- * @property string|null $patient_suffix
- * @property int $age
- * @property string $gender
- * @property string|null $patient_address
- * @property string|null $patient_contact
- * @property string|null $patient_barangay
+ * @property int|null $patient_id
+ * @property string|null $report_source
+ * @property string|null $assigned_to_role
+ * @property string|null $reporting_facility
+ * @property string|null $facility_name
+ * @property Carbon|null $date_reported
  * @property int|null $barangay_id
- * @property string|null $incident_barangay
- * @property string|null $exact_location
  * @property Carbon $incident_date
+ * @property string|null $exact_location
  * @property string $exposure_type
  * @property string|null $bite_site
  * @property string $category
@@ -35,28 +31,22 @@ use Illuminate\Support\Carbon;
  * @property string|null $animal_owner_name
  * @property string|null $animal_owner_contact
  * @property int|null $reported_by
- * @property string|null $reporting_facility
- * @property string|null $date_reported
  * @property array<array-key, mixed>|null $wound_management
  * @property string|null $post_exposure_prophylaxis
  * @property string|null $notes
+ * @property string|null $action_taken
+ * @property bool $rabies_confirmed
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property int|null $user_id
  * @property-read Barangay|null $barangay
  * @property-read Collection<int, Notification> $notifications
  * @property-read int|null $notifications_count
- * @property-read Barangay|null $patientBarangay
  * @property-read User|null $reportedBy
+ * @property-read Patient|null $patient
  *
- * @method static Builder<static>|BiteRabiesReport byAnimalType(string $type)
- * @method static Builder<static>|BiteRabiesReport byBarangay(int $barangayId)
- * @method static Builder<static>|BiteRabiesReport byCategory(string $category)
- * @method static Builder<static>|BiteRabiesReport byDateRange(string $from, string $to)
  * @method static Builder<static>|BiteRabiesReport newModelQuery()
  * @method static Builder<static>|BiteRabiesReport newQuery()
  * @method static Builder<static>|BiteRabiesReport query()
- * @method static Builder<static>|BiteRabiesReport whereAge($value)
  * @method static Builder<static>|BiteRabiesReport whereAnimalOwnerContact($value)
  * @method static Builder<static>|BiteRabiesReport whereAnimalOwnerName($value)
  * @method static Builder<static>|BiteRabiesReport whereAnimalStatus($value)
@@ -68,25 +58,16 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|BiteRabiesReport whereDateReported($value)
  * @method static Builder<static>|BiteRabiesReport whereExactLocation($value)
  * @method static Builder<static>|BiteRabiesReport whereExposureType($value)
- * @method static Builder<static>|BiteRabiesReport whereGender($value)
  * @method static Builder<static>|BiteRabiesReport whereId($value)
- * @method static Builder<static>|BiteRabiesReport whereIncidentBarangay($value)
- * @method static Builder<static>|BiteRabiesReport whereIncidentDate($value)
  * @method static Builder<static>|BiteRabiesReport whereNotes($value)
- * @method static Builder<static>|BiteRabiesReport wherePatientAddress($value)
- * @method static Builder<static>|BiteRabiesReport wherePatientBarangay($value)
- * @method static Builder<static>|BiteRabiesReport wherePatientContact($value)
- * @method static Builder<static>|BiteRabiesReport wherePatientFirstName($value)
- * @method static Builder<static>|BiteRabiesReport wherePatientMiddleName($value)
- * @method static Builder<static>|BiteRabiesReport wherePatientName($value)
- * @method static Builder<static>|BiteRabiesReport wherePatientSuffix($value)
+ * @method static Builder<static>|BiteRabiesReport wherePatientId($value)
  * @method static Builder<static>|BiteRabiesReport wherePostExposureProphylaxis($value)
+ * @method static Builder<static>|BiteRabiesReport whereRabiesConfirmed($value)
  * @method static Builder<static>|BiteRabiesReport whereReportNumber($value)
  * @method static Builder<static>|BiteRabiesReport whereReportedBy($value)
  * @method static Builder<static>|BiteRabiesReport whereReportingFacility($value)
  * @method static Builder<static>|BiteRabiesReport whereStatus($value)
  * @method static Builder<static>|BiteRabiesReport whereUpdatedAt($value)
- * @method static Builder<static>|BiteRabiesReport whereUserId($value)
  * @method static Builder<static>|BiteRabiesReport whereVaccinationStatus($value)
  * @method static Builder<static>|BiteRabiesReport whereWoundManagement($value)
  *
@@ -94,7 +75,7 @@ use Illuminate\Support\Carbon;
  */
 class BiteRabiesReport extends Model
 {
-    protected $table = 'bite_rabies_reports';
+    protected $table = 'rabies_reports';
 
     protected $fillable = [
         'report_number',
@@ -104,15 +85,7 @@ class BiteRabiesReport extends Model
         'reporting_facility',
         'facility_name',
         'date_reported',
-        'patient_first_name',
-        'patient_middle_name',
-        'patient_last_name',
-        'patient_suffix',
-        'age',
-        'gender',
-        'patient_address',
-        'patient_contact',
-        'patient_barangay_id',
+        'patient_id',
         'barangay_id',
         'incident_date',
         'exact_location',
@@ -134,6 +107,7 @@ class BiteRabiesReport extends Model
 
     protected $casts = [
         'incident_date' => 'date',
+        'date_reported' => 'date',
         'wound_management' => 'array',
     ];
 
@@ -142,9 +116,9 @@ class BiteRabiesReport extends Model
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
     }
 
-    public function patientBarangay(): BelongsTo
+    public function patient(): BelongsTo
     {
-        return $this->belongsTo(Barangay::class, 'patient_barangay', 'barangay_name', 'barangay_name');
+        return $this->belongsTo(Patient::class);
     }
 
     public function reportedBy(): BelongsTo

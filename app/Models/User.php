@@ -584,14 +584,6 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
     }
 
     /**
-     * Get the bite rabies reports approved by this user.
-     */
-    public function biteRabiesReportsApproved(): HasMany
-    {
-        return $this->hasMany(BiteRabiesReport::class, 'approved_by', 'id');
-    }
-
-    /**
      * Get the announcements created by this user.
      */
     public function announcements(): HasMany

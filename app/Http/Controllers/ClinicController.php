@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\RabiesVaccinationReport;
 use App\Models\BiteRabiesReport;
+use App\Models\Patient;
 use App\Models\Barangay;
 
 class ClinicController extends Controller
@@ -79,7 +80,7 @@ class ClinicController extends Controller
             'incident_barangay' => 'required|string|max:255',
             'exact_location' => 'nullable|string|max:500',
             'incident_date' => 'required|date',
-            'animal_type' => 'required|in:dog,cat,others',
+            'animal_type' => 'required|in:dog,cat',
             'ownership_status' => 'required|in:owned,stray,wild',
             'vaccination_status' => 'nullable|in:vaccinated,unvaccinated,unknown',
             'bite_category' => 'required|in:category_i,category_ii,category_iii',
@@ -95,31 +96,30 @@ class ClinicController extends Controller
         $barangay = \App\Models\Barangay::where('barangay_name', $validated['incident_barangay'])->first();
         $barangayId = $barangay ? $barangay->barangay_id : null;
 
-        $patientName = trim($validated['victim_first_name'] . ' ' . 
-            ($validated['victim_middle_name'] ? $validated['victim_middle_name'] . ' ' : '') . 
-            $validated['victim_last_name']);
-
         $reportNumber = $validated['victim_case_id'] 
             ? $validated['victim_case_id'] 
             : ($request->input('case_number') ?? BiteRabiesReport::generateReportNumber());
         
+        $patient = Patient::create([
+            'first_name' => $validated['victim_first_name'],
+            'middle_name' => $validated['victim_middle_name'] ?? null,
+            'last_name' => $validated['victim_last_name'],
+            'suffix' => $validated['victim_suffix'] ?? null,
+            'gender' => ucfirst($validated['victim_sex']),
+            'contact_number' => $validated['victim_contact'] ?? '',
+            'address' => $validated['victim_address'],
+            'barangay_id' => $barangayId,
+        ]);
+
         $report = BiteRabiesReport::create([
             'report_number' => $reportNumber,
             'status' => 'Under Investigation', // Auto-approve to show on map
             'date_reported' => now()->toDateString(),
             'reporting_facility' => Auth::user()->name,
             'reported_by' => Auth::id(),
-            'patient_name' => $patientName,
-            'patient_first_name' => $validated['victim_first_name'],
-            'patient_middle_name' => $validated['victim_middle_name'] ?? null,
-            'patient_suffix' => $validated['victim_suffix'] ?? null,
-            'age' => $validated['victim_age'],
-            'gender' => ucfirst($validated['victim_sex']),
-            'patient_contact' => $validated['victim_contact'] ?? '',
-            'patient_address' => $validated['victim_address'],
+            'patient_id' => $patient->id,
             'barangay_id' => $barangayId,
             'incident_date' => \Carbon\Carbon::parse($validated['incident_date'])->toDateString(),
-            'incident_barangay' => $validated['incident_barangay'] ?? null,
             'exact_location' => $validated['exact_location'] ?? null,
             'exposure_type' => 'bite',
             'bite_site' => $validated['body_part'],

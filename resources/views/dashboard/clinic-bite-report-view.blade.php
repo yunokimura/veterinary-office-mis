@@ -38,31 +38,31 @@ $rolePrefix = 'clinic';
             <!-- Patient Name -->
             <div>
                 <p class="text-sm text-gray-500">Patient Name</p>
-                <p class="font-medium text-gray-800">{{ $report->patient_name }}</p>
+                <p class="font-medium text-gray-800">{{ $report->patient->full_name ?? 'N/A' }}</p>
             </div>
 
             <!-- Patient Age -->
             <div>
                 <p class="text-sm text-gray-500">Patient Age</p>
-                <p class="font-medium text-gray-800">{{ $report->age ?? 'N/A' }}</p>
+                <p class="font-medium text-gray-800">{{ $report->patient->age ?? 'N/A' }}</p>
             </div>
 
             <!-- Patient Gender -->
             <div>
                 <p class="text-sm text-gray-500">Gender</p>
-                <p class="font-medium text-gray-800">{{ ucfirst($report->gender) ?? 'N/A' }}</p>
+                <p class="font-medium text-gray-800">{{ ucfirst($report->patient->gender) ?? 'N/A' }}</p>
             </div>
 
             <!-- Patient Contact -->
             <div>
                 <p class="text-sm text-gray-500">Contact</p>
-                <p class="font-medium text-gray-800">{{ $report->patient_contact ?? 'N/A' }}</p>
+                <p class="font-medium text-gray-800">{{ $report->patient->contact_number ?? 'N/A' }}</p>
             </div>
 
             <!-- Patient Barangay -->
             <div>
                 <p class="text-sm text-gray-500">Address (Barangay)</p>
-                <p class="font-medium text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A') }}</p>
+                <p class="font-medium text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient->barangay->barangay_name ?? 'N/A') }}</p>
             </div>
         </div>
 
