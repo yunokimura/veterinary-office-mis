@@ -181,7 +181,6 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
-        // Get counts for confirmed rabies cases only
         $stats = [
             'total' => BiteRabiesReport::where('rabies_confirmed', true)->count(),
             'dog_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['dog'])->count(),
@@ -190,149 +189,35 @@ class AdminController extends Controller
             'confirmed_this_year' => BiteRabiesReport::where('rabies_confirmed', true)->whereYear('incident_date', date('Y'))->count(),
         ];
 
-        $barangays = Barangay::orderBy('barangay_name')->get(['barangay_id', 'barangay_name']);
-
-        $query = BiteRabiesReport::where('rabies_confirmed', true)
-            ->with(['barangay']);
-
-        // Apply search filter
-        if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('patient_first_name', 'like', "%{$search}%")
-                  ->orWhere('patient_middle_name', 'like', "%{$search}%")
-                  ->orWhere('patient_last_name', 'like', "%{$search}%")
-                  ->orWhere('patient_suffix', 'like', "%{$search}%");
-            });
-        }
-
-        // Apply age filter
-        if ($request->has('age_filter') && $request->age_filter) {
-            switch ($request->age_filter) {
-                case '0-4':
-                    $query->whereBetween('age', [0, 4]);
-                    break;
-                case '5-14':
-                    $query->whereBetween('age', [5, 14]);
-                    break;
-                case '15-59':
-                    $query->whereBetween('age', [15, 59]);
-                    break;
-                case '60+':
-                    $query->where('age', '>=', 60);
-                    break;
-                case 'unknown':
-                    $query->where(function ($q) {
-                        $q->whereNull('age')->orWhere('age', '');
-                    });
-                    break;
-            }
-        }
-
-        // Apply animal type filter
-        if ($request->has('animal_type') && $request->animal_type) {
-            $query->where('animal_type', $request->animal_type);
-        }
-
-        // Apply category filter
-        if ($request->has('category') && $request->category) {
-            $query->where('category', $request->category);
-        }
-
-        // Apply barangay filter
-        if ($request->has('barangay_id') && $request->barangay_id) {
-            $barangayNames = explode(',', $request->barangay_id);
-            $barangayNames = array_map('trim', $barangayNames);
-            $barangays = Barangay::whereIn('barangay_name', $barangayNames)->get();
-            if ($barangays->count() > 0) {
-                $query->whereIn('barangay_id', $barangays->pluck('barangay_id'));
-            }
-        }
-
-        // Apply date filters
-        if ($request->has('date_from') && $request->date_from) {
-            $query->whereDate('incident_date', '>=', $request->date_from);
-        }
-        if ($request->has('date_to') && $request->date_to) {
-            $query->whereDate('incident_date', '<=', $request->date_to);
-        }
-
-        // Apply quick filter
-        if ($request->has('quick_filter') && $request->quick_filter) {
-            $today = \Carbon\Carbon::now()->startOfDay();
-            switch ($request->quick_filter) {
-                case 'today':
-                    $query->whereDate('incident_date', $today);
-                    break;
-                case 'week':
-                    $query->where('incident_date', '>=', \Carbon\Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('incident_date', '>=', \Carbon\Carbon::now()->startOfMonth());
-                    break;
-            }
-        }
-
-        $reports = $query->orderByDesc('incident_date')->paginate(10);
-        return view('dashboard.bite-reports', compact('user', 'reports', 'stats', 'barangays'));
-    }
-
-    public function filterBiteReports(Request $request)
-    {
-        $user = Auth::user();
-
-        $barangays = Barangay::orderBy('barangay_name')->get(['barangay_id', 'barangay_name']);
-
         $query = BiteRabiesReport::where('rabies_confirmed', true)
             ->with(['barangay']);
 
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('patient_first_name', 'like', "%{$search}%")
-                  ->orWhere('patient_middle_name', 'like', "%{$search}%")
-                  ->orWhere('patient_last_name', 'like', "%{$search}%")
-                  ->orWhere('patient_suffix', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('age_filter')) {
-            switch ($request->age_filter) {
-                case '0-4':
-                    $query->whereBetween('age', [0, 4]);
-                    break;
-                case '5-14':
-                    $query->whereBetween('age', [5, 14]);
-                    break;
-                case '15-59':
-                    $query->whereBetween('age', [15, 59]);
-                    break;
-                case '60+':
-                    $query->where('age', '>=', 60);
-                    break;
-                case 'unknown':
-                    $query->where(function ($q) {
-                        $q->whereNull('age')->orWhere('age', '');
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('report_number', 'like', "%{$term}%")
+                            ->orWhere('patient_first_name', 'like', "%{$term}%")
+                            ->orWhere('patient_middle_name', 'like', "%{$term}%")
+                            ->orWhere('patient_last_name', 'like', "%{$term}%")
+                            ->orWhere('patient_suffix', 'like', "%{$term}%")
+                            ->orWhereHas('barangay', function ($q2) use ($term) {
+                                $q2->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('patient_barangay', 'like', "%{$term}%")
+                            ->orWhere('animal_type', 'like', "%{$term}%")
+                            ->orWhere('animal_status', 'like', "%{$term}%")
+                            ->orWhere('category', 'like', "%{$term}%")
+                            ->orWhere('exposure_type', 'like', "%{$term}%")
+                            ->orWhere('bite_site', 'like', "%{$term}%")
+                            ->orWhere('exact_location', 'like', "%{$term}%")
+                            ->orWhere('status', 'like', "%{$term}%")
+                            ->orWhere('animal_owner_name', 'like', "%{$term}%")
+                            ->orWhere('reporting_facility', 'like', "%{$term}%");
                     });
-                    break;
-            }
-        }
-
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->filled('animal_type')) {
-            $query->where('animal_type', $request->animal_type);
-        }
-
-        if ($request->filled('barangay_id')) {
-            $barangayNames = explode(',', $request->barangay_id);
-            $barangayNames = array_map('trim', $barangayNames);
-            $barangays = Barangay::whereIn('barangay_name', $barangayNames)->get();
-            if ($barangays->count() > 0) {
-                $query->whereIn('barangay_id', $barangays->pluck('barangay_id'));
-            }
+                }
+            });
         }
 
         if ($request->filled('date_from')) {
@@ -342,41 +227,62 @@ class AdminController extends Controller
             $query->whereDate('incident_date', '<=', $request->date_to);
         }
 
-        if ($request->filled('quick_filter')) {
-            $today = \Carbon\Carbon::now()->startOfDay();
-            switch ($request->quick_filter) {
-                case 'today':
-                    $query->whereDate('incident_date', $today);
-                    break;
-                case 'week':
-                    $query->where('incident_date', '>=', \Carbon\Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('incident_date', '>=', \Carbon\Carbon::now()->startOfMonth());
-                    break;
-            }
+        $reports = $query->orderByDesc('incident_date')->paginate(10);
+        return view('dashboard.bite-reports', compact('user', 'reports', 'stats'));
+    }
+
+    public function filterBiteReports(Request $request)
+    {
+        $query = BiteRabiesReport::where('rabies_confirmed', true)
+            ->with(['barangay']);
+
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('report_number', 'like', "%{$term}%")
+                            ->orWhere('patient_first_name', 'like', "%{$term}%")
+                            ->orWhere('patient_middle_name', 'like', "%{$term}%")
+                            ->orWhere('patient_last_name', 'like', "%{$term}%")
+                            ->orWhere('patient_suffix', 'like', "%{$term}%")
+                            ->orWhereHas('barangay', function ($q2) use ($term) {
+                                $q2->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('patient_barangay', 'like', "%{$term}%")
+                            ->orWhere('animal_type', 'like', "%{$term}%")
+                            ->orWhere('animal_status', 'like', "%{$term}%")
+                            ->orWhere('category', 'like', "%{$term}%")
+                            ->orWhere('exposure_type', 'like', "%{$term}%")
+                            ->orWhere('bite_site', 'like', "%{$term}%")
+                            ->orWhere('exact_location', 'like', "%{$term}%")
+                            ->orWhere('status', 'like', "%{$term}%")
+                            ->orWhere('animal_owner_name', 'like', "%{$term}%")
+                            ->orWhere('reporting_facility', 'like', "%{$term}%");
+                    });
+                }
+            });
         }
 
-        $filteredQuery = clone $query;
-        $stats = [
-            'total' => $filteredQuery->count(),
-            'dog_cases' => (clone $filteredQuery)->whereRaw('LOWER(animal_type) = ?', ['dog'])->count(),
-            'cat_cases' => (clone $filteredQuery)->whereRaw('LOWER(animal_type) = ?', ['cat'])->count(),
-            'other_cases' => (clone $filteredQuery)->whereRaw('LOWER(animal_type) = ?', ['other'])->count(),
-            'confirmed_this_year' => (clone $filteredQuery)->whereYear('incident_date', date('Y'))->count(),
-        ];
+        if ($request->filled('date_from')) {
+            $query->whereDate('incident_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('incident_date', '<=', $request->date_to);
+        }
 
         $reports = $query->orderByDesc('incident_date')->paginate(10);
 
-        $tableHtml = view('dashboard.partials.bite-reports-table', compact('reports'))->render();
-        $paginationHtml = $reports->links()->render();
+        try {
+            $html = view('dashboard.partials.bite-reports-table', compact('reports'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
 
         return response()->json([
             'success' => true,
-            'stats' => $stats,
-            'table_html' => $tableHtml,
-            'pagination_html' => $paginationHtml,
-            'total_count' => $reports->total(),
+            'html' => $html,
+            'pagination' => $reports->links()->render(),
             'has_results' => $reports->count() > 0,
         ]);
     }
