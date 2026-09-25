@@ -7,7 +7,7 @@ use App\Models\Barangay;
 use App\Models\BiteRabiesReport;
 use App\Models\Facility;
 use App\Models\Pet;
-use App\Models\RabiesVaccinationReport;
+use App\Models\VaccinationReport;
 use App\Models\Role;
 use App\Models\SystemLog;
 use App\Models\User;
@@ -47,7 +47,7 @@ class SuperAdminController extends Controller
 
             // Case statistics
             'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
-            'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
+            'total_vaccinations' => VaccinationReport::whereYear('vaccination_date', $year)->count(),
             'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
 
             // System statistics
@@ -377,7 +377,7 @@ class SuperAdminController extends Controller
             'total_clients' => User::where('role', 'pet_owner')->count(),
             'total_animals' => Pet::count(),
             'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
-            'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
+            'total_vaccinations' => VaccinationReport::whereYear('vaccination_date', $year)->count(),
             'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
             'total_barangays' => Barangay::count(),
         ];
@@ -540,7 +540,7 @@ class SuperAdminController extends Controller
                 break;
 
             case 'vaccinations':
-                $data = RabiesVaccinationReport::whereYear('vaccination_date', $year)
+                $data = VaccinationReport::whereYear('vaccination_date', $year)
                     ->get()
                     ->toArray();
                 $filename = 'vaccinations_report_'.$year;
@@ -562,7 +562,7 @@ class SuperAdminController extends Controller
                     'total_clients' => User::where('role', 'pet_owner')->count(),
                     'total_animals' => Pet::count(),
                     'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
-                    'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
+                    'total_vaccinations' => VaccinationReport::whereYear('vaccination_date', $year)->count(),
                     'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
                     'total_barangays' => Barangay::count(),
                     'total_announcements' => Announcement::count(),

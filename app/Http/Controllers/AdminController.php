@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Barangay;
 use App\Models\BiteRabiesReport;
-use App\Models\RabiesVaccinationReport;
-use App\Models\MeatInspectionReport;
 use App\Models\VaccinationReport;
+use App\Models\MeatInspectionReport;
+use App\Models\VaccinationAppointment;
 use App\Models\MeatEstablishment;
 use App\Models\ImpoundRecord;
 use App\Models\User;
@@ -27,19 +28,16 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
-        // Get statistics
         $stats = [
             'total_bite_reports' => BiteRabiesReport::count(),
-            'pending_bite_reports' => BiteRabiesReport::where('status', 'Pending Review')->count(),
-            'total_vaccination_reports' => RabiesVaccinationReport::count(),
+            'total_vaccination_reports' => VaccinationReport::count(),
             'total_meat_inspection_reports' => MeatInspectionReport::count(),
             'total_users' => User::count(),
             'compliant_meat_inspections' => MeatInspectionReport::where('compliance_status', 'compliant')->count(),
         ];
 
-        // Get recent reports
         $recent_bites = BiteRabiesReport::latest()->take(5)->get();
-        $recent_vaccinations = RabiesVaccinationReport::latest()->take(5)->get();
+        $recent_vaccinations = VaccinationReport::latest()->take(5)->get();
         $recent_meat_inspections = MeatInspectionReport::latest()->take(5)->get();
 
         return view('dashboard.admin', compact('user', 'stats', 'recent_bites', 'recent_vaccinations', 'recent_meat_inspections'));
@@ -53,55 +51,24 @@ class AdminController extends Controller
         $user = Auth::user();
         $isSuperAdmin = $user->hasRole('super_admin');
 
-        // Get all statistics from database
         $stats = [
             'total_users' => User::count(),
             'active_users' => User::where('status', 'active')->count(),
             'total_announcements' => Announcement::count(),
             'total_bite_reports' => BiteRabiesReport::count(),
-            'total_vaccinations' => RabiesVaccinationReport::count(),
+            'total_vaccinations' => VaccinationReport::count(),
             'total_meat_inspections' => MeatInspectionReport::count(),
             'total_stray_reports' => StrayReport::count(),
         ];
 
-        // Bite reports by status
-        $biteStats = [
-            'pending' => BiteRabiesReport::where('status', 'Pending Review')->count(),
-            'investigating' => BiteRabiesReport::where('status', 'Under Review')->count(),
-            'resolved' => BiteRabiesReport::where('status', 'Resolved')->count(),
-        ];
-
-        // Rabies vaccinations by species
-        $vaccinationStats = [
-            'dogs' => RabiesVaccinationReport::where('pet_species', 'dog')->count(),
-            'cats' => RabiesVaccinationReport::where('pet_species', 'cat')->count(),
-            'other' => RabiesVaccinationReport::where('pet_species', 'other')->count(),
-        ];
-
-        // Meat inspections by compliance status
-        $meatInspectionStats = [
-            'compliant' => MeatInspectionReport::where('compliance_status', 'compliant')->count(),
-            'non_compliant' => MeatInspectionReport::where('compliance_status', 'non_compliant')->count(),
-            'pending' => MeatInspectionReport::where('compliance_status', 'pending')->count(),
-        ];
-
-        // User distribution by role
-        $userRoles = User::selectRaw('role, COUNT(*) as count')
-            ->groupBy('role')
-            ->pluck('count', 'role')
-            ->toArray();
-
-        // Recent activity (bite reports)
         $recentActivity = BiteRabiesReport::latest()->take(5)->get();
 
-        // Get reports for export/generation - paginated 10 per page
         $biteReports = BiteRabiesReport::latest()->paginate(10);
-        $vaccinationReports = RabiesVaccinationReport::latest()->paginate(10);
+        $vaccinationReports = VaccinationReport::latest()->paginate(10);
         $inspectionReports = MeatInspectionReport::latest()->paginate(10);
         $totalMeatEstablishments = MeatEstablishment::count();
         $meatEstablishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
 
-        // Missing Pet Reports (from reports table) - paginated 10 per page
         $missingPetReports = MissingPetsReport::with(['pet', 'user'])->latest()->paginate(10);
         $missingPetStats = [
             'total' => MissingPetsReport::count(),
@@ -112,8 +79,7 @@ class AdminController extends Controller
             'closed' => MissingPetsReport::whereIn('status', ['closed - expired', 'closed - cancelled', 'closed - duplicate'])->count(),
         ];
 
-        // Adoption Reports - paginated 10 per page
-        $adoptionReports = AdoptionApplication::with(['user', 'pet'])->latest()->paginate(10);
+        $adoptionReports = AdoptionApplication::with(['pet', 'user'])->latest()->paginate(10);
         $adoptionStats = [
             'total' => AdoptionApplication::count(),
             'pending_review' => AdoptionApplication::where('status', 'pending_review')->count(),
@@ -121,20 +87,14 @@ class AdminController extends Controller
             'rejected' => AdoptionApplication::where('status', 'rejected')->count(),
         ];
 
-        // Additional data for super_admin view
         $recentAnnouncements = Announcement::latest()->take(5)->get();
         $recentUsers = User::latest()->take(5)->get();
 
-        // For super_admin, show simplified user-focused view
         if ($isSuperAdmin) {
             return view('super-admin.all-reports', compact(
                 'user',
                 'isSuperAdmin',
                 'stats',
-                'biteStats',
-                'vaccinationStats',
-                'meatInspectionStats',
-                'userRoles',
                 'recentActivity',
                 'recentAnnouncements',
                 'recentUsers',
@@ -151,15 +111,10 @@ class AdminController extends Controller
             ));
         }
 
-        // For other admins (city_vet), show full reports view
         return view('admin.all-reports', compact(
             'user',
             'isSuperAdmin',
             'stats',
-            'biteStats',
-            'vaccinationStats',
-            'meatInspectionStats',
-            'userRoles',
             'recentActivity',
             'biteReports',
             'vaccinationReports',
@@ -182,60 +137,30 @@ class AdminController extends Controller
         $user = Auth::user();
 
         $stats = [
-            'total' => BiteRabiesReport::where('rabies_confirmed', true)->count(),
-            'dog_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['dog'])->count(),
-            'cat_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['cat'])->count(),
-            'other_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereRaw('LOWER(animal_type) = ?', ['other'])->count(),
-            'confirmed_this_year' => BiteRabiesReport::where('rabies_confirmed', true)->whereYear('incident_date', date('Y'))->count(),
+            'total' => BiteRabiesReport::count(),
+            'dog_cases' => BiteRabiesReport::where('animal_type', 'dog')->count(),
+            'cat_cases' => BiteRabiesReport::where('animal_type', 'cat')->count(),
+            'confirmed_this_year' => BiteRabiesReport::whereYear('incident_date', date('Y'))->count(),
         ];
 
-        $query = BiteRabiesReport::where('rabies_confirmed', true)
-            ->with(['barangay', 'patient']);
+        $query = BiteRabiesReport::with(['barangay']);
 
         if ($request->filled('search')) {
             $terms = array_values(array_filter(explode(' ', $request->search)));
-            $ageTerm = null;
 
-            foreach ($terms as $term) {
-                $normalized = strtolower($term);
-                $normalized = preg_replace('/\b(yrs?|years?|old)\b/i', '', $normalized);
-                $normalized = trim($normalized);
-
-                if (is_numeric($normalized)) {
-                    $ageTerm = (int) $normalized;
-                    break;
-                }
-            }
-
-            $query->where(function ($q) use ($terms, $ageTerm) {
+            $query->where(function ($q) use ($terms) {
                 foreach ($terms as $term) {
                     $q->where(function ($sub) use ($term) {
                         $sub->where('report_number', 'like', "%{$term}%")
-                            ->orWhereHas('patient', function ($q2) use ($term) {
-                                $q2->where('first_name', 'like', "%{$term}%")
-                                    ->orWhere('middle_name', 'like', "%{$term}%")
-                                    ->orWhere('last_name', 'like', "%{$term}%")
-                                    ->orWhere('suffix', 'like', "%{$term}%");
-                            })
                             ->orWhereHas('barangay', function ($q2) use ($term) {
                                 $q2->where('barangay_name', 'like', "%{$term}%");
                             })
                             ->orWhere('animal_type', 'like', "%{$term}%")
+                            ->orWhere('animal_gender', 'like', "%{$term}%")
                             ->orWhere('animal_status', 'like', "%{$term}%")
-                            ->orWhere('category', 'like', "%{$term}%")
-                            ->orWhere('exposure_type', 'like', "%{$term}%")
-                            ->orWhere('bite_site', 'like', "%{$term}%")
+                            ->orWhere('animal_name', 'like', "%{$term}%")
                             ->orWhere('exact_location', 'like', "%{$term}%")
-                            ->orWhere('status', 'like', "%{$term}%")
-                            ->orWhere('animal_owner_name', 'like', "%{$term}%")
-                            ->orWhere('reporting_facility', 'like', "%{$term}%");
-                    });
-                }
-
-                if ($ageTerm !== null) {
-                    $q->orWhereHas('patient', function ($q2) use ($ageTerm) {
-                        $q2->whereDate('date_of_birth', '<=', now()->subYears($ageTerm)->startOfDay())
-                            ->whereDate('date_of_birth', '>', now()->subYears($ageTerm + 1)->startOfDay());
+                            ->orWhere('animal_owner_name', 'like', "%{$term}%");
                     });
                 }
             });
@@ -254,53 +179,24 @@ class AdminController extends Controller
 
     public function filterBiteReports(Request $request)
     {
-        $query = BiteRabiesReport::where('rabies_confirmed', true)
-            ->with(['barangay', 'patient']);
+        $query = BiteRabiesReport::with(['barangay']);
 
         if ($request->filled('search')) {
             $terms = array_values(array_filter(explode(' ', $request->search)));
-            $ageTerm = null;
 
-            foreach ($terms as $term) {
-                $normalized = strtolower($term);
-                $normalized = preg_replace('/\b(yrs?|years?|old)\b/i', '', $normalized);
-                $normalized = trim($normalized);
-
-                if (is_numeric($normalized)) {
-                    $ageTerm = (int) $normalized;
-                    break;
-                }
-            }
-
-            $query->where(function ($q) use ($terms, $ageTerm) {
+            $query->where(function ($q) use ($terms) {
                 foreach ($terms as $term) {
                     $q->where(function ($sub) use ($term) {
                         $sub->where('report_number', 'like', "%{$term}%")
-                            ->orWhereHas('patient', function ($q2) use ($term) {
-                                $q2->where('first_name', 'like', "%{$term}%")
-                                    ->orWhere('middle_name', 'like', "%{$term}%")
-                                    ->orWhere('last_name', 'like', "%{$term}%")
-                                    ->orWhere('suffix', 'like', "%{$term}%");
-                            })
                             ->orWhereHas('barangay', function ($q2) use ($term) {
                                 $q2->where('barangay_name', 'like', "%{$term}%");
                             })
                             ->orWhere('animal_type', 'like', "%{$term}%")
+                            ->orWhere('animal_gender', 'like', "%{$term}%")
                             ->orWhere('animal_status', 'like', "%{$term}%")
-                            ->orWhere('category', 'like', "%{$term}%")
-                            ->orWhere('exposure_type', 'like', "%{$term}%")
-                            ->orWhere('bite_site', 'like', "%{$term}%")
+                            ->orWhere('animal_name', 'like', "%{$term}%")
                             ->orWhere('exact_location', 'like', "%{$term}%")
-                            ->orWhere('status', 'like', "%{$term}%")
-                            ->orWhere('animal_owner_name', 'like', "%{$term}%")
-                            ->orWhere('reporting_facility', 'like', "%{$term}%");
-                    });
-                }
-
-                if ($ageTerm !== null) {
-                    $q->orWhereHas('patient', function ($q2) use ($ageTerm) {
-                        $q2->whereDate('date_of_birth', '<=', now()->subYears($ageTerm)->startOfDay())
-                            ->whereDate('date_of_birth', '>', now()->subYears($ageTerm + 1)->startOfDay());
+                            ->orWhere('animal_owner_name', 'like', "%{$term}%");
                     });
                 }
             });
@@ -333,38 +229,25 @@ class AdminController extends Controller
      * Show bite report details (JSON for modal).
      */
     public function showBiteReportJson(BiteRabiesReport $report)
-    
     {
-        $report->load(['barangay', 'patient', 'reportedBy']);
-        
+        $report->load(['barangay']);
+
         return response()->json([
             'success' => true,
             'report' => [
                 'id' => $report->id,
                 'report_number' => $report->report_number,
-                'status' => $report->status,
-                'patient_name' => $report->patient?->full_name ?? 'N/A',
-                'age' => $report->patient?->age ?? 'N/A',
-                'gender' => $report->patient?->gender ?? 'N/A',
-                'patient_address' => $report->patient?->address ?? 'N/A',
-                'patient_contact' => $report->patient?->contact_number ?? 'N/A',
-                'barangay' => $report->barangay?->barangay_name ?? $report->patient?->barangay?->barangay_name ?? 'N/A',
+                'barangay' => $report->barangay?->barangay_name ?? 'N/A',
                 'incident_date' => \Carbon\Carbon::parse($report->incident_date)->format('M d, Y'),
                 'exact_location' => $report->exact_location,
-                'exposure_type' => $report->exposure_type,
-                'bite_site' => $report->bite_site,
-                'category' => $report->category,
                 'animal_type' => ucfirst($report->animal_type),
+                'animal_gender' => $report->animal_gender,
                 'animal_status' => ucfirst($report->animal_status),
+                'animal_name' => $report->animal_name,
                 'vaccination_status' => $report->vaccination_status,
                 'animal_owner_name' => $report->animal_owner_name,
                 'animal_owner_contact' => $report->animal_owner_contact,
-                'reporting_facility' => $report->reporting_facility,
-                'wound_management' => is_array($report->wound_management) ? implode(', ', $report->wound_management) : 'None',
-                'post_exposure_prophylaxis' => $report->post_exposure_prophylaxis,
                 'notes' => $report->notes,
-                'rabies_confirmed' => $report->rabies_confirmed ? 'Yes' : 'No',
-                'created_at' => $report->created_at->format('M d, Y h:i A'),
             ]
         ]);
     }
@@ -375,7 +258,7 @@ class AdminController extends Controller
     public function showBiteReport(BiteRabiesReport $report)
     {
         $user = Auth::user();
-        $report->load(['patient', 'reportedBy']);
+        $report->load(['barangay']);
         return view('dashboard.bite-reports.show', compact('report', 'user'));
     }
 
@@ -386,14 +269,12 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
-        $query = VaccinationReport::with(['owner', 'user', 'address']);
+        $query = VaccinationAppointment::with(['owner', 'user', 'address']);
 
-        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter by date range
         if ($request->filled('date_from')) {
             $query->whereDate('scheduled_at', '>=', $request->date_from);
         }
@@ -401,7 +282,6 @@ class AdminController extends Controller
             $query->whereDate('scheduled_at', '<=', $request->date_to);
         }
 
-        // Search by owner name
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('owner', function($q) use ($search) {
@@ -412,15 +292,14 @@ class AdminController extends Controller
 
         $appointments = $query->orderBy('scheduled_at', 'desc')->paginate(15);
 
-        // Statistics
         $stats = [
-            'total' => VaccinationReport::count(),
-            'pending' => VaccinationReport::where('status', 'pending')->count(),
-            'approved' => VaccinationReport::where('status', 'approved')->count(),
-            'completed' => VaccinationReport::where('status', 'completed')->count(),
-            'cancelled' => VaccinationReport::where('status', 'cancelled')->count(),
-            'today' => VaccinationReport::whereDate('scheduled_at', now()->toDateString())->count(),
-            'this_week' => VaccinationReport::whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'total' => VaccinationAppointment::count(),
+            'pending' => VaccinationAppointment::where('status', 'pending')->count(),
+            'approved' => VaccinationAppointment::where('status', 'approved')->count(),
+            'completed' => VaccinationAppointment::where('status', 'completed')->count(),
+            'cancelled' => VaccinationAppointment::where('status', 'cancelled')->count(),
+            'today' => VaccinationAppointment::whereDate('scheduled_at', now()->toDateString())->count(),
+            'this_week' => VaccinationAppointment::whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
         ];
 
         return view('dashboard.vaccination-appointments', compact('user', 'appointments', 'stats'));
@@ -429,9 +308,9 @@ class AdminController extends Controller
     /**
      * Show vaccination appointment details (JSON for modal).
      */
-    public function showVaccinationAppointmentJson(VaccinationReport $appointment)
+    public function showVaccinationAppointmentJson(VaccinationAppointment $appointment)
     {
-        $appointment->load(['owner', 'user', 'address.barangay']);
+        $appointment->load(['address.barangay']);
 
         $selectedPets = $appointment->selected_pets ?? [];
 
@@ -445,9 +324,14 @@ class AdminController extends Controller
                 'recent_surgery' => $appointment->recent_surgery ? 'Yes' : 'No',
                 'created_at' => $appointment->created_at->format('M d, Y h:i A'),
                 'owner_name' => $appointment->owner_name,
-                'owner_contact' => $appointment->owner->contact_number ?? 'N/A',
-                'owner_email' => $appointment->owner->email ?? 'N/A',
-                'address' => $appointment->address ? trim(($appointment->address->block_lot_phase ?? '').' '.($appointment->address->street ?? '').', '.($appointment->address->barangay->barangay_name ?? 'N/A').', '.($appointment->address->city ?? '')) : 'N/A',
+                'owner_contact' => $appointment->user->contact_number ?? 'N/A',
+                'owner_email' => $appointment->user->email ?? 'N/A',
+                'address' => $appointment->address ? trim(
+                    ($appointment->address->block_lot_phase ? $appointment->address->block_lot_phase . ' ' : '') .
+                    ($appointment->address->street ?? '') .
+                    ', ' . ($appointment->address->barangay->barangay_name ?? 'N/A') .
+                    ', ' . ($appointment->address->city ?? '')
+                ) : 'N/A',
                 'submitted_by' => $appointment->user->name ?? 'N/A',
                 'selected_pets' => $selectedPets,
                 'metadata' => $appointment->metadata,
@@ -456,9 +340,56 @@ class AdminController extends Controller
     }
 
     /**
+     * Filter vaccination appointments for AJAX.
+     */
+    public function filterVaccinationAppointments(Request $request)
+    {
+        $query = VaccinationAppointment::with(['owner', 'user', 'address.barangay']);
+
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('owner_name', 'like', "%{$term}%")
+                            ->orWhereHas('owner', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('status', 'like', "%{$term}%");
+                    });
+                }
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('scheduled_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('scheduled_at', '<=', $request->date_to);
+        }
+
+        $appointments = $query->orderBy('scheduled_at', 'desc')->paginate(15);
+
+        try {
+            $html = view('dashboard.partials.vaccination-appointments-table', compact('appointments'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="7" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'pagination' => $appointments->links()->render(),
+            'total_count' => $appointments->total(),
+            'has_results' => $appointments->count() > 0,
+        ]);
+    }
+
+    /**
      * Update vaccination appointment status.
      */
-    public function updateVaccinationAppointmentStatus(Request $request, VaccinationReport $appointment)
+    public function updateVaccinationAppointmentStatus(Request $request, VaccinationAppointment $appointment)
     {
         $request->validate([
             'status' => 'required|in:pending,approved,completed,cancelled,no_show',
@@ -466,13 +397,129 @@ class AdminController extends Controller
 
         $appointment->update(['status' => $request->status]);
 
+        if ($request->status === 'completed') {
+            if ($appointment->vaccinationReports()->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vaccination reports have already been generated for this appointment.',
+                ]);
+            }
+
+            $selectedPets = $appointment->metadata['selected_pets'] ?? [];
+            if (empty($selectedPets)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No pets selected for this appointment.',
+                ]);
+            }
+
+            $owner = $appointment->owner;
+            $address = $appointment->address;
+            $barangay = $address->barangay ?? null;
+
+            $validPets = [];
+            foreach ($selectedPets as $petData) {
+                $petId = is_array($petData) ? ($petData['id'] ?? null) : $petData;
+                if (!$petId) {
+                    continue;
+                }
+
+                $pet = Pet::withTrashed()->find($petId);
+                if (!$pet) {
+                    continue;
+                }
+
+                $validPets[] = [
+                    'pet' => $pet,
+                    'metadata' => is_array($petData) ? $petData : [],
+                ];
+            }
+
+            if (empty($validPets)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No valid pets found for this appointment.',
+                ]);
+            }
+
+            DB::transaction(function () use ($appointment, $owner, $address, $barangay, $validPets) {
+                $now = now();
+
+                foreach ($validPets as $item) {
+                    $pet = $item['pet'];
+                    $petMeta = $item['metadata'];
+
+                    VaccinationReport::create([
+                        'vaccination_appointment_id' => $appointment->id,
+                        'pet_id' => $pet->pet_id,
+                        'barangay_id' => $barangay?->barangay_id,
+                        'pet_name' => $pet->pet_name,
+                        'pet_species' => $pet->species,
+                        'pet_breed' => $pet->breed,
+                        'pet_gender' => $pet->gender,
+                        'pet_age' => $pet->age,
+                        'vaccine_brand' => null,
+                        'vaccine_batch_number' => null,
+                        'vaccination_date' => $appointment->scheduled_at->toDateString(),
+                        'vaccination_time' => $appointment->scheduled_at->toTimeString(),
+                        'next_vaccination_date' => null,
+                        'weight' => $petMeta['weight'] ?? null,
+                        'vaccination_type' => null,
+                        'status' => 'completed',
+                        'observations' => null,
+                        'notes' => null,
+                        'administered_by' => Auth::id(),
+                        'inventory_control_id' => null,
+                    ]);
+                }
+            });
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Appointment status updated successfully.',
             'appointment' => [
                 'id' => $appointment->id,
-                'status' => ucfirst($appointment->status),
+                'status' => $appointment->status,
             ]
+        ]);
+    }
+
+    public function editVaccinationAppointmentJson(VaccinationAppointment $appointment)
+    {
+        $appointment->load(['address.barangay']);
+
+        return response()->json([
+            'success' => true,
+            'appointment' => [
+                'id' => $appointment->id,
+                'scheduled_at' => $appointment->scheduled_at ? $appointment->scheduled_at->format('Y-m-d\TH:i') : null,
+                'status' => $appointment->status,
+                'last_anti_rabies_date' => $appointment->last_anti_rabies_date ? $appointment->last_anti_rabies_date->format('Y-m-d') : null,
+                'recent_surgery' => $appointment->recent_surgery,
+            ]
+        ]);
+    }
+
+    public function updateVaccinationAppointment(Request $request, VaccinationAppointment $appointment)
+    {
+        $validated = $request->validate([
+            'scheduled_at' => 'required|date',
+            'status' => 'required|in:pending,approved,completed,cancelled,no_show',
+            'last_anti_rabies_date' => 'nullable|date',
+            'recent_surgery' => 'required|boolean',
+        ]);
+
+        $appointment->update([
+            'scheduled_at' => $validated['scheduled_at'],
+            'status' => $validated['status'],
+            'last_anti_rabies_date' => $validated['last_anti_rabies_date'],
+            'recent_surgery' => $validated['recent_surgery'],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Appointment updated successfully.',
         ]);
     }
 
@@ -482,83 +529,25 @@ class AdminController extends Controller
     public function indexVaccinationReports(Request $request)
     {
         $user = Auth::user();
-        
-        $query = RabiesVaccinationReport::latest();
 
-        // Apply clinic search filter
-        if ($request->has('clinic_search') && $request->clinic_search) {
-            $query->where('clinic_name', 'like', '%' . $request->clinic_search . '%');
-        }
+        $query = VaccinationReport::latest()->with(['pet.owner']);
 
-        // Apply animal type search filter
-        if ($request->has('animal_type_search') && $request->animal_type_search) {
-            $query->where('pet_species', 'like', '%' . $request->animal_type_search . '%');
-        }
-
-        // Apply vaccine search filter
-        if ($request->has('vaccine_search') && $request->vaccine_search) {
-            $query->where('vaccine_brand', 'like', '%' . $request->vaccine_search . '%');
-        }
-
-        // Apply date filters
-        if ($request->has('date_from') && $request->date_from) {
-            $query->whereDate('vaccination_date', '>=', $request->date_from);
-        }
-        if ($request->has('date_to') && $request->date_to) {
-            $query->whereDate('vaccination_date', '<=', $request->date_to);
-        }
-
-        // Apply quick filter
-        if ($request->has('quick_filter') && $request->quick_filter) {
-            $today = \Carbon\Carbon::now()->startOfDay();
-            switch ($request->quick_filter) {
-                case 'today':
-                    $query->whereDate('vaccination_date', $today);
-                    break;
-                case 'week':
-                    $query->where('vaccination_date', '>=', \Carbon\Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('vaccination_date', '>=', \Carbon\Carbon::now()->startOfMonth());
-                    break;
-            }
-        }
-
-        $reports = $query->paginate(10);
-
-        $animalTypes = RabiesVaccinationReport::select('pet_species')
-            ->distinct()
-            ->orderBy('pet_species')
-            ->pluck('pet_species')
-            ->push('Other')
-            ->unique()
-            ->sort()
-            ->values();
-
-        $vaccines = RabiesVaccinationReport::select('vaccine_brand')
-            ->distinct()
-            ->orderBy('vaccine_brand')
-            ->pluck('vaccine_brand');
-
-        return view('dashboard.vaccination-reports', compact('user', 'reports', 'animalTypes', 'vaccines'));
-    }
-
-    public function filterVaccinationReports(Request $request)
-    {
-        $user = Auth::user();
-
-        $query = RabiesVaccinationReport::latest();
-
-        if ($request->filled('clinic_search')) {
-            $query->where('clinic_name', 'like', '%' . $request->clinic_search . '%');
-        }
-
-        if ($request->filled('animal_type_search')) {
-            $query->where('pet_species', 'like', '%' . $request->animal_type_search . '%');
-        }
-
-        if ($request->filled('vaccine_search')) {
-            $query->where('vaccine_brand', 'like', '%' . $request->vaccine_search . '%');
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('pet_name', 'like', "%{$term}%")
+                            ->orWhere('pet_species', 'like', "%{$term}%")
+                            ->orWhere('vaccine_brand', 'like', "%{$term}%")
+                            ->orWhere('status', 'like', "%{$term}%")
+                            ->orWhere('id', 'like', "%{$term}%")
+                            ->orWhereHas('pet.owner', function ($q2) use ($term) {
+                                $q2->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$term}%"]);
+                            });
+                    });
+                }
+            });
         }
 
         if ($request->filled('date_from')) {
@@ -568,31 +557,51 @@ class AdminController extends Controller
             $query->whereDate('vaccination_date', '<=', $request->date_to);
         }
 
-        if ($request->filled('quick_filter')) {
-            $today = \Carbon\Carbon::now()->startOfDay();
-            switch ($request->quick_filter) {
-                case 'today':
-                    $query->whereDate('vaccination_date', $today);
-                    break;
-                case 'week':
-                    $query->where('vaccination_date', '>=', \Carbon\Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('vaccination_date', '>=', \Carbon\Carbon::now()->startOfMonth());
-                    break;
-            }
+        $reports = $query->paginate(10);
+        return view('dashboard.vaccination-reports', compact('user', 'reports'));
+    }
+
+    public function filterVaccinationReports(Request $request)
+    {
+        $query = VaccinationReport::latest()->with(['pet.owner']);
+
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('pet_name', 'like', "%{$term}%")
+                            ->orWhere('pet_species', 'like', "%{$term}%")
+                            ->orWhere('vaccine_brand', 'like', "%{$term}%")
+                            ->orWhere('status', 'like', "%{$term}%")
+                            ->orWhere('id', 'like', "%{$term}%")
+                            ->orWhereHas('pet.owner', function ($q2) use ($term) {
+                                $q2->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$term}%"]);
+                            });
+                    });
+                }
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('vaccination_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('vaccination_date', '<=', $request->date_to);
         }
 
         $reports = $query->paginate(10);
 
-        $tableHtml = view('dashboard.partials.vaccination-reports-table', compact('reports'))->render();
-        $paginationHtml = $reports->links()->render();
+        try {
+            $html = view('dashboard.partials.vaccination-reports-table', compact('reports'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="7" class="px-6 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
 
         return response()->json([
             'success' => true,
-            'table_html' => $tableHtml,
-            'pagination_html' => $paginationHtml,
-            'total_count' => $reports->total(),
+            'html' => $html,
+            'pagination' => $reports->links()->render(),
             'has_results' => $reports->count() > 0,
         ]);
     }
@@ -600,25 +609,26 @@ class AdminController extends Controller
     /**
      * Show rabies vaccination report details (JSON for modal).
      */
-    public function showVaccinationReportJson(RabiesVaccinationReport $report)
+    public function showVaccinationReportJson(VaccinationReport $report)
     {
-        $report->load(['user', 'barangay']);
-        
+        $report->load(['pet.owner', 'pet.owner.address', 'barangay']);
+
+        $owner = $report->pet?->owner;
+        $address = $owner?->address;
+
         return response()->json([
             'success' => true,
             'report' => [
                 'id' => $report->id,
                 'report_number' => 'RV-' . str_pad($report->id, 5, '0', STR_PAD_LEFT),
-                'clinic_name' => $report->clinic_name,
-                'patient_name' => $report->patient_name,
-                'patient_contact' => $report->patient_contact,
-                'patient_address' => $report->patient_address,
+                'patient_name' => $owner ? trim(($owner->first_name ?? '') . ' ' . ($owner->last_name ?? '')) : 'N/A',
+                'patient_contact' => $owner->phone_number ?? 'N/A',
+                'patient_address' => $address ? trim(($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ', ' . ($address->barangay?->barangay_name ?? '')) : 'N/A',
                 'pet_name' => $report->pet_name,
                 'pet_species' => ucfirst($report->pet_species),
                 'pet_breed' => $report->pet_breed,
                 'pet_age' => $report->pet_age,
                 'pet_gender' => ucfirst($report->pet_gender),
-                'pet_color' => $report->pet_color,
                 'vaccine_brand' => $report->vaccine_brand,
                 'vaccine_batch_number' => $report->vaccine_batch_number,
                 'vaccination_date' => \Carbon\Carbon::parse($report->vaccination_date)->format('M d, Y'),
@@ -630,7 +640,6 @@ class AdminController extends Controller
                 'status' => $report->status,
                 'notes' => $report->notes,
                 'barangay' => optional($report->barangay)->barangay_name ?? 'N/A',
-                'created_at' => $report->created_at->format('M d, Y h:i A'),
             ]
         ]);
     }
@@ -638,7 +647,7 @@ class AdminController extends Controller
     /**
      * Show rabies vaccination report details.
      */
-    public function showVaccinationReport(RabiesVaccinationReport $report)
+    public function showVaccinationReport(VaccinationReport $report)
     {
         $user = Auth::user();
         $report->load('user');
@@ -740,7 +749,7 @@ class AdminController extends Controller
     public function showMeatEstablishmentJson(MeatEstablishment $establishment)
     {
         $establishment->load('barangay', 'user');
-        
+
         return response()->json([
             'success' => true,
             'establishment' => [
@@ -772,19 +781,5 @@ class AdminController extends Controller
         $user = Auth::user();
         $impounds = ImpoundRecord::with('strayReport')->latest()->paginate(10);
         return view('dashboard.impound-records', compact('user', 'impounds'));
-    }
-
-    /**
-     * Update animal bite report status.
-     */
-    public function updateBiteReport(Request $request, BiteRabiesReport $report)
-    {
-        $request->validate([
-            'status' => 'required|in:Pending Review,Under Review,Resolved,Closed',
-        ]);
-
-        $report->update(['status' => $request->status]);
-
-        return redirect()->route('admin.bite-reports.index')->with('success', 'Report status updated successfully.');
     }
 }

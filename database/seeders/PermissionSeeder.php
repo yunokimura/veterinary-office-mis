@@ -253,6 +253,10 @@ class PermissionSeeder extends Seeder
                 'appointments.reset',
                 'adoption-reports.view',
                 'owner-reports.view',
+                'inventory.view',
+                'inventory.create',
+                'inventory.edit',
+                'inventory.delete',
             ],
             'meat_inspector' => [
                 'dashboard.access',

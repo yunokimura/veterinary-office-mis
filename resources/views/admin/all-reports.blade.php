@@ -120,7 +120,6 @@
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Barangay</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Victim</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
@@ -134,15 +133,6 @@
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay?->barangay_name ?? ($report->patient?->barangay?->barangay_name ?? 'N/A') }}</td>
                                 <td class="px-4 py-3 text-sm">{{ $report->patient?->full_name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ ucfirst($report->animal_type) }}</td>
-                                <td class="px-4 py-3">
-                                    @if($report->category == 'I')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">Category I</span>
-                                    @elseif($report->category == 'II')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 whitespace-nowrap">Category II</span>
-                                    @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 whitespace-nowrap">Category III</span>
-                                    @endif
-                                </td>
                                 <td class="px-4 py-3">
                                     @if($report->status == 'Pending Review')
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 whitespace-nowrap">Pending Review</span>
@@ -162,7 +152,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="9" class="px-4 py-8 text-center text-gray-500">
+                                <td colspan="8" class="px-4 py-8 text-center text-gray-500">
                                     <i class="bi bi-inbox text-3xl mb-2 block"></i>
                                     No animal bite reports found.
                                 </td>

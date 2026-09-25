@@ -35,8 +35,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read Barangay|null $barangay
  * @property-read Collection<int, BiteRabiesReport> $biteRabiesReportsApproved
  * @property-read int|null $bite_rabies_reports_approved_count
- * @property-read Collection<int, BiteRabiesReport> $biteRabiesReportsReported
- * @property-read int|null $bite_rabies_reports_reported_count
  * @property-read Collection<int, DeviceToken> $deviceTokens
  * @property-read int|null $device_tokens_count
  * @property-read Facility|null $facility
@@ -573,14 +571,6 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
         // User → pet_owners → pets (through pet_owners table)
         return $this->hasManyThrough(Pet::class, PetOwner::class, 'user_id', 'owner_id')
             ->orderBy('pet_name');
-    }
-
-    /**
-     * Get the bite rabies reports reported by this user.
-     */
-    public function biteRabiesReportsReported(): HasMany
-    {
-        return $this->hasMany(BiteRabiesReport::class, 'reported_by', 'id');
     }
 
     /**

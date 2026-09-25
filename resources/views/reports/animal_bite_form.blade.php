@@ -232,7 +232,6 @@
                             <option value="">Select ownership</option>
                             <option value="owned" {{ old('ownership_status') == 'owned' ? 'selected' : '' }}>Owned</option>
                             <option value="stray" {{ old('ownership_status') == 'stray' ? 'selected' : '' }}>Stray</option>
-                            <option value="wild" {{ old('ownership_status') == 'wild' ? 'selected' : '' }}>Wild</option>
                         </select>
                         @error('ownership_status')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

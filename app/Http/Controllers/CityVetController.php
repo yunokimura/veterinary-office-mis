@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barangay;
 use App\Models\BiteRabiesReport;
-use App\Models\RabiesVaccinationReport;
+use App\Models\VaccinationReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,16 +25,15 @@ class CityVetController extends Controller
         $monthlyYear = $request->monthly_year ?? $year;
 
         $stats = [
-            'confirmed_bite_cases' => BiteRabiesReport::where('rabies_confirmed', true)->whereYear('incident_date', $year)->count(),
-            'anti_rabies_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
+            'confirmed_bite_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
+            'anti_rabies_vaccinations' => VaccinationReport::whereYear('vaccination_date', $year)->count(),
             'adoption_reports' => \App\Models\AdoptionApplication::whereYear('created_at', $year)->count(),
             'missing_pet_reports' => \App\Models\MissingPetsReport::whereYear('created_at', $year)->count(),
             'registered_meat_establishments' => \App\Models\MeatEstablishment::count(),
         ];
 
         $kpiSecondary = [
-            'rabies_active' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->whereYear('incident_date', $year)->count(),
-            'rabies_resolved' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $year)->count(),
+            'rabies_total' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
             'vaccination_target' => 50,
             'adoption_dogs' => \App\Models\AdoptionApplication::whereYear('created_at', $year)->whereHas('pet', function ($q) {
                 $q->where('species', 'Dog');
@@ -47,16 +46,14 @@ class CityVetController extends Controller
         ];
 
         // Get recent confirmed rabies cases only from current year
-        $recentCases = BiteRabiesReport::where('rabies_confirmed', true)
-            ->whereYear('incident_date', date('Y'))
+        $recentCases = BiteRabiesReport::whereYear('incident_date', date('Y'))
             ->with('barangay')
             ->latest()
             ->take(5)
             ->get();
 
         // Get top 5 barangays with highest confirmed rabies cases
-        $topBarangays = BiteRabiesReport::where('rabies_confirmed', true)
-            ->whereYear('incident_date', $year)
+        $topBarangays = BiteRabiesReport::whereYear('incident_date', $year)
             ->with('barangay')
             ->selectRaw('barangay_id, COUNT(*) as count')
             ->groupBy('barangay_id')
@@ -65,7 +62,7 @@ class CityVetController extends Controller
             ->get();
 
         // Get lowest vaccination coverage by barangay
-        $lowestVaccination = RabiesVaccinationReport::whereYear('vaccination_date', $year)
+        $lowestVaccination = VaccinationReport::whereYear('vaccination_date', $year)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', 0)
             ->selectRaw('barangay_id, COUNT(*) as count')
@@ -78,15 +75,13 @@ class CityVetController extends Controller
         $establishments = \App\Models\MeatEstablishment::latest()->take(5)->get();
 
         // Get monthly trends for confirmed rabies cases only
-        $monthlyCases = BiteRabiesReport::where('rabies_confirmed', true)
-            ->whereYear('incident_date', $monthlyYear)
+        $monthlyCases = BiteRabiesReport::whereYear('incident_date', $monthlyYear)
             ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
 
-        $dbYears = BiteRabiesReport::where('rabies_confirmed', true)
-            ->selectRaw('DISTINCT YEAR(incident_date) as year')
+        $dbYears = BiteRabiesReport::selectRaw('DISTINCT YEAR(incident_date) as year')
             ->orderByDesc('year')
             ->pluck('year')
             ->toArray();
@@ -117,29 +112,21 @@ class CityVetController extends Controller
         $biteChartTimeframe = $request->bite_chart_timeframe ?? ($biteChartMode === 'years' ? '3' : $currentYear);
 
         $biteMonthlyData = [];
-        $biteMonthlyActiveData = [];
-        $biteMonthlyResolvedData = [];
         $yearlyLabels = [];
-        $yearlyActiveData = [];
-        $yearlyResolvedData = [];
+        $yearlyTotalData = [];
 
         if ($biteChartMode === 'months') {
             $biteMonthlyData = $this->getMonthlyCasesByYear((int)$biteChartTimeframe);
-            $biteMonthlyActiveData = $this->getMonthlyActiveResolvedCasesByYear((int)$biteChartTimeframe, 'active');
-            $biteMonthlyResolvedData = $this->getMonthlyActiveResolvedCasesByYear((int)$biteChartTimeframe, 'resolved');
-            $chartActiveCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->whereYear('incident_date', $biteChartTimeframe)->count();
-            $chartResolvedCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $biteChartTimeframe)->count();
+            $chartTotalCount = BiteRabiesReport::whereYear('incident_date', $biteChartTimeframe)->count();
         } else {
             $yearsBack = $biteChartTimeframe === 'all' ? 50 : (int)$biteChartTimeframe;
-            $yearlyRaw = $this->getYearlyActiveResolvedCases($yearsBack);
+            $yearlyRaw = $this->getYearlyRabiesTotalsByYear($yearsBack);
             $yearlyLabels = array_column($yearlyRaw, 'year');
-            $yearlyActiveData = array_column($yearlyRaw, 'active');
-            $yearlyResolvedData = array_column($yearlyRaw, 'resolved');
-            $chartActiveCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->count();
-            $chartResolvedCount = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->count();
+            $yearlyTotalData = array_column($yearlyRaw, 'total');
+            $chartTotalCount = BiteRabiesReport::count();
         }
 
-        $biteYearlyData = $this->getYearlyRabiesTotals();
+        $biteYearlyData = $this->getYearlyRabiesTotalsByYear();
 
         $adoptionChartMode = $request->adoption_chart_mode ?? 'months';
         $adoptionChartTimeframe = $request->adoption_chart_timeframe ?? $currentYear;
@@ -252,7 +239,7 @@ class CityVetController extends Controller
             ->toArray();
 
         // Get vaccinations by barangay
-        $vaccinationsByBarangay = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', $year)
+        $vaccinationsByBarangay = \App\Models\VaccinationReport::whereYear('vaccination_date', $year)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', 0)
             ->selectRaw('barangay_id, COUNT(*) as count')
@@ -303,14 +290,10 @@ class CityVetController extends Controller
             'biteChartMode',
             'biteChartTimeframe',
             'biteMonthlyData',
-            'biteMonthlyActiveData',
-            'biteMonthlyResolvedData',
-            'chartActiveCount',
-            'chartResolvedCount',
+            'chartTotalCount',
             'biteYearlyData',
             'yearlyLabels',
-            'yearlyActiveData',
-            'yearlyResolvedData',
+            'yearlyTotalData',
             'adoptionChartMode',
             'adoptionChartTimeframe',
             'adoptionMonthlyData',
@@ -395,7 +378,6 @@ class CityVetController extends Controller
         // Get cases grouped by barangay from bite_rabies_reports
         // Use barangay_id (where the bite incident occurred)
         $byBarangay = BiteRabiesReport::whereYear('incident_date', $year)
-            ->where('rabies_confirmed', true)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', '')
             ->selectRaw('barangay_id, COUNT(*) as count')
@@ -435,7 +417,7 @@ class CityVetController extends Controller
     private function getVaccinationHeatmapData(int $year): array
     {
         // Get vaccinations grouped by barangay
-        $byBarangay = RabiesVaccinationReport::whereYear('vaccination_date', $year)
+        $byBarangay = VaccinationReport::whereYear('vaccination_date', $year)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', 0)
             ->where('barangay_id', '!=', '')
@@ -476,7 +458,6 @@ class CityVetController extends Controller
     private function getCaseTypeBreakdown(int $year): array
     {
         return BiteRabiesReport::whereYear('incident_date', $year)
-            ->where('rabies_confirmed', true)
             ->selectRaw('animal_type, COUNT(*) as count')
             ->groupBy('animal_type')
             ->pluck('count', 'animal_type')
@@ -494,7 +475,6 @@ class CityVetController extends Controller
         $data = [];
         foreach ($months as $monthName => $monthNum) {
             $count = BiteRabiesReport::whereYear('incident_date', $year)
-                ->where('rabies_confirmed', true)
                 ->whereMonth('incident_date', $monthNum)
                 ->count();
             $data[$monthName] = $count;
@@ -508,55 +488,19 @@ class CityVetController extends Controller
      */
     private function getMonthlyCasesByYear(int $year): array
     {
-        return BiteRabiesReport::where('rabies_confirmed', true)
-            ->whereYear('incident_date', $year)
+        return BiteRabiesReport::whereYear('incident_date', $year)
             ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
     }
 
-    private function getMonthlyActiveResolvedCasesByYear(int $year, string $type): array
-    {
-        $query = BiteRabiesReport::where('rabies_confirmed', true)
-            ->whereYear('incident_date', $year)
-            ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
-            ->groupBy('month');
-
-        if ($type === 'active') {
-            $query->whereIn('status', ['Pending Review', 'Under Review']);
-        } else {
-            $query->whereIn('status', ['Resolved', 'Closed']);
-        }
-
-        return $query->pluck('count', 'month')->toArray();
-    }
-
-    private function getYearlyRabiesTotals(): array
-    {
-        return BiteRabiesReport::where('rabies_confirmed', true)
-            ->selectRaw('YEAR(incident_date) as year, COUNT(*) as count')
-            ->groupBy('year')
-            ->pluck('count', 'year')
-            ->toArray();
-    }
-
-    private function getYearlyActiveResolvedCases(int $yearsBack = 50): array
+    private function getYearlyRabiesTotalsByYear(int $yearsBack = 50): array
     {
         $currentYear = (int) date('Y');
         $startYear = $currentYear - $yearsBack + 1;
 
-        $active = BiteRabiesReport::where('rabies_confirmed', true)
-            ->whereIn('status', ['Pending Review', 'Under Review'])
-            ->whereYear('incident_date', '>=', $startYear)
-            ->selectRaw('YEAR(incident_date) as year, COUNT(*) as count')
-            ->groupBy('year')
-            ->pluck('count', 'year')
-            ->toArray();
-
-        $resolved = BiteRabiesReport::where('rabies_confirmed', true)
-            ->whereIn('status', ['Resolved', 'Closed'])
-            ->whereYear('incident_date', '>=', $startYear)
+        $total = BiteRabiesReport::whereYear('incident_date', '>=', $startYear)
             ->selectRaw('YEAR(incident_date) as year, COUNT(*) as count')
             ->groupBy('year')
             ->pluck('count', 'year')
@@ -566,8 +510,7 @@ class CityVetController extends Controller
         for ($y = $startYear; $y <= $currentYear; $y++) {
             $result[] = [
                 'year' => $y,
-                'active' => $active[$y] ?? 0,
-                'resolved' => $resolved[$y] ?? 0,
+                'total' => $total[$y] ?? 0,
             ];
         }
 
@@ -736,9 +679,8 @@ class CityVetController extends Controller
 
     private function getMonthlyCompareData(int $year, ?int $barangayId = null): array
     {
-        $biteQuery = BiteRabiesReport::whereYear('incident_date', $year)
-            ->where('rabies_confirmed', true);
-        $vaccQuery = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', $year);
+        $biteQuery = BiteRabiesReport::whereYear('incident_date', $year);
+        $vaccQuery = \App\Models\VaccinationReport::whereYear('vaccination_date', $year);
 
         if ($barangayId) {
             $biteQuery->where('barangay_id', $barangayId);
@@ -774,9 +716,8 @@ class CityVetController extends Controller
         $currentYear = (int) date('Y');
         $startYear = $currentYear - $yearsBack + 1;
 
-        $biteQuery = BiteRabiesReport::where('rabies_confirmed', true)
-            ->whereYear('incident_date', '>=', $startYear);
-        $vaccQuery = \App\Models\RabiesVaccinationReport::whereYear('vaccination_date', '>=', $startYear);
+        $biteQuery = BiteRabiesReport::whereYear('incident_date', '>=', $startYear);
+        $vaccQuery = \App\Models\VaccinationReport::whereYear('vaccination_date', '>=', $startYear);
 
         if ($barangayId) {
             $biteQuery->where('barangay_id', $barangayId);
@@ -814,12 +755,8 @@ class CityVetController extends Controller
      */
     private function getYearComparison(int $currentYear, int $previousYear): array
     {
-        $current = BiteRabiesReport::whereYear('incident_date', $currentYear)
-            ->where('rabies_confirmed', true)
-            ->count();
-        $previous = BiteRabiesReport::whereYear('incident_date', $previousYear)
-            ->where('rabies_confirmed', true)
-            ->count();
+        $current = BiteRabiesReport::whereYear('incident_date', $currentYear)->count();
+        $previous = BiteRabiesReport::whereYear('incident_date', $previousYear)->count();
 
         $change = $previous > 0 ? round((($current - $previous) / $previous) * 100, 1) : 0;
 
@@ -837,7 +774,6 @@ class CityVetController extends Controller
     private function getHotspots(int $year): array
     {
         return BiteRabiesReport::whereYear('incident_date', $year)
-            ->where('rabies_confirmed', true)
             ->with('barangay')
             ->selectRaw('barangay_id, COUNT(*) as count')
             ->groupBy('barangay_id')
@@ -917,7 +853,6 @@ class CityVetController extends Controller
     private function getFilteredHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
     {
         $query = BiteRabiesReport::whereYear('incident_date', $year)
-            ->where('rabies_confirmed', true)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', '');
 
@@ -972,7 +907,7 @@ class CityVetController extends Controller
      */
     private function getFilteredVaccinationHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
     {
-        $query = RabiesVaccinationReport::whereYear('vaccination_date', $year)
+        $query = VaccinationReport::whereYear('vaccination_date', $year)
             ->whereNotNull('barangay_id')
             ->where('barangay_id', '!=', 0)
             ->where('barangay_id', '!=', '');
@@ -1028,8 +963,7 @@ class CityVetController extends Controller
      */
     private function getFilteredCaseTypeBreakdown(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
     {
-        $query = BiteRabiesReport::whereYear('incident_date', $year)
-            ->where('rabies_confirmed', true);
+        $query = BiteRabiesReport::whereYear('incident_date', $year);
 
         if ($dateFrom) {
             $query->where('incident_date', '>=', $dateFrom);
@@ -1428,12 +1362,19 @@ class CityVetController extends Controller
             'average' => $biteCasesByBarangayAnalytics->avg('count') ?? 0,
         ];
 
-        $totalConfirmedCases = BiteRabiesReport::where('rabies_confirmed', true)->whereYear('incident_date', $year)->count();
-        $resolvedCases = BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $year)->count();
-        $resolutionRate = $totalConfirmedCases > 0 ? round(($resolvedCases / $totalConfirmedCases) * 100, 1) : 0;
-        $biteCasesStats['resolution_rate'] = $resolutionRate;
-        $biteCasesStats['resolved_cases'] = $resolvedCases;
-        $biteCasesStats['total_confirmed_cases'] = $totalConfirmedCases;
+        $totalConfirmedCases = BiteRabiesReport::whereYear('incident_date', $year)->count();
+        $dogCases = BiteRabiesReport::whereYear('incident_date', $year)->where('animal_type', 'dog')->count();
+        $catCases = BiteRabiesReport::whereYear('incident_date', $year)->where('animal_type', 'cat')->count();
+        $strayCases = BiteRabiesReport::whereYear('incident_date', $year)->where('animal_status', 'stray')->count();
+        $ownedCases = BiteRabiesReport::whereYear('incident_date', $year)->where('animal_status', 'owned')->count();
+
+        $biteCasesStats = [
+            'total_confirmed_cases' => $totalConfirmedCases,
+            'dog_cases' => $dogCases,
+            'cat_cases' => $catCases,
+            'stray_cases' => $strayCases,
+            'owned_cases' => $ownedCases,
+        ];
 
         // Adoption Performance
         $totalAdoptions = \App\Models\AdoptionApplication::count();
@@ -1454,7 +1395,7 @@ class CityVetController extends Controller
         $totalMissing = $missingPetActive + $missingPetResolved;
         $missingPetStats['recovery_rate'] = $totalMissing > 0 ? round(($missingPetResolved / $totalMissing) * 100, 1) : 0;
         // Vaccination Performance
-        $actualVaccinations = RabiesVaccinationReport::whereYear('vaccination_date', $year)->count();
+        $actualVaccinations = VaccinationReport::whereYear('vaccination_date', $year)->count();
         $vaccinationTarget = 600; // 50 doses/month × 12 months
         $vaccinationStats = [
             'actual' => $actualVaccinations,
@@ -1582,15 +1523,13 @@ class CityVetController extends Controller
 
         if ($mode === 'years') {
             $yearsBack = $timeframe === 'all' ? 50 : (int) $timeframe;
-            $yearlyRaw = $this->getYearlyActiveResolvedCases($yearsBack);
+            $yearlyRaw = $this->getYearlyRabiesTotalsByYear($yearsBack);
 
             return response()->json([
                 'mode' => 'years',
                 'labels' => array_column($yearlyRaw, 'year'),
-                'active' => array_column($yearlyRaw, 'active'),
-                'resolved' => array_column($yearlyRaw, 'resolved'),
-                'activeCount' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->count(),
-                'resolvedCount' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->count(),
+                'total' => array_column($yearlyRaw, 'total'),
+                'totalCount' => BiteRabiesReport::count(),
             ]);
         }
 
@@ -1599,10 +1538,8 @@ class CityVetController extends Controller
         return response()->json([
             'mode' => 'months',
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            'active' => array_values(array_map(fn($m) => $this->getMonthlyActiveResolvedCasesByYear($year, 'active')[$m] ?? 0, range(1, 12))),
-            'resolved' => array_values(array_map(fn($m) => $this->getMonthlyActiveResolvedCasesByYear($year, 'resolved')[$m] ?? 0, range(1, 12))),
-            'activeCount' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Pending Review', 'Under Review'])->whereYear('incident_date', $year)->count(),
-            'resolvedCount' => BiteRabiesReport::where('rabies_confirmed', true)->whereIn('status', ['Resolved', 'Closed'])->whereYear('incident_date', $year)->count(),
+            'total' => array_values(array_map(fn($m) => $this->getMonthlyCasesByYear($year)[$m] ?? 0, range(1, 12))),
+            'totalCount' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
         ]);
     }
 }

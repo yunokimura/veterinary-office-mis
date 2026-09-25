@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -47,8 +48,6 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, AdoptionTrait> $traits
  * @property-read int|null $traits_count
  * @property-read User|null $userOwner
- * @property-read Collection<int, Vaccination> $vaccinations
- * @property-read int|null $vaccinations_count
  * *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet availableForAdoption()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet newModelQuery()
@@ -78,6 +77,7 @@ use Illuminate\Support\Carbon;
  */
 class Pet extends Model
 {
+    use SoftDeletes;
     protected $table = 'pets';
 
     protected $primaryKey = 'pet_id';
@@ -117,6 +117,7 @@ class Pet extends Model
         'consolidated_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
         'additional_photos' => 'array',
     ];
 
@@ -138,11 +139,6 @@ class Pet extends Model
     public function barangay(): BelongsTo
     {
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
-    }
-
-    public function vaccinations(): HasMany
-    {
-        return $this->hasMany(Vaccination::class, 'pet_id');
     }
 
     public function spayNeuterReports(): HasMany

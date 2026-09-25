@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\RabiesVaccinationReport;
 use App\Models\BiteRabiesReport;
-use App\Models\Patient;
 use App\Models\Barangay;
 
 class ClinicController extends Controller
@@ -17,14 +16,14 @@ class ClinicController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        $biteReports = BiteRabiesReport::where('reported_by', $user->id)->latest()->take(5)->get();
+        $biteReports = BiteRabiesReport::latest()->take(5)->get();
         $rabiesReports = RabiesVaccinationReport::where('user_id', $user->id)->latest()->take(5)->get();
-        
+
         $stats = [
-            'total_bite' => BiteRabiesReport::where('reported_by', $user->id)->count(),
+            'total_bite' => BiteRabiesReport::count(),
             'total_rabies' => RabiesVaccinationReport::where('user_id', $user->id)->count(),
         ];
-        
+
         return view('dashboard.clinic', compact('biteReports', 'rabiesReports', 'stats'));
     }
 
@@ -45,9 +44,7 @@ class ClinicController extends Controller
      */
     public function indexBiteReports()
     {
-        $reports = BiteRabiesReport::where('reported_by', Auth::id())
-            ->latest()
-            ->paginate(10);
+        $reports = BiteRabiesReport::latest()->paginate(10);
         return view('dashboard.clinic-bite-reports', compact('reports'));
     }
 
@@ -81,7 +78,8 @@ class ClinicController extends Controller
             'exact_location' => 'nullable|string|max:500',
             'incident_date' => 'required|date',
             'animal_type' => 'required|in:dog,cat',
-            'ownership_status' => 'required|in:owned,stray,wild',
+            'animal_gender' => 'nullable|in:male,female',
+            'ownership_status' => 'required|in:owned,stray',
             'vaccination_status' => 'nullable|in:vaccinated,unvaccinated,unknown',
             'bite_category' => 'required|in:category_i,category_ii,category_iii',
             'body_part' => 'required|string|max:255',
@@ -92,32 +90,16 @@ class ClinicController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
-        // Find barangay_id from incident_barangay name
         $barangay = \App\Models\Barangay::where('barangay_name', $validated['incident_barangay'])->first();
         $barangayId = $barangay ? $barangay->barangay_id : null;
 
-        $reportNumber = $validated['victim_case_id'] 
-            ? $validated['victim_case_id'] 
+        $reportNumber = $validated['victim_case_id']
+            ? $validated['victim_case_id']
             : ($request->input('case_number') ?? BiteRabiesReport::generateReportNumber());
-        
-        $patient = Patient::create([
-            'first_name' => $validated['victim_first_name'],
-            'middle_name' => $validated['victim_middle_name'] ?? null,
-            'last_name' => $validated['victim_last_name'],
-            'suffix' => $validated['victim_suffix'] ?? null,
-            'gender' => ucfirst($validated['victim_sex']),
-            'contact_number' => $validated['victim_contact'] ?? '',
-            'address' => $validated['victim_address'],
-            'barangay_id' => $barangayId,
-        ]);
 
         $report = BiteRabiesReport::create([
             'report_number' => $reportNumber,
-            'status' => 'Under Investigation', // Auto-approve to show on map
             'date_reported' => now()->toDateString(),
-            'reporting_facility' => Auth::user()->name,
-            'reported_by' => Auth::id(),
-            'patient_id' => $patient->id,
             'barangay_id' => $barangayId,
             'incident_date' => \Carbon\Carbon::parse($validated['incident_date'])->toDateString(),
             'exact_location' => $validated['exact_location'] ?? null,
@@ -125,10 +107,9 @@ class ClinicController extends Controller
             'bite_site' => $validated['body_part'],
             'category' => strtoupper(str_replace('category_', '', $validated['bite_category'])),
             'animal_type' => $validated['animal_type'],
+            'animal_gender' => $validated['animal_gender'] ?? null,
             'animal_status' => $validated['ownership_status'],
             'vaccination_status' => $validated['vaccination_status'] ?? 'unknown',
-            'wound_management' => $validated['wound_management'] ?? [],
-            'post_exposure_prophylaxis' => $validated['pep'] ?? 'No',
             'notes' => $validated['remarks'] ?? '',
         ]);
 
@@ -141,15 +122,7 @@ class ClinicController extends Controller
      */
     public function showBiteReport(BiteRabiesReport $report)
     {
-        $this->authorizeBiteReport($report);
         return view('dashboard.clinic-bite-report-view', compact('report'));
-    }
-
-    private function authorizeBiteReport($report)
-    {
-        if ($report->reported_by !== Auth::id() && !Auth::user()->hasRole('super_admin')) {
-            abort(403);
-        }
     }
 
     // ==============================
@@ -212,9 +185,6 @@ class ClinicController extends Controller
      */
     public function showVaccinationReport(RabiesVaccinationReport $report)
     {
-        if ($report->reported_by !== Auth::id() && !Auth::user()->hasRole('super_admin')) {
-            abort(403);
-        }
         return view('reports.rabies_vaccination_show', compact('report'));
     }
 }

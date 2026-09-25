@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\BiteRabiesReport;
 use App\Models\Barangay;
-use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,7 +11,7 @@ class BiteRabiesReportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = BiteRabiesReport::with(['barangay', 'reportedBy', 'patient']);
+        $query = BiteRabiesReport::with(['barangay']);
 
         if ($request->filled('barangay_id')) {
             $query->where('barangay_id', $request->barangay_id);
@@ -26,14 +25,6 @@ class BiteRabiesReportController extends Controller
             $query->where('animal_type', $request->animal_type);
         }
 
-        if ($request->filled('search')) {
-            $query->where('report_number', 'like', '%' . $request->search . '%')
-                ->orWhereHas('patient', function ($q) use ($request) {
-                    $q->where('first_name', 'like', '%' . $request->search . '%')
-                        ->orWhere('last_name', 'like', '%' . $request->search . '%');
-                });
-        }
-
         $reports = $query->orderBy('created_at', 'desc')->paginate(15);
         $barangays = Barangay::orderBy('barangay_name')->get();
 
@@ -42,7 +33,7 @@ class BiteRabiesReportController extends Controller
 
     public function show(BiteRabiesReport $biteRabiesReport)
     {
-        $biteRabiesReport->load(['barangay', 'reportedBy', 'patient']);
+        $biteRabiesReport->load(['barangay']);
 
         return view('admin-staff.bite-rabies-reports.show', compact('biteRabiesReport'));
     }
@@ -57,24 +48,19 @@ class BiteRabiesReportController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:200',
-            'middle_name' => 'nullable|string|max:200',
-            'last_name' => 'required|string|max:200',
-            'suffix' => 'nullable|string|max:50',
-            'date_of_birth' => 'nullable|date',
-            'gender' => 'required|in:Male,Female',
-            'contact_number' => 'nullable|string|max:11',
-            'address' => 'nullable|string|max:500',
-            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'incident_date' => 'required|date',
             'exposure_type' => 'required|in:bite,scratch,lick',
             'bite_site' => 'nullable|string|max:100',
             'category' => 'required|in:I,II,III',
             'animal_type' => 'required|in:dog,cat',
-            'animal_status' => 'required|in:stray,owned,wild',
+            'animal_gender' => 'nullable|in:male,female',
+            'animal_status' => 'required|in:stray,owned',
+            'animal_name' => 'nullable|string|max:100|required_if:animal_status,owned',
             'vaccination_status' => 'required|in:vaccinated,unvaccinated,unknown',
             'animal_owner_name' => 'nullable|string|max:200',
             'animal_owner_contact' => 'nullable|string|max:11',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
+            'exact_location' => 'nullable|string|max:500',
             'notes' => 'nullable|string',
         ]);
 
@@ -86,24 +72,6 @@ class BiteRabiesReportController extends Controller
 
         $reportNumber = BiteRabiesReport::generateReportNumber();
 
-        $patientData = $request->only([
-            'first_name',
-            'middle_name',
-            'last_name',
-            'suffix',
-            'date_of_birth',
-            'gender',
-            'contact_number',
-            'address',
-            'barangay_id',
-        ]);
-
-        if (!empty($patientData['date_of_birth'])) {
-            $patientData['age'] = \Carbon\Carbon::parse($patientData['date_of_birth'])->age;
-        }
-
-        $patient = Patient::create($patientData);
-
         $report = BiteRabiesReport::create(array_merge(
             $request->only([
                 'incident_date',
@@ -111,16 +79,18 @@ class BiteRabiesReportController extends Controller
                 'bite_site',
                 'category',
                 'animal_type',
+                'animal_gender',
                 'animal_status',
+                'animal_name',
                 'vaccination_status',
                 'animal_owner_name',
                 'animal_owner_contact',
+                'barangay_id',
+                'exact_location',
                 'notes',
             ]),
             [
                 'report_number' => $reportNumber,
-                'reported_by' => auth()->id(),
-                'patient_id' => $patient->id,
             ]
         ));
 
@@ -132,7 +102,7 @@ class BiteRabiesReportController extends Controller
 
     public function edit(BiteRabiesReport $biteRabiesReport)
     {
-        $biteRabiesReport->load('barangay', 'patient');
+        $biteRabiesReport->load('barangay');
         $barangays = Barangay::orderBy('barangay_name')->get();
 
         return view('admin-staff.bite-rabies-reports.edit', compact('biteRabiesReport', 'barangays'));
@@ -141,24 +111,19 @@ class BiteRabiesReportController extends Controller
     public function update(Request $request, BiteRabiesReport $biteRabiesReport)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:200',
-            'middle_name' => 'nullable|string|max:200',
-            'last_name' => 'required|string|max:200',
-            'suffix' => 'nullable|string|max:50',
-            'date_of_birth' => 'nullable|date',
-            'gender' => 'required|in:Male,Female',
-            'contact_number' => 'nullable|string|max:11',
-            'address' => 'nullable|string|max:500',
-            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'incident_date' => 'required|date',
             'exposure_type' => 'required|in:bite,scratch,lick',
             'bite_site' => 'nullable|string|max:100',
             'category' => 'required|in:I,II,III',
             'animal_type' => 'required|in:dog,cat',
-            'animal_status' => 'required|in:stray,owned,wild',
+            'animal_gender' => 'nullable|in:male,female',
+            'animal_status' => 'required|in:stray,owned',
+            'animal_name' => 'nullable|string|max:100|required_if:animal_status,owned',
             'vaccination_status' => 'required|in:vaccinated,unvaccinated,unknown',
             'animal_owner_name' => 'nullable|string|max:200',
             'animal_owner_contact' => 'nullable|string|max:11',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
+            'exact_location' => 'nullable|string|max:500',
             'notes' => 'nullable|string',
         ]);
 
@@ -168,36 +133,19 @@ class BiteRabiesReportController extends Controller
                 ->withInput();
         }
 
-        if ($biteRabiesReport->patient) {
-            $patientData = $request->only([
-                'first_name',
-                'middle_name',
-                'last_name',
-                'suffix',
-                'date_of_birth',
-                'gender',
-                'contact_number',
-                'address',
-                'barangay_id',
-            ]);
-
-            if (!empty($patientData['date_of_birth'])) {
-                $patientData['age'] = \Carbon\Carbon::parse($patientData['date_of_birth'])->age;
-            }
-
-            $biteRabiesReport->patient->update($patientData);
-        }
-
         $biteRabiesReport->update($request->only([
             'incident_date',
             'exposure_type',
             'bite_site',
             'category',
             'animal_type',
+            'animal_gender',
             'animal_status',
             'vaccination_status',
             'animal_owner_name',
             'animal_owner_contact',
+            'barangay_id',
+            'exact_location',
             'notes',
         ]));
 

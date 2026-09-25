@@ -2,10 +2,11 @@
     <thead class="bg-gray-50">
         <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report No.</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Barangay</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Incident Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Barangay</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner Name</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Animal Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Animal Name</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
         </tr>
     </thead>
@@ -15,29 +16,31 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                     <span class="font-medium text-gray-800">{{ $report->report_number ?? 'N/A' }}</span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 h-10 w-10 bg-red-100 rounded-full flex items-center justify-center">
-                            <i class="bi bi-person text-red-600"></i>
-                        </div>
-                        <div class="ml-4">
-                            <div class="text-sm font-medium text-gray-900">
-                                {{ $report->patient?->full_name ?? 'Unknown' }}
-                             </div>
-                             <div class="text-sm text-gray-500">{{ $report->patient?->age ?? 'N/A' }} yrs old</div>
-                        </div>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <p class="text-gray-800">{{ $report->barangay?->barangay_name ?? $report->patient?->barangay?->barangay_name ?? 'N/A' }}</p>
-                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <p class="text-gray-800">{{ $report->barangay?->barangay_name ?? 'N/A' }}</p>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <p class="text-gray-800">{{ $report->animal_owner_name ?? 'N/A' }}</p>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div>
                         <p class="text-gray-800">{{ ucfirst($report->animal_type) }}</p>
                         <p class="text-sm text-gray-500">{{ ucfirst($report->animal_status) }}</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-1">
+                        <span class="text-sm font-medium text-gray-900">{{ $report->animal_name ?? 'Unknown' }}</span>
+                        @if($report->animal_gender)
+                            @if($report->animal_gender === 'male')
+                                <i class="bi bi-gender-male text-blue-500"></i>
+                            @elseif($report->animal_gender === 'female')
+                                <i class="bi bi-gender-female text-pink-500"></i>
+                            @endif
+                        @endif
                     </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -48,7 +51,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500">No reports found</td>
+                <td colspan="7" class="px-6 py-4 text-center text-gray-500">No reports found</td>
             </tr>
         @endforelse
     </tbody>

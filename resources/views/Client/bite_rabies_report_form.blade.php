@@ -104,36 +104,6 @@
                     </h3>
 
                     <div class="grid md:grid-cols-2 gap-4">
-                        <!-- Reporting Facility -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Reporting Facility <span class="text-red-500">*</span>
-                            </label>
-                            <select name="reporting_facility" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('reporting_facility') border-red-500 @enderror">
-                                <option value="">Select Facility Type</option>
-                                <option value="Registered Veterinary Clinics" {{ old('reporting_facility') == 'Registered Veterinary Clinics' ? 'selected' : '' }}>Registered Veterinary Clinics</option>
-                                <option value="Animal Bite Centers (ABCs)" {{ old('reporting_facility') == 'Animal Bite Centers (ABCs)' ? 'selected' : '' }}>Animal Bite Centers (ABCs)</option>
-                                <option value="Hospitals" {{ old('reporting_facility') == 'Hospitals' ? 'selected' : '' }}>Hospitals</option>
-                                <option value="Others" {{ old('reporting_facility') == 'Others' ? 'selected' : '' }}>Others</option>
-                            </select>
-                            @error('reporting_facility')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Facility Name (for Others) -->
-                        <div id="facility_name_container" class="{{ old('reporting_facility') == 'Others' ? '' : 'hidden' }}">
-                            <label class="block text-sm font-medium mb-1.5">
-                                Facility Name <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="facility_name" value="{{ old('facility_name') }}"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('facility_name') border-red-500 @enderror"
-                                   placeholder="Enter facility name">
-                            @error('facility_name')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <!-- Date Reported -->
                         <div>
                             <label class="block text-sm font-medium mb-1.5">
@@ -142,103 +112,6 @@
                             <input type="date" name="date_reported" value="{{ old('date_reported', date('Y-m-d')) }}"
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('date_reported') border-red-500 @enderror">
                             @error('date_reported')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION II: PATIENT (HUMAN) INFORMATION -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        II. PATIENT (HUMAN) INFORMATION
-                    </h3>
-
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <!-- Full Name / Case ID -->
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium mb-1.5">
-                                Full Name / Case ID <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="patient_name" value="{{ old('patient_name') }}"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('patient_name') border-red-500 @enderror"
-                                   placeholder="Last Name, First Name, Middle Name or Case ID">
-                            @error('patient_name')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Age -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Age <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" name="patient_age" value="{{ old('patient_age') }}" min="0" max="150"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('patient_age') border-red-500 @enderror"
-                                   placeholder="Enter age">
-                            @error('patient_age')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Gender -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Gender <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex gap-4 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="patient_gender" value="Male" {{ old('patient_gender') == 'Male' ? 'checked' : '' }}
-                                           class="text-primary focus:ring-primary">
-                                    <span class="ml-2">Male</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="patient_gender" value="Female" {{ old('patient_gender') == 'Female' ? 'checked' : '' }}
-                                           class="text-primary focus:ring-primary">
-                                    <span class="ml-2">Female</span>
-                                </label>
-                            </div>
-                            @error('patient_gender')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Address (Barangay) -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Address (Barangay) <span class="text-red-500">*</span>
-                            </label>
-                            <select name="patient_barangay_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('patient_barangay_id') border-red-500 @enderror">
-                                <option value="">Select Barangay</option>
-                                @foreach($barangays as $barangay)
-                                    <option value="{{ $barangay->barangay_id }}" {{ old('patient_barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>
-                                        {{ $barangay->barangay_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('patient_barangay_id')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Contact Number -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Contact Number <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex">
-                                <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                                    +63
-                                </span>
-                                <input type="tel" name="patient_contact" value="{{ old('patient_contact') }}" maxlength="11"
-                                       class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('patient_contact') border-red-500 @enderror"
-                                       placeholder="91234567890">
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Must be exactly 11 digits</p>
-                            @error('patient_contact')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -279,23 +152,6 @@
                                 <option value="Licked (Open Wound)" {{ old('nature_of_incident') == 'Licked (Open Wound)' ? 'selected' : '' }}>Licked (Open Wound)</option>
                             </select>
                             @error('nature_of_incident')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Bite Site (Body Part) -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Bite Site (Body Part) <span class="text-red-500">*</span>
-                            </label>
-                            <select name="bite_site" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('bite_site') border-red-500 @enderror">
-                                <option value="">Select Body Part</option>
-                                <option value="Head/Neck" {{ old('bite_site') == 'Head/Neck' ? 'selected' : '' }}>Head/Neck</option>
-                                <option value="Upper Extremities" {{ old('bite_site') == 'Upper Extremities' ? 'selected' : '' }}>Upper Extremities</option>
-                                <option value="Trunk" {{ old('bite_site') == 'Trunk' ? 'selected' : '' }}>Trunk</option>
-                                <option value="Lower Extremities" {{ old('bite_site') == 'Lower Extremities' ? 'selected' : '' }}>Lower Extremities</option>
-                            </select>
-                            @error('bite_site')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -378,9 +234,23 @@
                                 <option value="">Select Status</option>
                                 <option value="Stray" {{ old('animal_status') == 'Stray' ? 'selected' : '' }}>Stray</option>
                                 <option value="Owned" {{ old('animal_status') == 'Owned' ? 'selected' : '' }}>Owned</option>
-                                <option value="Wild" {{ old('animal_status') == 'Wild' ? 'selected' : '' }}>Wild</option>
                             </select>
                             @error('animal_status')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Animal Gender -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">
+                                Animal Gender
+                            </label>
+                            <select name="animal_gender" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('animal_gender') border-red-500 @enderror">
+                                <option value="">Select Gender</option>
+                                <option value="Male" {{ old('animal_gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                                <option value="Female" {{ old('animal_gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                            </select>
+                            @error('animal_gender')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -430,68 +300,7 @@
                     </div>
                 </div>
 
-                <!-- SECTION V: CLINICAL ACTION -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                        V. CLINICAL ACTION
-                    </h3>
-
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <!-- Wound Management -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Wound Management
-                            </label>
-                            <div class="space-y-2">
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="wound_management[]" value="Washed with Soap"
-                                           {{ is_array(old('wound_management')) && in_array('Washed with Soap', old('wound_management')) ? 'checked' : '' }}
-                                           class="text-primary focus:ring-primary rounded">
-                                    <span class="ml-2">Washed with Soap</span>
-                                </label>
-                                <br>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="wound_management[]" value="Antiseptic Applied"
-                                           {{ is_array(old('wound_management')) && in_array('Antiseptic Applied', old('wound_management')) ? 'checked' : '' }}
-                                           class="text-primary focus:ring-primary rounded">
-                                    <span class="ml-2">Antiseptic Applied</span>
-                                </label>
-                                <br>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="wound_management[]" value="None"
-                                           {{ is_array(old('wound_management')) && in_array('None', old('wound_management')) ? 'checked' : '' }}
-                                           class="text-primary focus:ring-primary rounded">
-                                    <span class="ml-2">None</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Post-Exposure Prophylaxis (PEP) -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Post-Exposure Prophylaxis (PEP) <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex gap-4 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="post_exposure_prophylaxis" value="Yes" {{ old('post_exposure_prophylaxis') == 'Yes' ? 'checked' : '' }}
-                                           class="text-primary focus:ring-primary">
-                                    <span class="ml-2">Yes</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="post_exposure_prophylaxis" value="No" {{ old('post_exposure_prophylaxis') == 'No' ? 'checked' : '' }}
-                                           class="text-primary focus:ring-primary">
-                                    <span class="ml-2">No</span>
-                                </label>
-                            </div>
-                            @error('post_exposure_prophylaxis')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Additional Notes -->
+                <!-- Notes -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium mb-1.5">
                                 Additional Notes

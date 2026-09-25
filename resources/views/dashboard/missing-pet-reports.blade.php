@@ -12,67 +12,28 @@ $rolePrefix = 'city-vet';
 
 @section('content')
 <div class="max-w-7xl mx-auto">
-    <!-- Page Header -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Missing Pet Reports</h1>
-                <p class="text-gray-500 mt-1">View and manage all missing pet reports</p>
-            </div>
-            <div class="flex items-center gap-3">
-            </div>
-        </div>
-    </div>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <!-- Total Reports -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-            <div class="flex items-center justify-between gap-4">
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-500 mb-1">Total Reports</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $stats['total'] ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-file-earmark-text text-blue-600 text-xl"></i>
-                </div>
-            </div>
+            <p class="text-sm text-gray-500 mb-1">Total Reports</p>
+            <p class="text-2xl font-bold text-gray-800">{{ $stats['total'] ?? 0 }}</p>
         </div>
         <!-- Currently Missing -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-            <div class="flex items-center justify-between gap-4">
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-500 mb-1">Currently Missing</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $stats['active'] ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-exclamation-circle text-red-600 text-xl"></i>
-                </div>
-            </div>
+            <p class="text-sm text-gray-500 mb-1">Currently Missing</p>
+            <p class="text-2xl font-bold text-gray-800">{{ $stats['active'] ?? 0 }}</p>
         </div>
         <!-- Resolved Cases -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-            <div class="flex items-center justify-between gap-4">
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-500 mb-1">Resolved Cases</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $stats['resolved'] ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-check-circle text-green-600 text-xl"></i>
-                </div>
-            </div>
+            <p class="text-sm text-gray-500 mb-1">Resolved Cases</p>
+            <p class="text-2xl font-bold text-gray-800">{{ $stats['resolved'] ?? 0 }}</p>
         </div>
         <!-- This Month -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-            <div class="flex items-center justify-between gap-4">
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-500 mb-1">This Month</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $stats['this_month'] ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-calendar-month text-purple-600 text-xl"></i>
-                </div>
-            </div>
+            <p class="text-sm text-gray-500 mb-1">This Month</p>
+            <p class="text-2xl font-bold text-gray-800">{{ $stats['this_month'] ?? 0 }}</p>
         </div>
     </div>
 

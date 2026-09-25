@@ -167,14 +167,6 @@ class DashboardService
         ];
     }
 
-    public function getBiteRabiesByCategory(): array
-    {
-        return BiteRabiesReport::select('category', \DB::raw('COUNT(*) as total'))
-            ->groupBy('category')
-            ->pluck('total', 'category')
-            ->toArray();
-    }
-
     public function getBiteRabiesByAnimalType(): array
     {
         return BiteRabiesReport::select('animal_type', \DB::raw('COUNT(*) as total'))

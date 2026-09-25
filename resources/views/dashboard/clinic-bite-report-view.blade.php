@@ -74,24 +74,6 @@ $rolePrefix = 'clinic';
                     <p class="text-sm text-gray-500">Incident Date</p>
                     <p class="font-medium text-gray-800">{{ $report->incident_date ? (is_string($report->incident_date) ? \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') : $report->incident_date->format('M d, Y')) : 'N/A' }}</p>
                 </div>
-
-                <!-- Nature of Incident -->
-                <div>
-                    <p class="text-sm text-gray-500">Nature of Incident</p>
-                    <p class="font-medium text-gray-800">{{ ucfirst($report->exposure_type) ?? 'N/A' }}</p>
-                </div>
-
-                <!-- Bite Site -->
-                <div>
-                    <p class="text-sm text-gray-500">Bite Site</p>
-                    <p class="font-medium text-gray-800">{{ $report->bite_site ?? 'N/A' }}</p>
-                </div>
-
-                <!-- Exposure Category -->
-                <div>
-                    <p class="text-sm text-gray-500">Exposure Category</p>
-                    <p class="font-medium text-gray-800">{{ $report->category ? 'Category ' . $report->category : 'N/A' }}</p>
-                </div>
             </div>
         </div>
 
@@ -102,6 +84,12 @@ $rolePrefix = 'clinic';
                 <div>
                     <p class="text-sm text-gray-500">Animal Species</p>
                     <p class="font-medium text-gray-800">{{ ucfirst($report->animal_type) ?? 'N/A' }}</p>
+                </div>
+
+                <!-- Animal Gender -->
+                <div>
+                    <p class="text-sm text-gray-500">Animal Gender</p>
+                    <p class="font-medium text-gray-800">{{ ucfirst($report->animal_gender) ?? 'N/A' }}</p>
                 </div>
 
                 <!-- Animal Status -->
@@ -124,56 +112,12 @@ $rolePrefix = 'clinic';
             </div>
         </div>
 
-        @if($report->wound_management || $report->post_exposure_prophylaxis || $report->notes)
+        @if($report->notes)
         <div class="border-t border-gray-200 mt-6 pt-6">
-            <h3 class="text-base font-semibold text-gray-800 mb-4">Treatment Information</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Wound Management -->
-                <div>
-                    <p class="text-sm text-gray-500">Wound Management</p>
-                    @php
-                        $woundMgmt = is_array($report->wound_management) ? $report->wound_management : (is_string($report->wound_management) ? json_decode($report->wound_management, true) : []);
-                    @endphp
-                    <p class="font-medium text-gray-800">
-                        @if(is_array($woundMgmt) && count($woundMgmt) > 0)
-                            {{ implode(', ', $woundMgmt) }}
-                        @elseif(is_string($report->wound_management))
-                            {{ $report->wound_management }}
-                        @else
-                            N/A
-                        @endif
-                    </p>
-                </div>
-
-                <!-- Post Exposure Prophylaxis -->
-                <div>
-                    <p class="text-sm text-gray-500">Post Exposure Prophylaxis</p>
-                    <p class="font-medium text-gray-800">{{ $report->post_exposure_prophylaxis ?? 'N/A' }}</p>
-                </div>
-            </div>
-
-            @if($report->notes)
-            <div class="mt-4">
-                <p class="text-sm text-gray-500">Notes</p>
-                <p class="font-medium text-gray-800">{{ $report->notes }}</p>
-            </div>
-            @endif
+            <h3 class="text-base font-semibold text-gray-800 mb-4">Notes</h3>
+            <p class="text-sm text-gray-800 whitespace-pre-line">{{ $report->notes }}</p>
         </div>
         @endif
-
-        <!-- Reporting Facility -->
-        <div class="border-t border-gray-200 mt-6 pt-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <p class="text-sm text-gray-500">Reporting Facility</p>
-                    <p class="font-medium text-gray-800">{{ $report->reporting_facility ?? 'N/A' }}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">Facility Name</p>
-                    <p class="font-medium text-gray-800">{{ $report->facility_name ?? 'N/A' }}</p>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 @endsection

@@ -144,7 +144,7 @@ class AnimalBiteReportSeeder extends Seeder
                 'bite_site' => 'Upper Extremities',
                 'category' => 'II',
                 'animal_type' => 'dog',
-                'animal_status' => 'wild',
+                'animal_status' => 'stray',
                 'animal_owner_name' => null,
                 'vaccination_status' => 'unknown',
                 'incident_date' => now()->subDays(10),

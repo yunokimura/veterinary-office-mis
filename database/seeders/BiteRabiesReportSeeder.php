@@ -25,7 +25,7 @@ class BiteRabiesReportSeeder extends Seeder
 
         // Sample data for seeding
         $animalTypes = ['dog', 'cat'];
-        $animalStatuses = ['stray', 'owned', 'wild'];
+        $animalStatuses = ['stray', 'owned'];
         $vaccinationStatuses = ['vaccinated', 'unvaccinated', 'unknown'];
         $exposureTypes = ['bite', 'scratch', 'lick'];
         $categories = ['I', 'II', 'III'];

@@ -43,7 +43,7 @@
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" id="biteSearch" value="{{ request('search') }}" placeholder="Search reports, patient, age..."
+                <input type="text" id="biteSearch" value="{{ request('search') }}"                  placeholder="Search reports, animal name, type..."
                        class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 <button type="button" id="searchHelpBtn"
                         class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
@@ -52,12 +52,10 @@
                         data-bs-content="
                             <div class='text-sm text-gray-700 space-y-1'>
                                 <div><strong>Examples:</strong></div>
-                                <div>BR-2026 <span class='text-gray-400'>(Report No.)</span></div>
-                                <div>Juan <span class='text-gray-400'>(Patient Name)</span></div>
+                                <div>B1 <span class='text-gray-400'>(Report No.)</span></div>
                                 <div>Dog <span class='text-gray-400'>(Animal Type)</span></div>
-                                <div>Category I <span class='text-gray-400'>(Category)</span></div>
+                                <div>Stray <span class='text-gray-400'>(Animal Status)</span></div>
                                 <div>Poblacion <span class='text-gray-400'>(Barangay)</span></div>
-                                <div>39 yrs old <span class='text-gray-400'>(Age)</span></div>
                             </div>
                         ">
                     <i class="bi bi-info-circle"></i>
@@ -287,86 +285,26 @@ function displayReportDetails(report) {
                     <p class="text-sm text-gray-500">Report Number</p>
                     <p class="text-lg font-semibold text-gray-800">${report.report_number}</p>
                 </div>
-                <div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${report.rabies_confirmed === 'Yes' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
-                        <i class="bi bi-virus mr-1"></i> ${report.rabies_confirmed}
-                    </span>
-                </div>
             </div>
             <hr class="border-gray-100">
             <div class="bg-gray-50 rounded-lg p-4">
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500">Status</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.status}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Created At</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.created_at}</p>
-                    </div>
-                </div>
-            </div>
-            <hr class="border-gray-100">
-            <div class="bg-blue-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Patient Information</h4>
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500">Patient Name</p>
-                        <div class="flex items-center mt-1">
-                            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                                <i class="bi bi-person text-red-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium text-gray-800">${report.patient_name}</p>
-                                <p class="text-sm text-gray-500">${report.age} yrs old / ${report.gender}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Contact</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.patient_contact || 'N/A'}</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div class="col-span-2">
-                        <p class="text-sm text-gray-500">Address</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.patient_address || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Barangay</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.barangay}</p>
-                    </div>
-                </div>
-            </div>
-            <hr class="border-gray-100">
-            <div class="bg-yellow-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Incident Information</h4>
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">INCIDENT INFORMATION</h4>
                 <div class="grid grid-cols-2 gap-6">
                     <div>
                         <p class="text-sm text-gray-500">Incident Date</p>
                         <p class="font-medium text-gray-800 mt-1">${report.incident_date}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Exposure Type</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.exposure_type || 'N/A'}</p>
+                        <p class="text-sm text-gray-500">Barangay</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.barangay}</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Exact Location</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.exact_location || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Bite Site</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.bite_site || 'N/A'}</p>
-                    </div>
+                ${report.notes ? `
+                <div class="mt-4">
+                    <p class="text-sm text-gray-500">Notes</p>
+                    <p class="text-gray-800 whitespace-pre-wrap mt-1">${report.notes}</p>
                 </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Category</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.category || 'N/A'}</p>
-                    </div>
-                </div>
+                ` : ''}
             </div>
             <hr class="border-gray-100">
             <div class="bg-green-50 rounded-lg p-4">
@@ -377,46 +315,21 @@ function displayReportDetails(report) {
                         <p class="font-medium text-gray-800 mt-1">${report.animal_type}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Animal Status</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.animal_status}</p>
+                        <p class="text-sm text-gray-500">Animal Gender</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.animal_gender ? report.animal_gender.charAt(0).toUpperCase() + report.animal_gender.slice(1) : 'N/A'}</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Animal Status</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.animal_status}</p>
+                    </div>
                     <div>
                         <p class="text-sm text-gray-500">Vaccination Status</p>
                         <p class="font-medium text-gray-800 mt-1">${report.vaccination_status || 'N/A'}</p>
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Owner Name</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.animal_owner_name || 'N/A'}</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Reporting Facility</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.reporting_facility || 'N/A'}</p>
-                    </div>
                 </div>
             </div>
-            <hr class="border-gray-100">
-            <div class="bg-purple-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Treatment Information</h4>
-                <div>
-                    <p class="text-sm text-gray-500">Wound Management</p>
-                    <p class="font-medium text-gray-800 mt-1">${report.wound_management}</p>
-                </div>
-                <div class="mt-4">
-                    <p class="text-sm text-gray-500">Post Exposure Prophylaxis</p>
-                    <p class="font-medium text-gray-800 mt-1">${report.post_exposure_prophylaxis || 'N/A'}</p>
-                </div>
-            </div>
-            ${report.notes ? `
-            <hr class="border-gray-100">
-            <div class="bg-gray-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Notes</h4>
-                <p class="text-gray-800 whitespace-pre-wrap">${report.notes}</p>
-            </div>
-            ` : ''}
         </div>
     `;
 }

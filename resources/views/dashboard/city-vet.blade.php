@@ -13,11 +13,15 @@
 
         <!-- Bite Cases by Barangay -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <p class="text-xs font-medium text-gray-500 mb-2">Confirmed Rabies Cases by Barangay</p>
-            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['bite_cases_by_barangay']['resolution_rate'] ?? 0 }}%</p>
-            <p class="text-xs text-gray-500 mb-3">Resolution Rate</p>
-            <p class="text-xs text-gray-400">Resolved: {{ $analytics['bite_cases_by_barangay']['resolved_cases'] ?? 0 }}</p>
-            <p class="text-xs text-gray-400 mt-1">Total Confirmed: {{ $analytics['bite_cases_by_barangay']['total_confirmed_cases'] ?? 0 }}</p>
+            <p class="text-xs font-medium text-gray-500 mb-2">Confirmed Rabies Cases</p>
+            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['bite_cases_by_barangay']['total_confirmed_cases'] ?? 0 }}</p>
+            <p class="text-xs text-gray-500 mb-3">Total Confirmed Cases</p>
+            <div class="flex gap-2 flex-wrap">
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">{{ $analytics['bite_cases_by_barangay']['dog_cases'] ?? 0 }} Dog</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">{{ $analytics['bite_cases_by_barangay']['cat_cases'] ?? 0 }} Cat</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">{{ $analytics['bite_cases_by_barangay']['stray_cases'] ?? 0 }} Stray</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['bite_cases_by_barangay']['owned_cases'] ?? 0 }} Owned</span>
+            </div>
         </div>
 
         <!-- Anti-Rabies Vaccination -->
@@ -60,7 +64,7 @@
         <div class="flex items-center justify-between mb-4">
             <div>
                 <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases</h3>
-                <p class="text-xs text-gray-500">Active vs Resolved Cases</p>
+                <p class="text-xs text-gray-500">Confirmed Cases Trend</p>
             </div>
             <div class="flex items-center gap-2">
                 <div class="flex bg-gray-100 rounded-md p-0.5">
@@ -85,16 +89,6 @@
                     </select>
                 @endif
             </div>
-        </div>
-        <div class="flex gap-4 mb-4">
-            <button type="button" id="biteLegendActive" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
-                <span class="w-3 h-3 rounded bg-amber-500"></span>
-                <span class="text-xs text-gray-600">Active: <span class="font-semibold">{{ ($chartActiveCount ?? 0) }}</span></span>
-            </button>
-            <button type="button" id="biteLegendResolved" class="flex items-center gap-2 text-left px-2 py-1 rounded transition hover:bg-gray-100 cursor-pointer">
-                <span class="w-3 h-3 rounded bg-green-500"></span>
-                <span class="text-xs text-gray-600">Resolved: <span class="font-semibold">{{ ($chartResolvedCount ?? 0) }}</span></span>
-            </button>
         </div>
         <div class="h-64 relative">
             <canvas id="biteCasesByMonthChart"></canvas>
@@ -266,11 +260,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const barangays = @json($barangays ?? []);
 
     const biteMonthlyRaw = @json($biteMonthlyData ?? []);
-    const biteMonthlyActiveRaw = @json($biteMonthlyActiveData ?? []);
-    const biteMonthlyResolvedRaw = @json($biteMonthlyResolvedData ?? []);
     const yearlyLabels = @json($yearlyLabels ?? []);
-    const yearlyActiveData = @json($yearlyActiveData ?? []);
-    const yearlyResolvedData = @json($yearlyResolvedData ?? []);
+    const yearlyTotalData = @json($yearlyTotalData ?? []);
     const adoptionMonthlyRaw = @json($adoptionMonthlyData ?? []);
     const adoptionMonthlyPendingRaw = @json($adoptionMonthlyPendingData ?? []);
     const adoptionMonthlyApprovedRaw = @json($adoptionMonthlyApprovedData ?? []);
@@ -317,30 +308,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getBiteDatasets() {
-        let activeData, resolvedData, labels;
+        let totalData, labels;
         if (biteChartMode === 'years') {
             labels = yearlyLabels.map(String);
-            activeData = yearlyActiveData;
-            resolvedData = yearlyResolvedData;
+            totalData = yearlyTotalData;
         } else {
             labels = monthLabels;
-            activeData = monthLabels.map((_, i) => biteMonthlyActiveRaw[i + 1] || 0);
-            resolvedData = monthLabels.map((_, i) => biteMonthlyResolvedRaw[i + 1] || 0);
+            totalData = monthLabels.map((_, i) => biteMonthlyRaw[i + 1] || 0);
         }
-        return [
-            {
-                label: 'Active Cases',
-                data: activeData,
-                backgroundColor: '#f59e0b',
-                borderRadius: 4
-            },
-            {
-                label: 'Resolved Cases',
-                data: resolvedData,
-                backgroundColor: '#22c55e',
-                borderRadius: 4
-            }
-        ];
+        return [{
+            label: 'Confirmed Cases',
+            data: totalData,
+            backgroundColor: '#3b82f6',
+            borderRadius: 4
+        }];
     }
 
     function getAdoptionDatasets() {
@@ -468,29 +449,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    const activeToggle = document.getElementById('biteLegendActive');
-    const resolvedToggle = document.getElementById('biteLegendResolved');
-    if (activeToggle && resolvedToggle && biteChart) {
-        const updateToggleVisual = (el, visible) => {
-            el.style.opacity = visible ? '1' : '0.5';
-            el.style.textDecoration = visible ? 'none' : 'line-through';
-        };
-        activeToggle.addEventListener('click', () => {
-            const idx = 0;
-            const next = !biteChart.isDatasetVisible(idx);
-            biteChart.setDatasetVisibility(idx, next);
-            biteChart.update();
-            updateToggleVisual(activeToggle, next);
-        });
-        resolvedToggle.addEventListener('click', () => {
-            const idx = 1;
-            const next = !biteChart.isDatasetVisible(idx);
-            biteChart.setDatasetVisibility(idx, next);
-            biteChart.update();
-            updateToggleVisual(resolvedToggle, next);
-        });
-    }
-
     const loadBiteChart = async (mode, timeframe) => {
         const url = new URL('{{ route('city-vet.dashboard.chart-data') }}', window.location.origin);
         url.searchParams.set('mode', mode);
@@ -501,12 +459,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             biteChart.data.labels = data.labels.map(String);
-            biteChart.data.datasets[0].data = data.active;
-            biteChart.data.datasets[1].data = data.resolved;
+            biteChart.data.datasets[0].data = data.total;
             biteChart.update();
-
-            activeToggle.querySelector('.font-semibold').textContent = data.activeCount;
-            resolvedToggle.querySelector('.font-semibold').textContent = data.resolvedCount;
         } catch (error) {
             console.error('Failed to load chart data:', error);
         }

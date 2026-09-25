@@ -88,6 +88,10 @@ $backRoute = $rolePrefix . '.bite-reports.index';
                     <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->animal_type) ?? 'Unknown' }}</p>
                 </div>
                 <div>
+                    <p class="text-xs text-gray-500">Animal Gender</p>
+                    <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->animal_gender) ?? 'N/A' }}</p>
+                </div>
+                <div>
                     <p class="text-xs text-gray-500">Ownership Status</p>
                     <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->animal_status) ?? 'N/A' }}</p>
                 </div>
@@ -107,18 +111,6 @@ $backRoute = $rolePrefix . '.bite-reports.index';
                     <p class="text-sm font-medium text-gray-800">{{ $report->incident_date ? \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') : 'N/A' }}</p>
                 </div>
                 <div>
-                    <p class="text-xs text-gray-500">Exposure Type</p>
-                    <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->exposure_type) ?? 'N/A' }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500">Category</p>
-                    <p class="text-sm font-medium text-gray-800">Category {{ $report->category ?? 'N/A' }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500">Body Part Bitten</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->bite_site ?? 'N/A' }}</p>
-                </div>
-                <div>
                     <p class="text-xs text-gray-500">Barangay</p>
                     <p class="text-sm font-medium text-gray-800">{{ $report->incident_barangay ?? 'N/A' }}</p>
                 </div>
@@ -129,32 +121,12 @@ $backRoute = $rolePrefix . '.bite-reports.index';
             </div>
         </div>
 
-        <!-- Treatment Information -->
+        @if($report->action_taken)
         <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Treatment Information</h3>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div>
-                    <p class="text-xs text-gray-500">Post-Exposure Prophylaxis (PEP)</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->post_exposure_prophylaxis ?? 'N/A' }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500">Wound Management</p>
-                    <p class="text-sm font-medium text-gray-800">
-                        @if(is_array($report->wound_management))
-                            {{ implode(', ', $report->wound_management) }}
-                        @else
-                            {{ $report->wound_management ?? 'N/A' }}
-                        @endif
-                    </p>
-                </div>
-            </div>
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Action Taken</h3>
+            <p class="text-sm text-gray-800 whitespace-pre-line">{{ $report->action_taken }}</p>
         </div>
-
-        <!-- Reporting Facility -->
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Reporting Facility</h3>
-            <p class="text-sm font-medium text-gray-800">{{ $report->reporting_facility ?? 'N/A' }}</p>
-        </div>
+        @endif
 
         <!-- Notes -->
         @if($report->notes)

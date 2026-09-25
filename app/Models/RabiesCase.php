@@ -7,22 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
- * @property string $status
  * @property string $report_number
- * @property int|null $patient_id
  * @property int|null $barangay_id
  * @property Carbon $incident_date
  * @property string|null $exact_location
- * @property string $exposure_type
- * @property string|null $bite_site
- * @property string $category
  * @property string $animal_type
  * @property string $animal_status
+ * @property string|null $animal_name
  * @property string $vaccination_status
  * @property string|null $animal_owner_name
  * @property string|null $animal_owner_contact
- * @property int|null $reported_by
- * @property string|null $reporting_facility
  * @property string|null $date_reported
  * @property string|null $wound_management
  * @property string|null $post_exposure_prophylaxis
@@ -33,7 +27,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Owner|null $owner
  * @property-read \App\Models\BiteRabiesReport|null $rabiesReport
  * @property-read \App\Models\User|null $user
- * @property-read \App\Models\Patient|null $patient
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase query()
@@ -44,15 +37,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereAnimalType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereBarangayId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereBiteSite($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereCategory($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereDateReported($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereExactLocation($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereExposureType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereIncidentBarangay($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereIncidentDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase wherePatientBarangay($value)
@@ -80,24 +69,16 @@ class RabiesCase extends Model
 
     protected $fillable = [
         'report_number',
-        'status',
-        'patient_id',
         'barangay_id',
         'incident_date',
         'exact_location',
-        'exposure_type',
-        'bite_site',
-        'category',
         'animal_type',
         'animal_status',
+        'animal_name',
         'vaccination_status',
         'animal_owner_name',
         'animal_owner_contact',
-        'reported_by',
-        'reporting_facility',
         'date_reported',
-        'wound_management',
-        'post_exposure_prophylaxis',
         'notes',
     ];
 
@@ -110,11 +91,6 @@ class RabiesCase extends Model
     public function barangay()
     {
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
-    }
-
-    public function patient()
-    {
-        return $this->belongsTo(Patient::class);
     }
 
     public function rabiesReport()

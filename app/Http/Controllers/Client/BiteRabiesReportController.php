@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\BiteRabiesReport;
 use App\Models\Barangay;
-use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -45,58 +44,27 @@ class BiteRabiesReportController extends Controller
     private function validateRequest(Request $request)
     {
         $rules = [
-            'reporting_facility' => 'required|string',
-            'facility_name' => 'nullable|string|max:200',
-            'date_reported' => 'required|date',
-            'patient_name' => 'required|string|min:2|max:200',
-            'patient_age' => 'required|integer|min:0|max:150',
-            'patient_gender' => 'required|in:Male,Female',
-            'patient_barangay_id' => 'required|exists:barangays,barangay_id',
-            'patient_contact' => 'required|regex:/^[0-9]{11}$/',
-            'incident_date' => 'required|date|before_or_equal:today',
-            'nature_of_incident' => 'required|in:Bitten,Scratched,Licked (Open Wound)',
-            'bite_site' => 'required|in:Head/Neck,Upper Extremities,Trunk,Lower Extremities',
-            'exposure_category' => 'required|in:Category I (Lick),Category II (Scratch),Category III (Bite / Deep)',
-            'animal_species' => 'required|in:Dog,Cat',
-            'animal_status' => 'required|in:Stray,Owned,Wild',
-            'animal_owner_name' => 'nullable|string|max:200',
-            'animal_vaccination_status' => 'required|in:Vaccinated,Unvaccinated,Unknown',
-            'animal_current_condition' => 'required|in:Healthy / Alive,Dead,Missing / Escaped,Euthanized',
-            'wound_management' => 'nullable|array',
-            'wound_management.*' => 'in:Washed with Soap,Antiseptic Applied,None',
-            'post_exposure_prophylaxis' => 'required|in:Yes,No',
-            'notes' => 'nullable|string|max:1000',
+            'incident_date' => 'required|date',
+            'exact_location' => 'nullable|string|max:500',
             'barangay_id' => 'required|exists:barangays,barangay_id',
+            'animal_type' => 'required|in:Dog,Cat',
+            'animal_gender' => 'nullable|in:Male,Female',
+            'animal_status' => 'required|in:Stray,Owned,Wild',
+            'vaccination_status' => 'required|in:Vaccinated,Unvaccinated,Unknown',
+            'bite_site' => 'required|in:Head/Neck,Upper Extremities,Trunk,Lower Extremities',
+            'category' => 'required|in:I,II,III',
+            'animal_owner_name' => 'nullable|string|max:200',
+            'notes' => 'nullable|string|max:1000',
         ];
 
-        $messages = [
-            'patient_contact.regex' => 'The contact number must be exactly 11 digits.',
-            'incident_date.before_or_equal' => 'The incident date cannot be in the future.',
-        ];
-
-        return Validator::make($request->all(), $rules, $messages);
+        return Validator::make($request->all(), $rules);
     }
 
     private function createReport(Request $request): BiteRabiesReport
     {
         $reportNumber = BiteRabiesReport::generateReportNumber();
-        
-        // Use patient_barangay_id for barangay_id (incident location)
-        $barangayId = $request->input('barangay_id') ?: $request->input('patient_barangay_id');
-        
-        $woundManagement = $request->input('wound_management', []);
 
-        $patientNameParts = explode(' ', $request->input('patient_name', ''), 2);
-        $firstName = $patientNameParts[0] ?? '';
-        $lastName = $patientNameParts[1] ?? '';
-
-        $patient = Patient::create([
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'gender' => $request->input('patient_gender'),
-            'contact_number' => $request->input('patient_contact'),
-            'barangay_id' => $request->input('patient_barangay_id'),
-        ]);
+        $barangayId = $request->input('barangay_id');
 
         $animalTypeMap = [
             'Dog' => 'dog',
@@ -106,30 +74,34 @@ class BiteRabiesReportController extends Controller
         $animalStatusMap = [
             'Stray' => 'stray',
             'Owned' => 'owned',
-            'Wild' => 'wild',
+        ];
+
+        $animalGenderMap = [
+            'Male' => 'male',
+            'Female' => 'female',
+        ];
+
+        $vaccinationStatusMap = [
+            'Vaccinated' => 'vaccinated',
+            'Unvaccinated' => 'unvaccinated',
+            'Unknown' => 'unknown',
         ];
 
         return BiteRabiesReport::create([
             'report_number' => $reportNumber,
-            'report_source' => 'client_submission',
-            'status' => 'Under Investigation', // Auto-approve to show on map
-            'assigned_to_role' => 'assistant_vet',
-            'reporting_facility' => $request->input('reporting_facility'),
-            'facility_name' => $request->input('facility_name'),
-            'date_reported' => $request->input('date_reported'),
-            'patient_id' => $patient->id,
             'barangay_id' => $barangayId,
             'incident_date' => $request->input('incident_date'),
-            'exposure_type' => strtolower($request->input('nature_of_incident')),
+            'exact_location' => $request->input('exact_location') ?? null,
+            'exposure_type' => 'bite',
             'bite_site' => $request->input('bite_site'),
-            'category' => $request->input('exposure_category'),
-            'animal_type' => $animalTypeMap[$request->input('animal_species')] ?? 'dog',
+            'category' => $request->input('category'),
+            'animal_type' => $animalTypeMap[$request->input('animal_type')] ?? 'dog',
+            'animal_gender' => $animalGenderMap[$request->input('animal_gender')] ?? null,
             'animal_status' => $animalStatusMap[$request->input('animal_status')] ?? 'stray',
+            'animal_name' => $request->input('animal_name'),
+            'vaccination_status' => $vaccinationStatusMap[$request->input('vaccination_status')] ?? 'unknown',
             'animal_owner_name' => $request->input('animal_owner_name'),
-            'vaccination_status' => strtolower($request->input('animal_vaccination_status')),
-            'wound_management' => $woundManagement,
-            'post_exposure_prophylaxis' => $request->input('post_exposure_prophylaxis'),
-            'notes' => $request->input('notes'),
+            'notes' => $request->input('notes') ?? '',
         ]);
     }
 }

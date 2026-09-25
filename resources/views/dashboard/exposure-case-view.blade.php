@@ -130,10 +130,6 @@ $rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'city-
                     <dd class="font-medium text-gray-900">{{ ucfirst($exposureCase->exposure_type) ?? 'N/A' }}</dd>
                 </div>
                 <div class="flex justify-between">
-                    <dt class="text-gray-500">Bite Site</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->bite_site ?? 'N/A' }}</dd>
-                </div>
-                <div class="flex justify-between">
                     <dt class="text-gray-500">Exposure Category</dt>
                     <dd class="font-medium text-gray-900">{{ $exposureCase->category ? 'Category ' . $exposureCase->category : 'N/A' }}</dd>
                 </div>

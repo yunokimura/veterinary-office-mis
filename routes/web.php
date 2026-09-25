@@ -78,6 +78,7 @@ use App\Models\MissingPetsReport;
 use App\Models\Pet;
 use App\Models\PetOwner;
 use App\Models\SpayNeuterReport;
+use App\Models\VaccinationAppointment;
 use App\Models\VaccinationReport;
 use App\Services\AppointmentBookingService;
 use App\Services\VeterinarianRotationService;
@@ -221,7 +222,6 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
     // Animal Bite Reports (from Barangay)
     Route::get('/animal-bite-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
     Route::get('/animal-bite-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
-    Route::put('/animal-bite-reports/{report}', [AdminController::class, 'updateBiteReport'])->name('bite-reports.update');
 
     // Rabies Vaccination Reports (from Clinic)
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
@@ -280,7 +280,6 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
     Route::get('/bite-rabies-reports/filter', [AdminController::class, 'filterBiteReports'])->name('bite-reports.filter');
     Route::get('/bite-rabies-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
     Route::get('/bite-rabies-reports/{report}/json', [AdminController::class, 'showBiteReportJson'])->name('bite-reports.show-json');
-    Route::put('/bite-rabies-reports/{report}', [AdminController::class, 'updateBiteReport'])->name('bite-reports.update');
 
     // Rabies Vaccination Reports (from Clinic)
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
@@ -290,7 +289,10 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
 
     // Anti-Rabies Vaccination Appointments
     Route::get('/vaccination-appointments', [AdminController::class, 'indexVaccinationAppointments'])->name('vaccination-appointments.index');
+    Route::get('/vaccination-appointments/filter', [AdminController::class, 'filterVaccinationAppointments'])->name('vaccination-appointments.filter');
     Route::get('/vaccination-appointments/{appointment}/json', [AdminController::class, 'showVaccinationAppointmentJson'])->name('vaccination-appointments.show-json');
+    Route::get('/vaccination-appointments/{appointment}/edit', [AdminController::class, 'editVaccinationAppointmentJson'])->name('vaccination-appointments.edit');
+    Route::put('/vaccination-appointments/{appointment}', [AdminController::class, 'updateVaccinationAppointment'])->name('vaccination-appointments.update');
     Route::put('/vaccination-appointments/{appointment}/status', [AdminController::class, 'updateVaccinationAppointmentStatus'])->name('vaccination-appointments.update-status');
 
     // Meat Inspection Reports
@@ -358,7 +360,6 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     // Bite & Rabies Reports - View Only
     Route::get('/bite-rabies-reports', [DiseaseControlController::class, 'indexRabiesReports'])->name('rabies-bite-reports.index');
     Route::get('/bite-rabies-reports/{rabiesReport}', [DiseaseControlController::class, 'showRabiesReport'])->name('rabies-bite-reports.show');
-    Route::patch('/bite-rabies-reports/{rabiesReport}/check', [DiseaseControlController::class, 'acceptRabiesReport'])->name('rabies-bite-reports.check');
 
     // ========== ADMIN ASST MODULES (merged into assistant_vet) ==========
     // Pet Registrations (Portal Admin Assistant)
@@ -389,16 +390,6 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     Route::post('/business-profiles/{businessProfile}/approve', [BusinessProfileController::class, 'approve'])->name('business-profiles.approve');
     Route::post('/business-profiles/{businessProfile}/suspend', [BusinessProfileController::class, 'suspend'])->name('business-profiles.suspend');
     Route::get('/business-profiles/export', [BusinessProfileController::class, 'export'])->name('business-profiles.export');
-
-    // Inventory (merged with city-pound)
-    Route::get('/inventory', [App\Http\Controllers\AdminAsst\InventoryController::class, 'index'])->name('inventory.index');
-    Route::get('/inventory/create', [App\Http\Controllers\AdminAsst\InventoryController::class, 'create'])->name('inventory.create');
-    Route::post('/inventory', [App\Http\Controllers\AdminAsst\InventoryController::class, 'store'])->name('inventory.store');
-    Route::get('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'show'])->name('inventory.show');
-    Route::get('/inventory/{inventory}/edit', [App\Http\Controllers\AdminAsst\InventoryController::class, 'edit'])->name('inventory.edit');
-    Route::put('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'update'])->name('inventory.update');
-    Route::delete('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'destroy'])->name('inventory.destroy');
-    Route::get('/inventory/low-stock', [App\Http\Controllers\AdminAsst\InventoryController::class, 'lowStock'])->name('inventory.low-stock');
 
     // Impound Records (merged with city-pound)
     Route::get('/impounds', [ImpoundController::class, 'index'])->name('impounds.index');
@@ -490,6 +481,27 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
     Route::post('/appointments/{appointment}/reject', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'reject'])->name('appointments.reject');
     Route::post('/appointments/{appointment}/complete', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'complete'])->name('appointments.complete');
     Route::post('/appointments/{appointment}/reset', [App\Http\Controllers\AdminAsst\AppointmentController::class, 'reset'])->name('appointments.reset');
+
+    // Inventory
+    Route::get('/inventory', [App\Http\Controllers\AdminAsst\InventoryController::class, 'index'])->name('inventory.index');
+    Route::get('/inventory/create', [App\Http\Controllers\AdminAsst\InventoryController::class, 'create'])->name('inventory.create');
+    Route::post('/inventory', [App\Http\Controllers\AdminAsst\InventoryController::class, 'store'])->name('inventory.store');
+    Route::get('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'show'])->name('inventory.show');
+    Route::get('/inventory/{inventory}/edit', [App\Http\Controllers\AdminAsst\InventoryController::class, 'edit'])->name('inventory.edit');
+    Route::put('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'update'])->name('inventory.update');
+    Route::delete('/inventory/{inventory}', [App\Http\Controllers\AdminAsst\InventoryController::class, 'destroy'])->name('inventory.destroy');
+    Route::get('/inventory/low-stock', [App\Http\Controllers\AdminAsst\InventoryController::class, 'lowStock'])->name('inventory.low-stock');
+    Route::get('/inventory/expiring', [App\Http\Controllers\AdminAsst\InventoryController::class, 'expiring'])->name('inventory.expiring');
+    Route::get('/inventory/movements', [App\Http\Controllers\AdminAsst\InventoryController::class, 'movements'])->name('inventory.movements');
+
+    Route::get('/inventory/{inventory}/stock-in', [App\Http\Controllers\AdminAsst\InventoryController::class, 'stockInForm'])->name('inventory.stock-in');
+    Route::post('/inventory/{inventory}/stock-in', [App\Http\Controllers\AdminAsst\InventoryController::class, 'stockIn'])->name('inventory.stock-in.process');
+    Route::get('/inventory/{inventory}/stock-out', [App\Http\Controllers\AdminAsst\InventoryController::class, 'stockOutForm'])->name('inventory.stock-out');
+    Route::post('/inventory/{inventory}/stock-out', [App\Http\Controllers\AdminAsst\InventoryController::class, 'stockOut'])->name('inventory.stock-out.process');
+    Route::get('/inventory/{inventory}/adjustment', [App\Http\Controllers\AdminAsst\InventoryController::class, 'adjustmentForm'])->name('inventory.adjustment');
+    Route::post('/inventory/{inventory}/adjustment', [App\Http\Controllers\AdminAsst\InventoryController::class, 'adjustment'])->name('inventory.adjustment.process');
+    Route::get('/inventory/{inventory}/transfer', [App\Http\Controllers\AdminAsst\InventoryController::class, 'transferForm'])->name('inventory.transfer');
+    Route::post('/inventory/{inventory}/transfer', [App\Http\Controllers\AdminAsst\InventoryController::class, 'transfer'])->name('inventory.transfer.process');
 });
 
 // ==============================
@@ -568,39 +580,6 @@ Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet'])->prefix('
     Route::get('/reports/{report}/edit', [SpayNeuterController::class, 'edit'])->name('reports.edit');
     Route::put('/reports/{report}', [SpayNeuterController::class, 'update'])->name('reports.update');
     Route::delete('/reports/{report}', [SpayNeuterController::class, 'destroy'])->name('reports.destroy');
-});
-
-// ==============================
-// INVENTORY MANAGEMENT MODULE
-// Roles: city_vet, super_admin, inventory_staff, assistant_vet (merged)
-// Access: Vaccine and supply inventory management
-// ==============================
-    Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet'])->prefix('inventory')->name('inventory.')->group(function () {
-    Route::get('/dashboard', [InventoryController::class, 'dashboard'])->name('dashboard');
-
-    // Inventory Items
-    Route::get('/', [InventoryController::class, 'index'])->name('index');
-    Route::get('/create', [InventoryController::class, 'create'])->name('create');
-    Route::post('/', [InventoryController::class, 'store'])->name('store');
-    Route::get('/{item}', [InventoryController::class, 'show'])->name('show');
-    Route::get('/{item}/edit', [InventoryController::class, 'edit'])->name('edit');
-    Route::put('/{item}', [InventoryController::class, 'update'])->name('update');
-    Route::delete('/{item}', [InventoryController::class, 'destroy'])->name('destroy');
-
-    // Stock Movements
-    Route::get('/{item}/stock-in', [InventoryController::class, 'showStockIn'])->name('stock-in');
-    Route::post('/{item}/stock-in', [InventoryController::class, 'stockIn'])->name('stock-in.process');
-    Route::get('/{item}/stock-out', [InventoryController::class, 'showStockOut'])->name('stock-out');
-    Route::post('/{item}/stock-out', [InventoryController::class, 'stockOut'])->name('stock-out.process');
-    Route::get('/{item}/adjustment', [InventoryController::class, 'showAdjustment'])->name('adjustment');
-    Route::post('/{item}/adjustment', [InventoryController::class, 'adjustment'])->name('adjustment.process');
-
-    // Alerts
-    Route::get('/alerts/low-stock', [InventoryController::class, 'lowStock'])->name('low-stock');
-    Route::get('/alerts/expiring', [InventoryController::class, 'expiring'])->name('expiring');
-
-    // Movements Log
-    Route::get('/movements', [InventoryController::class, 'movements'])->name('movements');
 });
 
 // ==============================
@@ -1356,8 +1335,8 @@ Route::post('/vaccination/form', function (Request $request) {
         'is_primary' => true,
     ]);
 
-    // Create vaccination report using foreign keys
-    VaccinationReport::create([
+    // Create vaccination appointment using foreign keys
+    VaccinationAppointment::create([
         'user_id' => $user->id,
         'owner_id' => $petOwner->owner_id,
         'address_id' => $address->id,

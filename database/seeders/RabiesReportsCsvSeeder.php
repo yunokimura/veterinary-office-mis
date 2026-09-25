@@ -32,25 +32,14 @@ class RabiesReportsCsvSeeder extends Seeder
 
             $data = array_combine($header, $row);
 
-            $patientId = isset($data['patient_id']) && $data['patient_id'] !== ''
-                ? (int) $data['patient_id']
-                : null;
+            $barangayId = isset($data['barangay_id']) && $data['barangay_id'] !== '' ? (int) $data['barangay_id'] : null;
 
-            $woundManagement = isset($data['wound_management']) && $data['wound_management'] !== ''
-                ? json_encode([$data['wound_management']])
-                : null;
-
-            $animalOwnerContact = isset($data['animal_owner_contact']) && $data['animal_owner_contact'] !== ''
-                ? $data['animal_owner_contact']
-                : null;
+            $animalOwnerContact = isset($data['animal_owner_contact']) && $data['animal_owner_contact'] !== '' ? $data['animal_owner_contact'] : null;
 
             BiteRabiesReport::create([
                 'report_number'           => $data['report_number'] ?? null,
-                'status'                  => $data['status'] ?? 'Pending Review',
-                'reporting_facility'      => $data['reporting_facility'] ?? null,
                 'date_reported'           => $data['date_reported'] ?: null,
-                'patient_id'              => $patientId,
-                'barangay_id'             => isset($data['barangay_id']) && $data['barangay_id'] !== '' ? (int) $data['barangay_id'] : null,
+                'barangay_id'             => $barangayId,
                 'incident_date'           => $data['incident_date'] ?: null,
                 'exact_location'          => $data['exact_location'] ?? null,
                 'exposure_type'           => $data['exposure_type'] ?? null,
@@ -61,12 +50,8 @@ class RabiesReportsCsvSeeder extends Seeder
                 'vaccination_status'      => $data['vaccination_status'] ?? null,
                 'animal_owner_name'       => $data['animal_owner_name'] ?: null,
                 'animal_owner_contact'    => $animalOwnerContact,
-                'reported_by'             => null,
-                'wound_management'        => $woundManagement,
-                'post_exposure_prophylaxis' => $data['post_exposure_prophylaxis'] ?? null,
                 'notes'                   => $data['notes'] ?? null,
                 'action_taken'            => $data['action_taken'] ?? null,
-                'rabies_confirmed'        => isset($data['rabies_confirmed']) ? (bool) $data['rabies_confirmed'] : false,
                 'created_at'              => $data['created_at'] ?: now(),
                 'updated_at'              => $data['created_at'] ?: now(),
             ]);

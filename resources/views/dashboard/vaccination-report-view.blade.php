@@ -90,10 +90,6 @@
                     <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->pet_gender) ?? 'N/A' }}</p>
                 </div>
                 <div>
-                    <p class="text-xs text-gray-500">Color</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->pet_color ?? 'Unknown' }}</p>
-                </div>
-                <div>
                     <p class="text-xs text-gray-500">Weight</p>
                     <p class="text-sm font-medium text-gray-800">{{ $report->weight ? $report->weight . ' kg' : 'N/A' }}</p>
                 </div>

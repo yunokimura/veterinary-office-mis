@@ -8,18 +8,12 @@
 @php
 $rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'assistant-vet');
 
-// Get available route for rabies-bite-reports
-$rabiesReportsIndexRoute = 'city-vet.rabies-bite-reports.index';
-$rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
-} elseif ($rolePrefix === 'city-vet') {
-    if (Route::has('city-vet.rabies-bite-reports.index')) {
-        $rabiesReportsIndexRoute = 'city-vet.rabies-bite-reports.index';
-        $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
-        $rabiesReportsAcceptRoute = 'city-vet.rabies-bite-reports.accept';
-        $rabiesReportsResolveRoute = 'city-vet.rabies-bite-reports.resolve';
-        $rabiesReportsDeclineRoute = 'city-vet.rabies-bite-reports.decline';
-    }
-}
+$rabiesReportsIndexRoute = $rolePrefix === 'city-vet' && Route::has('city-vet.rabies-bite-reports.index')
+    ? 'city-vet.rabies-bite-reports.index'
+    : 'dashboard.rabies-bite-reports.index';
+$rabiesReportsShowRoute = $rolePrefix === 'city-vet' && Route::has('city-vet.rabies-bite-reports.show')
+    ? 'city-vet.rabies-bite-reports.show'
+    : 'dashboard.rabies-bite-reports.show';
 @endphp
 
 @section('content')
@@ -58,23 +52,6 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
         </div>
     @endif
 
-    <!-- Status Badge -->
-    <div class="mb-6 flex items-center gap-4 flex-wrap">
-        <span class="text-lg font-semibold text-gray-700">Status:</span>
-        @php
-            $statusConfig = [
-                'Pending Review' => ['class' => 'bg-yellow-100 text-yellow-800', 'icon' => 'bi-clock'],
-                'Under Review' => ['class' => 'bg-blue-100 text-blue-800', 'icon' => 'bi-search'],
-                'Resolved' => ['class' => 'bg-green-100 text-green-800', 'icon' => 'bi-check-circle'],
-                'Closed' => ['class' => 'bg-gray-100 text-gray-800', 'icon' => 'bi-x-circle'],
-            ];
-            $status = $statusConfig[$rabiesReport->status] ?? ['class' => 'bg-gray-100 text-gray-800', 'icon' => 'bi-circle'];
-        @endphp
-        <span class="px-4 py-2 text-sm font-semibold rounded-full {{ $status['class'] }}">
-            <i class="{{ $status['icon'] }} mr-1"></i>{{ $rabiesReport->status }}
-        </span>
-    </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <!-- Main Content -->
@@ -89,44 +66,8 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Reporting Facility</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->reporting_facility }}</p>
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Date Reported</label>
                             <p class="text-gray-900 font-medium">{{ \Carbon\Carbon::parse($rabiesReport->date_reported)->format('F d, Y') }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECTION II: Patient Information -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="bg-blue-600 px-6 py-3 flex items-center gap-2">
-                    <i class="bi bi-person text-white"></i>
-                    <h3 class="text-lg font-semibold text-white">SECTION II: Patient (Human) Information</h3>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Patient Name</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->full_name ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Age</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->age ?? 'N/A' }} years old</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Gender</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->gender ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Address (Barangay)</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->barangay->barangay_name ?? ($rabiesReport->patient->barangay->barangay_name ?? 'N/A') }}</p>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Contact Number</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->contact_number ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -143,27 +84,6 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Date of Incident</label>
                             <p class="text-gray-900 font-medium">{{ \Carbon\Carbon::parse($rabiesReport->incident_date)->format('F d, Y') }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Nature of Incident</label>
-                            <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->exposure_type) }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Bite Site (Body Part)</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->bite_site ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Exposure Category</label>
-                            <p class="text-gray-900 font-medium">
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full
-                                    @switch($rabiesReport->category)
-                                        @case('I') bg-gray-200 text-gray-800
-                                        @case('II') bg-yellow-200 text-yellow-800
-                                        @case('III') bg-red-200 text-red-800
-                                    @endswitch">
-                                    Category {{ $rabiesReport->category }}
-                                </span>
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -201,23 +121,6 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                 </div>
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-2">Wound Management</label>
-                            <div class="flex flex-wrap gap-2">
-                                @php
-                                    $woundManagement = is_array($rabiesReport->wound_management) ? $rabiesReport->wound_management : json_decode($rabiesReport->wound_management, true) ?? [];
-                                @endphp
-                                @forelse($woundManagement as $wm)
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-800">{{ $wm }}</span>
-                                @empty
-                                    <span class="text-gray-500">None</span>
-                                @endforelse
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Post-Exposure Prophylaxis (PEP)</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->post_exposure_prophylaxis }}</p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -262,7 +165,7 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
 
                     <!-- Action Buttons - Only for assistant_vet (not city_vet) -->
                     @if(!auth()->user()->hasRole('city_vet'))
-                        @if(!$rabiesReport->rabiesCase && in_array($rabiesReport->status, ['Pending Review', 'Under Review']))
+                        @if(!$rabiesReport->rabiesCase)
                             <a href="{{ route($rolePrefix . '.rabies-bite-reports.create-case', $rabiesReport->id) }}"
                                class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
                                 <i class="bi bi-plus-circle"></i> Create Rabies Case
@@ -274,33 +177,6 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                                class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
                                 <i class="bi bi-eye"></i> View Linked Case
                             </a>
-                        @endif
-
-                        @if($rabiesReport->status === 'Pending Review')
-                            <form action="{{ route($rabiesReportsAcceptRoute, $rabiesReport->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
-                                    <i class="bi bi-check-circle"></i> Accept & Start Review
-                                </button>
-                            </form>
-                        @endif
-
-                        @if($rabiesReport->status === 'Under Review')
-                            <form action="{{ route($rabiesReportsResolveRoute, $rabiesReport->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">
-                                    <i class="bi bi-check-all"></i> Mark as Resolved
-                                </button>
-                            </form>
-                        @endif
-
-                        @if(in_array($rabiesReport->status, ['Pending Review', 'Under Review']))
-                            <button type="button" onclick="document.getElementById('declineModal').classList.remove('hidden')"
-                                    class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
-                                <i class="bi bi-x-circle"></i> Decline Report
-                            </button>
                         @endif
                     @else
                         <!-- City Vet View Only - Show info message -->

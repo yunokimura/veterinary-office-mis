@@ -79,10 +79,6 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Reporting Facility</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->reporting_facility }}</p>
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Date Reported</label>
                             <p class="text-gray-900 font-medium">{{ \Carbon\Carbon::parse($rabiesReport->date_reported)->format('F d, Y') }}</p>
                         </div>
@@ -90,39 +86,7 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                 </div>
             </div>
 
-            <!-- SECTION II: Patient Information -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="bg-blue-600 px-6 py-3 flex items-center gap-2">
-                    <i class="bi bi-person text-white"></i>
-                    <h3 class="text-lg font-semibold text-white">SECTION II: Patient (Human) Information</h3>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Patient Name</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->full_name ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Age</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->age ?? 'N/A' }} years old</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Gender</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->gender ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Address (Barangay)</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->barangay->barangay_name ?? ($rabiesReport->patient->barangay->barangay_name ?? 'N/A') }}</p>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Contact Number</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient->contact_number ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECTION III: Incident Details -->
+            <!-- SECTION II: Incident Details -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="bg-red-600 px-6 py-3 flex items-center gap-2">
                     <i class="bi bi-exclamation-triangle text-white"></i>
@@ -172,41 +136,16 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                             <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->animal_type) }}</p>
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Animal Gender</label>
+                            <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->animal_gender) ?? 'N/A' }}</p>
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Animal Status</label>
                             <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->animal_status) }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Vaccination Status</label>
                             <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->vaccination_status) }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECTION V: Clinical Action -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="bg-teal-600 px-6 py-3 flex items-center gap-2">
-                    <i class="bi bi-clipboard-pulse text-white"></i>
-                    <h3 class="text-lg font-semibold text-white">SECTION V: Clinical Action</h3>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-2">Wound Management</label>
-                            <div class="flex flex-wrap gap-2">
-                                @php
-                                    $woundManagement = is_array($rabiesReport->wound_management) ? $rabiesReport->wound_management : json_decode($rabiesReport->wound_management, true) ?? [];
-                                @endphp
-                                @forelse($woundManagement as $wm)
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-800">{{ $wm }}</span>
-                                @empty
-                                    <span class="text-gray-500">None</span>
-                                @endforelse
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Post-Exposure Prophylaxis (PEP)</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->post_exposure_prophylaxis }}</p>
                         </div>
                     </div>
                 </div>

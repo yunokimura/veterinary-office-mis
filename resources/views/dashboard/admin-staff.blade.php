@@ -50,7 +50,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500">Vaccinations</p>
-                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\RabiesVaccinationReport::count() }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\VaccinationReport::count() }}</p>
             </div>
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <i class="bi bi-shield-check text-green-600"></i>
@@ -145,7 +145,7 @@
             <h3 class="font-semibold text-gray-800">Recent Vaccinations</h3>
         </div>
         <div class="divide-y divide-gray-100">
-            @forelse(\App\Models\RabiesVaccinationReport::latest()->take(4)->get() as $vaccination)
+            @forelse(\App\Models\VaccinationReport::latest()->take(4)->get() as $vaccination)
                 <a href="{{ route('admin-staff.vaccinations.show', $vaccination->id) }}" class="block p-4 hover:bg-gray-50 transition">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">

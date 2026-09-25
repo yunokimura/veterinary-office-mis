@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\BiteRabiesReport;
 use App\Models\Pet;
 use App\Models\PetOwner;
-use App\Models\RabiesVaccinationReport;
+use App\Models\RabiesVaccinationAppointmentReport;
 use App\Models\User;
-use App\Models\Vaccination;
+use App\Models\VaccinationAppointmentAppointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Auth;
  * MODULE ASSIGNMENTS:
  * - Pet Registration Records
  * - Owner Records (via Client model)
- * - Vaccination Encoding
+ * - VaccinationAppointment Encoding
  * - Records Search
  *
  * Note: Pet owners are stored in 'clients' table, not 'users' table.
@@ -43,20 +43,19 @@ class RecordsController extends Controller
         $stats = [
             'total_pets' => Pet::count(),
             'total_owners' => PetOwner::count(),
-            'total_vaccinations' => Vaccination::count(),
+            'total_vaccinations' => VaccinationAppointment::count(),
             'vaccinated_animals' => Pet::where('vaccination_status', 'vaccinated')->count(),
             'unvaccinated_animals' => Pet::where('vaccination_status', 'unvaccinated')->count(),
             'bite_reports' => BiteRabiesReport::count(),
-            'pending_bite_reports' => BiteRabiesReport::where('status', 'Pending Review')->count(),
         ];
 
         // Get recent registrations with eager loading
         $recentPets = Pet::with(['owner', 'barangay'])->latest()->take(5)->get();
 
         // Get recent vaccinations with eager loading
-        $recentVaccinations = Vaccination::with(['pet', 'user'])->latest()->take(5)->get();
+        $recentVaccinationAppointments = VaccinationAppointment::with(['pet', 'user'])->latest()->take(5)->get();
 
-        return view('dashboard.admin-staff', compact('user', 'stats', 'recentPets', 'recentVaccinations'));
+        return view('dashboard.admin-staff', compact('user', 'stats', 'recentPets', 'recentVaccinationAppointments'));
     }
 
     /**
@@ -248,7 +247,7 @@ class RecordsController extends Controller
     /**
      * Display vaccination encoding form.
      */
-    public function createVaccination()
+    public function createVaccinationAppointment()
     {
         $pets = Pet::orderBy('pet_name')->get();
 
@@ -258,7 +257,7 @@ class RecordsController extends Controller
     /**
      * Store vaccination record.
      */
-    public function storeVaccination(Request $request)
+    public function storeVaccinationAppointment(Request $request)
     {
         $validated = $request->validate([
             'patient_name' => 'required|string|max:255',
@@ -282,7 +281,7 @@ class RecordsController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        RabiesVaccinationReport::create([
+        RabiesVaccinationAppointmentReport::create([
             'user_id' => Auth::id(),
             'clinic_name' => 'VSO Records',
             'patient_name' => $validated['patient_name'],
@@ -306,7 +305,7 @@ class RecordsController extends Controller
             'notes' => $validated['notes'] ?? null,
         ]);
 
-        return redirect()->route('admin-staff.dashboard')->with('success', 'Vaccination record encoded successfully.');
+        return redirect()->route('admin-staff.dashboard')->with('success', 'VaccinationAppointment record encoded successfully.');
     }
 
     /**
@@ -318,7 +317,7 @@ class RecordsController extends Controller
         $status = $request->get('status', '');
         $month = $request->get('month', '');
 
-        $vaccinations = RabiesVaccinationReport::with('user')
+        $vaccinations = RabiesVaccinationAppointmentReport::with('user')
             ->when($search, function ($query) use ($search) {
                 $query->where('patient_name', 'like', "%{$search}%")
                     ->orWhere('pet_name', 'like', "%{$search}%")
@@ -339,7 +338,7 @@ class RecordsController extends Controller
     /**
      * Display vaccination record details.
      */
-    public function showVaccination(RabiesVaccinationReport $report)
+    public function showVaccinationAppointment(RabiesVaccinationAppointmentReport $report)
     {
         return view('records-staff.vaccinations.show', compact('report'));
     }
@@ -376,7 +375,7 @@ class RecordsController extends Controller
             ->get();
 
         // Search vaccinations
-        $vaccinations = RabiesVaccinationReport::where('patient_name', 'like', "%{$search}%")
+        $vaccinations = RabiesVaccinationAppointmentReport::where('patient_name', 'like', "%{$search}%")
             ->orWhere('pet_name', 'like', "%{$search}%")
             ->take(10)
             ->get();

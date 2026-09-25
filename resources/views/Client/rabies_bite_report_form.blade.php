@@ -283,23 +283,6 @@
                             @enderror
                         </div>
 
-                        <!-- Bite Site (Body Part) -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Bite Site (Body Part) <span class="text-red-500">*</span>
-                            </label>
-                            <select name="bite_site" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('bite_site') border-red-500 @enderror">
-                                <option value="">Select Body Part</option>
-                                <option value="Head/Neck" {{ old('bite_site') == 'Head/Neck' ? 'selected' : '' }}>Head/Neck</option>
-                                <option value="Upper Extremities" {{ old('bite_site') == 'Upper Extremities' ? 'selected' : '' }}>Upper Extremities</option>
-                                <option value="Trunk" {{ old('bite_site') == 'Trunk' ? 'selected' : '' }}>Trunk</option>
-                                <option value="Lower Extremities" {{ old('bite_site') == 'Lower Extremities' ? 'selected' : '' }}>Lower Extremities</option>
-                            </select>
-                            @error('bite_site')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <!-- Exposure Category -->
                         <div>
                             <label class="block text-sm font-medium mb-1.5">
@@ -378,7 +361,6 @@
                                 <option value="">Select Status</option>
                                 <option value="Stray" {{ old('animal_status') == 'Stray' ? 'selected' : '' }}>Stray</option>
                                 <option value="Owned" {{ old('animal_status') == 'Owned' ? 'selected' : '' }}>Owned</option>
-                                <option value="Wild" {{ old('animal_status') == 'Wild' ? 'selected' : '' }}>Wild</option>
                             </select>
                             @error('animal_status')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

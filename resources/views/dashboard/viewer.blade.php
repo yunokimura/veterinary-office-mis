@@ -39,7 +39,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500">Anti-Rabies Vaccination</p>
-                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\RabiesVaccinationReport::count() }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\VaccinationReport::count() }}</p>
             </div>
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <i class="bi bi-eyedropper text-green-600"></i>
@@ -130,7 +130,7 @@
         <div class="space-y-3">
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600">Total Anti-Rabies Vaccination</span>
-                <span class="text-sm font-medium text-gray-800">{{ \App\Models\RabiesVaccinationReport::count() }}</span>
+                <span class="text-sm font-medium text-gray-800">{{ \App\Models\VaccinationReport::count() }}</span>
             </div>
         </div>
         <div class="mt-4 text-center">

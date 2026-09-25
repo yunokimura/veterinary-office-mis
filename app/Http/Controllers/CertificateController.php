@@ -138,7 +138,7 @@ class CertificateController extends Controller
     {
         return match($type) {
             'meat' => 'meat_inspection_reports',
-            'rabies' => 'rabies_vaccination_reports',
+            'rabies' => 'vaccination_reports',
             'spay' => 'spay_neuter_reports',
             default => 'reports',
         };
@@ -151,7 +151,7 @@ class CertificateController extends Controller
     {
         return match($type) {
             'meat' => \App\Models\MeatInspectionReport::class,
-            'rabies' => \App\Models\RabiesVaccinationReport::class,
+            'rabies' => \App\Models\VaccinationReport::class,
             'spay' => \App\Models\SpayNeuterReport::class,
             default => \App\Models\Model::class,
         };
