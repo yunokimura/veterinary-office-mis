@@ -1,428 +1,168 @@
 @extends('layouts.admin')
 
 @section('title', 'Missing Pet Reports Management')
-
 @section('header', 'Missing Pet Reports Management')
 @section('subheader', 'View and manage all missing pet reports')
 
 @php
-// Use 'city-vet' prefix for this page since it's under the city-vet route group
-$rolePrefix = 'city-vet';
+$routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->routeIs('super-admin.*') ? 'super-admin' : 'admin');
 @endphp
 
 @section('content')
-<div class="max-w-7xl mx-auto">
-
+<div class="space-y-6">
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <!-- Total Reports -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-            <p class="text-sm text-gray-500 mb-1">Total Reports</p>
-            <p class="text-2xl font-bold text-gray-800">{{ $stats['total'] ?? 0 }}</p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Total Reports</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['total'] ?? 0 }}</p>
+            </div>
         </div>
-        <!-- Currently Missing -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-            <p class="text-sm text-gray-500 mb-1">Currently Missing</p>
-            <p class="text-2xl font-bold text-gray-800">{{ $stats['active'] ?? 0 }}</p>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Currently Missing</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['active'] ?? 0 }}</p>
+            </div>
         </div>
-        <!-- Resolved Cases -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-            <p class="text-sm text-gray-500 mb-1">Resolved Cases</p>
-            <p class="text-2xl font-bold text-gray-800">{{ $stats['resolved'] ?? 0 }}</p>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Resolved Cases</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['resolved'] ?? 0 }}</p>
+            </div>
         </div>
-        <!-- This Month -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-            <p class="text-sm text-gray-500 mb-1">This Month</p>
-            <p class="text-2xl font-bold text-gray-800">{{ $stats['this_month'] ?? 0 }}</p>
-        </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-        <div class="row g-3 align-items-end">
-            <!-- Pet Name Search -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Pet Name</label>
-                <input type="text" id="petNameSearch" value="{{ request('pet_name_search') }}" placeholder="Search pet name..."
-                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-            </div>
-
-            <!-- Animal Type Search -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
-                <select id="animalTypeSearch" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <option value="">All Animal Types</option>
-                    <option value="dog" {{ request('animal_type') === 'dog' ? 'selected' : '' }}>Dog</option>
-                    <option value="cat" {{ request('animal_type') === 'cat' ? 'selected' : '' }}>Cat</option>
-                    <option value="other" {{ request('animal_type') === 'other' ? 'selected' : '' }}>Other</option>
-                </select>
-            </div>
-
-            <!-- Barangay Filter -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
-                <div class="relative">
-                    <div id="missingPetBarangayDisplay" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer hover:border-gray-400 transition" onclick="toggleMissingPetBarangayDropdown()">
-                        <span id="selectedMissingPetBarangayText" class="text-gray-500">All Barangays</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                    <div id="missingPetBarangayDropdown" class="hidden absolute z-10 w-full mt-1 border border-gray-300 rounded-lg bg-white shadow-lg max-h-64">
-                        <div class="p-2 border-b border-gray-200">
-                            <input type="text" id="missingPetBarangaySearch" placeholder="Search barangay..." class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-green-500" onkeyup="filterMissingPetBarangays()" onclick="event.stopPropagation()">
-                        </div>
-                        <div id="missingPetBarangayOptions" class="max-h-48 overflow-y-auto py-1">
-                            @foreach($barangays as $barangay)
-                                <label class="flex items-center px-3 py-2 cursor-pointer hover:bg-gray-100">
-                                    <input type="checkbox" value="{{ $barangay->barangay_name }}" class="missing-pet-barangay-checkbox h-4 w-4 text-green-600 border-gray-300 rounded" onchange="updateMissingPetBarangaySelection()" {{ request('barangay') && str_contains(request('barangay'), $barangay->barangay_name) ? 'checked' : '' }}>
-                                    <span class="ml-3 text-sm text-gray-700">{{ $barangay->barangay_name }}</span>
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                <input type="hidden" id="missingPetBarangay" value="{{ request('barangay') ?? '' }}">
-            </div>
-
-            <!-- Status Filter -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select id="statusFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <option value="">All Status</option>
-                    <option value="missing" {{ request('status') === 'missing' ? 'selected' : '' }}>Missing</option>
-                    <option value="found" {{ request('status') === 'found' ? 'selected' : '' }}>Found</option>
-                    <option value="reunited" {{ request('status') === 'reunited' ? 'selected' : '' }}>Reunited</option>
-                </select>
-            </div>
-
-            <!-- Date From -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                <input type="date" id="dateFrom" value="{{ request('date_from') }}"
-                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-            </div>
-
-            <!-- Date To -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                <input type="date" id="dateTo" value="{{ request('date_to') }}"
-                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-            </div>
-
-            <!-- Clear Button -->
-            <div class="col-12 col-md-3">
-                <button type="button" onclick="clearMissingPetFilters()"
-                        class="btn btn-outline-danger w-100">
-                    <i class="bi bi-x-circle mr-1"></i>Clear
-                </button>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">This Month</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['this_month'] ?? 0 }}</p>
             </div>
         </div>
     </div>
 
-    <!-- Reports Table -->
+    <!-- Reports Table Card -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        @if($reports->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-100">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Report No.</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Pet Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animal Type</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Last Seen</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Location</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100" id="reportsTableBody">
-                        @include('dashboard.partials.missing-pet-reports-table')
-                    </tbody>
-                </table>
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">Missing Pet Reports</h3>
+                <p class="text-sm text-gray-500">Search and filter missing pet reports</p>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100" id="reportsPagination">
-                {{ $reports->links() }}
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+            <div class="relative w-[480px]">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="missingPetSearchInput" value="{{ request('search') }}" placeholder="Search report no, pet name, species, barangay, status..."
+                       class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
-        @else
-            <div class="p-12 text-center" id="reportsEmptyState">
-                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="bi bi-search text-2xl text-blue-400"></i>
+            <div class="flex gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">From Date</label>
+                    <input type="date" id="dateFrom" value="{{ request('date_from') }}"
+                           class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 </div>
-                <h3 class="text-lg font-medium text-gray-800 mb-2">No Missing Pet Reports Found</h3>
-                <p class="text-gray-500">There are currently no missing pet reports in the system.</p>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">To Date</label>
+                    <input type="date" id="dateTo" value="{{ request('date_to') }}"
+                           class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                </div>
             </div>
-        @endif
-        <div id="reportsLoading" class="hidden p-12 text-center">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
-            <p class="mt-4 text-gray-600">Loading reports...</p>
+            <button type="button" id="clearMissingPetFiltersBtn" onclick="clearMissingPetFilters()"
+                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap hidden">
+                <i class="bi bi-x-circle mr-1"></i>Clear Filters
+            </button>
+        </div>
+
+        <div id="reportsTableContainer">
+            @include('dashboard.partials.missing-pet-reports-table')
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200" id="reportsPagination">
+            {{ $reports->links() }}
+        </div>
+        <div id="reportsLoading" class="hidden px-6 py-4 border-t border-gray-200 text-center text-gray-500">
+            <span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-green-600 mr-2"></span>
+            Loading...
+        </div>
+        <div id="reportsEmptyState" class="hidden p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-search text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">No Reports Found</h3>
+            <p class="text-gray-500">Try adjusting your search or filter criteria.</p>
         </div>
     </div>
 </div>
 
 <!-- Report Details Modal -->
-<div id="reportModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-lg bg-white max-h-[80vh] overflow-y-auto">
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between pb-4 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-800">Missing Pet Report Details</h3>
-            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 focus:outline-none">
-                <i class="bi bi-x-lg text-2xl"></i>
-            </button>
-        </div>
-
-        <!-- Modal Body -->
-        <div id="modalContent" class="mt-4">
-            <!-- Content will be loaded dynamically -->
-            <div class="text-center py-12">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
-                <p class="mt-4 text-gray-600">Loading report details...</p>
+<div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Missing Pet Report Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 mt-4">
-            <button onclick="closeModal()" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition">
-                Close
-            </button>
+            <div class="modal-body" id="reportModalBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-green-600" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-function openReportModal(reportId) {
-    const modal = document.getElementById('reportModal');
-    const modalContent = document.getElementById('modalContent');
-    
-    // Show modal with loading state
-    modal.classList.remove('hidden');
-    modalContent.innerHTML = `
-        <div class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
-            <p class="mt-4 text-gray-600">Loading report details...</p>
-        </div>
-    `;
+let searchDebounce;
+const missingPetFilterUrl = `{{ route($routePrefix . '.missing-pet-reports.filter') }}`;
 
-    // Fetch report data
-    fetch(`{{ route($rolePrefix . '.missing-pet-reports.show-json', ':id') }}`.replace(':id', reportId))
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                displayReportDetails(data.report);
-            } else {
-                modalContent.innerHTML = '<p class="text-red-600 text-center py-8">Error loading report details.</p>';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            modalContent.innerHTML = '<p class="text-red-600 text-center py-8">Error loading report details.</p>';
-        });
+function getMissingPetStatusBadge(status) {
+    const map = {
+        'pending review': 'bg-[#FEF3C7] text-[#92400E]',
+        'approved': 'bg-[#DCFCE7] text-[#166534]',
+        'rejected': 'bg-[#FEE2E2] text-[#991B1B]',
+        'resolved - reunited': 'bg-[#E0E7FF] text-[#3730A3]',
+        'resolved - shelter intake': 'bg-[#E0F2FE] text-[#075985]',
+        'closed - expired': 'bg-[#F3F4F6] text-[#4B5563]',
+        'closed - cancelled': 'bg-[#E5E7EB] text-[#374151]',
+        'closed - duplicate': 'bg-[#F3F4F6] text-[#6B7280]',
+        'missing': 'bg-red-100 text-red-800',
+        'found': 'bg-blue-100 text-blue-800',
+    };
+    return map[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
 }
 
-function displayReportDetails(report) {
-    const modalContent = document.getElementById('modalContent');
-    
-    modalContent.innerHTML = `
-        <div class="space-y-6">
-            <!-- Report Info -->
-            <div class="bg-gray-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Report Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Report Number</p>
-                        <p class="font-medium text-gray-800">${report.report_number}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Status</p>
-                        <p class="font-medium text-gray-800">${report.status}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Reported By</p>
-                        <p class="font-medium text-gray-800">${report.reported_by}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Created At</p>
-                        <p class="font-medium text-gray-800">${report.created_at}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pet Information -->
-            <div class="bg-blue-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Pet Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Pet Name</p>
-                        <p class="font-medium text-gray-800">${report.pet_name}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Species</p>
-                        <p class="font-medium text-gray-800">${report.species}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Breed</p>
-                        <p class="font-medium text-gray-800">${report.breed}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Color</p>
-                        <p class="font-medium text-gray-800">${report.color}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Gender</p>
-                        <p class="font-medium text-gray-800">${report.gender}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Missing Pet Details -->
-            <div class="bg-yellow-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Missing Pet Details</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Last Seen Date</p>
-                        <p class="font-medium text-gray-800">${report.last_seen_at}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Last Seen Time</p>
-                        <p class="font-medium text-gray-800">${report.last_seen_time}</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Location</p>
-                        <p class="font-medium text-gray-800">${report.location}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Barangay</p>
-                        <p class="font-medium text-gray-800">${report.barangay}</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Description</p>
-                        <p class="font-medium text-gray-800 whitespace-pre-wrap">${report.description || 'N/A'}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reporter Information -->
-            <div class="bg-green-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Reporter Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Reporter Name</p>
-                        <p class="font-medium text-gray-800">${report.reporter_name}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Contact Number</p>
-                        <p class="font-medium text-gray-800">${report.reporter_contact}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Email</p>
-                        <p class="font-medium text-gray-800">${report.reporter_email}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+function getMissingPetStatusLabel(status) {
+    const map = {
+        'pending review': 'Pending Review',
+        'resolved - reunited': 'Resolved - Reunited',
+        'resolved - shelter intake': 'Resolved - Shelter Intake',
+        'closed - expired': 'Closed - Expired',
+        'closed - cancelled': 'Closed - Cancelled',
+        'closed - duplicate': 'Closed - Duplicate',
+    };
+    return map[status.toLowerCase()] || status.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
-
-function closeModal() {
-    document.getElementById('reportModal').classList.add('hidden');
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('reportModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-
-const missingPetFilterUrl = `{{ route($rolePrefix . '.missing-pet-reports.filter') }}`;
 
 function getMissingPetFilterParams() {
     return {
-        animal_type: document.getElementById('animalTypeSearch').value,
-        barangay: document.getElementById('missingPetBarangay').value,
-        pet_name_search: document.getElementById('petNameSearch').value,
-        status: document.getElementById('statusFilter').value,
+        search: document.getElementById('missingPetSearchInput').value,
         date_from: document.getElementById('dateFrom').value,
         date_to: document.getElementById('dateTo').value,
     };
 }
 
-function toggleMissingPetBarangayDropdown() {
-    const dropdown = document.getElementById('missingPetBarangayDropdown');
-    dropdown.classList.toggle('hidden');
-}
-
-function updateMissingPetBarangaySelection() {
-    const checkboxes = document.querySelectorAll('.missing-pet-barangay-checkbox:checked');
-    const selected = Array.from(checkboxes).map(cb => cb.value).sort();
-    const hiddenInput = document.getElementById('missingPetBarangay');
-    const displayText = document.getElementById('selectedMissingPetBarangayText');
-
-    hiddenInput.value = selected.join(',');
-
-    if (selected.length === 0) {
-        displayText.textContent = 'All Barangays';
-        displayText.classList.add('text-gray-500');
-        displayText.classList.remove('text-gray-900');
-    } else {
-        displayText.textContent = selected.length === 1 ? selected[0] : selected.length + ' barangays selected';
-        displayText.classList.remove('text-gray-500');
-        displayText.classList.add('text-gray-900');
-    }
-
-    reorderMissingPetBarangayOptions();
-    document.getElementById('missingPetBarangayDropdown').classList.add('hidden');
-    applyMissingPetFilters();
-}
-
-function reorderMissingPetBarangayOptions() {
-    const container = document.getElementById('missingPetBarangayOptions');
-    const labels = Array.from(container.querySelectorAll('label'));
-    const selected = labels.filter(label => label.querySelector('.missing-pet-barangay-checkbox')?.checked).sort((a, b) => {
-        const aText = a.querySelector('span')?.textContent?.trim() || '';
-        const bText = b.querySelector('span')?.textContent?.trim() || '';
-        return aText.localeCompare(bText);
-    });
-    const unselected = labels.filter(label => !label.querySelector('.missing-pet-barangay-checkbox')?.checked).sort((a, b) => {
-        const aText = a.querySelector('span')?.textContent?.trim() || '';
-        const bText = b.querySelector('span')?.textContent?.trim() || '';
-        return aText.localeCompare(bText);
-    });
-
-    container.innerHTML = '';
-    selected.forEach(label => container.appendChild(label));
-    unselected.forEach(label => container.appendChild(label));
-}
-
-function filterMissingPetBarangays() {
-    const search = document.getElementById('missingPetBarangaySearch').value.toLowerCase();
-    const labels = document.querySelectorAll('#missingPetBarangayOptions label');
-    labels.forEach(label => {
-        const text = label.textContent.toLowerCase();
-        label.style.display = text.includes(search) ? 'flex' : 'none';
-    });
-}
-
-document.addEventListener('click', function(e) {
-    const dropdown = document.getElementById('missingPetBarangayDropdown');
-    const display = document.getElementById('missingPetBarangayDisplay');
-    if (dropdown && display && !dropdown.contains(e.target) && !display.contains(e.target)) {
-        dropdown.classList.add('hidden');
-    }
-});
-
 function applyMissingPetFilters() {
     const params = getMissingPetFilterParams();
-    const loading = document.getElementById('reportsLoading');
-    const tableBody = document.getElementById('reportsTableBody');
-    const pagination = document.getElementById('reportsPagination');
+    const tableContainer = document.getElementById('reportsTableContainer');
+    const paginationContainer = document.getElementById('reportsPagination');
+    const loadingEl = document.getElementById('reportsLoading');
     const emptyState = document.getElementById('reportsEmptyState');
 
-    if (loading) loading.classList.remove('hidden');
-    if (tableBody) tableBody.style.opacity = '0.3';
-    if (pagination) pagination.style.opacity = '0.3';
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    if (tableContainer) tableContainer.style.opacity = '0.3';
+    if (paginationContainer) paginationContainer.style.opacity = '0.3';
 
     const query = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
@@ -438,45 +178,231 @@ function applyMissingPetFilters() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            if (tableBody) {
-                tableBody.innerHTML = data.table_html;
-                tableBody.style.opacity = '1';
+            if (tableContainer) {
+                tableContainer.innerHTML = data.html;
+                tableContainer.style.opacity = '1';
             }
-            if (pagination) {
-                pagination.innerHTML = data.pagination_html;
-                pagination.style.opacity = '1';
+            if (paginationContainer) {
+                paginationContainer.innerHTML = data.pagination;
+                paginationContainer.style.opacity = '1';
             }
             if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
-            if (loading) loading.classList.add('hidden');
         }
     })
     .catch(error => {
         console.error('Error filtering missing pet reports:', error);
-        if (tableBody) tableBody.style.opacity = '1';
-        if (pagination) pagination.style.opacity = '1';
-        if (loading) loading.classList.add('hidden');
+        if (tableContainer) tableContainer.style.opacity = '1';
+        if (paginationContainer) paginationContainer.style.opacity = '1';
+    })
+    .finally(() => {
+        if (loadingEl) loadingEl.classList.add('hidden');
     });
 }
 
 function clearMissingPetFilters() {
-    document.getElementById('animalTypeSearch').value = '';
-    document.querySelectorAll('.missing-pet-barangay-checkbox:checked').forEach(cb => cb.checked = false);
-    document.getElementById('selectedMissingPetBarangayText').textContent = 'All Barangays';
-    document.getElementById('selectedMissingPetBarangayText').classList.add('text-gray-500');
-    document.getElementById('selectedMissingPetBarangayText').classList.remove('text-gray-900');
-    document.getElementById('missingPetBarangay').value = '';
-    document.getElementById('petNameSearch').value = '';
-    document.getElementById('statusFilter').value = '';
+    document.getElementById('missingPetSearchInput').value = '';
     document.getElementById('dateFrom').value = '';
     document.getElementById('dateTo').value = '';
+    updateClearMissingPetFiltersVisibility();
     applyMissingPetFilters();
 }
 
-document.getElementById('animalTypeSearch').addEventListener('change', applyMissingPetFilters);
-document.querySelectorAll('.missing-pet-barangay-checkbox').forEach(cb => cb.addEventListener('change', applyMissingPetFilters));
-document.getElementById('petNameSearch').addEventListener('input', applyMissingPetFilters);
-document.getElementById('statusFilter').addEventListener('change', applyMissingPetFilters);
-document.getElementById('dateFrom').addEventListener('change', applyMissingPetFilters);
-document.getElementById('dateTo').addEventListener('change', applyMissingPetFilters);
+function updateClearMissingPetFiltersVisibility() {
+    const searchInput = document.getElementById('missingPetSearchInput');
+    const dateFrom = document.getElementById('dateFrom');
+    const dateTo = document.getElementById('dateTo');
+    const clearBtn = document.getElementById('clearMissingPetFiltersBtn');
+
+    const hasFilters = (searchInput && searchInput.value.trim() !== '') ||
+                       (dateFrom && dateFrom.value.trim() !== '') ||
+                       (dateTo && dateTo.value.trim() !== '');
+
+    if (clearBtn) {
+        if (hasFilters) {
+            clearBtn.classList.remove('hidden');
+        } else {
+            clearBtn.classList.add('hidden');
+        }
+    }
+}
+
+document.getElementById('missingPetSearchInput').addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => {
+        updateClearMissingPetFiltersVisibility();
+        applyMissingPetFilters();
+    }, 300);
+});
+
+document.getElementById('dateFrom').addEventListener('change', () => {
+    updateClearMissingPetFiltersVisibility();
+    applyMissingPetFilters();
+});
+
+document.getElementById('dateTo').addEventListener('change', () => {
+    updateClearMissingPetFiltersVisibility();
+    applyMissingPetFilters();
+});
+
+document.getElementById('reportsPagination').addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    e.preventDefault();
+    const url = new URL(link.href);
+    const query = url.searchParams.toString();
+
+    fetch(`${missingPetFilterUrl}?${query}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('reportsTableContainer').innerHTML = data.html;
+            document.getElementById('reportsPagination').innerHTML = data.pagination;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading reports page:', error);
+    });
+});
+
+function openReportModal(reportId) {
+    const modalEl = document.getElementById('reportDetailsModal');
+    const modalBody = document.getElementById('reportModalBody');
+    const modal = new bootstrap.Modal(modalEl);
+
+    modalBody.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-green-600" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    `;
+    modal.show();
+
+    fetch(`{{ route($routePrefix . '.missing-pet-reports.show-json', ':id') }}`.replace(':id', reportId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayReportDetails(data.report);
+            } else {
+                modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load report details.</div>';
+            }
+        })
+        .catch(() => {
+            modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load report details.</div>';
+        });
+}
+
+function displayReportDetails(report) {
+    const modalBody = document.getElementById('reportModalBody');
+
+    modalBody.innerHTML = `
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Report Number</p>
+                    <p class="text-lg font-semibold text-gray-800">${report.report_number}</p>
+                </div>
+                <div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getMissingPetStatusBadge(report.status)}">
+                        ${getMissingPetStatusLabel(report.status)}
+                    </span>
+                </div>
+            </div>
+            <hr class="border-gray-100">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Reported By</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.reported_by}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Created At</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.created_at}</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-gray-100">
+            <div class="bg-blue-50 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Pet Information</h4>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Pet Name</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.pet_name}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Species</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.species}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Breed</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.breed}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Color</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.color}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Gender</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.gender}</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-gray-100">
+            <div class="bg-yellow-50 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Missing Pet Details</h4>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Last Seen Date</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.last_seen_at}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Last Seen Time</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.last_seen_time}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div class="col-span-2">
+                        <p class="text-sm text-gray-500">Barangay</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.barangay}</p>
+                    </div>
+                    <div class="col-span-2">
+                        <p class="text-sm text-gray-500">Description</p>
+                        <p class="font-medium text-gray-800 mt-1 whitespace-pre-wrap">${report.description || 'N/A'}</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-gray-100">
+            <div class="bg-green-50 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Reporter Information</h4>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Reporter Name</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.reporter_name}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Contact Number</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.reporter_contact}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Email</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.reporter_email}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+updateClearMissingPetFiltersVisibility();
 </script>
 @endsection

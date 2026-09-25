@@ -996,99 +996,21 @@ class CityVetController extends Controller
 
         $query = \App\Models\MissingPetsReport::with(['pet', 'user']);
 
-        // Apply animal type filter
-        if ($request->has('animal_type') && $request->animal_type) {
-            $query->whereHas('pet', function ($q) use ($request) {
-                $q->where('species', $request->animal_type);
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('report_id', 'like', "%{$term}%")
+                            ->orWhereHas('pet', function ($q2) use ($term) {
+                                $q2->where('pet_name', 'like', "%{$term}%")
+                                    ->orWhere('species', 'like', "%{$term}%");
+                            })
+                            ->orWhere('location_barangay', 'like', "%{$term}%")
+                            ->orWhere('status', 'like', "%{$term}%");
+                    });
+                }
             });
-        }
-
-        // Apply pet name search filter
-        if ($request->has('pet_name_search') && $request->pet_name_search) {
-            $query->whereHas('pet', function ($q) use ($request) {
-                $q->where('pet_name', 'like', '%' . $request->pet_name_search . '%');
-            });
-        }
-
-        // Apply status filter
-        if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
-        }
-
-        // Apply barangay filter
-        if ($request->has('barangay') && $request->barangay) {
-            $barangayNames = explode(',', $request->barangay);
-            $barangayNames = array_map('trim', $barangayNames);
-            $query->whereIn('location_barangay', $barangayNames);
-        }
-
-        // Apply date filters
-        if ($request->has('date_from') && $request->date_from) {
-            $query->whereDate('last_seen_at', '>=', $request->date_from);
-        }
-        if ($request->has('date_to') && $request->date_to) {
-            $query->whereDate('last_seen_at', '<=', $request->date_to);
-        }
-
-        // Apply quick filter
-        if ($request->has('quick_filter') && $request->quick_filter) {
-            $today = \Carbon\Carbon::now()->startOfDay();
-            switch ($request->quick_filter) {
-                case 'today':
-                    $query->whereDate('last_seen_at', $today);
-                    break;
-                case 'week':
-                    $query->where('last_seen_at', '>=', \Carbon\Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('last_seen_at', '>=', \Carbon\Carbon::now()->startOfMonth());
-                    break;
-            }
-        }
-
-        $reports = $query->latest()->paginate(10);
-
-        // Get statistics
-        $stats = [
-            'total' => \App\Models\MissingPetsReport::count(),
-            'active' => \App\Models\MissingPetsReport::whereIn('status', ['pending review', 'approved'])->count(),
-            'resolved' => \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->count(),
-            'this_month' => \App\Models\MissingPetsReport::whereMonth('last_seen_at', date('m'))
-                ->whereYear('last_seen_at', date('Y'))
-                ->count(),
-        ];
-
-        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get(['barangay_id', 'barangay_name']);
-
-        return view('dashboard.missing-pet-reports', compact('user', 'reports', 'stats', 'barangays'));
-    }
-
-    public function filterMissingPetReports(Request $request)
-    {
-        $user = Auth::user();
-
-        $query = \App\Models\MissingPetsReport::with(['pet', 'user']);
-
-        if ($request->filled('animal_type')) {
-            $query->whereHas('pet', function ($q) use ($request) {
-                $q->where('species', $request->animal_type);
-            });
-        }
-
-        if ($request->filled('pet_name_search')) {
-            $query->whereHas('pet', function ($q) use ($request) {
-                $q->where('pet_name', 'like', '%' . $request->pet_name_search . '%');
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('barangay')) {
-            $barangayNames = explode(',', $request->barangay);
-            $barangayNames = array_map('trim', $barangayNames);
-            $query->whereIn('location_barangay', $barangayNames);
         }
 
         if ($request->filled('date_from')) {
@@ -1098,31 +1020,60 @@ class CityVetController extends Controller
             $query->whereDate('last_seen_at', '<=', $request->date_to);
         }
 
-        if ($request->filled('quick_filter')) {
-            $today = \Carbon\Carbon::now()->startOfDay();
-            switch ($request->quick_filter) {
-                case 'today':
-                    $query->whereDate('last_seen_at', $today);
-                    break;
-                case 'week':
-                    $query->where('last_seen_at', '>=', \Carbon\Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('last_seen_at', '>=', \Carbon\Carbon::now()->startOfMonth());
-                    break;
-            }
+        $reports = $query->latest()->paginate(5);
+
+        $stats = [
+            'total' => \App\Models\MissingPetsReport::count(),
+            'active' => \App\Models\MissingPetsReport::whereIn('status', ['pending review', 'approved'])->count(),
+            'resolved' => \App\Models\MissingPetsReport::whereIn('status', ['resolved - reunited', 'resolved - shelter intake'])->count(),
+            'this_month' => \App\Models\MissingPetsReport::whereMonth('last_seen_at', date('m'))
+                ->whereYear('last_seen_at', date('Y'))
+                ->count(),
+        ];
+
+        return view('dashboard.missing-pet-reports', compact('user', 'reports', 'stats'));
+    }
+
+    public function filterMissingPetReports(Request $request)
+    {
+        $query = \App\Models\MissingPetsReport::with(['pet', 'user']);
+
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('report_id', 'like', "%{$term}%")
+                            ->orWhereHas('pet', function ($q2) use ($term) {
+                                $q2->where('pet_name', 'like', "%{$term}%")
+                                    ->orWhere('species', 'like', "%{$term}%");
+                            })
+                            ->orWhere('location_barangay', 'like', "%{$term}%")
+                            ->orWhere('status', 'like', "%{$term}%");
+                    });
+                }
+            });
         }
 
-        $reports = $query->latest()->paginate(10);
+        if ($request->filled('date_from')) {
+            $query->whereDate('last_seen_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('last_seen_at', '<=', $request->date_to);
+        }
 
-        $tableHtml = view('dashboard.partials.missing-pet-reports-table', compact('reports'))->render();
-        $paginationHtml = $reports->links()->render();
+        $reports = $query->latest()->paginate(5);
+
+        try {
+            $html = view('dashboard.partials.missing-pet-reports-table', compact('reports'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="7" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
 
         return response()->json([
             'success' => true,
-            'table_html' => $tableHtml,
-            'pagination_html' => $paginationHtml,
-            'total_count' => $reports->total(),
+            'html' => $html,
+            'pagination' => $reports->links()->render(),
             'has_results' => $reports->count() > 0,
         ]);
     }
