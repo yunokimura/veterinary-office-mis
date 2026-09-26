@@ -1149,38 +1149,34 @@ class CityVetController extends Controller
 
         $query = \App\Models\AdoptionApplication::with(['user', 'pet']);
 
-        // Apply status filter
-        if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->whereHas('user', function ($q2) use ($term) {
+                            $q2->where('name', 'like', "%{$term}%");
+                        })
+                        ->orWhereHas('pet', function ($q2) use ($term) {
+                            $q2->where('pet_name', 'like', "%{$term}%")
+                                ->orWhere('breed', 'like', "%{$term}%")
+                                ->orWhere('species', 'like', "%{$term}%");
+                        })
+                        ->orWhere('status', 'like', "%{$term}%");
+                    });
+                }
+            });
         }
 
-        // Apply date filters
-        if ($request->has('date_from') && $request->date_from) {
+        if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
-        if ($request->has('date_to') && $request->date_to) {
+        if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        // Apply quick filter
-        if ($request->has('quick_filter') && $request->quick_filter) {
-            $today = \Carbon\Carbon::now()->startOfDay();
-            switch ($request->quick_filter) {
-                case 'today':
-                    $query->whereDate('created_at', $today);
-                    break;
-                case 'week':
-                    $query->where('created_at', '>=', \Carbon\Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('created_at', '>=', \Carbon\Carbon::now()->startOfMonth());
-                    break;
-            }
         }
 
         $reports = $query->latest()->paginate(10);
 
-        // Get statistics
         $stats = [
             'total' => \App\Models\AdoptionApplication::count(),
             'pending_review' => \App\Models\AdoptionApplication::where('status', 'pending_review')->count(),
@@ -1191,40 +1187,30 @@ class CityVetController extends Controller
                 ->count(),
         ];
 
-        $animalTypes = \App\Models\Pet::select('species')
-            ->distinct()
-            ->orderBy('species')
-            ->pluck('species');
-
-        return view('dashboard.adoption-reports', compact('user', 'reports', 'stats', 'animalTypes'));
+        return view('dashboard.adoption-reports', compact('user', 'reports', 'stats'));
     }
 
     public function filterAdoptionReports(Request $request)
     {
-        $user = Auth::user();
-
         $query = \App\Models\AdoptionApplication::with(['user', 'pet']);
 
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('user', function ($q2) use ($search) {
-                    $q2->where('name', 'like', '%' . $search . '%');
-                })
-                ->orWhereHas('pet', function ($q2) use ($search) {
-                    $q2->where('pet_name', 'like', '%' . $search . '%');
-                });
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->whereHas('user', function ($q2) use ($term) {
+                            $q2->where('name', 'like', "%{$term}%");
+                        })
+                        ->orWhereHas('pet', function ($q2) use ($term) {
+                            $q2->where('pet_name', 'like', "%{$term}%")
+                                ->orWhere('breed', 'like', "%{$term}%")
+                                ->orWhere('species', 'like', "%{$term}%");
+                        })
+                        ->orWhere('status', 'like', "%{$term}%");
+                    });
+                }
             });
-        }
-
-        if ($request->filled('animal_type')) {
-            $query->whereHas('pet', function ($q) use ($request) {
-                $q->where('species', $request->animal_type);
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
         }
 
         if ($request->filled('date_from')) {
@@ -1234,31 +1220,18 @@ class CityVetController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        if ($request->filled('quick_filter')) {
-            $today = \Carbon\Carbon::now()->startOfDay();
-            switch ($request->quick_filter) {
-                case 'today':
-                    $query->whereDate('created_at', $today);
-                    break;
-                case 'week':
-                    $query->where('created_at', '>=', \Carbon\Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('created_at', '>=', \Carbon\Carbon::now()->startOfMonth());
-                    break;
-            }
-        }
-
         $reports = $query->latest()->paginate(10);
 
-        $tableHtml = view('dashboard.partials.adoption-reports-table', compact('reports'))->render();
-        $paginationHtml = $reports->links()->render();
+        try {
+            $html = view('dashboard.partials.adoption-reports-table', compact('reports'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="7" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
 
         return response()->json([
             'success' => true,
-            'table_html' => $tableHtml,
-            'pagination_html' => $paginationHtml,
-            'total_count' => $reports->total(),
+            'html' => $html,
+            'pagination' => $reports->links()->render(),
             'has_results' => $reports->count() > 0,
         ]);
     }

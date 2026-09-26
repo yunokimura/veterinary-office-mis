@@ -1,332 +1,125 @@
 @extends('layouts.admin')
 
 @section('title', 'Adoption Reports Management')
-
 @section('header', 'Adoption Reports Management')
 @section('subheader', 'View and manage all adoption applications')
 
 @php
-// Use 'city-vet' prefix for this page since it's under the city-vet route group
-$rolePrefix = 'city-vet';
+$routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->routeIs('super-admin.*') ? 'super-admin' : 'admin');
 @endphp
 
 @section('content')
-<div class="max-w-7xl mx-auto">
+<div class="space-y-6">
     <!-- Stats Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <!-- Total Applications -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex-1 min-w-0">
-                <p class="text-xs md:text-sm text-gray-500 mb-1">Total Applications</p>
-                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['total'] ?? 0 }}</p>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Total Applications</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['total'] ?? 0 }}</p>
             </div>
         </div>
-        <!-- Pending -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex-1 min-w-0">
-                <p class="text-xs md:text-sm text-gray-500 mb-1">Pending</p>
-                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['pending'] ?? 0 }}</p>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Pending</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['pending_review'] ?? 0 }}</p>
             </div>
         </div>
-        <!-- Approved -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex-1 min-w-0">
-                <p class="text-xs md:text-sm text-gray-500 mb-1">Approved</p>
-                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['approved'] ?? 0 }}</p>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Approved</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['approved'] ?? 0 }}</p>
             </div>
         </div>
-        <!-- Rejected -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
-            <div class="flex-1 min-w-0">
-                <p class="text-xs md:text-sm text-gray-500 mb-1">Rejected</p>
-                <p class="text-xl md:text-2xl font-bold text-gray-800">{{ $stats['rejected'] ?? 0 }}</p>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Rejected</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['rejected'] ?? 0 }}</p>
             </div>
         </div>
     </div>
 
-    <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-        <div class="row g-3 align-items-end">
-            <!-- Applicant Name/Pet Name Search -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Applicant Name/Pet Name</label>
-                <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Search by name..."
-                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-            </div>
-
-            <!-- Animal Type -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Animal Type</label>
-                <select id="animalTypeSearch" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <option value="">All Animal Types</option>
-                    @foreach($animalTypes as $type)
-                        <option value="{{ $type }}" {{ request('animal_type') === $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <!-- Status Filter -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select id="statusFilter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <option value="">All Status</option>
-                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
-                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                    <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                </select>
-            </div>
-
-            <!-- Date From -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                <input type="date" id="dateFrom" value="{{ request('date_from') }}"
-                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-            </div>
-
-            <!-- Date To -->
-            <div class="col-12 col-md-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                <input type="date" id="dateTo" value="{{ request('date_to') }}"
-                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-            </div>
-
-            <!-- Clear Button -->
-            <div class="col-12 col-md-3">
-                <button type="button" onclick="clearAdoptionFilters()"
-                        class="btn btn-outline-danger w-100">
-                    <i class="bi bi-x-circle mr-1"></i>Clear
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reports Table -->
+    <!-- Reports Table Card -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        @if($reports->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-100">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Application No.</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Applicant</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Pet</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animal Type</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Applied Date</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100" id="reportsTableBody">
-                        @include('dashboard.partials.adoption-reports-table')
-                    </tbody>
-                </table>
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">Adoption Applications</h3>
+                <p class="text-sm text-gray-500">Search and filter adoption applications</p>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100" id="reportsPagination">
-                {{ $reports->links() }}
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+            <div class="relative w-96">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="adoptionSearchInput" value="{{ request('search') }}" placeholder="Search applicant, pet, breed, status..."
+                       class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
-        @else
-            <div class="p-12 text-center" id="reportsEmptyState">
-                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="bi bi-heart text-2xl text-purple-400"></i>
+            <div class="flex gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">From Date</label>
+                    <input type="date" id="dateFrom" value="{{ request('date_from') }}"
+                           class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
                 </div>
-                <h3 class="text-lg font-medium text-gray-800 mb-2">No Adoption Applications Found</h3>
-                <p class="text-gray-500">There are currently no adoption applications in the system.</p>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">To Date</label>
+                    <input type="date" id="dateTo" value="{{ request('date_to') }}"
+                           class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                </div>
             </div>
-        @endif
-        <div id="reportsLoading" class="hidden p-12 text-center">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
-            <p class="mt-4 text-gray-600">Loading reports...</p>
+            <button type="button" id="clearAdoptionFiltersBtn" onclick="clearAdoptionFilters()"
+                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap hidden">
+                <i class="bi bi-x-circle mr-1"></i>Clear Filters
+            </button>
+        </div>
+
+        <div id="reportsTableContainer">
+            @include('dashboard.partials.adoption-reports-table')
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200" id="reportsPagination">
+            {{ $reports->links() }}
+        </div>
+        <div id="reportsLoading" class="hidden px-6 py-4 border-t border-gray-200 text-center text-gray-500">
+            <span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-green-600 mr-2"></span>
+            Loading...
+        </div>
+        <div id="reportsEmptyState" class="hidden p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-search text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">No Reports Found</h3>
+            <p class="text-gray-500">Try adjusting your search or filter criteria.</p>
         </div>
     </div>
 </div>
 
 <!-- Report Details Modal -->
-<div id="reportModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-lg bg-white max-h-[80vh] overflow-y-auto">
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between pb-4 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-800">Adoption Application Details</h3>
-            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 focus:outline-none">
-                <i class="bi bi-x-lg text-2xl"></i>
-            </button>
-        </div>
-
-        <!-- Modal Body -->
-        <div id="modalContent" class="mt-4">
-            <!-- Content will be loaded dynamically -->
-            <div class="text-center py-12">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
-                <p class="mt-4 text-gray-600">Loading application details...</p>
+<div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adoption Application Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 mt-4">
-            <button onclick="closeModal()" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition">
-                Close
-            </button>
+            <div class="modal-body" id="reportModalBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-green-600" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-function openReportModal(reportId) {
-    const modal = document.getElementById('reportModal');
-    const modalContent = document.getElementById('modalContent');
-    
-    // Show modal with loading state
-    modal.classList.remove('hidden');
-    modalContent.innerHTML = `
-        <div class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-green-600"></div>
-            <p class="mt-4 text-gray-600">Loading application details...</p>
-        </div>
-    `;
-
-    // Fetch report data
-    fetch(`{{ route($rolePrefix . '.adoption-reports.show-json', ':id') }}`.replace(':id', reportId))
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                displayReportDetails(data.report);
-            } else {
-                modalContent.innerHTML = '<p class="text-red-600 text-center py-8">Error loading application details.</p>';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            modalContent.innerHTML = '<p class="text-red-600 text-center py-8">Error loading application details.</p>';
-        });
-}
-
-function displayReportDetails(report) {
-    const modalContent = document.getElementById('modalContent');
-    
-    modalContent.innerHTML = `
-        <div class="space-y-6">
-            <!-- Application Info -->
-            <div class="bg-gray-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Application Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Application Number</p>
-                        <p class="font-medium text-gray-800">${report.report_number}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Status</p>
-                        <p class="font-medium text-gray-800">${report.status}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Applied Date</p>
-                        <p class="font-medium text-gray-800">${report.created_at}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Last Updated</p>
-                        <p class="font-medium text-gray-800">${report.updated_at}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Applicant Information -->
-            <div class="bg-blue-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Applicant Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Full Name</p>
-                        <p class="font-medium text-gray-800">${report.applicant_name}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Email</p>
-                        <p class="font-medium text-gray-800">${report.applicant_email}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Contact Number</p>
-                        <p class="font-medium text-gray-800">${report.applicant_contact}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pet Information -->
-            <div class="bg-green-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Pet Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Pet Name</p>
-                        <p class="font-medium text-gray-800">${report.pet_name}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Species</p>
-                        <p class="font-medium text-gray-800">${report.pet_species}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Breed</p>
-                        <p class="font-medium text-gray-800">${report.pet_breed}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Gender</p>
-                        <p class="font-medium text-gray-800">${report.pet_gender}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Application Details -->
-            <div class="bg-yellow-50 rounded-lg p-4">
-                <h4 class="text-lg font-semibold text-gray-800 mb-3">Application Details</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Reason for Adoption</p>
-                        <p class="font-medium text-gray-800 whitespace-pre-wrap">${report.reason || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Has Other Pets</p>
-                        <p class="font-medium text-gray-800">${report.has_other_pets}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Home Type</p>
-                        <p class="font-medium text-gray-800">${report.home_type}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Yard Has Fence</p>
-                        <p class="font-medium text-gray-800">${report.yard_has_fence}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Adoption Date</p>
-                        <p class="font-medium text-gray-800">${report.adoption_date}</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Other Pets Details</p>
-                        <p class="font-medium text-gray-800 whitespace-pre-wrap">${report.other_pets_details || 'N/A'}</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Notes</p>
-                        <p class="font-medium text-gray-800 whitespace-pre-wrap">${report.notes || 'N/A'}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function closeModal() {
-    document.getElementById('reportModal').classList.add('hidden');
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('reportModal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
-
-const adoptionFilterUrl = `{{ route($rolePrefix . '.adoption-reports.filter') }}`;
+let searchDebounce;
+const adoptionFilterUrl = `{{ route($routePrefix . '.adoption-reports.filter') }}`;
 
 function getAdoptionFilterParams() {
     return {
-        search: document.getElementById('searchInput').value,
-        animal_type: document.getElementById('animalTypeSearch').value,
-        status: document.getElementById('statusFilter').value,
+        search: document.getElementById('adoptionSearchInput').value,
         date_from: document.getElementById('dateFrom').value,
         date_to: document.getElementById('dateTo').value,
     };
@@ -334,14 +127,14 @@ function getAdoptionFilterParams() {
 
 function applyAdoptionFilters() {
     const params = getAdoptionFilterParams();
-    const loading = document.getElementById('reportsLoading');
-    const tableBody = document.getElementById('reportsTableBody');
-    const pagination = document.getElementById('reportsPagination');
+    const tableContainer = document.getElementById('reportsTableContainer');
+    const paginationContainer = document.getElementById('reportsPagination');
+    const loadingEl = document.getElementById('reportsLoading');
     const emptyState = document.getElementById('reportsEmptyState');
 
-    if (loading) loading.classList.remove('hidden');
-    if (tableBody) tableBody.style.opacity = '0.3';
-    if (pagination) pagination.style.opacity = '0.3';
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    if (tableContainer) tableContainer.style.opacity = '0.3';
+    if (paginationContainer) paginationContainer.style.opacity = '0.3';
 
     const query = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
@@ -357,39 +150,237 @@ function applyAdoptionFilters() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            if (tableBody) {
-                tableBody.innerHTML = data.table_html;
-                tableBody.style.opacity = '1';
+            if (tableContainer) {
+                tableContainer.innerHTML = data.html;
+                tableContainer.style.opacity = '1';
             }
-            if (pagination) {
-                pagination.innerHTML = data.pagination_html;
-                pagination.style.opacity = '1';
+            if (paginationContainer) {
+                paginationContainer.innerHTML = data.pagination;
+                paginationContainer.style.opacity = '1';
             }
             if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
-            if (loading) loading.classList.add('hidden');
         }
     })
     .catch(error => {
         console.error('Error filtering adoption reports:', error);
-        if (tableBody) tableBody.style.opacity = '1';
-        if (pagination) pagination.style.opacity = '1';
-        if (loading) loading.classList.add('hidden');
+        if (tableContainer) tableContainer.style.opacity = '1';
+        if (paginationContainer) paginationContainer.style.opacity = '1';
+    })
+    .finally(() => {
+        if (loadingEl) loadingEl.classList.add('hidden');
     });
 }
 
 function clearAdoptionFilters() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('animalTypeSearch').value = '';
-    document.getElementById('statusFilter').value = '';
+    document.getElementById('adoptionSearchInput').value = '';
     document.getElementById('dateFrom').value = '';
     document.getElementById('dateTo').value = '';
+    updateClearAdoptionFiltersVisibility();
     applyAdoptionFilters();
 }
 
-document.getElementById('searchInput').addEventListener('input', applyAdoptionFilters);
-document.getElementById('animalTypeSearch').addEventListener('change', applyAdoptionFilters);
-document.getElementById('statusFilter').addEventListener('change', applyAdoptionFilters);
-document.getElementById('dateFrom').addEventListener('change', applyAdoptionFilters);
-document.getElementById('dateTo').addEventListener('change', applyAdoptionFilters);
+function updateClearAdoptionFiltersVisibility() {
+    const searchInput = document.getElementById('adoptionSearchInput');
+    const dateFrom = document.getElementById('dateFrom');
+    const dateTo = document.getElementById('dateTo');
+    const clearBtn = document.getElementById('clearAdoptionFiltersBtn');
+
+    const hasFilters = (searchInput && searchInput.value.trim() !== '') ||
+                       (dateFrom && dateFrom.value.trim() !== '') ||
+                       (dateTo && dateTo.value.trim() !== '');
+
+    if (clearBtn) {
+        if (hasFilters) {
+            clearBtn.classList.remove('hidden');
+        } else {
+            clearBtn.classList.add('hidden');
+        }
+    }
+}
+
+document.getElementById('adoptionSearchInput').addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => {
+        updateClearAdoptionFiltersVisibility();
+        applyAdoptionFilters();
+    }, 300);
+});
+
+document.getElementById('dateFrom').addEventListener('change', () => {
+    updateClearAdoptionFiltersVisibility();
+    applyAdoptionFilters();
+});
+
+document.getElementById('dateTo').addEventListener('change', () => {
+    updateClearAdoptionFiltersVisibility();
+    applyAdoptionFilters();
+});
+
+document.getElementById('reportsPagination').addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    e.preventDefault();
+    const url = new URL(link.href);
+    const query = url.searchParams.toString();
+
+    fetch(`${adoptionFilterUrl}?${query}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('reportsTableContainer').innerHTML = data.html;
+            document.getElementById('reportsPagination').innerHTML = data.pagination;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading reports page:', error);
+    });
+});
+
+function openReportModal(reportId) {
+    const modalEl = document.getElementById('reportDetailsModal');
+    const modalBody = document.getElementById('reportModalBody');
+    const modal = new bootstrap.Modal(modalEl);
+
+    modalBody.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-green-600" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    `;
+    modal.show();
+
+    fetch(`{{ route($routePrefix . '.adoption-reports.show-json', ':id') }}`.replace(':id', reportId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayReportDetails(data.report);
+            } else {
+                modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load report details.</div>';
+            }
+        })
+        .catch(() => {
+            modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load report details.</div>';
+        });
+}
+
+function displayReportDetails(report) {
+    const modalBody = document.getElementById('reportModalBody');
+
+    modalBody.innerHTML = `
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Application Number</p>
+                    <p class="text-lg font-semibold text-gray-800">${report.report_number}</p>
+                </div>
+                <div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                        ${report.status}
+                    </span>
+                </div>
+            </div>
+            <hr class="border-gray-100">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Applied Date</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.created_at}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Last Updated</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.updated_at}</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-gray-100">
+            <div class="bg-blue-50 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Applicant Information</h4>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Full Name</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.applicant_name}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Email</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.applicant_email}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Contact Number</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.applicant_contact}</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-gray-100">
+            <div class="bg-green-50 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Pet Information</h4>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Pet Name</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.pet_name}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Species</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.pet_species}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Breed</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.pet_breed}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Gender</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.pet_gender}</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-gray-100">
+            <div class="bg-yellow-50 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Application Details</h4>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="col-span-2">
+                        <p class="text-sm text-gray-500">Reason for Adoption</p>
+                        <p class="font-medium text-gray-800 mt-1 whitespace-pre-wrap">${report.reason || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Has Other Pets</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.has_other_pets}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Home Type</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.home_type}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Yard Has Fence</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.yard_has_fence}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Adoption Date</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.adoption_date}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-4">
+                    <div class="col-span-2">
+                        <p class="text-sm text-gray-500">Notes</p>
+                        <p class="font-medium text-gray-800 mt-1 whitespace-pre-wrap">${report.notes || 'N/A'}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+updateClearAdoptionFiltersVisibility();
 </script>
 @endsection
