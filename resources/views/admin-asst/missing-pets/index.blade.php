@@ -124,7 +124,7 @@
                         <p class="text-sm text-gray-500">{{ ucfirst($pet->pet->species ?? 'Unknown') }} - {{ $pet->pet->breed ?? 'Unknown Breed' }}</p>
                         <div class="mt-3 space-y-1 text-sm text-gray-600">
                             <p><i class="bi bi-calendar mr-1"></i> Last seen: {{ $pet->last_seen_at ? $pet->last_seen_at->format('M d, Y') : 'N/A' }}</p>
-                            <p><i class="bi bi-geo-alt mr-1"></i> {{ $pet->location_barangay }}</p>
+                            <p><i class="bi bi-geo-alt mr-1"></i> {{ $pet->barangay->barangay_name ?? 'Unknown' }}</p>
                         </div>
                         <div class="mt-4 flex gap-2">
                             <a href="{{ route('admin-asst.missing-pets.show', $pet->report_id) }}" class="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">

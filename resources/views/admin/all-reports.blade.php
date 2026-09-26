@@ -360,7 +360,7 @@
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $report->pet ? ucfirst($report->pet->species ?? 'N/A') : 'N/A' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $report->pet->breed ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $report->last_seen_at ? \Carbon\Carbon::parse($report->last_seen_at)->format('M d, Y') : 'N/A' }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->location_barangay ?? ($report->location_description ?? 'N/A') }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay->barangay_name ?? ($report->location_description ?? 'N/A') }}</td>
                                 <td class="px-4 py-3">
                                     @if($report->status == 'pending')
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>

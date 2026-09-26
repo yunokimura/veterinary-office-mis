@@ -85,11 +85,19 @@
 
                 <!-- Location Barangay -->
                 <div>
-                    <label for="location_barangay" class="block text-sm font-medium text-gray-700 mb-1">Location (Barangay) <span class="text-red-500">*</span></label>
-                    <input type="text" name="location_barangay" id="location_barangay" value="{{ old('location_barangay', $missingPet->location_barangay) }}" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Barangay">
-                    @error('location_barangay')
+                    <label for="barangay_id" class="block text-sm font-medium text-gray-700 mb-1">Location (Barangay) <span class="text-red-500">*</span></label>
+                    <select name="barangay_id" id="barangay_id" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select Barangay</option>
+                        @if(isset($barangays) && $barangays->count() > 0)
+                            @foreach($barangays as $barangay)
+                                <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id', $missingPet->barangay_id) == $barangay->barangay_id ? 'selected' : '' }}>
+                                    {{ $barangay->barangay_name }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                    @error('barangay_id')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -108,6 +116,30 @@
                     <input type="text" name="emergency_contact" id="emergency_contact" value="{{ old('emergency_contact', $missingPet->emergency_contact) }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Phone number or contact details">
+                </div>
+
+                <!-- Reporter Name -->
+                <div>
+                    <label for="reported_by_name" class="block text-sm font-medium text-gray-700 mb-1">Reporter Name</label>
+                    <input type="text" name="reported_by_name" id="reported_by_name" value="{{ old('reported_by_name', $missingPet->reported_by_name) }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Full name of the person reporting">
+                </div>
+
+                <!-- Reporter Contact -->
+                <div>
+                    <label for="reporter_contact" class="block text-sm font-medium text-gray-700 mb-1">Reporter Contact <span class="text-red-500">*</span></label>
+                    <input type="text" name="reporter_contact" id="reporter_contact" value="{{ old('reporter_contact', $missingPet->reporter_contact) }}" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Phone number">
+                </div>
+
+                <!-- Reporter Email -->
+                <div>
+                    <label for="reporter_email" class="block text-sm font-medium text-gray-700 mb-1">Reporter Email</label>
+                    <input type="email" name="reporter_email" id="reporter_email" value="{{ old('reporter_email', $missingPet->reporter_email) }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Email address (optional)">
                 </div>
 
                 <!-- Eye Color -->

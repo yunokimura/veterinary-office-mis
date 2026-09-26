@@ -1128,10 +1128,7 @@ Route::get('/missing-pets', function () {
         ->orderBy('breed')
         ->pluck('breed');
 
-    $availableLocations = \App\Models\Barangay::whereHas('pets', function ($query) {
-        $query->where('pet_status', 'missing');
-    })
-        ->orderBy('barangay_name')
+    $availableLocations = \App\Models\Barangay::orderBy('barangay_name')
         ->pluck('barangay_name');
 
     $announcements = Announcement::where('is_active', true)
@@ -1162,8 +1159,8 @@ Route::get('/missing-pets/paginate', function (Request $request) {
 
     if ($request->filled('location')) {
         $locations = explode(',', $request->location);
-        $query->whereHas('missingReport', function ($q) use ($locations) {
-            $q->whereIn('location_barangay', $locations);
+        $query->whereHas('missingReport.barangay', function ($q) use ($locations) {
+            $q->whereIn('barangay_name', $locations);
         });
     }
 
@@ -1181,7 +1178,7 @@ Route::get('/missing-pets/paginate', function (Request $request) {
             'weight' => $pet->weight,
             'color' => $pet->color,
             'description' => $pet->notes,
-            'location_barangay' => $report ? $report->location_barangay : null,
+            'location_barangay' => $report && $report->barangay ? $report->barangay->barangay_name : null,
             'location_description' => $report ? $report->location_description : null,
             'last_seen_at' => $report ? $report->last_seen_at : null,
             'pet_image' => $pet->pet_image ? asset('storage/'.$pet->pet_image) : null,
@@ -1219,12 +1216,24 @@ Route::get('/missing-pets/form', function () {
         ];
     })->toArray();
 
-    return view('Client.missing_pets_form', compact('user', 'petOwner', 'petsArray'));
+    $barangays = \App\Models\Barangay::orderBy('barangay_name')->get();
+
+    return view('Client.missing_pets_form', compact('user', 'petOwner', 'petsArray', 'barangays'));
 })->middleware('auth')->name('missing-pets.form');
 
 Route::post('/missing-pets/report', [\App\Http\Controllers\Client\MissingPetReportController::class, 'store'])
     ->middleware('auth')
     ->name('missing-pets.report.store');
+
+Route::get('/missing-pets/report', function () {
+    return view('Client.missing_pets_landing');
+})->name('missing-pets.report-landing');
+
+Route::get('/missing-pets/report/guest', [\App\Http\Controllers\Client\GuestMissingPetReportController::class, 'create'])
+    ->name('missing-pets.report.guest.create');
+
+Route::post('/missing-pets/report/guest', [\App\Http\Controllers\Client\GuestMissingPetReportController::class, 'store'])
+    ->name('missing-pets.report.guest.store');
 
 // Pet Registration Page Route - Public
 Route::get('/pet-registration', function () {

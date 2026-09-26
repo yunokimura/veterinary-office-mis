@@ -87,6 +87,11 @@ class Barangay extends Model
         return $this->hasMany(StrayReport::class, 'barangay_id', 'barangay_id');
     }
 
+    public function pets(): HasMany
+    {
+        return $this->hasMany(Pet::class, 'barangay_id', 'barangay_id');
+    }
+
     public function livestockCensuses(): HasMany
     {
         return $this->hasMany(LivestockCensus::class, 'barangay_id', 'barangay_id');

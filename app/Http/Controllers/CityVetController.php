@@ -1004,13 +1004,22 @@ class CityVetController extends Controller
                         $sub->where('report_id', 'like', "%{$term}%")
                             ->orWhereHas('pet', function ($q2) use ($term) {
                                 $q2->where('pet_name', 'like', "%{$term}%")
-                                    ->orWhere('species', 'like', "%{$term}%");
+                                    ->orWhere('species', 'like', "%{$term}%")
+                                    ->orWhere('breed', 'like', "%{$term}%");
                             })
-                            ->orWhere('location_barangay', 'like', "%{$term}%")
-                            ->orWhere('status', 'like', "%{$term}%");
+                            ->orWhereHas('barangay', function ($q2) use ($term) {
+                                $q2->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('status', 'like', "%{$term}%")
+                            ->orWhere('reported_by_name', 'like', "%{$term}%")
+                            ->orWhere('reporter_contact', 'like', "%{$term}%");
                     });
                 }
             });
+        }
+
+        if ($request->filled('report_type')) {
+            $query->where('report_type', $request->report_type);
         }
 
         if ($request->filled('date_from')) {
@@ -1046,13 +1055,22 @@ class CityVetController extends Controller
                         $sub->where('report_id', 'like', "%{$term}%")
                             ->orWhereHas('pet', function ($q2) use ($term) {
                                 $q2->where('pet_name', 'like', "%{$term}%")
-                                    ->orWhere('species', 'like', "%{$term}%");
+                                    ->orWhere('species', 'like', "%{$term}%")
+                                    ->orWhere('breed', 'like', "%{$term}%");
                             })
-                            ->orWhere('location_barangay', 'like', "%{$term}%")
-                            ->orWhere('status', 'like', "%{$term}%");
+                            ->orWhereHas('barangay', function ($q2) use ($term) {
+                                $q2->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('status', 'like', "%{$term}%")
+                            ->orWhere('reported_by_name', 'like', "%{$term}%")
+                            ->orWhere('reporter_contact', 'like', "%{$term}%");
                     });
                 }
             });
+        }
+
+        if ($request->filled('report_type')) {
+            $query->where('report_type', $request->report_type);
         }
 
         if ($request->filled('date_from')) {
@@ -1067,7 +1085,7 @@ class CityVetController extends Controller
         try {
             $html = view('dashboard.partials.missing-pet-reports-table', compact('reports'))->render();
         } catch (\Throwable $e) {
-            $html = '<tr><td colspan="7" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+            $html = '<tr><td colspan="6" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
         }
 
         return response()->json([
@@ -1090,6 +1108,7 @@ class CityVetController extends Controller
             'report' => [
                 'id' => $missingPet->report_id,
                 'report_number' => 'MP-' . str_pad($missingPet->report_id, 5, '0', STR_PAD_LEFT),
+                'report_type' => $missingPet->report_type ?? 'missing',
                 'status' => $missingPet->status,
                 'pet_name' => $missingPet->pet->pet_name ?? 'N/A',
                 'species' => ucfirst($missingPet->pet->species ?? 'N/A'),
@@ -1099,12 +1118,12 @@ class CityVetController extends Controller
                 'last_seen_at' => \Carbon\Carbon::parse($missingPet->last_seen_at)->format('M d, Y'),
                 'last_seen_time' => \Carbon\Carbon::parse($missingPet->last_seen_at)->format('h:i A'),
                 'location' => $missingPet->location_description,
-                'barangay' => $missingPet->location_barangay,
+                'barangay' => $missingPet->barangay->barangay_name ?? 'N/A',
                 'description' => $missingPet->body_marks,
-                'reporter_name' => $missingPet->user->name ?? 'N/A',
-                'reporter_contact' => $missingPet->emergency_contact ?? 'N/A',
-                'reporter_email' => $missingPet->user->email ?? 'N/A',
-                'reported_by' => optional($missingPet->user)->name ?? 'N/A',
+                'reporter_name' => $missingPet->reported_by_name ?? optional($missingPet->user)->name ?? 'Guest',
+                'reporter_contact' => $missingPet->reporter_contact ?? ($missingPet->user->contact_number ?? 'N/A'),
+                'reporter_email' => $missingPet->reporter_email ?? ($missingPet->user->email ?? 'N/A'),
+                'reported_by' => $missingPet->reported_by_name ?? optional($missingPet->user)->name ?? 'N/A',
                 'created_at' => $missingPet->created_at->format('M d, Y h:i A'),
                 'updated_at' => $missingPet->updated_at->format('M d, Y h:i A'),
             ]

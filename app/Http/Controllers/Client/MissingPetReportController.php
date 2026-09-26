@@ -30,10 +30,13 @@ class MissingPetReportController extends Controller
             'physical_marks.collar_harness' => 'nullable|string|max:255',
             'last_seen_date' => 'required|date',
             'last_seen_time' => 'required',
-            'location_barangay' => 'required|string|max:255',
+            'barangay_id' => 'required|integer|exists:barangays,barangay_id',
             'location_description' => 'nullable|string|max:2000',
             'additional_contact' => 'nullable|string|max:1000',
             'pet_photo' => 'nullable|image|max:8192',
+            'reported_by_name' => 'nullable|string|max:255',
+            'reporter_contact' => 'nullable|string|max:255',
+            'reporter_email' => 'nullable|email|max:255',
         ]);
 
         $selectedPetIds = $validated['selected_pets'];
@@ -71,11 +74,15 @@ class MissingPetReportController extends Controller
             $reports[] = MissingPetsReport::create([
                 'user_id' => $user->id,
                 'pet_id' => $petId,
+                'report_type' => 'missing',
+                'reported_by_name' => $validated['reported_by_name'] ?? trim(($petOwner->first_name ?? '') . ' ' . ($petOwner->last_name ?? '')),
+                'reporter_contact' => $validated['reporter_contact'] ?? $petOwner->phone_number ?? $user->contact_number,
+                'reporter_email' => $validated['reporter_email'] ?? $user->email,
                 'body_marks' => $validated['physical_marks']['body_marks'] ?? null,
                 'eye_color' => $validated['physical_marks']['eye_color'],
                 'collar_harness' => $validated['physical_marks']['collar_harness'] ?? null,
                 'last_seen_at' => $lastSeenAt,
-                'location_barangay' => $validated['location_barangay'],
+                'barangay_id' => $validated['barangay_id'],
                 'location_description' => $validated['location_description'] ?? null,
                 'emergency_contact' => $validated['additional_contact'] ?? null,
                 'status' => 'pending review',

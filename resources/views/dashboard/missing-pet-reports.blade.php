@@ -49,14 +49,23 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
 
         <!-- Search & Filters -->
         <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
-            <div class="relative w-[480px]">
+            <div class="relative w-[400px]">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" id="missingPetSearchInput" value="{{ request('search') }}" placeholder="Search report no, pet name, species, barangay, status..."
+                <input type="text" id="missingPetSearchInput" value="{{ request('search') }}" placeholder="Search report no, pet name, breed, barangay, status..."
                        class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
             <div class="flex gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Report Type</label>
+                    <select id="reportTypeFilter"
+                            class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                        <option value="">All Types</option>
+                        <option value="missing" {{ request('report_type') == 'missing' ? 'selected' : '' }}>Missing</option>
+                        <option value="found" {{ request('report_type') == 'found' ? 'selected' : '' }}>Found</option>
+                    </select>
+                </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-500 mb-1">From Date</label>
                     <input type="date" id="dateFrom" value="{{ request('date_from') }}"
@@ -148,6 +157,7 @@ function getMissingPetStatusLabel(status) {
 function getMissingPetFilterParams() {
     return {
         search: document.getElementById('missingPetSearchInput').value,
+        report_type: document.getElementById('reportTypeFilter').value,
         date_from: document.getElementById('dateFrom').value,
         date_to: document.getElementById('dateTo').value,
     };
@@ -201,6 +211,7 @@ function applyMissingPetFilters() {
 
 function clearMissingPetFilters() {
     document.getElementById('missingPetSearchInput').value = '';
+    document.getElementById('reportTypeFilter').value = '';
     document.getElementById('dateFrom').value = '';
     document.getElementById('dateTo').value = '';
     updateClearMissingPetFiltersVisibility();
@@ -209,11 +220,13 @@ function clearMissingPetFilters() {
 
 function updateClearMissingPetFiltersVisibility() {
     const searchInput = document.getElementById('missingPetSearchInput');
+    const reportTypeFilter = document.getElementById('reportTypeFilter');
     const dateFrom = document.getElementById('dateFrom');
     const dateTo = document.getElementById('dateTo');
     const clearBtn = document.getElementById('clearMissingPetFiltersBtn');
 
     const hasFilters = (searchInput && searchInput.value.trim() !== '') ||
+                       (reportTypeFilter && reportTypeFilter.value.trim() !== '') ||
                        (dateFrom && dateFrom.value.trim() !== '') ||
                        (dateTo && dateTo.value.trim() !== '');
 
@@ -240,6 +253,11 @@ document.getElementById('dateFrom').addEventListener('change', () => {
 });
 
 document.getElementById('dateTo').addEventListener('change', () => {
+    updateClearMissingPetFiltersVisibility();
+    applyMissingPetFilters();
+});
+
+document.getElementById('reportTypeFilter').addEventListener('change', () => {
     updateClearMissingPetFiltersVisibility();
     applyMissingPetFilters();
 });
@@ -315,15 +333,24 @@ function displayReportDetails(report) {
                 </div>
             </div>
             <hr class="border-gray-100">
-            <div class="bg-gray-50 rounded-lg p-4">
+            <div class="bg-green-50 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Reporter Information</h4>
                 <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <p class="text-sm text-gray-500">Reported By</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.reported_by}</p>
+                        <p class="text-sm text-gray-500">Reporter Name</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.reporter_name}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Created At</p>
+                        <p class="text-sm text-gray-500">Reported At</p>
                         <p class="font-medium text-gray-800 mt-1">${report.created_at}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Contact Number</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.reporter_contact}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Email</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.reporter_email}</p>
                     </div>
                 </div>
             </div>
@@ -378,24 +405,6 @@ function displayReportDetails(report) {
                     <div class="col-span-2">
                         <p class="text-sm text-gray-500">Description</p>
                         <p class="font-medium text-gray-800 mt-1 whitespace-pre-wrap">${report.description || 'N/A'}</p>
-                    </div>
-                </div>
-            </div>
-            <hr class="border-gray-100">
-            <div class="bg-green-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Reporter Information</h4>
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500">Reporter Name</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.reporter_name}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Contact Number</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.reporter_contact}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Email</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.reporter_email}</p>
                     </div>
                 </div>
             </div>

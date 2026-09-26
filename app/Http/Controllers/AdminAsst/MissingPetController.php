@@ -41,7 +41,8 @@ class MissingPetController extends Controller
     public function create()
     {
         $clients = PetOwner::active()->orderBy('last_name')->get();
-        return view('admin-asst.missing-pets.create', compact('clients'));
+        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get();
+        return view('admin-asst.missing-pets.create', compact('clients', 'barangays'));
     }
 
     public function store(Request $request)
@@ -54,13 +55,16 @@ class MissingPetController extends Controller
             'gender' => 'nullable|string|in:male,female,unknown',
             'image' => 'nullable|image|max:2048',
             'last_seen_at' => 'required|date',
-            'location_barangay' => 'required|string|max:255',
+            'barangay_id' => 'required|integer|exists:barangays,barangay_id',
             'location_description' => 'nullable|string|max:2000',
             'emergency_contact' => 'nullable|string|max:255',
             'body_marks' => 'nullable|string|max:2000',
             'eye_color' => 'required|string|max:255',
             'collar_harness' => 'nullable|string|max:255',
             'owner_id' => 'nullable|exists:pet_owners,owner_id',
+            'reported_by_name' => 'nullable|string|max:255',
+            'reporter_contact' => 'required|string|max:255',
+            'reporter_email' => 'nullable|email|max:255',
         ]);
 
         $pet = Pet::create([
@@ -81,11 +85,15 @@ class MissingPetController extends Controller
         MissingPetsReport::create([
             'user_id' => Auth::id(),
             'pet_id' => $pet->pet_id,
+            'report_type' => 'missing',
+            'reported_by_name' => $validated['reported_by_name'] ?? null,
+            'reporter_contact' => $validated['reporter_contact'],
+            'reporter_email' => $validated['reporter_email'] ?? null,
             'body_marks' => $validated['body_marks'] ?? null,
             'eye_color' => $validated['eye_color'],
             'collar_harness' => $validated['collar_harness'] ?? null,
             'last_seen_at' => $validated['last_seen_at'],
-            'location_barangay' => $validated['location_barangay'],
+            'barangay_id' => $validated['barangay_id'],
             'location_description' => $validated['location_description'] ?? null,
             'emergency_contact' => $validated['emergency_contact'] ?? null,
             'status' => 'approved',
@@ -105,7 +113,8 @@ class MissingPetController extends Controller
     {
         $missingPet->load('pet');
         $clients = PetOwner::active()->orderBy('last_name')->get();
-        return view('admin-asst.missing-pets.edit', compact('missingPet', 'clients'));
+        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get();
+        return view('admin-asst.missing-pets.edit', compact('missingPet', 'clients', 'barangays'));
     }
 
     public function update(Request $request, MissingPetsReport $missingPet)
@@ -118,12 +127,15 @@ class MissingPetController extends Controller
             'gender' => 'nullable|string|in:male,female,unknown',
             'image' => 'nullable|image|max:2048',
             'last_seen_at' => 'required|date',
-            'location_barangay' => 'required|string|max:255',
+            'barangay_id' => 'required|integer|exists:barangays,barangay_id',
             'location_description' => 'nullable|string|max:2000',
             'emergency_contact' => 'nullable|string|max:255',
             'body_marks' => 'nullable|string|max:2000',
             'eye_color' => 'required|string|max:255',
             'collar_harness' => 'nullable|string|max:255',
+            'reported_by_name' => 'nullable|string|max:255',
+            'reporter_contact' => 'required|string|max:255',
+            'reporter_email' => 'nullable|email|max:255',
         ]);
 
         $pet = $missingPet->pet;
@@ -151,9 +163,12 @@ class MissingPetController extends Controller
             'eye_color' => $validated['eye_color'],
             'collar_harness' => $validated['collar_harness'] ?? null,
             'last_seen_at' => $validated['last_seen_at'],
-            'location_barangay' => $validated['location_barangay'],
+            'barangay_id' => $validated['barangay_id'],
             'location_description' => $validated['location_description'] ?? null,
             'emergency_contact' => $validated['emergency_contact'] ?? null,
+            'reported_by_name' => $validated['reported_by_name'] ?? null,
+            'reporter_contact' => $validated['reporter_contact'],
+            'reporter_email' => $validated['reporter_email'] ?? null,
         ]);
 
         return redirect()->route('admin-asst.missing-pets.show', $missingPet->report_id)

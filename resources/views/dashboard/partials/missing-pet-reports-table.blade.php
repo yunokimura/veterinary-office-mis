@@ -1,11 +1,10 @@
 <table class="w-full text-sm">
     <thead class="bg-gray-50">
         <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Report No.</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pet Name</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Animal Type</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Seen</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Barangay</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pet & Breed</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Report Type</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reporter</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Barangay & Date</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
             <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
         </tr>
@@ -13,9 +12,6 @@
     <tbody class="divide-y divide-gray-200">
         @forelse($reports as $report)
         <tr class="hover:bg-gray-50">
-            <td class="px-4 py-3">
-                <span class="font-medium text-gray-800">MP-{{ str_pad($report->report_id, 5, '0', STR_PAD_LEFT) }}</span>
-            </td>
             <td class="px-4 py-3">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -28,13 +24,15 @@
                 </div>
             </td>
             <td class="px-4 py-3 text-gray-600">
-                <p class="text-gray-800">{{ ucfirst($report->pet->species ?? 'Unknown') }}</p>
+                <p class="font-medium text-gray-800">{{ ucfirst($report->report_type ?? 'missing') }}</p>
             </td>
             <td class="px-4 py-3 text-gray-600">
-                <p class="text-gray-800">{{ \Carbon\Carbon::parse($report->last_seen_at)->format('M d, Y') }}</p>
+                <p class="font-medium text-gray-800">{{ $report->reported_by_name ?? ($report->user->name ?? 'Guest') }}</p>
+                <p class="text-sm text-gray-500">{{ $report->reporter_contact ?? ($report->user->contact_number ?? '') }}</p>
             </td>
             <td class="px-4 py-3 text-gray-600">
-                <p class="text-gray-800">{{ $report->location_barangay ?? 'Unknown' }}</p>
+                <p class="font-medium text-gray-800">{{ $report->barangay->barangay_name ?? 'Unknown' }}</p>
+                <p class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($report->last_seen_at)->format('M d, Y') }}</p>
             </td>
             <td class="px-4 py-3">
                 @php
@@ -72,7 +70,7 @@
         </tr>
         @empty
         <tr>
-            <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
                 <i class="bi bi-calendar-x text-4xl mb-2 block"></i>
                 No missing pet reports found
             </td>

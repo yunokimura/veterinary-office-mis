@@ -352,7 +352,7 @@
                 <p class="text-gray-500 text-xs mb-1">Location:</p>
                 <p class="text-gray-700 font-medium text-xs">
                     @if($pet->missingReport->first())
-                        {{ $pet->missingReport->first()->location_barangay }}
+                        {{ $pet->missingReport->first()->barangay->barangay_name ?? 'N/A' }}
                         @if($pet->missingReport->first()->location_description)
                             - {{ $pet->missingReport->first()->location_description }}
                         @endif
@@ -542,7 +542,7 @@
                 'weight' => $pet->weight, 
                 'color' => $pet->color, 
                 'description' => $pet->notes, 
-                'location_barangay' => $report ? $report->location_barangay : null, 
+                'location_barangay' => $report && $report->barangay ? $report->barangay->barangay_name : null, 
                 'location_description' => $report ? $report->location_description : null, 
                 'last_seen_at' => $report ? $report->last_seen_at : null, 
                 'pet_image' => $pet->pet_image ? asset('storage/'.$pet->pet_image) : null,

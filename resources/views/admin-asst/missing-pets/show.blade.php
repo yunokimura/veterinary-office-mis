@@ -76,6 +76,8 @@
             <div class="relative h-80 bg-gray-200 rounded-lg overflow-hidden">
                 @if($missingPet->pet && $missingPet->pet->pet_image)
                     <img src="{{ asset('storage/' . $missingPet->pet->pet_image) }}" alt="{{ $missingPet->pet->pet_name }}" class="w-full h-full object-cover">
+                @elseif($missingPet->photo_path)
+                    <img src="{{ asset('storage/' . $missingPet->photo_path) }}" alt="Report photo" class="w-full h-full object-cover">
                 @else
                     <div class="w-full h-full flex items-center justify-center">
                         <i class="bi bi-image text-gray-400 text-6xl"></i>
@@ -117,7 +119,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Location</p>
-                    <p class="font-medium text-gray-800">{{ $missingPet->location_barangay }}</p>
+                    <p class="font-medium text-gray-800">{{ $missingPet->barangay->barangay_name ?? 'Unknown' }}</p>
                     @if($missingPet->location_description)
                         <p class="text-sm text-gray-600 mt-1">{{ $missingPet->location_description }}</p>
                     @endif
@@ -155,6 +157,31 @@
                     <p class="text-sm text-gray-500">Reported On</p>
                     <p class="font-medium text-gray-800">{{ $missingPet->created_at->format('M d, Y') }}</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Reporter Information -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Reporter Information</h3>
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm text-gray-500">Reported By</p>
+                    <p class="font-medium text-gray-800">{{ $missingPet->reported_by_name ?? ($missingPet->user->name ?? 'Guest / Unknown') }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Contact Number</p>
+                    <p class="font-medium text-gray-800">{{ $missingPet->reporter_contact ?? ($missingPet->user->contact_number ?? 'N/A') }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Email</p>
+                    <p class="font-medium text-gray-800">{{ $missingPet->reporter_email ?? ($missingPet->user->email ?? 'N/A') }}</p>
+                </div>
+                @if($missingPet->user)
+                <div>
+                    <p class="text-sm text-gray-500">Account</p>
+                    <p class="font-medium text-gray-800">{{ $missingPet->user->name ?? 'N/A' }} (ID: {{ $missingPet->user->id }})</p>
+                </div>
+                @endif
             </div>
         </div>
     </div>

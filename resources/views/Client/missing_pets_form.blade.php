@@ -199,7 +199,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('missing-pets.report.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('missing-pets.report.store') }}" enctype="multipart/form-data" onsubmit="syncReporterFields()">
                 @csrf
 
                 <!-- PART 1: OWNER'S INFO -->
@@ -709,84 +709,16 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 Location (Barangay) <span class="text-red-500">*</span>
                             </label>
-                            <select name="location_barangay" id="location_barangay"
+                            <select name="barangay_id" id="barangay_id"
                                     class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                 <option value="">Select Barangay</option>
-                                <option value="Burol I">Burol I</option>
-                                <option value="Burol II">Burol II</option>
-                                <option value="Burol III">Burol III</option>
-                                <option value="Burol Main">Burol Main</option>
-                                <option value="Datu Esmael (Bago-A-Ingud)">Datu Esmael (Bago-A-Ingud)</option>
-                                <option value="Emmanuel Bergaod I">Emmanuel Bergaod I</option>
-                                <option value="Emmanuel Bergaod II">Emmanuel Bergaod II</option>
-                                <option value="Fatima I">Fatima I</option>
-                                <option value="Fatima II">Fatima II</option>
-                                <option value="Fatima III">Fatima III</option>
-                                <option value="H-2 (Sta. Veronica)">H-2 (Sta. Veronica)</option>
-                                <option value="Langkaan I (Humayao)">Langkaan I (Humayao)</option>
-                                <option value="Langkaan II">Langkaan II</option>
-                                <option value="Luzviminda I">Luzviminda I</option>
-                                <option value="Luzviminda II">Luzviminda II</option>
-                                <option value="Paliparan I">Paliparan I</option>
-                                <option value="Paliparan II">Paliparan II</option>
-                                <option value="Paliparan III">Paliparan III</option>
-                                <option value="Sabang">Sabang</option>
-                                <option value="Saint Peter I">Saint Peter I</option>
-                                <option value="Saint Peter II">Saint Peter II</option>
-                                <option value="Salawag">Salawag</option>
-                                <option value="Salitran I">Salitran I</option>
-                                <option value="Salitran II">Salitran II</option>
-                                <option value="Salitran III">Salitran III</option>
-                                <option value="Salitran IV">Salitran IV</option>
-                                <option value="Sampaloc I (Pala-Pala)">Sampaloc I (Pala-Pala)</option>
-                                <option value="Sampaloc II (Bucal/Malinta)">Sampaloc II (Bucal/Malinta)</option>
-                                <option value="Sampaloc III (Piela)">Sampaloc III (Piela)</option>
-                                <option value="Sampaloc IV (Talisayan/Bautista)">Sampaloc IV (Talisayan/Bautista)</option>
-                                <option value="Sampaloc V (New Era)">Sampaloc V (New Era)</option>
-                                <option value="San Augustin I">San Augustin I</option>
-                                <option value="San Augustin II (R. Tirona)">San Augustin II (R. Tirona)</option>
-                                <option value="San Augustin III">San Augustin III</option>
-                                <option value="San Andres I">San Andres I</option>
-                                <option value="San Andres II">San Andres II</option>
-                                <option value="San Antonio De Padua I">San Antonio De Padua I</option>
-                                <option value="San Antonio De Padua II">San Antonio De Padua II</option>
-                                <option value="San Dionisio">San Dionisio</option>
-                                <option value="San Esteban">San Esteban</option>
-                                <option value="San Fransisco I">San Fransisco I</option>
-                                <option value="San Fransisco II">San Fransisco II</option>
-                                <option value="San Isidro Labrador I">San Isidro Labrador I</option>
-                                <option value="San Isidro Labrador II">San Isidro Labrador II</option>
-                                <option value="San Jose">San Jose</option>
-                                <option value="San Juan">San Juan</option>
-                                <option value="San Lorenzo Ruiz I">San Lorenzo Ruiz I</option>
-                                <option value="San Lorenzo Ruiz II">San Lorenzo Ruiz II</option>
-                                <option value="San Luis I">San Luis I</option>
-                                <option value="San Luis II">San Luis II</option>
-                                <option value="San Manuel I">San Manuel I</option>
-                                <option value="San Manuel II">San Manuel II</option>
-                                <option value="San Mateo">San Mateo</option>
-                                <option value="San Miguel I">San Miguel I</option>
-                                <option value="San Miguel II">San Miguel II</option>
-                                <option value="San Nicolas I">San Nicolas I</option>
-                                <option value="San Nicolas II">San Nicolas II</option>
-                                <option value="San Roque">San Roque</option>
-                                <option value="San Simon">San Simon</option>
-                                <option value="Santa Cristina I">Santa Cristina I</option>
-                                <option value="Santa Cristina II">Santa Cristina II</option>
-                                <option value="Santa Cruz I">Santa Cruz I</option>
-                                <option value="Santa Cruz II">Santa Cruz II</option>
-                                <option value="Santa Fe">Santa Fe</option>
-                                <option value="Santa Lucia">Santa Lucia</option>
-                                <option value="Santa Maria">Santa Maria</option>
-                                <option value="Santo Cristo">Santo Cristo</option>
-                                <option value="Santo Niño I">Santo Niño I</option>
-                                <option value="Santo Niño II">Santo Niño II</option>
-                                <option value="Victoria Reyes">Victoria Reyes</option>
-                                <option value="Zone I">Zone I</option>
-                                <option value="Zone I-A">Zone I-A</option>
-                                <option value="Zone II">Zone II</option>
-                                <option value="Zone III">Zone III</option>
-                                <option value="Zone IV">Zone IV</option>
+                                @if(isset($barangays) && $barangays->count() > 0)
+                                    @foreach($barangays as $barangay)
+                                        <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>
+                                            {{ $barangay->barangay_name }}
+                                        </option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
 
@@ -852,6 +784,11 @@
                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-y"
                                       placeholder="Any additional contact details or information that might help"></textarea>
                         </div>
+
+                        <!-- Reporter fields (hidden, populated from Part 1) -->
+                        <input type="hidden" name="reported_by_name" id="reported_by_name" value="{{ old('reported_by_name', trim(($petOwner->first_name ?? '') . ' ' . ($petOwner->last_name ?? ''))) }}">
+                        <input type="hidden" name="reporter_contact" id="reporter_contact" value="{{ old('reporter_contact', $petOwner->phone_number ?? '') }}">
+                        <input type="hidden" name="reporter_email" id="reporter_email" value="{{ old('reporter_email', $user->email ?? '') }}">
                     </div>
 
                     <!-- Submit Button with Navigation -->
@@ -891,6 +828,21 @@
 </footer>
 
 <script>
+    function syncReporterFields() {
+        const firstName = document.querySelector('input[name="first_name"]')?.value || '';
+        const lastName = document.querySelector('input[name="last_name"]')?.value || '';
+        const email = document.querySelector('input[name="email"]')?.value || '';
+        const mobile = document.querySelector('input[name="mobile_number"]')?.value || '';
+
+        const reportedByName = document.getElementById('reported_by_name');
+        const reporterContact = document.getElementById('reporter_contact');
+        const reporterEmail = document.getElementById('reporter_email');
+
+        if (reportedByName) reportedByName.value = (firstName + ' ' + lastName).trim();
+        if (reporterContact) reporterContact.value = mobile;
+        if (reporterEmail) reporterEmail.value = email;
+    }
+
     // Multi-step form navigation
     function goToStep(step) {
         // Hide all parts

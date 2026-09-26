@@ -240,7 +240,7 @@ class CityVetDashboardSeeder extends Seeder
                 'eye_color' => $eyeColors[array_rand($eyeColors)],
                 'collar_harness' => fake()->randomElement(['Red Collar', 'Blue Harness', 'None', 'Green Collar']),
                 'last_seen_at' => $lastSeen,
-                'location_barangay' => $barangay->barangay_name,
+                'barangay_id' => $barangay->barangay_id,
                 'location_description' => fake()->optional(0.7)->sentence(),
                 'emergency_contact' => '09' . rand(100000000, 999999999),
                 'status' => $status,
