@@ -1398,6 +1398,7 @@
                 name === 'family_support_explain' || 
                 name === 'alt_mobile_number' ||
                 name === 'occupation' ||
+                name === 'company' ||
                 name === 'social_media' ||
                 name === 'zoom_date' ||
                 name === 'zoom_time_hour' ||

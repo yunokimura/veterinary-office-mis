@@ -16,7 +16,7 @@ class AdoptionFormController extends Controller
     {
         $validated = $request->validate([
             'occupation' => 'nullable|string|max:255',
-            'company' => 'required|string|max:255',
+            'company' => 'nullable|string|max:255',
             'social_media' => 'nullable|string|max:255',
             'adopted_before' => 'required|in:yes,no',
             'zoom_interview' => 'required|in:Yes,No',
@@ -63,7 +63,7 @@ class AdoptionFormController extends Controller
             'address_id' => $addressId,
             'selected_pet_id' => $selectedPetId,
             'occupation' => $validated['occupation'] ?? null,
-            'company' => $validated['company'],
+            'company' => $validated['company'] ?? '',
             'social_media' => $validated['social_media'] ?? null,
             'adopted_before' => $validated['adopted_before'],
             'status' => 'pending_review',
