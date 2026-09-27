@@ -11,7 +11,7 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
 @section('content')
 <div class="space-y-6">
     <!-- Stats Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
             <div>
                 <p class="text-xs font-medium text-gray-500">Total Applications</p>
@@ -28,6 +28,12 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
             <div>
                 <p class="text-xs font-medium text-gray-500">Approved</p>
                 <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['approved'] ?? 0 }}</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Adopted</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $stats['adopted'] ?? 0 }}</p>
             </div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
@@ -273,30 +279,31 @@ function openReportModal(reportId) {
 function displayReportDetails(report) {
     const modalBody = document.getElementById('reportModalBody');
 
+    const statusClass = report.status === 'pending_review' ? 'bg-amber-100 text-amber-800' :
+        report.status === 'approved' ? 'bg-blue-100 text-blue-800' :
+        report.status === 'adopted' ? 'bg-emerald-100 text-emerald-800' :
+        report.status === 'rejected' ? 'bg-red-100 text-red-800' :
+        'bg-gray-100 text-gray-800';
+
+    const statusText = report.status
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+
     modalBody.innerHTML = `
         <div class="space-y-3">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-4">
                 <div>
                     <p class="text-sm text-gray-500">Application Number</p>
                     <p class="text-lg font-semibold text-gray-800">${report.report_number}</p>
                 </div>
-                <div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                        ${report.status}
-                    </span>
+                <div class="text-right">
+                    <p class="text-sm text-gray-500">Submitted At</p>
+                    <p class="text-sm font-medium text-gray-800">${report.created_at}</p>
                 </div>
-            </div>
-            <hr class="border-gray-100">
-            <div class="bg-gray-50 rounded-lg p-4">
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500">Applied Date</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.created_at}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Last Updated</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.updated_at}</p>
-                    </div>
+                <div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass}">
+                        ${statusText}
+                    </span>
                 </div>
             </div>
             <hr class="border-gray-100">

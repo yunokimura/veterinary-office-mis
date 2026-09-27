@@ -223,7 +223,7 @@ class AdoptionPetsSeeder extends Seeder
                 array_merge($petData, [
                     'source_module' => 'adoption_pets',
                     'source_module_id' => null,
-                    'pet_status' => 'available',
+                    'pet_status' => 'for adoption',
                     'is_approved' => true,
                     'owner_id' => null,
                     'created_at' => $now,

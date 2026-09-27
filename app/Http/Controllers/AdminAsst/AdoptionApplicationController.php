@@ -35,12 +35,14 @@ class AdoptionApplicationController extends Controller
         $pendingReviewCount = AdoptionApplication::where('status', 'pending_review')->count();
         $approvedCount = AdoptionApplication::where('status', 'approved')->count();
         $rejectedCount = AdoptionApplication::where('status', 'rejected')->count();
+        $adoptedCount = AdoptionApplication::where('status', 'adopted')->count();
 
         return view('admin-asst.adoption-applications.index', compact(
             'applications',
             'pendingReviewCount',
             'approvedCount',
-            'rejectedCount'
+            'rejectedCount',
+            'adoptedCount'
         ));
     }
 
@@ -62,11 +64,16 @@ class AdoptionApplicationController extends Controller
 
     public function reject(Request $request, AdoptionApplication $application)
     {
-        $application->update([
-            'status' => 'rejected',
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|max:1000',
         ]);
 
-        return redirect()->back()->with('success', 'Application rejected.');
+        $application->update([
+            'status' => 'rejected',
+            'rejection_reason' => $validated['rejection_reason'],
+        ]);
+
+        return redirect()->back()->with('success', 'Application rejected with reason.');
     }
 
     public function pending(AdoptionApplication $application)
@@ -76,5 +83,14 @@ class AdoptionApplicationController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Application status reset to pending review.');
+    }
+
+    public function adopt(Request $request, AdoptionApplication $application)
+    {
+        $application->update([
+            'status' => 'adopted',
+        ]);
+
+        return redirect()->back()->with('success', 'Adoption marked as completed and pet status updated.');
     }
 }

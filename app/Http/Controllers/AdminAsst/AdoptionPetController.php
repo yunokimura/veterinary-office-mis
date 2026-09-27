@@ -12,7 +12,7 @@ class AdoptionPetController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pet::query()->where('source_module', 'adoption_pets'); // Only pets from adoption listings
+        $query = Pet::query()->where('source_module', 'adoption_pets');
 
         if ($request->filled('species')) {
             $query->where('species', $request->species);
@@ -20,6 +20,14 @@ class AdoptionPetController extends Controller
 
         if ($request->filled('gender')) {
             $query->where('gender', $request->gender);
+        }
+
+        if ($request->filled('approval_status')) {
+            if ($request->approval_status === 'pending') {
+                $query->where('is_approved', false);
+            } elseif ($request->approval_status === 'approved') {
+                $query->where('is_approved', true);
+            }
         }
 
         if ($request->filled('search')) {
@@ -77,7 +85,7 @@ class AdoptionPetController extends Controller
             'source_module' => 'adoption_pets',
             'source_module_id' => null, // will be set after pet is created via pet_id
             'is_approved' => false,
-            'pet_status' => 'pending', // pending approval
+            'pet_status' => 'for adoption', // for adoption: awaiting approval or approved listing
             'created_at' => $now,
             'updated_at' => $now,
         ]);
@@ -200,8 +208,24 @@ class AdoptionPetController extends Controller
             abort(404);
         }
 
-        $pet->update(['is_approved' => true, 'pet_status' => 'available']);
+        $pet->update(['is_approved' => true, 'pet_status' => 'for adoption']);
 
         return redirect()->back()->with('success', 'Adoption pet approved successfully!');
+    }
+
+    public function reject(Request $request, Pet $pet)
+    {
+        if ($pet->source_module !== 'adoption_pets') {
+            abort(404);
+        }
+
+        $pet->update([
+            'source_module' => null,
+            'source_module_id' => null,
+            'pet_status' => 'owned',
+            'is_approved' => false,
+        ]);
+
+        return redirect()->back()->with('success', 'Adoption request rejected. Pet has been returned to the owner.');
     }
 }

@@ -97,19 +97,33 @@
                 <div class="card-body text-center">
                     @switch($application->status)
                         @case('pending_review')
-                            <span class="badge bg-warning fs-5">Pending Review</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pending Review</span>
                             @break
                         @case('approved')
-                            <span class="badge bg-success fs-5">Approved</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Approved</span>
                             @break
                         @case('rejected')
-                            <span class="badge bg-danger fs-5">Rejected</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Rejected</span>
+                            @break
+                        @case('adopted')
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Adopted</span>
                             @break
                         @default
-                            <span class="badge bg-secondary fs-5">{{ $application->status }}</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ ucfirst($application->status) }}</span>
                     @endswitch
                 </div>
             </div>
+
+            @if($application->status == 'rejected' && $application->rejection_reason)
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Rejection Reason</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0 text-danger">{{ $application->rejection_reason }}</p>
+                </div>
+            </div>
+            @endif
 
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3">
@@ -123,17 +137,44 @@
                             <i class="fas fa-check me-1"></i> Approve
                         </button>
                     </form>
-                    <form action="{{ route('admin-asst.adoption-applications.reject', $application) }}" method="POST" class="mb-2">
-                        @csrf
-                        <button type="submit" class="btn btn-danger w-100">
-                            <i class="fas fa-times me-1"></i> Reject
-                        </button>
-                    </form>
+                    <button type="button" class="btn btn-danger w-100 mb-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                        <i class="fas fa-times me-1"></i> Reject
+                    </button>
+
+                    <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form action="{{ route('admin-asst.adoption-applications.reject', $application) }}" method="POST" class="modal-content">
+                                @csrf
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Reject Application</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="rejection_reason" class="form-label">Rejection Reason <span class="text-danger">*</span></label>
+                                        <textarea name="rejection_reason" id="rejection_reason" rows="4" class="form-control" maxlength="1000" required placeholder="Enter reason for rejection..."></textarea>
+                                        <div class="form-text">Max 1000 characters.</div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     @elseif($application->status == 'rejected')
                     <form action="{{ route('admin-asst.adoption-applications.pending', $application) }}" method="POST" class="mb-2">
                         @csrf
                         <button type="submit" class="btn btn-warning w-100">
                             <i class="fas fa-undo me-1"></i> Reset to Pending Review
+                        </button>
+                    </form>
+                    @elseif($application->status == 'approved')
+                    <form action="{{ route('admin-asst.adoption-applications.adopt', $application) }}" method="POST" class="mb-2">
+                        @csrf
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-heart me-1"></i> Mark as Adopted
                         </button>
                     </form>
                     @endif

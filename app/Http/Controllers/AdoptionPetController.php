@@ -48,7 +48,7 @@ class AdoptionPetController extends Controller
             'source_module' => 'adoption_pets',
             'source_module_id' => null,
             'is_approved' => false,
-            'pet_status' => 'pending',
+            'pet_status' => 'for adoption',
             'created_at' => $now,
             'updated_at' => $now,
         ]);

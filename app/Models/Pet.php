@@ -168,7 +168,7 @@ class Pet extends Model
     public function scopeAvailableForAdoption($query)
     {
         return $query->where('source_module', 'adoption_pets')
-            ->where('pet_status', 'available')
+            ->where('pet_status', 'for adoption')
             ->where('is_approved', true);
     }
 

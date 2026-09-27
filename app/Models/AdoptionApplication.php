@@ -99,6 +99,7 @@ class AdoptionApplication extends Model
         'zoom_time',
         'zoom_time_ampm',
         'shelter_visit',
+        'rejection_reason',
     ];
 
     protected $casts = [

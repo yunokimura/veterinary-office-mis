@@ -5,6 +5,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssistantVetController;
 use App\Http\Controllers\CityVetController;
 use App\Http\Controllers\Client\AdoptionFormController;
+use App\Http\Controllers\Client\AdoptionRequestController;
 use App\Http\Controllers\Client\OtpController;
 use App\Http\Controllers\Client\PetController;
 use App\Http\Controllers\Client\PetRegistrationController;
@@ -454,6 +455,18 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
     Route::post('/adoption-applications/{application}/approve', [AdoptionApplicationController::class, 'approve'])->name('adoption-applications.approve');
     Route::post('/adoption-applications/{application}/reject', [AdoptionApplicationController::class, 'reject'])->name('adoption-applications.reject');
     Route::post('/adoption-applications/{application}/pending', [AdoptionApplicationController::class, 'pending'])->name('adoption-applications.pending');
+    Route::post('/adoption-applications/{application}/adopt', [AdoptionApplicationController::class, 'adopt'])->name('adoption-applications.adopt');
+
+    // Adoption Pets
+    Route::get('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'index'])->name('adoption-pets.index');
+    Route::get('/adoption-pets/create', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'create'])->name('adoption-pets.create');
+    Route::post('/adoption-pets', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'store'])->name('adoption-pets.store');
+    Route::get('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'show'])->name('adoption-pets.show');
+    Route::get('/adoption-pets/{pet}/edit', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'edit'])->name('adoption-pets.edit');
+    Route::put('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'update'])->name('adoption-pets.update');
+    Route::delete('/adoption-pets/{pet}', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'destroy'])->name('adoption-pets.destroy');
+    Route::post('/adoption-pets/{pet}/approve', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'approve'])->name('adoption-pets.approve');
+    Route::post('/adoption-pets/{pet}/reject', [App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'reject'])->name('adoption-pets.reject');
 
     // Missing Pets
     Route::get('/missing-pets', [MissingPetController::class, 'index'])->name('missing-pets.index');
@@ -1377,6 +1390,9 @@ Route::put('/owner/pets/{id}', [PetController::class, 'update'])->middleware(['a
 
 // Delete Pet Route
 Route::delete('/owner/pets/{id}', [PetController::class, 'destroy'])->middleware(['auth'])->name('pet.destroy');
+
+// Submit Pet for Adoption Route
+Route::post('/owner/pets/{pet}/submit-for-adoption', [AdoptionRequestController::class, 'submitForAdoption'])->middleware(['auth'])->name('pet.submit-for-adoption');
 
 // ==============================
 // PROFILE ROUTES (Authenticated Users)

@@ -170,6 +170,15 @@
                                 <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-primary">
                                     {{ ucfirst($pet->species) }}
                                 </div>
+                                @if($pet->source_module === 'adoption_pets')
+                                <div class="absolute bottom-3 left-3">
+                                    @if($pet->is_approved)
+                                    <span class="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-medium">Listed for Adoption</span>
+                                    @else
+                                    <span class="bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-medium">Pending Adoption Review</span>
+                                    @endif
+                                </div>
+                                @endif
                                 <!-- Triple Dot Dropdown -->
                                 <div class="absolute top-3 left-3">
                                     <button onclick="togglePetDropdown(event, 'petDropdown{{ $pet->pet_id }}')" class="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors shadow-md">
@@ -179,6 +188,17 @@
                                     </button>
                                     <!-- Dropdown Menu -->
                                     <div id="petDropdown{{ $pet->pet_id }}" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
+                                        @if($pet->source_module !== 'adoption_pets' && !in_array($pet->pet_status, ['deceased', 'missing']))
+                                        <form method="POST" action="{{ route('pet.submit-for-adoption', $pet->pet_id) }}" onsubmit="return confirm('Submit this pet for adoption consideration? It will be reviewed by admin staff.')">
+                                            @csrf
+                                            <button type="submit" class="flex items-center w-full px-4 py-2 text-primary hover:bg-green-50">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                                </svg>
+                                                Submit for Adoption
+                                            </button>
+                                        </form>
+                                        @endif
                                         <button onclick="markAsMissing({{ $pet->pet_id }})" class="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />

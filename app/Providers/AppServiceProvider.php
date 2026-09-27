@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\Organization;
 use App\Models\PetOwner;
 use App\Models\User;
+use App\Observers\AdoptionApplicationObserver;
 use App\Policies\UserPolicy;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
@@ -52,5 +53,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-super-admin', function (User $user) {
             return $user->isSuperAdmin();
         });
+
+        \App\Models\AdoptionApplication::observe(AdoptionApplicationObserver::class);
     }
 }

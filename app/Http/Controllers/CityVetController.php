@@ -1182,6 +1182,7 @@ class CityVetController extends Controller
             'pending_review' => \App\Models\AdoptionApplication::where('status', 'pending_review')->count(),
             'approved' => \App\Models\AdoptionApplication::where('status', 'approved')->count(),
             'rejected' => \App\Models\AdoptionApplication::where('status', 'rejected')->count(),
+            'adopted' => \App\Models\AdoptionApplication::where('status', 'adopted')->count(),
             'this_month' => \App\Models\AdoptionApplication::whereMonth('created_at', date('m'))
                 ->whereYear('created_at', date('Y'))
                 ->count(),
@@ -1263,8 +1264,7 @@ class CityVetController extends Controller
                 'yard_has_fence' => $adoption->yard_has_fence ? 'Yes' : 'No',
                 'adoption_date' => $adoption->adoption_date ? \Carbon\Carbon::parse($adoption->adoption_date)->format('M d, Y') : 'N/A',
                 'notes' => $adoption->notes ?? 'N/A',
-                'created_at' => $adoption->created_at->format('M d, Y h:i A'),
-                'updated_at' => $adoption->updated_at->format('M d, Y h:i A'),
+                'created_at' => $adoption->created_at->format('F j, Y \a\t g:i A'),
             ]
         ]);
     }

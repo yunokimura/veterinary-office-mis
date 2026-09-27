@@ -17,47 +17,60 @@
     </div>
 </div>
 
-<!-- Statistics Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-    <!-- Pending -->
-    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500 hover:shadow-md transition">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Pending</p>
-                <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $pendingReviewCount }}</p>
-            </div>
-            <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="bi bi-clock text-amber-600 text-xl"></i>
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+        <!-- Pending -->
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500 hover:shadow-md transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Pending</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $pendingReviewCount }}</p>
+                </div>
+                <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-clock text-amber-600 text-xl"></i>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Approved -->
-    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500 hover:shadow-md transition">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Approved</p>
-                <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $approvedCount }}</p>
-            </div>
-            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="bi bi-check-circle text-emerald-600 text-xl"></i>
+        <!-- Approved -->
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500 hover:shadow-md transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Approved</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $approvedCount }}</p>
+                </div>
+                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-check-circle text-emerald-600 text-xl"></i>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Rejected -->
-    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500 hover:shadow-md transition">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Rejected</p>
-                <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $rejectedCount }}</p>
+        <!-- Adopted -->
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 hover:shadow-md transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Adopted</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $adoptedCount }}</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-heart text-blue-600 text-xl"></i>
+                </div>
             </div>
-            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="bi bi-x-circle text-red-600 text-xl"></i>
+        </div>
+
+        <!-- Rejected -->
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500 hover:shadow-md transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Rejected</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $rejectedCount }}</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-x-circle text-red-600 text-xl"></i>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <!-- Filters -->
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
@@ -68,10 +81,11 @@
     <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
             <label class="block text-xs font-medium text-gray-700 mb-1.5">Status</label>
-            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                 <option value="">All Status</option>
                 <option value="pending_review" {{ request('status') == 'pending_review' ? 'selected' : '' }}>Pending Review</option>
                 <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                <option value="adopted" {{ request('status') == 'adopted' ? 'selected' : '' }}>Adopted</option>
                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
             </select>
         </div>
@@ -100,6 +114,7 @@
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Contact</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Address</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Rejection Reason</th>
                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Submitted</th>
                     <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -125,7 +140,7 @@
                                 </span>
                                 @break
                             @case('approved')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                     <i class="bi bi-check-circle me-1"></i>Approved
                                 </span>
                                 @break
@@ -134,9 +149,9 @@
                                     <i class="bi bi-x-circle me-1"></i>Rejected
                                 </span>
                                 @break
-                            @case('completed')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    <i class="bi bi-check-all me-1"></i>Completed
+                            @case('adopted')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                    <i class="bi bi-heart me-1"></i>Adopted
                                 </span>
                                 @break
                             @default
@@ -144,6 +159,15 @@
                                     {{ ucfirst($application->status) }}
                                 </span>
                         @endswitch
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-600">
+                        @if($application->status == 'rejected' && $application->rejection_reason)
+                            <span title="{{ $application->rejection_reason }}" class="text-danger cursor-help">
+                                <i class="bi bi-info-circle me-1"></i>Provided
+                            </span>
+                        @else
+                            <span class="text-gray-400">-</span>
+                        @endif
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-600">{{ $application->created_at->format('M d, Y') }}</td>
                     <td class="px-4 py-3">
@@ -158,7 +182,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-4 py-12">
+                    <td colspan="7" class="px-4 py-12">
                         <div class="text-center">
                             <i class="bi bi-inbox text-gray-300 text-4xl mb-3 block"></i>
                             <p class="text-gray-500 font-medium">No adoption applications found</p>

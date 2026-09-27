@@ -32,6 +32,17 @@
                 </div>
             </div>
         </div>
+        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-amber-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Pending Approval</p>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ \App\Models\Pet::where('source_module', 'adoption_pets')->where('is_approved', false)->count() }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                    <i class="bi bi-clock text-amber-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm mb-6">
@@ -54,6 +65,13 @@
                         <option value="">All Genders</option>
                         <option value="male" {{ request('gender') == 'male' ? 'selected' : '' }}>Male</option>
                         <option value="female" {{ request('gender') == 'female' ? 'selected' : '' }}>Female</option>
+                    </select>
+                </div>
+                <div class="w-40">
+                    <select name="approval_status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All Status</option>
+                        <option value="pending" {{ request('approval_status') == 'pending' ? 'selected' : '' }}>Pending Approval</option>
+                        <option value="approved" {{ request('approval_status') == 'approved' ? 'selected' : '' }}>Approved</option>
                     </select>
                 </div>
                 <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
@@ -99,6 +117,20 @@
                             <a href="{{ route('admin-asst.adoption-pets.show', $pet) }}" class="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
                                 View
                             </a>
+                            @if(!$pet->is_approved)
+                            <form action="{{ route('admin-asst.adoption-pets.approve', $pet) }}" method="POST" class="flex-1">
+                                @csrf
+                                <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+                                    Approve
+                                </button>
+                            </form>
+                            <form action="{{ route('admin-asst.adoption-pets.reject', $pet) }}" method="POST" class="flex-1" onsubmit="return confirm('Reject this adoption request? The pet will be returned to the owner.')">
+                                @csrf
+                                <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
+                                    Reject
+                                </button>
+                            </form>
+                            @else
                             <a href="{{ route('admin-asst.adoption-pets.edit', $pet) }}" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition text-sm">
                                 <i class="bi bi-pencil"></i>
                             </a>
@@ -109,6 +141,7 @@
                                     Delete
                                 </button>
                             </form>
+                            @endif
                         </div>
                     </div>
                 </div>
