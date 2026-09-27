@@ -180,17 +180,6 @@
                     @endif
                 </div>
             </div>
-
-            @if($application->shelter_visit)
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0">Shelter Visit</h5>
-                </div>
-                <div class="card-body">
-                    <p class="mb-0">{{ $application->shelter_visit }}</p>
-                </div>
-            </div>
-            @endif
         </div>
     </div>
 </div>

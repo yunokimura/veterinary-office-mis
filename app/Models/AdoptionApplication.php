@@ -15,16 +15,14 @@ use Illuminate\Support\Carbon;
  * @property string $company
  * @property string|null $occupation
  * @property string|null $social_media
+ * @property string|null $marital_status
  * @property string $adopted_before
  * @property string $status
  * @property array<array-key, mixed>|null $alternate_contact
  * @property array<array-key, mixed>|null $questionnaire
  * @property string|null $valid_id_path
- * @property string|null $zoom_interview
- * @property Carbon|null $zoom_date
- * @property string|null $zoom_time
- * @property string|null $zoom_time_ampm
- * @property string|null $shelter_visit
+ * @property Carbon|null $appointment_date
+ * @property string|null $appointment_time
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read User $user
@@ -63,17 +61,14 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereOccupation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereQuestionnaire($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereSelectedPetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereShelterVisit($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereSocialMedia($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereStreet($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereValidIdPath($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereZoomDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereZoomInterview($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereZoomTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereZoomTimeAmpm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereAppointmentDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereAppointmentTime($value)
  *
  * @mixin \Eloquent
  */
@@ -89,23 +84,22 @@ class AdoptionApplication extends Model
         'company',
         'occupation',
         'social_media',
+        'marital_status',
         'adopted_before',
         'status',
         'alternate_contact',
         'questionnaire',
         'valid_id_path',
-        'zoom_interview',
-        'zoom_date',
-        'zoom_time',
-        'zoom_time_ampm',
-        'shelter_visit',
+        'appointment_date',
+        'appointment_time',
         'rejection_reason',
     ];
 
     protected $casts = [
         'alternate_contact' => 'array',
         'questionnaire' => 'array',
-        'zoom_date' => 'date',
+        'appointment_date' => 'date',
+        'appointment_time' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

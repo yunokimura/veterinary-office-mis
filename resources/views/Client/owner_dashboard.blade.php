@@ -283,8 +283,8 @@
                                     <p><strong>Pet:</strong> {{ $application->pet->pet_name }}</p>
                                 @endif
                                 <p><strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $application->status)) }}</p>
-                                @if($application->zoom_date)
-                                    <p><strong>Interview:</strong> {{ $application->zoom_date->format('M d, Y') }}</p>
+                                @if($application->appointment_date)
+                                    <p><strong>Appointment:</strong> {{ $application->appointment_date->format('M d, Y') }}</p>
                                 @endif
                             </div>
                             

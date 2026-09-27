@@ -109,11 +109,8 @@ namespace App\Models{
  * @property string|null $alternate_contact
  * @property array<array-key, mixed>|null $questionnaire
  * @property string|null $valid_id_path
- * @property string|null $zoom_interview
- * @property \Illuminate\Support\Carbon|null $zoom_date
- * @property string|null $zoom_time
- * @property string|null $zoom_time_ampm
- * @property string|null $shelter_visit
+ * @property \Illuminate\Support\Carbon|null $appointment_date
+ * @property string|null $appointment_time
  * @property int|null $selected_pet_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -138,17 +135,15 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereOccupation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereQuestionnaire($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereSelectedPetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereShelterVisit($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereSocialMedia($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereStreet($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereValidIdPath($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereZoomDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereZoomInterview($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereZoomTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereZoomTimeAmpm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereAppointmentDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereAppointmentTime($value)
+ *
  * @mixin \Eloquent
  */
 	class AdoptionApplication extends \Eloquent {}

@@ -361,18 +361,18 @@
                                     Status <span class="text-red-500">*</span>
                                 </label>
                                 <div class="flex gap-4 mt-2">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="status" value="Single" class="text-primary" {{ old('status', $application->status ?? '') === 'Single' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                        <span class="ml-2">Single</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="status" value="Married" class="text-primary" {{ old('status', $application->status ?? '') === 'Married' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                        <span class="ml-2">Married</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="status" value="Others" class="text-primary" {{ old('status', $application->status ?? '') === 'Others' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                        <span class="ml-2">Others</span>
-                                    </label>
+    <label class="inline-flex items-center">
+        <input type="radio" name="status" value="Single" class="text-primary" {{ old('status', $application->marital_status ?? $application->status ?? '') === 'Single' ? 'checked' : '' }} {{ $disabledAttr }}>
+        <span class="ml-2">Single</span>
+    </label>
+    <label class="inline-flex items-center">
+        <input type="radio" name="status" value="Married" class="text-primary" {{ old('status', $application->marital_status ?? $application->status ?? '') === 'Married' ? 'checked' : '' }} {{ $disabledAttr }}>
+        <span class="ml-2">Married</span>
+    </label>
+    <label class="inline-flex items-center">
+        <input type="radio" name="status" value="Others" class="text-primary" {{ old('status', $application->marital_status ?? $application->status ?? '') === 'Others' ? 'checked' : '' }} {{ $disabledAttr }}>
+        <span class="ml-2">Others</span>
+    </label>
                                 </div>
                             </div>
 
@@ -884,57 +884,6 @@
                     
                     let selectedAdoptionPets = [];
 
-                    function toggleInterviewFields() {
-                        const zoomYes = document.querySelector('input[name="zoom_interview"][value="Yes"]');
-                        const zoomNo = document.querySelector('input[name="zoom_interview"][value="No"]');
-                        const zoomDateTimeField = document.getElementById('zoomDateTimeField');
-                        const scheduleInterviewField = document.getElementById('scheduleInterviewField');
-                        
-                        if (!zoomDateTimeField || !scheduleInterviewField) return;
-                        
-                        if (zoomYes && zoomYes.checked) {
-                            zoomDateTimeField.classList.remove('hidden');
-                            scheduleInterviewField.classList.add('hidden');
-                        } else if (zoomNo && zoomNo.checked) {
-                            zoomDateTimeField.classList.add('hidden');
-                            scheduleInterviewField.classList.remove('hidden');
-                        } else {
-                            zoomDateTimeField.classList.add('hidden');
-                            scheduleInterviewField.classList.remove('hidden');
-                        }
-                    }
-
-                    function updateHomePhotoFields() {
-                        const windowsField = document.getElementById('windowsField');
-                        const frontBackyardField = document.getElementById('frontBackyardField');
-                        
-                        if (!windowsField || !frontBackyardField) return;
-                        
-                        let hasCat = false;
-                        let hasDog = false;
-                        
-                        selectedAdoptionPets.forEach(petId => {
-                            const pet = adoptionPetsData.find(p => String(p.pet_id) === String(petId));
-                            if (pet) {
-                                const species = pet.species ? pet.species.toLowerCase() : '';
-                                if (species === 'cat') hasCat = true;
-                                if (species === 'dog') hasDog = true;
-                            }
-                        });
-                        
-                        if (hasCat) {
-                            windowsField.classList.remove('hidden');
-                        } else {
-                            windowsField.classList.add('hidden');
-                        }
-                        
-                        if (hasDog) {
-                            frontBackyardField.classList.remove('hidden');
-                        } else {
-                            frontBackyardField.classList.add('hidden');
-                        }
-                    }
-
                     function openAdoptionPetModal() {
                         // Check if no pets available
                         if (adoptionPetsData.length === 0) {
@@ -1109,6 +1058,173 @@
                         updateAdoptionSelectedCount();
                     }
 
+                    const homePhotoState = {
+                        primaryLivingArea: [],
+                        outdoorYardGate: []
+                    };
+
+                    let validIdState = {
+                        file: null,
+                        existingPath: null
+                    };
+
+                    function getPhotoItem(file, existingPath) {
+                        return { file, existingPath };
+                    }
+
+                    function renderPhotoPreview(containerId, items, label) {
+                        const container = document.getElementById(containerId);
+                        if (!container) return;
+
+                        container.innerHTML = '';
+
+                        if (!items.length) {
+                            container.innerHTML = '<p class="text-xs text-gray-500 mt-1">No photos selected</p>';
+                            return;
+                        }
+
+                        items.forEach((item, index) => {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const card = document.createElement('div');
+                                card.className = 'relative';
+                                card.innerHTML = `
+                                    <img src="${item.existingPath ? '{{ asset('storage/') }}/' + item.existingPath : e.target.result}" 
+                                         alt="${label}" 
+                                         class="w-full h-32 object-cover rounded-lg border border-gray-200">
+                                    <button type="button" 
+                                            onclick="removePhoto('${containerId}', ${index})" 
+                                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition-colors">
+                                        ×
+                                    </button>
+                                    <p class="text-xs text-gray-500 mt-1">${item.existingPath ? 'Current photo' : 'Selected photo'}</p>
+                                `;
+                                container.appendChild(card);
+                            };
+                            reader.readAsDataURL(item.file);
+                        });
+                    }
+
+                    function removePhoto(containerId, index) {
+                        const stateKey = containerId === 'primaryLivingAreaPreview' ? 'primaryLivingArea' : 'outdoorYardGate';
+                        const items = homePhotoState[stateKey];
+                        
+                        if (index >= 0 && index < items.length) {
+                            items.splice(index, 1);
+                            renderPhotoPreview(containerId, items, stateKey === 'primaryLivingArea' ? 'Primary living area' : 'Outdoor yard gate');
+                            syncPhotoInput(containerId, items);
+                        }
+                    }
+
+                    function syncPhotoInput(containerId, items) {
+                        const inputName = containerId === 'primaryLivingAreaPreview' ? 'primary_living_area[]' : 'outdoor_yard_gate[]';
+                        const input = document.querySelector(`input[name="${inputName}"]`);
+                        if (!input) return;
+
+                        const dataTransfer = new DataTransfer();
+                        items.forEach(item => {
+                            if (item.file) {
+                                dataTransfer.items.add(item.file);
+                            }
+                        });
+
+                        const freshInput = document.createElement('input');
+                        freshInput.type = 'file';
+                        freshInput.name = input.name;
+                        freshInput.accept = 'image/*';
+                        freshInput.multiple = true;
+                        freshInput.className = input.className;
+                        freshInput.files = dataTransfer.files;
+                        freshInput.onchange = function() {
+                            handlePhotoSelect(this, containerId, 3);
+                        };
+                        input.parentNode.replaceChild(freshInput, input);
+                    }
+
+                    function handlePhotoSelect(input, containerId, maxCount) {
+                        const stateKey = containerId === 'primaryLivingAreaPreview' ? 'primaryLivingArea' : 'outdoorYardGate';
+                        const newFiles = Array.from(input.files);
+                        const totalCount = homePhotoState[stateKey].length + newFiles.length;
+
+                        if (totalCount > maxCount) {
+                            alert(`Only ${maxCount} photos are allowed`);
+                            input.value = '';
+                            return;
+                        }
+
+                        newFiles.forEach(file => {
+                            homePhotoState[stateKey].push(getPhotoItem(file, null));
+                        });
+
+                        renderPhotoPreview(containerId, homePhotoState[stateKey], stateKey === 'primaryLivingArea' ? 'Primary living area' : 'Outdoor yard gate');
+                        
+                        const dataTransfer = new DataTransfer();
+                        homePhotoState[stateKey].forEach(item => {
+                            if (item.file) {
+                                dataTransfer.items.add(item.file);
+                            }
+                        });
+
+                        const freshInput = document.createElement('input');
+                        freshInput.type = 'file';
+                        freshInput.name = input.name;
+                        freshInput.accept = 'image/*';
+                        freshInput.multiple = true;
+                        freshInput.className = input.className;
+                        freshInput.files = dataTransfer.files;
+                        freshInput.onchange = function() {
+                            handlePhotoSelect(this, containerId, maxCount);
+                        };
+                        input.parentNode.replaceChild(freshInput, input);
+                    }
+
+                    function handleValidIdSelect(input) {
+                        const container = document.getElementById('validIdPreview');
+                        if (!container || !input.files.length) return;
+
+                        const file = input.files[0];
+                        validIdState.file = file;
+                        validIdState.existingPath = null;
+
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            container.innerHTML = `
+                                <div class="relative inline-block">
+                                    <img src="${e.target.result}" alt="Valid ID" class="max-w-xs max-h-48 object-contain border border-gray-200 rounded-lg">
+                                    <button type="button" 
+                                            onclick="removeValidId()" 
+                                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition-colors">
+                                        ×
+                                    </button>
+                                    <p class="text-xs text-gray-500 mt-1">Selected valid ID</p>
+                                </div>
+                            `;
+                        };
+                        reader.readAsDataURL(file);
+
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+
+                        const freshInput = document.createElement('input');
+                        freshInput.type = 'file';
+                        freshInput.name = input.name;
+                        freshInput.accept = 'image/*';
+                        freshInput.className = input.className;
+                        freshInput.files = dataTransfer.files;
+                        freshInput.onchange = function() {
+                            handleValidIdSelect(this);
+                        };
+                        input.parentNode.replaceChild(freshInput, input);
+                    }
+
+                    function removeValidId() {
+                        validIdState = { file: null, existingPath: null };
+                        const container = document.getElementById('validIdPreview');
+                        if (container) {
+                            container.innerHTML = '';
+                        }
+                    }
+
                     // Close modal on escape key
                     document.addEventListener('keydown', function(e) {
                         if (e.key === 'Escape') {
@@ -1122,143 +1238,40 @@
                     <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 4: Home Photos</h3>
                     
                     <p class="text-sm text-gray-600 italic mb-4">
-                        Please attach photos of your home. This has replaced our on-site ocular inspections.
+                        Please attach 2–3 photos showing where the pet will sleep, play, and live (e.g., living room, yard, or balcony).
                     </p>
 
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <!-- Front of the house -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Front of the house</label>
-                            @if($isEdit && !empty($appHomePhotos['photo_front_house']))
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $appHomePhotos['photo_front_house']) }}" alt="Front of house" class="w-full h-32 object-cover rounded-lg border border-gray-200">
-                                    <p class="text-xs text-gray-500 mt-1">Current photo</p>
-                                </div>
-                            @endif
-                            <input type="file" name="photo_front_house" accept="image/*"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            @if($isEdit && !empty($appHomePhotos['photo_front_house']))
-                                <p class="text-xs text-gray-500 mt-1">Upload a new photo to replace the current one</p>
-                            @endif
+                    <div class="space-y-6">
+                        <!-- Primary Living Area -->
+                        <div class="border border-slate-200 rounded-lg p-4 bg-gray-50/50">
+                            <label class="block text-sm font-medium mb-1.5">
+                                Primary Living Area <span class="text-red-500">*</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mb-2">Upload 1–3 photos of living room, indoor area, or sleeping area</p>
+                            <input type="file" name="primary_living_area[]" accept="image/*" multiple
+                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                                   onchange="handlePhotoSelect(this, 'primaryLivingAreaPreview', 3)">
+                            <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb per photo</p>
+
+                            <div id="primaryLivingAreaPreview" class="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3">
+                            </div>
                         </div>
 
-                        <!-- Street photo -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Street photo</label>
-                            @if($isEdit && !empty($appHomePhotos['photo_street']))
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $appHomePhotos['photo_street']) }}" alt="Street photo" class="w-full h-32 object-cover rounded-lg border border-gray-200">
-                                    <p class="text-xs text-gray-500 mt-1">Current photo</p>
-                                </div>
-                            @endif
-                            <input type="file" name="photo_street" accept="image/*"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            @if($isEdit && !empty($appHomePhotos['photo_street']))
-                                <p class="text-xs text-gray-500 mt-1">Upload a new photo to replace the current one</p>
-                            @endif
-                        </div>
+                        <!-- Outdoor / Yard / Gate Area -->
+                        <div class="border border-slate-200 rounded-lg p-4 bg-gray-50/50">
+                            <label class="block text-sm font-medium mb-1.5">
+                                Outdoor / Yard / Gate Area <span class="text-gray-500">(Optional)</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mb-2">Photos of yard, balcony, or front gate if applicable</p>
+                            <input type="file" name="outdoor_yard_gate[]" accept="image/*" multiple
+                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                                   onchange="handlePhotoSelect(this, 'outdoorYardGatePreview', 3)">
+                            <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb per photo</p>
 
-                        <!-- Living room -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Living room</label>
-                            @if($isEdit && !empty($appHomePhotos['photo_living_room']))
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $appHomePhotos['photo_living_room']) }}" alt="Living room" class="w-full h-32 object-cover rounded-lg border border-gray-200">
-                                    <p class="text-xs text-gray-500 mt-1">Current photo</p>
-                                </div>
-                            @endif
-                            <input type="file" name="photo_living_room" accept="image/*"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            @if($isEdit && !empty($appHomePhotos['photo_living_room']))
-                                <p class="text-xs text-gray-500 mt-1">Upload a new photo to replace the current one</p>
-                            @endif
-                        </div>
-
-                        <!-- Dining area -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Dining area</label>
-                            @if($isEdit && !empty($appHomePhotos['photo_dining']))
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $appHomePhotos['photo_dining']) }}" alt="Dining area" class="w-full h-32 object-cover rounded-lg border border-gray-200">
-                                    <p class="text-xs text-gray-500 mt-1">Current photo</p>
-                                </div>
-                            @endif
-                            <input type="file" name="photo_dining" accept="image/*"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            @if($isEdit && !empty($appHomePhotos['photo_dining']))
-                                <p class="text-xs text-gray-500 mt-1">Upload a new photo to replace the current one</p>
-                            @endif
-                        </div>
-
-                        <!-- Kitchen -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Kitchen</label>
-                            @if($isEdit && !empty($appHomePhotos['photo_kitchen']))
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $appHomePhotos['photo_kitchen']) }}" alt="Kitchen" class="w-full h-32 object-cover rounded-lg border border-gray-200">
-                                    <p class="text-xs text-gray-500 mt-1">Current photo</p>
-                                </div>
-                            @endif
-                            <input type="file" name="photo_kitchen" accept="image/*"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            @if($isEdit && !empty($appHomePhotos['photo_kitchen']))
-                                <p class="text-xs text-gray-500 mt-1">Upload a new photo to replace the current one</p>
-                            @endif
-                        </div>
-
-                        <!-- Bedroom/s -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">Bedroom/s (optional)</label>
-                            @if($isEdit && !empty($appHomePhotos['photo_bedroom']))
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $appHomePhotos['photo_bedroom']) }}" alt="Bedroom" class="w-full h-32 object-cover rounded-lg border border-gray-200">
-                                    <p class="text-xs text-gray-500 mt-1">Current photo</p>
-                                </div>
-                            @endif
-                            <input type="file" name="photo_bedroom" accept="image/*"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            @if($isEdit && !empty($appHomePhotos['photo_bedroom']))
-                                <p class="text-xs text-gray-500 mt-1">Upload a new photo to replace the current one</p>
-                            @endif
-                        </div>
-
-                        <!-- Windows (if adopting a cat) -->
-                        <div id="windowsField" class="hidden">
-                            <label class="block text-sm font-medium mb-1.5">Windows <span class="text-red-500">*</span></label>
-                            @if($isEdit && !empty($appHomePhotos['photo_windows']))
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $appHomePhotos['photo_windows']) }}" alt="Windows" class="w-full h-32 object-cover rounded-lg border border-gray-200">
-                                    <p class="text-xs text-gray-500 mt-1">Current photo</p>
-                                </div>
-                            @endif
-                            <input type="file" name="photo_windows" accept="image/*"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            @if($isEdit && !empty($appHomePhotos['photo_windows']))
-                                <p class="text-xs text-gray-500 mt-1">Upload a new photo to replace the current one</p>
-                            @endif
-                        </div>
-
-                        <!-- Front & backyard (if adopting a dog) -->
-                        <div id="frontBackyardField" class="hidden">
-                            <label class="block text-sm font-medium mb-1.5">Front & backyard <span class="text-red-500">*</span></label>
-                            @if($isEdit && !empty($appHomePhotos['photo_backyard']))
-                                <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $appHomePhotos['photo_backyard']) }}" alt="Front & backyard" class="w-full h-32 object-cover rounded-lg border border-gray-200">
-                                    <p class="text-xs text-gray-500 mt-1">Current photo</p>
-                                </div>
-                            @endif
-                            <input type="file" name="photo_backyard" accept="image/*"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            @if($isEdit && !empty($appHomePhotos['photo_backyard']))
-                                <p class="text-xs text-gray-500 mt-1">Upload a new photo to replace the current one</p>
-                            @endif
+                            <div id="outdoorYardGatePreview" class="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3">
+                            </div>
                         </div>
                     </div>
-
-                    <p class="text-sm text-gray-600 mt-4">
-                        We value your privacy. Your photos will not be used for purposes other than this adoption application. <span class="text-red-500">*</span>
-                    </p>
-                    <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb</p>
 
                     <!-- Navigation Buttons for Part 4 -->
                     <div class="flex justify-between mt-8">
@@ -1285,15 +1298,42 @@
                         <label class="block text-sm font-medium mb-1.5">
                             Upload a valid ID <span class="text-red-500">*</span>
                         </label>
-                        @if($isEdit && !empty($application->valid_id_path))
-                            <div class="mb-2">
-                                <a href="{{ asset('storage/' . $application->valid_id_path) }}" target="_blank" class="text-primary hover:underline text-sm">View current valid ID</a>
-                                <p class="text-xs text-gray-500 mt-1">Upload a new file to replace the current one</p>
-                            </div>
-                        @endif
-                        <input type="file" name="valid_id" accept="image/*"
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                        <input type="file" id="validIdInput" name="valid_id" accept="image/*"
+                               class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                               onchange="handleValidIdSelect(this)">
                         <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb</p>
+
+                        <div id="validIdPreview" class="mt-3">
+                            @if($isEdit && !empty($application->valid_id_path))
+                                @php
+                                    $validIdPath = $application->valid_id_path;
+                                    $isPdf = str_contains(strtolower($validIdPath), '.pdf');
+                                @endphp
+                                <div class="relative inline-block" data-existing-path="{{ $validIdPath }}">
+                                    @if($isPdf)
+                                        <a href="{{ asset('storage/' . $validIdPath) }}" target="_blank" class="block">
+                                            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 flex items-center gap-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0014.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                </svg>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-700">Valid ID Document</p>
+                                                    <p class="text-xs text-gray-500">PDF - Click to view</p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    @else
+                                        <img src="{{ asset('storage/' . $validIdPath) }}" alt="Valid ID" class="max-w-xs max-h-48 object-contain border border-gray-200 rounded-lg">
+                                        <p class="text-xs text-gray-500 mt-1">Current valid ID</p>
+                                    @endif
+                                    <button type="button" 
+                                            onclick="removeValidId()" 
+                                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition-colors">
+                                        ×
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Navigation Buttons for Part 5 -->
@@ -1305,7 +1345,7 @@
                             Previous
                         </button>
                         <button type="button" onclick="goToStep(6)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
-                            Next: Interview & Visitation
+                            Next: Appointment Setup
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                             </svg>
@@ -1313,83 +1353,22 @@
                     </div>
                 </div>
 
-                <!-- PART 6: INTERVIEW & VISITATION -->
+                <!-- PART 6: APPOINTMENT SETUP -->
                 <div id="part6" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 6: Interview & Visitation</h3>
-                    
-                    <p class="text-sm text-gray-600 mb-4">
-                        Minors must be accompanied by a parent or guardian.
-                    </p>
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 6: Appointment Setup</h3>
 
                     <div class="space-y-6">
-                        <!-- Zoom interview -->
-                        <div>
-                            <p class="text-sm font-medium mb-2">
-                                Are you able to be interviewed through zoom meeting? <span class="text-red-500">*</span>
-                            </p>
-                            <p class="text-xs text-gray-500 italic mb-2">
-                                if yes please fill in the questions below, if no proceed to the next question
-                            </p>
-                            <div class="flex gap-4 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="zoom_interview" value="Yes" class="text-primary" onchange="toggleInterviewFields()" {{ old('zoom_interview', $application->zoom_interview ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                    <span class="ml-2">Yes</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="zoom_interview" value="No" class="text-primary" onchange="toggleInterviewFields()" {{ old('zoom_interview', $application->zoom_interview ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                    <span class="ml-2">No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Preferred date and time for Zoom interview -->
-                        <div id="zoomDateTimeField" class="hidden">
-                            <label class="block text-sm font-medium mb-1.5">
-                                Preferred date and time for Zoom interview <span class="text-red-500">*</span>
-                            </label>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <input type="date" name="zoom_date"
-                                       value="{{ old('zoom_date', ($application->zoom_date ?? '') ? \Carbon\Carbon::parse($application->zoom_date)->format('Y-m-d') : '') }}"
-                                       {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
-                                <input type="time" name="zoom_time"
-                                       value="{{ old('zoom_time', ($application->zoom_time ?? '') ? \Carbon\Carbon::parse($application->zoom_time)->format('H:i') : '') }}"
-                                       {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
-                            </div>
-                            <p class="text-xs text-gray-500 italic mt-2">
-                                We can't guarantee the availability of your requested time.
-                            </p>
-                        </div>
-
-                        <!-- Shelter visit -->
-                        <div>
-                            <p class="text-sm font-medium mb-2">
-                                Will you be able to visit the shelter for the meet-and-greet? <span class="text-red-500">*</span>
-                            </p>
-                            <div class="flex gap-4 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="shelter_visit" value="Yes" class="text-primary" {{ old('shelter_visit', $application->shelter_visit ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                    <span class="ml-2">Yes</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="shelter_visit" value="No" class="text-primary" {{ old('shelter_visit', $application->shelter_visit ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                    <span class="ml-2">No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Interview Appointment Slot Picker -->
+                        <!-- Appointment Slot Picker -->
                         <div id="scheduleInterviewField" class="mt-6 pt-6 border-t border-gray-200">
-                            <h4 class="text-md font-semibold text-gray-800 mb-4">Schedule Interview Appointment</h4>
+                            <h4 class="text-md font-semibold text-gray-800 mb-4">Schedule Appointment</h4>
                             <p class="text-sm text-gray-500 mb-4">
-                                Select a date and time for your adoption interview.
+                                Select a date and time for your adoption appointment.
                             </p>
                             @if($isView)
                                 <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
                                     <p class="text-sm text-gray-600">
-                                        <strong>Selected Date:</strong> {{ $application->zoom_date ? $application->zoom_date->format('F d, Y') : 'Not set' }}<br>
-                                        <strong>Selected Time:</strong> {{ $application->zoom_time ? \Carbon\Carbon::createFromFormat('H:i:s', $application->zoom_time)->format('h:i A') : 'Not set' }}
+                                        <strong>Selected Date:</strong> {{ $application->appointment_date ? \Carbon\Carbon::parse($application->appointment_date)->format('F d, Y') : 'Not set' }}<br>
+                                        <strong>Selected Time:</strong> {{ $application->appointment_time ? \Carbon\Carbon::createFromFormat('H:i:s', $application->appointment_time)->format('h:i A') : 'Not set' }}
                                     </p>
                                 </div>
                             @else
@@ -1728,6 +1707,50 @@
                 showPetSelectedToast(pet.pet_name);
             }
         }
+
+        // Initialize home photo state with existing photos
+        @if($isEdit && !empty($appHomePhotos['primary_living_area']))
+            homePhotoState.primaryLivingArea = @json($appHomePhotos['primary_living_area']).map(path => ({ file: null, existingPath: path }));
+            renderPhotoPreview('primaryLivingAreaPreview', homePhotoState.primaryLivingArea, 'Primary living area');
+        @endif
+
+        @if($isEdit && !empty($appHomePhotos['outdoor_yard_gate']))
+            homePhotoState.outdoorYardGate = @json($appHomePhotos['outdoor_yard_gate']).map(path => ({ file: null, existingPath: path }));
+            renderPhotoPreview('outdoorYardGatePreview', homePhotoState.outdoorYardGate, 'Outdoor yard gate');
+        @endif
+
+        @if($isEdit && !empty($application->valid_id_path))
+            validIdState.existingPath = @json($application->valid_id_path);
+            const validIdContainer = document.getElementById('validIdPreview');
+            if (validIdContainer) {
+                const validIdPath = validIdState.existingPath;
+                const isPdf = validIdPath && validIdPath.toLowerCase().includes('.pdf');
+                validIdContainer.innerHTML = `
+                    <div class="relative inline-block" data-existing-path="${validIdPath}">
+                        ${isPdf 
+                            ? `<a href="{{ asset('storage/') }}/${validIdPath}" target="_blank" class="block">
+                                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 flex items-center gap-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0014.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-700">Valid ID Document</p>
+                                        <p class="text-xs text-gray-500">PDF - Click to view</p>
+                                    </div>
+                                </div>
+                            </a>`
+                            : `<img src="{{ asset('storage/') }}/${validIdPath}" alt="Valid ID" class="max-w-xs max-h-48 object-contain border border-gray-200 rounded-lg">
+                               <p class="text-xs text-gray-500 mt-1">Current valid ID</p>`
+                        }
+                        <button type="button" 
+                                onclick="removeValidId()" 
+                                class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition-colors">
+                            ×
+                        </button>
+                    </div>
+                `;
+            }
+        @endif
     });
 
     // Step navigation
@@ -1745,11 +1768,6 @@
         // Show the target part
         document.getElementById('part' + step).classList.remove('hidden');
         
-        // Update conditional fields based on selected pets
-        if (step === 4) {
-            updateHomePhotoFields();
-        }
-
         // Update progress bar
         const progress = (step / 6) * 100;
         document.getElementById('progressBar').style.width = progress + '%';
@@ -1763,7 +1781,7 @@
             'Part 3: Adoption Questionnaire',
             'Part 4: Home Photos',
             'Part 5: Upload Valid ID',
-            'Part 6: Interview & Visitation'
+            'Part 6: Appointment Setup'
         ];
         document.getElementById('stepTitle').textContent = titles[step];
 
@@ -1815,11 +1833,7 @@
                 name === 'alt_email' ||
                 name === 'occupation' ||
                 name === 'company' ||
-                name === 'social_media' ||
-                name === 'zoom_date' ||
-                name === 'zoom_time_hour' ||
-                name === 'zoom_time_min' ||
-                name === 'zoom_time_ampm') {
+                name === 'social_media') {
                 return;
             }
 

@@ -10,6 +10,7 @@ use App\Models\Pet;
 use App\Services\AppointmentBookingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class AdoptionFormController extends Controller
@@ -38,14 +39,9 @@ class AdoptionFormController extends Controller
             'social_media' => 'nullable|string|max:255',
             'status' => 'nullable|in:Single,Married,Others',
             'adopted_before' => 'required|in:yes,no',
-            'zoom_interview' => 'required|in:Yes,No',
-            'interview_date' => 'required|date|after_or_equal:today',
-            'interview_time' => 'required',
-            'shelter_visit' => 'nullable|in:Yes,No',
             'selected_adoption_pets' => 'nullable|array',
             'selected_adoption_pets.*' => 'integer|exists:pets,pet_id',
             'questionnaire' => 'nullable|array',
-            'zoom_time_ampm' => 'nullable|string|max:10',
 
             'housing_type' => 'required|string|max:255',
             'housing_ownership' => 'required|string|max:255',
@@ -74,6 +70,10 @@ class AdoptionFormController extends Controller
             'photo_windows' => 'nullable|image|mimes:jpeg,png,jpg|max:8192',
             'photo_backyard' => 'nullable|image|mimes:jpeg,png,jpg|max:8192',
             'valid_id' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:8192',
+            'primary_living_area' => 'nullable|array|max:3',
+            'primary_living_area.*' => 'nullable|image|mimes:jpeg,png,jpg|max:8192',
+            'outdoor_yard_gate' => 'nullable|array|max:3',
+            'outdoor_yard_gate.*' => 'nullable|image|mimes:jpeg,png,jpg|max:8192',
         ]);
 
         $user = Auth::user();
@@ -84,16 +84,6 @@ class AdoptionFormController extends Controller
         }
 
         $addressId = $petOwner->address?->id;
-
-        $interviewDate = $validated['interview_date'];
-        $interviewTime = $validated['interview_time'];
-
-        try {
-            $bookingService = new AppointmentBookingService;
-            $bookingService->checkAndBookAdoptionSlot($interviewDate, $interviewTime);
-        } catch (AppointmentSlotTakenException $e) {
-            return redirect()->back()->with('error', $e->getMessage())->withInput();
-        }
 
         $selectedPetId = null;
         if ($request->has('selected_adoption_pets') && is_array($request->input('selected_adoption_pets'))) {
@@ -123,21 +113,20 @@ class AdoptionFormController extends Controller
         $questionnaire['past_pet_experience'] = $validated['past_pet_experience'] ?? null;
         $questionnaire['vaccination_stance'] = $validated['vaccination_stance'] ?? null;
 
-        $homePhotoPaths = [];
-        $homePhotoFields = [
-            'photo_front_house',
-            'photo_street',
-            'photo_living_room',
-            'photo_dining',
-            'photo_kitchen',
-            'photo_bedroom',
-            'photo_windows',
-            'photo_backyard',
+        $homePhotoPaths = [
+            'primary_living_area' => [],
+            'outdoor_yard_gate' => [],
         ];
 
-        foreach ($homePhotoFields as $field) {
-            if ($request->hasFile($field)) {
-                $homePhotoPaths[$field] = $request->file($field)->store('adoption/home-photos', 'public');
+        if ($request->hasFile('primary_living_area')) {
+            foreach ($request->file('primary_living_area') as $file) {
+                $homePhotoPaths['primary_living_area'][] = $file->store('adoption/home-photos', 'public');
+            }
+        }
+
+        if ($request->hasFile('outdoor_yard_gate')) {
+            foreach ($request->file('outdoor_yard_gate') as $file) {
+                $homePhotoPaths['outdoor_yard_gate'][] = $file->store('adoption/home-photos', 'public');
             }
         }
 
@@ -148,41 +137,43 @@ class AdoptionFormController extends Controller
             $validIdPath = $request->file('valid_id')->store('adoption/valid-ids', 'public');
         }
 
-        $adoptionApplication = AdoptionApplication::create([
-            'user_id' => $user->id,
-            'owner_id' => $petOwner->owner_id,
-            'address_id' => $addressId,
-            'selected_pet_id' => $selectedPetId,
-            'occupation' => $validated['occupation'] ?? null,
-            'company' => $validated['company'] ?? null,
-            'social_media' => $validated['social_media'] ?? null,
-            'status' => $validated['status'] ?? null,
-            'adopted_before' => $validated['adopted_before'],
-            'alternate_contact' => $alternateContact,
-            'questionnaire' => $questionnaire,
-            'valid_id_path' => $validIdPath,
-            'zoom_interview' => $validated['zoom_interview'],
-            'zoom_date' => $interviewDate,
-            'zoom_time' => $interviewTime,
-            'zoom_time_ampm' => $validated['zoom_time_ampm'] ?? null,
-            'shelter_visit' => $validated['shelter_visit'] ?? 'No',
-        ]);
+        DB::beginTransaction();
+        try {
+            $adoptionApplication = AdoptionApplication::create([
+                'user_id' => $user->id,
+                'owner_id' => $petOwner->owner_id,
+                'address_id' => $addressId,
+                'selected_pet_id' => $selectedPetId,
+                'occupation' => $validated['occupation'] ?? null,
+                'company' => $validated['company'] ?? null,
+                'social_media' => $validated['social_media'] ?? null,
+                'marital_status' => $validated['status'] ?? null,
+                'adopted_before' => $validated['adopted_before'],
+                'alternate_contact' => $alternateContact,
+                'questionnaire' => $questionnaire,
+                'valid_id_path' => $validIdPath,
+                'appointment_date' => $request->input('interview_date'),
+                'appointment_time' => $request->input('interview_time'),
+            ]);
 
-        Appointment::create([
-            'appointment_date' => $interviewDate,
-            'appointment_time' => $interviewTime,
-            'service_type' => 'adoption_interview',
-            'service_id' => $adoptionApplication->id,
-            'status' => 'pending',
-            'total_weight' => 1,
-            'metadata' => [
-                'adopter_name' => $petOwner->full_name,
-                'adopter_email' => $user->email,
-                'adopter_contact' => $petOwner->phone_number,
-            ],
-        ]);
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
 
-        return redirect()->back()->with('success', 'Adoption application submitted successfully! We will contact you soon for the interview.');
+            foreach ($homePhotoPaths['primary_living_area'] ?? [] as $path) {
+                Storage::disk('public')->delete($path);
+            }
+            foreach ($homePhotoPaths['outdoor_yard_gate'] ?? [] as $path) {
+                Storage::disk('public')->delete($path);
+            }
+            if ($validIdPath) {
+                Storage::disk('public')->delete($validIdPath);
+            }
+
+            throw $e;
+        }
+
+        return redirect()->route('adoption.index')->with('success', 'Adoption application submitted successfully! We will contact you soon for the interview.');
     }
 
     public function edit($id)
@@ -225,14 +216,9 @@ class AdoptionFormController extends Controller
             'social_media' => 'nullable|string|max:255',
             'status' => 'nullable|in:Single,Married,Others',
             'adopted_before' => 'required|in:yes,no',
-            'zoom_interview' => 'required|in:Yes,No',
-            'interview_date' => 'required|date|after_or_equal:today',
-            'interview_time' => 'required',
-            'shelter_visit' => 'nullable|in:Yes,No',
             'selected_adoption_pets' => 'nullable|array',
             'selected_adoption_pets.*' => 'integer|exists:pets,pet_id',
             'questionnaire' => 'nullable|array',
-            'zoom_time_ampm' => 'nullable|string|max:10',
 
             'housing_type' => 'required|string|max:255',
             'housing_ownership' => 'required|string|max:255',
@@ -261,10 +247,11 @@ class AdoptionFormController extends Controller
             'photo_windows' => 'nullable|image|mimes:jpeg,png,jpg|max:8192',
             'photo_backyard' => 'nullable|image|mimes:jpeg,png,jpg|max:8192',
             'valid_id' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:8192',
+            'primary_living_area' => 'nullable|array|max:3',
+            'primary_living_area.*' => 'nullable|image|mimes:jpeg,png,jpg|max:8192',
+            'outdoor_yard_gate' => 'nullable|array|max:3',
+            'outdoor_yard_gate.*' => 'nullable|image|mimes:jpeg,png,jpg|max:8192',
         ]);
-
-        $interviewDate = $validated['interview_date'];
-        $interviewTime = $validated['interview_time'];
 
         $selectedPetId = null;
         if ($request->has('selected_adoption_pets') && is_array($request->input('selected_adoption_pets'))) {
@@ -295,25 +282,31 @@ class AdoptionFormController extends Controller
         $questionnaire['vaccination_stance'] = $validated['vaccination_stance'] ?? null;
 
         $homePhotoPaths = $application->questionnaire['home_photos'] ?? [];
-        $homePhotoFields = [
-            'photo_front_house',
-            'photo_street',
-            'photo_living_room',
-            'photo_dining',
-            'photo_kitchen',
-            'photo_bedroom',
-            'photo_windows',
-            'photo_backyard',
-        ];
+        $homePhotoPaths = is_array($homePhotoPaths) ? $homePhotoPaths : [];
 
-        foreach ($homePhotoFields as $field) {
-            if ($request->hasFile($field)) {
-                if (!empty($homePhotoPaths[$field])) {
-                    Storage::disk('public')->delete($homePhotoPaths[$field]);
-                }
-                $homePhotoPaths[$field] = $request->file($field)->store('adoption/home-photos', 'public');
+        $oldPrimaryPhotos = isset($homePhotoPaths['primary_living_area']) && is_array($homePhotoPaths['primary_living_area'])
+            ? $homePhotoPaths['primary_living_area']
+            : [];
+        $oldOutdoorPhotos = isset($homePhotoPaths['outdoor_yard_gate']) && is_array($homePhotoPaths['outdoor_yard_gate'])
+            ? $homePhotoPaths['outdoor_yard_gate']
+            : [];
+
+        $newPrimaryPhotos = [];
+        if ($request->hasFile('primary_living_area')) {
+            foreach ($request->file('primary_living_area') as $file) {
+                $newPrimaryPhotos[] = $file->store('adoption/home-photos', 'public');
             }
         }
+
+        $newOutdoorPhotos = [];
+        if ($request->hasFile('outdoor_yard_gate')) {
+            foreach ($request->file('outdoor_yard_gate') as $file) {
+                $newOutdoorPhotos[] = $file->store('adoption/home-photos', 'public');
+            }
+        }
+
+        $homePhotoPaths['primary_living_area'] = $newPrimaryPhotos ?: $oldPrimaryPhotos;
+        $homePhotoPaths['outdoor_yard_gate'] = $newOutdoorPhotos ?: $oldOutdoorPhotos;
 
         $questionnaire['home_photos'] = $homePhotoPaths;
 
@@ -325,21 +318,46 @@ class AdoptionFormController extends Controller
             $validIdPath = $request->file('valid_id')->store('adoption/valid-ids', 'public');
         }
 
-        $application->update([
-            'occupation' => $validated['occupation'] ?? null,
-            'company' => $validated['company'] ?? null,
-            'social_media' => $validated['social_media'] ?? null,
-            'status' => $validated['status'] ?? null,
-            'adopted_before' => $validated['adopted_before'],
-            'alternate_contact' => $alternateContact,
-            'questionnaire' => $questionnaire,
-            'valid_id_path' => $validIdPath,
-            'zoom_interview' => $validated['zoom_interview'],
-            'zoom_date' => $interviewDate,
-            'zoom_time' => $interviewTime,
-            'zoom_time_ampm' => $validated['zoom_time_ampm'] ?? null,
-            'shelter_visit' => $validated['shelter_visit'] ?? 'No',
-        ]);
+        DB::beginTransaction();
+        try {
+            $application->update([
+                'occupation' => $validated['occupation'] ?? null,
+                'company' => $validated['company'] ?? null,
+                'social_media' => $validated['social_media'] ?? null,
+                'marital_status' => $validated['status'] ?? null,
+                'adopted_before' => $validated['adopted_before'],
+                'alternate_contact' => $alternateContact,
+                'questionnaire' => $questionnaire,
+                'valid_id_path' => $validIdPath,
+                'appointment_date' => $request->input('interview_date'),
+                'appointment_time' => $request->input('interview_time'),
+            ]);
+
+            if (!empty($oldPrimaryPhotos) && !empty($newPrimaryPhotos)) {
+                foreach ($oldPrimaryPhotos as $path) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+
+            if (!empty($oldOutdoorPhotos) && !empty($newOutdoorPhotos)) {
+                foreach ($oldOutdoorPhotos as $path) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            foreach ($newPrimaryPhotos as $path) {
+                Storage::disk('public')->delete($path);
+            }
+            foreach ($newOutdoorPhotos as $path) {
+                Storage::disk('public')->delete($path);
+            }
+
+            throw $e;
+        }
 
         return redirect()->route('owner.dashboard')
             ->with('success', 'Adoption application updated successfully!');
