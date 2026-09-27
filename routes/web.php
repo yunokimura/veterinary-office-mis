@@ -1104,19 +1104,19 @@ Route::get('/adoption/paginate', function (Request $request) {
 });
 
 // Adoption Form Page Route
-Route::get('/adoption/form', function () {
-    $user = auth()->user();
-    if (! $user) {
-        return redirect()->route('login');
-    }
-    $petOwner = $user->petOwner()->with(['address' => function ($query) {
-        $query->with('barangay');
-    }])->first();
-    $traits = AdoptionTrait::orderBy('name')->get();
-    $adoptionPets = Pet::where('source_module', 'adoption_pets')->get();
+Route::get('/adoption/form', [AdoptionFormController::class, 'create'])
+    ->middleware(['auth'])
+    ->name('adoption.form');
 
-    return view('Client.adoption_form', compact('user', 'petOwner', 'traits', 'adoptionPets'));
-})->name('adoption.form');
+// Adoption Form Edit Route
+Route::get('/adoption/form/{application}/edit', [AdoptionFormController::class, 'edit'])
+    ->middleware(['auth'])
+    ->name('adoption.form.edit');
+
+// Adoption Form Update Route
+Route::put('/adoption/form/{application}', [AdoptionFormController::class, 'update'])
+    ->middleware(['auth'])
+    ->name('adoption.form.update');
 
 // Adoption Form POST Route
 Route::post('/adoption/form', [AdoptionFormController::class, 'store'])
