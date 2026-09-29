@@ -51,6 +51,9 @@ class VaccinationAppointment extends Model
         'last_anti_rabies_date',
         'recent_surgery',
         'assigned_vet',
+        'clinic_name',
+        'vaccination_certificate',
+        'vaccine_lot_number',
     ];
 
     protected $casts = [

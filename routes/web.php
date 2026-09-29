@@ -1304,8 +1304,14 @@ Route::post('/vaccination/form', function (Request $request) {
         'selected_pets' => 'required|array|min:1|max:3',
         'appointment_date' => 'required|date|after_or_equal:today',
         'appointment_time' => 'required',
-        'last_anti_rabies_date' => 'nullable|date',
-        'recent_surgery' => 'required|in:yes,no',
+        'pet_medical_history' => 'required|array',
+        'pet_medical_history.*.has_previous_vaccine' => 'required|in:yes,no',
+        'pet_medical_history.*.last_anti_rabies_date' => 'nullable|date',
+        'pet_medical_history.*.clinic_name' => 'nullable|string|max:255',
+        'pet_medical_history.*.vaccination_certificate' => 'nullable|string|max:255',
+        'pet_medical_history.*.vaccine_lot_number' => 'nullable|string|max:255',
+        'pet_medical_history.*.special_notes' => 'nullable|string|max:1000',
+        'pet_medical_history.*.recent_surgery' => 'required|in:yes,no',
         'alt_mobile_number' => 'nullable|string|max:12',
         // Address fields to create a new Address record
         'blk_lot_ph' => 'required|string|max:255',
@@ -1338,9 +1344,10 @@ Route::post('/vaccination/form', function (Request $request) {
     // Combine date and time into scheduled_at
     $scheduledAt = Carbon::parse($validated['appointment_date'].' '.$validated['appointment_time']);
 
-    // Store selected pets and optional alt_mobile_number in metadata JSON
+    // Store selected pets, per-pet medical history, and optional alt_mobile_number in metadata JSON
     $metadata = [
         'selected_pets' => $selectedPets,
+        'pet_medical_history' => $validated['pet_medical_history'] ?? [],
     ];
     if (! empty($validated['alt_mobile_number'])) {
         $metadata['alt_mobile_number'] = $validated['alt_mobile_number'];
@@ -1369,8 +1376,6 @@ Route::post('/vaccination/form', function (Request $request) {
         'owner_id' => $petOwner->owner_id,
         'address_id' => $address->id,
         'scheduled_at' => $scheduledAt,
-        'last_anti_rabies_date' => $validated['last_anti_rabies_date'] ?? null,
-        'recent_surgery' => $validated['recent_surgery'] === 'yes',
         'status' => 'pending',
         'metadata' => $metadata,
     ]);
