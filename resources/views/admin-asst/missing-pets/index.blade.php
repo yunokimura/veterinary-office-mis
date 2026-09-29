@@ -107,15 +107,15 @@
                         @endif
                         <div class="absolute top-2 right-2 flex gap-1">
                             @if($pet->status == 'pending review')
-                                <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">Pending Review</span>
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">Pending Review</span>
                             @elseif($pet->status == 'approved')
-                                <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">Approved</span>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Approved</span>
                             @elseif(str_starts_with($pet->status, 'resolved'))
-                                <span class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">Resolved</span>
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Resolved</span>
                             @elseif(str_starts_with($pet->status, 'closed'))
-                                <span class="bg-gray-600 text-white px-2 py-1 rounded-full text-xs font-medium">Closed</span>
+                                <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">Closed</span>
                             @elseif($pet->status == 'rejected')
-                                <span class="bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium">Rejected</span>
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">Rejected</span>
                             @endif
                         </div>
                     </div>

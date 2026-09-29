@@ -1242,7 +1242,9 @@ class CityVetController extends Controller
      */
     public function showAdoptionReportJson(\App\Models\AdoptionApplication $adoption)
     {
-        $adoption->load(['user', 'pet']);
+        $adoption->load(['user', 'pet', 'owner', 'address']);
+
+        $q = $adoption->questionnaire ?? [];
 
         return response()->json([
             'success' => true,
@@ -1257,14 +1259,22 @@ class CityVetController extends Controller
                 'pet_species' => ucfirst($adoption->pet->species ?? 'N/A'),
                 'pet_breed' => $adoption->pet->breed ?? 'N/A',
                 'pet_gender' => ucfirst($adoption->pet->gender ?? 'N/A'),
-                'reason' => $adoption->reason,
-                'has_other_pets' => $adoption->has_other_pets ? 'Yes' : 'No',
-                'other_pets_details' => $adoption->other_pets_details ?? 'N/A',
-                'home_type' => ucfirst($adoption->home_type ?? 'N/A'),
-                'yard_has_fence' => $adoption->yard_has_fence ? 'Yes' : 'No',
-                'adoption_date' => $adoption->adoption_date ? \Carbon\Carbon::parse($adoption->adoption_date)->format('M d, Y') : 'N/A',
-                'notes' => $adoption->notes ?? 'N/A',
+                'reason' => $q['relocation_plan'] ?? $adoption->rejection_reason ?? 'N/A',
+                'has_other_pets' => $q['current_pets'] ?? 'N/A',
+                'other_pets_details' => $q['past_pet_experience'] ?? 'N/A',
+                'home_type' => ucfirst($q['housing_type'] ?? 'N/A'),
+                'yard_has_fence' => 'N/A',
+                'adoption_date' => $adoption->appointment_date ? \Carbon\Carbon::parse($adoption->appointment_date)->format('M d, Y') : 'N/A',
+                'appointment_time' => $adoption->appointment_time ? \Carbon\Carbon::createFromFormat('H:i:s', $adoption->appointment_time)->format('h:i A') : 'N/A',
+                'notes' => $adoption->rejection_reason ?? 'N/A',
                 'created_at' => $adoption->created_at->format('F j, Y \a\t g:i A'),
+                'marital_status' => $adoption->marital_status ?? 'N/A',
+                'occupation' => $adoption->occupation ?? 'N/A',
+                'company' => $adoption->company ?? 'N/A',
+                'social_media' => $adoption->social_media ?? 'N/A',
+                'address' => trim(($adoption->address?->block_lot_phase ?? '') . ' ' . ($adoption->address?->street ?? '') . ', ' . ($adoption->address?->barangay?->barangay_name ?? '')) ?: 'N/A',
+                'valid_id_path' => $adoption->valid_id_path,
+                'home_photos' => collect($q['home_photos'] ?? [])->flatten()->filter()->values()->all(),
             ]
         ]);
     }

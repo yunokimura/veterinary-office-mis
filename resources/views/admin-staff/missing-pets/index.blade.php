@@ -90,9 +90,9 @@
                         @endif
                         <div class="absolute top-2 right-2 flex gap-1">
                             @if($pet->status == 'pending')
-                                <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">Pending</span>
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">Pending</span>
                             @else
-                                <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">Approved</span>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Approved</span>
                             @endif
                         </div>
                     </div>

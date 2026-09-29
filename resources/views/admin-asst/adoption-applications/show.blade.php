@@ -11,93 +11,162 @@
         </a>
     </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm mb-4">
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white py-3">
-                    <h4 class="mb-0">{{ $application->first_name }} {{ $application->last_name }}</h4>
+                    <h5 class="mb-0">Applicant Information</h5>
                 </div>
                 <div class="card-body">
-                    <table class="table table-borderless">
-                        <tr>
-                            <td class="text-muted" style="width: 200px;">Email</td>
-                            <td>{{ $application->email }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Mobile Number</td>
-                            <td>{{ $application->mobile_number }}</td>
-                        </tr>
+                    <div class="row g-2">
+                        <div class="col-sm-4 text-muted">Name</div>
+                        <div class="col-sm-8">{{ $application->first_name }} {{ $application->last_name }}</div>
+
+                        <div class="col-sm-4 text-muted">Email</div>
+                        <div class="col-sm-8">{{ $application->email }}</div>
+
+                        <div class="col-sm-4 text-muted">Mobile Number</div>
+                        <div class="col-sm-8">{{ $application->mobile_number }}</div>
+
                         @if($application->alt_mobile_number)
-                        <tr>
-                            <td class="text-muted">Alt Mobile</td>
-                            <td>{{ $application->alt_mobile_number }}</td>
-                        </tr>
+                        <div class="col-sm-4 text-muted">Alt Mobile</div>
+                        <div class="col-sm-8">{{ $application->alt_mobile_number }}</div>
                         @endif
-                        <tr>
-                            <td class="text-muted">Address</td>
-                            <td>
-                                {{ $application->blk_lot_ph }} {{ $application->street }}<br>
-                                {{ $application->barangay }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Birth Date</td>
-                            <td>{{ $application->birth_date ? $application->birth_date->format('M d, Y') : 'N/A' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Occupation</td>
-                            <td>{{ $application->occupation ?? 'N/A' }}</td>
-                        </tr>
+
+                        <div class="col-sm-4 text-muted">Address</div>
+                        <div class="col-sm-8">
+                            {{ $application->blk_lot_ph }} {{ $application->street }}<br>
+                            {{ $application->barangay }}
+                        </div>
+
+                        <div class="col-sm-4 text-muted">Birth Date</div>
+                        <div class="col-sm-8">{{ $application->birth_date ? $application->birth_date->format('M d, Y') : 'N/A' }}</div>
+
+                        <div class="col-sm-4 text-muted">Occupation</div>
+                        <div class="col-sm-8">{{ $application->occupation ?? 'N/A' }}</div>
+
                         @if($application->company)
-                        <tr>
-                            <td class="text-muted">Company</td>
-                            <td>{{ $application->company }}</td>
-                        </tr>
+                        <div class="col-sm-4 text-muted">Company</div>
+                        <div class="col-sm-8">{{ $application->company }}</div>
                         @endif
+
                         @if($application->social_media)
-                        <tr>
-                            <td class="text-muted">Social Media</td>
-                            <td>{{ $application->social_media }}</td>
-                        </tr>
+                        <div class="col-sm-4 text-muted">Social Media</div>
+                        <div class="col-sm-8">{{ $application->social_media }}</div>
                         @endif
-                        <tr>
-                            <td class="text-muted">Adopted Before</td>
-                            <td>{{ $application->adopted_before ? 'Yes' : 'No' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Submitted</td>
-                            <td>{{ $application->created_at->format('M d, Y h:i A') }}</td>
-                        </tr>
-                    </table>
+
+                        <div class="col-sm-4 text-muted">Marital Status</div>
+                        <div class="col-sm-8">{{ $application->marital_status ?? 'N/A' }}</div>
+
+                        <div class="col-sm-4 text-muted">Adopted Before</div>
+                        <div class="col-sm-8">{{ $application->adopted_before ? 'Yes' : 'No' }}</div>
+
+                        <div class="col-sm-4 text-muted">Submitted</div>
+                        <div class="col-sm-8">{{ $application->created_at->format('M d, Y h:i A') }}</div>
+                    </div>
                 </div>
             </div>
 
             @if($application->questionnaire)
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Questionnaire Responses</h5>
                 </div>
                 <div class="card-body">
-                    @foreach($application->questionnaire as $question => $answer)
-                    <div class="mb-3">
-                        <strong class="text-muted d-block small">{{ $question }}</strong>
-                        <p class="mb-0">{{ $answer }}</p>
+                    @php
+                        $q = $application->questionnaire;
+                        $items = [
+                            'Housing Type' => $q['housing_type'] ?? null,
+                            'Housing Ownership' => $q['housing_ownership'] ?? null,
+                            'Household Members' => isset($q['household_members']) && is_array($q['household_members']) ? implode(', ', $q['household_members']) : null,
+                            'Household Agreement' => $q['household_agreement'] ?? null,
+                            'Pet Allergies' => $q['pet_allergies'] ?? null,
+                            'Primary Caregiver' => $q['primary_caregiver'] ?? null,
+                            'Time Alone' => $q['time_alone'] ?? null,
+                            'Relocation Plan' => $q['relocation_plan'] ?? null,
+                            'Current Pets' => $q['current_pets'] ?? null,
+                            'Past Pet Experience' => $q['past_pet_experience'] ?? null,
+                            'Vaccination Stance' => $q['vaccination_stance'] ?? null,
+                        ];
+                    @endphp
+
+                    <div class="row g-2">
+                        @foreach($items as $label => $value)
+                            @if($value)
+                                <div class="col-sm-4 text-muted">{{ $label }}</div>
+                                <div class="col-sm-8 mb-2">{{ $value }}</div>
+                            @endif
+                        @endforeach
                     </div>
-                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if($application->appointment_date || $application->appointment_time)
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Adoption Appointment</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-sm-4 text-muted">Date</div>
+                        <div class="col-sm-8">{{ $application->appointment_date ? \Carbon\Carbon::parse($application->appointment_date)->format('F d, Y') : 'Not set' }}</div>
+
+                        <div class="col-sm-4 text-muted">Time</div>
+                        <div class="col-sm-8">{{ $application->appointment_time ? \Carbon\Carbon::createFromFormat('H:i:s', $application->appointment_time)->format('h:i A') : 'Not set' }}</div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            @if(!empty($application->questionnaire['home_photos']))
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Home Photos</h5>
+                </div>
+                <div class="card-body">
+                    @php
+                        $photos = collect($application->questionnaire['home_photos'])->flatten()->filter()->values();
+                    @endphp
+
+                    @if($photos->count())
+                        <div class="row g-2">
+                            @foreach($photos as $path)
+                                @php
+                                    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                                    $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                @endphp
+
+                                <div class="col-4 col-sm-3">
+                                    @if($isImage)
+                                        <a href="{{ asset('storage/' . $path) }}" target="_blank">
+                                            <img src="{{ asset('storage/' . $path) }}" alt="Home photo" class="w-100 rounded border border-gray-200" style="height: 96px; object-fit: cover;">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset('storage/' . $path) }}" target="_blank" class="d-flex align-items-center justify-content-center border border-gray-200 rounded" style="height: 96px;">
+                                            <span class="text-muted small">Document</span>
+                                        </a>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">No home photos uploaded.</p>
+                    @endif
                 </div>
             </div>
             @endif
         </div>
 
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm mb-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Status</h5>
                 </div>
                 <div class="card-body text-center">
                     @switch($application->status)
                         @case('pending_review')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pending Review</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending Review</span>
                             @break
                         @case('approved')
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Approved</span>
@@ -115,7 +184,7 @@
             </div>
 
             @if($application->status == 'rejected' && $application->rejection_reason)
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Rejection Reason</h5>
                 </div>
@@ -125,7 +194,7 @@
             </div>
             @endif
 
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Actions</h5>
                 </div>
@@ -180,6 +249,31 @@
                     @endif
                 </div>
             </div>
+
+            @if($application->valid_id_path)
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Valid ID</h5>
+                </div>
+                <div class="card-body">
+                    @php
+                        $ext = strtolower(pathinfo($application->valid_id_path, PATHINFO_EXTENSION));
+                        $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                    @endphp
+
+                    @if($isImage)
+                        <a href="{{ asset('storage/' . $application->valid_id_path) }}" target="_blank">
+                            <img src="{{ asset('storage/' . $application->valid_id_path) }}" alt="Valid ID" class="w-100 rounded border border-gray-200" style="max-height: 220px; object-fit: cover;">
+                        </a>
+                    @else
+                        <a href="{{ asset('storage/' . $application->valid_id_path) }}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none">
+                            <i class="fas fa-file-alt text-secondary"></i>
+                            <span>View document</span>
+                        </a>
+                    @endif
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>

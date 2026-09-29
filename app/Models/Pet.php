@@ -184,11 +184,9 @@ class Pet extends Model
             return (int) $this->birthdate->diffInYears(now());
         }
 
-        $info = $this->petInfo?->estimated_age;
-        if ($info) {
-            $num = preg_replace('/\D/', '', $info);
-
-            return is_numeric($num) ? (int) $num : null;
+        $petAge = $this->petInfo?->pet_age;
+        if ($petAge) {
+            return $petAge;
         }
 
         return null;
@@ -211,6 +209,6 @@ class Pet extends Model
 
     public function getIsAgeEstimatedAttribute()
     {
-        return ! empty($this->petInfo?->estimated_age);
+        return ! empty($this->petInfo?->pet_age);
     }
 }

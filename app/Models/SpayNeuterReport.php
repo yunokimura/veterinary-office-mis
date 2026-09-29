@@ -205,7 +205,7 @@ class SpayNeuterReport extends Model
      */
     public function getPetAgeAttribute(): ?string
     {
-        return $this->pet?->petInfo?->estimated_age;
+        return $this->pet?->petInfo?->pet_age;
     }
 
     /**

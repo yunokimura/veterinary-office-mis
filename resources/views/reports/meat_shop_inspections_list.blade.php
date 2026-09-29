@@ -54,10 +54,10 @@
                             <td class="px-4 py-4">
                                 @php
                                     $statusColors = [
-                                        'none' => 'bg-gray-100 text-gray-700',
-                                        '1st_warning' => 'bg-yellow-100 text-yellow-700',
-                                        '2nd_warning' => 'bg-orange-100 text-orange-700',
-                                        '3rd_warning' => 'bg-red-100 text-red-700',
+                                        'none' => 'bg-gray-100 text-gray-800',
+                                        '1st_warning' => 'bg-yellow-100 text-yellow-800',
+                                        '2nd_warning' => 'bg-orange-100 text-orange-800',
+                                        '3rd_warning' => 'bg-red-100 text-red-800',
                                     ];
                                     $statusLabels = [
                                         'none' => 'None',
@@ -66,7 +66,7 @@
                                         '3rd_warning' => '3rd Warning',
                                     ];
                                 @endphp
-                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusColors[$inspection->apprehension_status] ?? 'bg-gray-100 text-gray-700' }}">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusColors[$inspection->apprehension_status] ?? 'bg-gray-100 text-gray-800' }}">
                                     {{ $statusLabels[$inspection->apprehension_status] ?? 'None' }}
                                 </span>
                             </td>

@@ -1280,8 +1280,14 @@ Route::get('/vaccination/form', function () {
             'name' => $pet->pet_name,
             'species' => $pet->species,
             'breed' => $pet->breed,
+            'gender' => $pet->gender,
+            'color' => $pet->color,
             'age' => $pet->age,
             'weight' => $pet->weight,
+            'vaccination_status' => $pet->vaccination_status,
+            'vaccination_date' => $pet->vaccination_date,
+            'next_vaccination_date' => $pet->next_vaccination_date,
+            'birthdate' => $pet->birthdate,
             'image' => $pet->pet_image,
         ];
     })->toArray();

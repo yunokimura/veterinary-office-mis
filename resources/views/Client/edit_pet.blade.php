@@ -276,17 +276,11 @@
                     <input type="date" id="petBirthdate" name="pet_birthdate" value="{{ $pet->birthdate ? $pet->birthdate->format('Y-m-d') : '' }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
                 </div>
 
-                <!-- Estimated Pet Age -->
+                <!-- Exact Pet Age -->
                 <div id="ageSection" class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Pet Age <span class="text-red-500">*</span></label>
-                    <select id="estimatedAge" name="estimated_age" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
-                        <option value="">Select estimated age</option>
-                        <option value="less_than_3_months" {{ ($pet->petInfo?->estimated_age ?? '') == 'less_than_3_months' ? 'selected' : '' }}>Less than 3 months old</option>
-                        <option value="3_to_12_months" {{ ($pet->petInfo?->estimated_age ?? '') == '3_to_12_months' ? 'selected' : '' }}>3 to 12 months old</option>
-                        @for($i = 1; $i <= 20; $i++)
-                        <option value="{{ $i }}_years" {{ ($pet->petInfo?->estimated_age ?? '') == $i . '_years' ? 'selected' : '' }}>{{ $i }} year{{ $i > 1 ? 's' : '' }} old</option>
-                        @endfor
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Pet Age</label>
+                    <input type="text" id="petAge" name="pet_age" value="{{ $pet->petInfo?->pet_age ?? '' }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="e.g. 2 years 3 months">
+                    <p class="text-xs text-gray-500 mt-1">Enter exact age, e.g. "3 months", "1 year", "2 years 6 months"</p>
                 </div>
 
                 <!-- Pet Weight -->

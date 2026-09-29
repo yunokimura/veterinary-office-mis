@@ -370,6 +370,30 @@
                 </div>
             </div>
 
+            <!-- Pet Info Modal -->
+            <div id="petInfoModal" class="fixed inset-0 z-50 hidden">
+                <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closePetInfoModal()"></div>
+                <div class="fixed inset-0 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">Pet Information</h3>
+                            <button type="button" onclick="closePetInfoModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="px-6 py-4" id="petInfoModalContent">
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end">
+                            <button type="button" onclick="closePetInfoModal()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Pet Limit Modal -->
             <div id="petLimitModal" class="fixed inset-0 z-50 hidden">
                 <div class="fixed inset-0 bg-black bg-opacity-50"></div>
@@ -439,15 +463,20 @@
         const petsData = @json($petsArray);
         const currentUserId = @json($userId ?? null);
         
-        // Format age - remove underscores and format naturally
+        const antiRabiesMaxDate = new Date().toISOString().split('T')[0];
+        const antiRabiesMinDate = new Date();
+        antiRabiesMinDate.setFullYear(antiRabiesMinDate.getFullYear() - 10);
+        const antiRabiesMinDateStr = antiRabiesMinDate.toISOString().split('T')[0];
+        
+        // Format age - handle exact age strings from pet_info.pet_age
         function formatAge(age) {
-            if (!age) return 'Unknown';
-            return age.replace(/_/g, ' ').replace(/\b(\d)\b/g, '$1 ').trim();
+            if (age === null || age === undefined || age === '') return 'Unknown';
+            return String(age).replace(/_/g, ' ').trim();
         }
         
         // Format weight - append kg if not included
         function formatWeight(weight) {
-            if (!weight) return 'Unknown';
+            if (weight === null || weight === undefined || weight === '') return 'Unknown';
             const weightStr = String(weight).toLowerCase();
             if (weightStr.includes('kg') || weightStr === 'n/a' || weightStr === 'na') {
                 return weight;
@@ -746,6 +775,83 @@
             document.body.style.overflow = 'auto';
         }
 
+        function showPetInfoModal(petId) {
+            const pet = petsData.find(p => String(p.id) === String(petId));
+            if (!pet) return;
+
+            const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
+            const genderDisplay = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : 'Unknown';
+            const colorDisplay = pet.color || 'Unknown';
+            const vaccinationStatusDisplay = pet.vaccination_status ? pet.vaccination_status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Unknown';
+            
+            let imageHtml = '';
+            if (pet.image) {
+                let imgPath = pet.image;
+                if (!imgPath.includes('images/pets') && !imgPath.includes('http')) {
+                    imgPath = 'images/pets/' + imgPath.split('/').pop();
+                }
+                const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-24 h-24 rounded-full object-cover mx-auto mb-4">`;
+            } else {
+                imageHtml = `<div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>`;
+            }
+
+            const content = document.getElementById('petInfoModalContent');
+            content.innerHTML = `
+                <div class="text-center mb-4">
+                    ${imageHtml}
+                    <h4 class="text-xl font-semibold text-gray-900">${pet.name || 'Unknown'}</h4>
+                    <p class="text-sm text-gray-500">${speciesDisplay} • ${pet.breed || 'Unknown'}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Gender</p>
+                        <p class="text-gray-900 font-medium">${genderDisplay}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Color</p>
+                        <p class="text-gray-900 font-medium">${colorDisplay}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Age</p>
+                        <p class="text-gray-900 font-medium">${formatAge(pet.age)}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Weight</p>
+                        <p class="text-gray-900 font-medium">${formatWeight(pet.weight)}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Vaccination Status</p>
+                        <p class="text-gray-900 font-medium">${vaccinationStatusDisplay}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Last Vaccination</p>
+                        <p class="text-gray-900 font-medium">${pet.vaccination_date || 'N/A'}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Next Vaccination</p>
+                        <p class="text-gray-900 font-medium">${pet.next_vaccination_date || 'N/A'}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Birthdate</p>
+                        <p class="text-gray-900 font-medium">${pet.birthdate || 'N/A'}</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('petInfoModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePetInfoModal() {
+            document.getElementById('petInfoModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
         function showPetLimitModal() {
             document.getElementById('petLimitModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -824,18 +930,18 @@
                     
                     // Add pet card
                     const petCard = document.createElement('div');
-                    petCard.className = 'bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between';
+                    petCard.className = 'bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between cursor-pointer hover:border-primary hover:shadow-sm transition-colors';
                     const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
                     petCard.innerHTML = `
-                        <div class="flex items-center">
+                        <div class="flex items-center flex-1 min-w-0" onclick="showPetInfoModal(${pet.id})">
                             ${imageHtml}
-                            <div class="ml-3">
-                                <p class="font-semibold text-gray-900">${pet.name || 'Unknown'}</p>
+                            <div class="ml-3 min-w-0">
+                                <p class="font-semibold text-gray-900 truncate">${pet.name || 'Unknown'}</p>
                                 <p class="text-xs text-gray-500">${speciesDisplay} • ${pet.breed || 'Unknown'}</p>
                                 <p class="text-xs text-gray-600 mt-1">Age: ${formatAge(pet.age)} • Weight: ${formatWeight(pet.weight)}</p>
                             </div>
                         </div>
-                        <button type="button" onclick="removePet(${pet.id})" class="text-red-500 hover:text-red-700 p-1">
+                        <button type="button" onclick="event.stopPropagation(); removePet(${pet.id})" class="text-red-500 hover:text-red-700 p-1 flex-shrink-0 ml-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -983,6 +1089,7 @@
                             <div id="vaccineDateContainer_${pet.id}" class="hidden mt-3">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Date of Last Anti-Rabies</label>
                                 <input type="date" name="pet_medical_history[${pet.id}][last_anti_rabies_date]" 
+                                       max="${antiRabiesMaxDate}" min="${antiRabiesMinDateStr}"
                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
                         </div>
@@ -1026,6 +1133,9 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closePetModal();
+                closePetInfoModal();
+                closeAlreadyBookedModal();
+                closePetLimitModal();
             }
         });
     </script>

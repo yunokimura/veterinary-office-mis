@@ -114,7 +114,7 @@ class PetController extends Controller
             'gender' => 'required|in:male,female',
             'pet_breed' => 'required|string|max:255',
             'pet_birthdate' => 'nullable|date',
-            'estimated_age' => 'nullable|string',
+            'pet_age' => 'nullable|string',
             'pet_weight' => 'nullable|string|max:50',
             'body_mark_details' => 'nullable|string',
         ]);
@@ -144,7 +144,7 @@ class PetController extends Controller
         ]);
 
         $petInfoData = [
-            'estimated_age' => $validated['estimated_age'] ?? null,
+            'pet_age' => $validated['pet_age'] ?? null,
             'pet_weight' => $validated['pet_weight'] ?? null,
             'is_neutered' => $request->has('is_neutered') ? 'yes' : 'no',
             'is_crossbreed' => $request->has('is_crossbreed') ? 'yes' : 'no',

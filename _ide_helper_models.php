@@ -1312,10 +1312,10 @@ namespace App\Models{
  * @property string $vaccination_status
  * @property string|null $vaccination_date
  * @property string|null $next_vaccination_date
- * @property string|null $is_neutered
- * @property string|null $is_crossbreed
- * @property string|null $estimated_age
- * @property string|null $pet_weight
+  * @property string|null $is_neutered
+  * @property string|null $is_crossbreed
+  * @property string|null $pet_age
+  * @property string|null $pet_weight
  * @property string|null $body_mark_image
  * @property string|null $body_mark_details
  * @property string|null $training

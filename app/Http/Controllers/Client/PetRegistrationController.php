@@ -31,7 +31,7 @@ class PetRegistrationController extends Controller
                 'gender' => 'required|in:male,female',
                 'pet_breed' => 'required|string|max:255',
                 'pet_birthdate' => 'nullable|date',
-                'estimated_age' => 'nullable|string',
+                'pet_age' => 'nullable|string',
                 'pet_weight' => 'nullable|string|max:50',
                 'body_mark_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'body_mark_details' => 'required|string|max:1000',
@@ -118,35 +118,14 @@ class PetRegistrationController extends Controller
                 $bodyMarkImagePath = 'images/pets/'.$filename;
             }
 
-            // Calculate birthdate from estimated age if birthdate not provided
+            // Calculate birthdate from exact pet_age if birthdate not provided
             $birthdate = null;
 
             if ($request->filled('pet_birthdate')) {
-                // Known birthdate provided
                 $birthdate = $request->input('pet_birthdate');
-            } elseif ($request->filled('estimated_age')) {
-                // Calculate birthdate from estimated age
-                $estimatedAge = $request->input('estimated_age');
-                $years = 0;
-                $months = 0;
-
-                if ($estimatedAge === 'less_than_3_months') {
-                    $months = 2; // approx 2 months
-                } elseif ($estimatedAge === '3_to_12_months') {
-                    $months = 7; // approx 7 months
-                } elseif (preg_match('/^(\d+)_years$/', $estimatedAge, $matches)) {
-                    $years = (int) $matches[1];
-                }
-
-                if ($months > 0) {
-                    $birthdate = now()->subMonths($months)->format('Y-m-d');
-                } elseif ($years > 0) {
-                    $birthdate = now()->subYears($years)->format('Y-m-d');
-                }
+            } elseif ($request->filled('pet_age')) {
+                $birthdate = $this->calculateBirthdateFromExactAge($request->input('pet_age'));
             }
-
-            // Create the pet - use correct field names matching Pet model
-            Log::info('Saving pet_image: '.($petImagePath ?? 'null'));
 
             $pet = Pet::create([
                 'owner_id' => $petOwner ? $petOwner->owner_id : null,
@@ -163,7 +142,7 @@ class PetRegistrationController extends Controller
             $pet->petInfo()->create([
                 'is_neutered' => $request->has('is_neutered') ? 'yes' : 'no',
                 'is_crossbreed' => $request->has('is_crossbreed') ? 'yes' : 'no',
-                'estimated_age' => $validated['estimated_age'] ?? null,
+                'pet_age' => $validated['pet_age'] ?? null,
                 'pet_weight' => $validated['pet_weight'] ?? null,
                 'training' => json_encode($request->input('training', [])),
                 'insurance' => json_encode($request->input('insurance', [])),
@@ -203,5 +182,24 @@ class PetRegistrationController extends Controller
 
             return back()->with('error', 'Failed to register pet: '.$e->getMessage())->withInput();
         }
+    }
+
+    private function calculateBirthdateFromExactAge(string $petAge): ?string
+    {
+        $years = 0;
+        $months = 0;
+
+        if (preg_match('/(\d+)\s*year/', $petAge, $matches)) {
+            $years = (int) $matches[1];
+        }
+        if (preg_match('/(\d+)\s*month/', $petAge, $matches)) {
+            $months = (int) $matches[1];
+        }
+
+        if ($years > 0 || $months > 0) {
+            return now()->subYears($years)->subMonths($months)->format('Y-m-d');
+        }
+
+        return null;
     }
 }

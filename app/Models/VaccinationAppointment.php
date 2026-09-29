@@ -50,6 +50,7 @@ class VaccinationAppointment extends Model
         'metadata',
         'last_anti_rabies_date',
         'recent_surgery',
+        'assigned_vet',
     ];
 
     protected $casts = [
@@ -81,6 +82,11 @@ class VaccinationAppointment extends Model
         return $this->hasMany(VaccinationReport::class, 'vaccination_appointment_id');
     }
 
+    public function assignedVet(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'assigned_vet');
+    }
+
     public function getSelectedPetsAttribute(): array
     {
         return $this->metadata['selected_pets'] ?? [];
@@ -89,5 +95,14 @@ class VaccinationAppointment extends Model
     public function getOwnerNameAttribute(): string
     {
         return $this->owner ? trim($this->owner->first_name.' '.$this->owner->last_name) : 'N/A';
+    }
+
+    public function getAssignedVetNameAttribute(): string
+    {
+        if ($this->assignedVet && $this->assignedVet->user) {
+            return trim($this->assignedVet->user->name);
+        }
+
+        return 'N/A';
     }
 }

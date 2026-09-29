@@ -103,7 +103,7 @@ class PetRegistrationController extends Controller
 
         if ($request->filled('age') || $request->filled('weight')) {
             $pet->petInfo()->create([
-                'estimated_age' => $request->input('age'),
+                'pet_age' => $request->input('age'),
                 'pet_weight' => $request->input('weight'),
             ]);
         }
@@ -168,7 +168,7 @@ class PetRegistrationController extends Controller
 
         $petInfoData = [];
         if ($request->filled('age')) {
-            $petInfoData['estimated_age'] = $request->input('age');
+            $petInfoData['pet_age'] = $request->input('age');
         }
         if ($request->filled('weight')) {
             $petInfoData['pet_weight'] = $request->input('weight');

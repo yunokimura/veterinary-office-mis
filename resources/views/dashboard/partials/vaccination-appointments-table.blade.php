@@ -1,9 +1,10 @@
 <table class="w-full text-sm">
     <thead class="bg-gray-50">
         <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pets</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Scheduled</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patient (Pet)</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assigned Vet</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
             <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
         </tr>
@@ -11,29 +12,52 @@
     <tbody class="divide-y divide-gray-200">
         @forelse($appointments as $appointment)
         <tr class="hover:bg-gray-50">
-            <td class="px-4 py-3">
-                <div class="font-medium text-gray-900">{{ $appointment->owner_name }}</div>
-                <div class="text-sm text-gray-500">{{ $appointment->user->name ?? 'N/A' }}</div>
+            <td class="px-4 py-3 text-gray-600">
+                @php
+                    $scheduled = \Carbon\Carbon::parse($appointment->scheduled_at);
+                @endphp
+                <div class="text-sm font-medium text-gray-900">{{ $scheduled->format('M d, Y') }}</div>
+                <div class="text-xs text-gray-500">{{ $scheduled->format('h:i A') }}</div>
             </td>
             <td class="px-4 py-3 text-gray-600">
                 @php
-                    $pets = $appointment->selected_pets ?? [];
-                    $petNames = array_slice($pets, 0, 2);
-                    $petCount = count($pets);
+                    $rawPets = $appointment->selected_pets ?? [];
+                    $ownerPets = $appointment->owner->pets ?? collect();
+                    $petsMap = $ownerPets->keyBy('pet_id');
+                    $displayPets = [];
+                    foreach ($rawPets as $pet) {
+                        if (!is_array($pet)) continue;
+                        $petId = isset($pet['id']) ? (int) $pet['id'] : null;
+                        $petModel = $petId && $petsMap->has($petId) ? $petsMap[$petId] : null;
+                        $displayPets[] = [
+                            'name' => $pet['name'] ?? ($petModel->pet_name ?? 'N/A'),
+                            'species' => $pet['species'] ?? ($petModel->species ?? 'N/A'),
+                            'breed' => $petModel->breed ?? ($pet['breed'] ?? 'N/A'),
+                        ];
+                    }
                 @endphp
-                @if(count($petNames) > 0)
-                    <div class="text-sm">
-                        {{ implode(', ', array_column($petNames, 'name')) }}
-                        @if($petCount > 2)
-                            <span class="text-gray-400">+{{ $petCount - 2 }} more</span>
+                @if(count($displayPets) > 0)
+                    <div class="space-y-1">
+                        @foreach(array_slice($displayPets, 0, 2) as $pet)
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">{{ $pet['name'] }}</div>
+                                <div class="text-xs text-gray-500">{{ $pet['species'] }} • {{ $pet['breed'] }}</div>
+                            </div>
+                        @endforeach
+                        @if(count($rawPets) > 2)
+                            <span class="text-gray-400 text-xs">+{{ count($rawPets) - 2 }} more</span>
                         @endif
                     </div>
                 @else
                     <span class="text-gray-400">N/A</span>
                 @endif
             </td>
-            <td class="px-4 py-3 text-gray-600">
-                {{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('M d, Y h:i A') }}
+            <td class="px-4 py-3">
+                <div class="text-sm font-medium text-gray-900">{{ $appointment->owner_name }}</div>
+                <div class="text-xs text-gray-500">{{ $appointment->user->contact_number ?? 'N/A' }}</div>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-600">
+                {{ $appointment->assigned_vet_name }}
             </td>
             <td class="px-4 py-3">
                 @php
@@ -65,7 +89,7 @@
         </tr>
         @empty
         <tr>
-            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
                 <i class="bi bi-calendar-x text-4xl mb-2 block"></i>
                 No vaccination appointments found
             </td>

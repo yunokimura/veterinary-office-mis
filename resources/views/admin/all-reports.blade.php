@@ -448,7 +448,7 @@
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $report->pet ? ucfirst($report->pet->species ?? 'N/A') : 'N/A' }}</td>
                                 <td class="px-4 py-3">
                                     @if($report->status == 'pending')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pending</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
                                     @elseif($report->status == 'approved')
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Approved</span>
                                     @elseif($report->status == 'adopted')

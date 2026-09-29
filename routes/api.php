@@ -175,7 +175,7 @@ Route::get('/appointments/slots', function (Request $request) {
             $reportsByHour[$time]++;
         }
     } elseif ($serviceType === 'vaccination') {
-        $existingRequests = \App\Models\VaccinationReport::whereDate('scheduled_at', $date)
+        $existingRequests = \App\Models\VaccinationAppointment::whereDate('scheduled_at', $date)
             ->whereIn('status', ['pending', 'scheduled'])
             ->whereNotNull('scheduled_at')
             ->get();
@@ -258,14 +258,12 @@ Route::get('/appointments/check-pet/{petName}/{userId}', function ($petName, $us
 
 // Check if a specific pet already has a vaccination appointment
 Route::get('/appointments/check-vaccination-pet/{petName}/{userId}', function ($petName, $userId) {
-    // Get the pet to find its ID by name
     $petOwner = \App\Models\PetOwner::where('user_id', $userId)->first();
     
     if (!$petOwner) {
         return response()->json(['success' => true, 'already_booked' => false]);
     }
     
-    // Find the pet by name and owner_id
     $pet = \App\Models\Pet::where('owner_id', $petOwner->owner_id)
         ->where('pet_name', $petName)
         ->first();
@@ -274,23 +272,22 @@ Route::get('/appointments/check-vaccination-pet/{petName}/{userId}', function ($
         return response()->json(['success' => true, 'already_booked' => false]);
     }
     
-    // Check vaccination_reports with this pet in metadata
-    $existingReports = \App\Models\VaccinationReport::where('user_id', $userId)
-        ->whereIn('status', ['pending', 'scheduled'])
+    $existingAppointments = \App\Models\VaccinationAppointment::where('user_id', $userId)
+        ->whereIn('status', ['pending', 'scheduled', 'approved'])
         ->whereNotNull('scheduled_at')
         ->get();
     
-    foreach ($existingReports as $report) {
-        $selectedPets = $report->metadata['selected_pets'] ?? [];
+    foreach ($existingAppointments as $appointment) {
+        $selectedPets = $appointment->metadata['selected_pets'] ?? [];
         if (in_array($pet->pet_id, $selectedPets) || in_array((string)$pet->pet_id, $selectedPets)) {
             return response()->json([
                 'success' => true,
                 'already_booked' => true,
                 'pet_name' => $petName,
-                'scheduled_at' => $report->scheduled_at,
-                'scheduled_date' => \Carbon\Carbon::parse($report->scheduled_at)->format('F j, Y'),
-                'scheduled_time' => \Carbon\Carbon::parse($report->scheduled_at)->format('h:i A'),
-                'status' => $report->status,
+                'scheduled_at' => $appointment->scheduled_at,
+                'scheduled_date' => \Carbon\Carbon::parse($appointment->scheduled_at)->format('F j, Y'),
+                'scheduled_time' => \Carbon\Carbon::parse($appointment->scheduled_at)->format('h:i A'),
+                'status' => $appointment->status,
             ]);
         }
     }

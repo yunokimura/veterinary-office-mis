@@ -84,7 +84,7 @@
                             <td class="px-6 py-4">{{ $establishment->contact_number }}</td>
                             <td class="px-6 py-4">{{ $establishment->barangay->barangay_name ?? 'N/A' }}</td>
                             <td class="px-6 py-4">
-                                <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $establishment->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-700' }}">{{ ucfirst($establishment->status) }}</span>
+                                <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $establishment->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">{{ ucfirst($establishment->status) }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex justify-end gap-2">

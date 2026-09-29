@@ -102,7 +102,7 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
 
 <!-- Report Details Modal -->
 <div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Adoption Application Details</h5>
@@ -279,7 +279,7 @@ function openReportModal(reportId) {
 function displayReportDetails(report) {
     const modalBody = document.getElementById('reportModalBody');
 
-    const statusClass = report.status === 'pending_review' ? 'bg-amber-100 text-amber-800' :
+    const statusClass = report.status === 'pending_review' ? 'bg-yellow-100 text-yellow-800' :
         report.status === 'approved' ? 'bg-blue-100 text-blue-800' :
         report.status === 'adopted' ? 'bg-emerald-100 text-emerald-800' :
         report.status === 'rejected' ? 'bg-red-100 text-red-800' :
@@ -289,98 +289,170 @@ function displayReportDetails(report) {
         .replace(/_/g, ' ')
         .replace(/\b\w/g, c => c.toUpperCase());
 
+    const homePhotos = Array.isArray(report.home_photos) ? report.home_photos : [];
+    const validIdPath = report.valid_id_path || '';
+    const validIdExt = validIdPath ? validIdPath.split('.').pop().toLowerCase() : '';
+    const validIdIsImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(validIdExt);
+
+    const homePhotosHtml = homePhotos.length > 0 ? `
+        <div class="grid grid-cols-3 gap-2 mt-2">
+            ${homePhotos.map(path => `
+                <a href="${window.location.origin}/storage/${path}" target="_blank" class="block">
+                    <img src="${window.location.origin}/storage/${path}" alt="Home photo" class="w-full h-24 object-cover rounded border border-gray-200 hover:opacity-90 transition">
+                </a>
+            `).join('')}
+        </div>
+    ` : '<p class="text-xs text-gray-500 mt-1">No home photos uploaded.</p>';
+
+    const validIdHtml = validIdPath ? `
+        <div class="mt-2">
+            ${validIdIsImage ? `
+                <a href="${window.location.origin}/storage/${validIdPath}" target="_blank">
+                    <img src="${window.location.origin}/storage/${validIdPath}" alt="Valid ID" class="w-full h-28 object-cover rounded border border-gray-200 hover:opacity-90 transition">
+                </a>
+            ` : `
+                <a href="${window.location.origin}/storage/${validIdPath}" target="_blank" class="inline-flex items-center gap-2 text-sm text-primary hover:underline">
+                    <i class="fas fa-file-alt"></i> View document
+                </a>
+            `}
+        </div>
+    ` : '<p class="text-xs text-gray-500 mt-1">No valid ID uploaded.</p>';
+
     modalBody.innerHTML = `
         <div class="space-y-3">
-            <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center justify-between gap-3">
                 <div>
-                    <p class="text-sm text-gray-500">Application Number</p>
-                    <p class="text-lg font-semibold text-gray-800">${report.report_number}</p>
+                    <p class="text-xs text-gray-500">Application Number</p>
+                    <p class="text-base font-semibold text-gray-800">${report.report_number}</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-sm text-gray-500">Submitted At</p>
-                    <p class="text-sm font-medium text-gray-800">${report.created_at}</p>
+                    <p class="text-xs text-gray-500">Submitted</p>
+                    <p class="text-xs font-medium text-gray-700">${report.created_at}</p>
                 </div>
                 <div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass}">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}">
                         ${statusText}
                     </span>
                 </div>
             </div>
+
             <hr class="border-gray-100">
-            <div class="bg-blue-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Applicant Information</h4>
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500">Full Name</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.applicant_name}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Email</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.applicant_email}</p>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Applicant</h4>
+                    <div class="space-y-1">
+                        <div>
+                            <p class="text-xs text-gray-500">Name</p>
+                            <p class="text-sm font-medium text-gray-800">${report.applicant_name}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Email</p>
+                            <p class="text-sm text-gray-700 break-all">${report.applicant_email}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Contact</p>
+                            <p class="text-sm text-gray-700">${report.applicant_contact}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Address</p>
+                            <p class="text-sm text-gray-700">${report.address}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <p class="text-xs text-gray-500">Marital Status</p>
+                                <p class="text-sm text-gray-700">${report.marital_status}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Occupation</p>
+                                <p class="text-sm text-gray-700">${report.occupation}</p>
+                            </div>
+                        </div>
+                        ${report.company !== 'N/A' ? `
+                        <div>
+                            <p class="text-xs text-gray-500">Company</p>
+                            <p class="text-sm text-gray-700">${report.company}</p>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Contact Number</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.applicant_contact}</p>
+
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Pet</h4>
+                    <div class="space-y-1">
+                        <div>
+                            <p class="text-xs text-gray-500">Name</p>
+                            <p class="text-sm font-medium text-gray-800">${report.pet_name}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <p class="text-xs text-gray-500">Species</p>
+                                <p class="text-sm text-gray-700">${report.pet_species}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Breed</p>
+                                <p class="text-sm text-gray-700">${report.pet_breed}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <p class="text-xs text-gray-500">Gender</p>
+                                <p class="text-sm text-gray-700">${report.pet_gender}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <hr class="border-gray-100">
-            <div class="bg-green-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Pet Information</h4>
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500">Pet Name</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.pet_name}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Species</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.pet_species}</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Breed</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.pet_breed}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Gender</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.pet_gender}</p>
-                    </div>
-                </div>
-            </div>
-            <hr class="border-gray-100">
-            <div class="bg-yellow-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Application Details</h4>
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="col-span-2">
-                        <p class="text-sm text-gray-500">Reason for Adoption</p>
-                        <p class="font-medium text-gray-800 mt-1 whitespace-pre-wrap">${report.reason || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Has Other Pets</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.has_other_pets}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Home Type</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.home_type}</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Yard Has Fence</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.yard_has_fence}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Adoption Date</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.adoption_date}</p>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-blue-50 rounded-lg p-3">
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Application Details</h4>
+                    <div class="space-y-1">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <p class="text-xs text-gray-500">Housing Type</p>
+                                <p class="text-sm text-gray-700">${report.home_type}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Has Other Pets</p>
+                                <p class="text-sm text-gray-700">${report.has_other_pets}</p>
+                            </div>
+                        </div>
+                        ${report.other_pets_details && report.other_pets_details !== 'N/A' ? `
+                        <div>
+                            <p class="text-xs text-gray-500">Pet Experience</p>
+                            <p class="text-sm text-gray-700">${report.other_pets_details}</p>
+                        </div>
+                        ` : ''}
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <p class="text-xs text-gray-500">Appointment Date</p>
+                                <p class="text-sm text-gray-700">${report.adoption_date}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Appointment Time</p>
+                                <p class="text-sm text-gray-700">${report.appointment_time}</p>
+                            </div>
+                        </div>
+                        ${report.notes && report.notes !== 'N/A' ? `
+                        <div>
+                            <p class="text-xs text-gray-500">Notes</p>
+                            <p class="text-sm text-gray-700 whitespace-pre-wrap">${report.notes}</p>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div class="col-span-2">
-                        <p class="text-sm text-gray-500">Notes</p>
-                        <p class="font-medium text-gray-800 mt-1 whitespace-pre-wrap">${report.notes || 'N/A'}</p>
+
+                <div class="space-y-3">
+                    <div class="bg-green-50 rounded-lg p-3">
+                        <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Valid ID</h4>
+                        ${validIdHtml}
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-3">
+                        <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Home Photos</h4>
+                        ${homePhotosHtml}
                     </div>
                 </div>
             </div>

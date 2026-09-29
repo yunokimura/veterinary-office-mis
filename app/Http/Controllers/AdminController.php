@@ -269,7 +269,7 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
-        $query = VaccinationAppointment::with(['owner', 'user', 'address']);
+        $query = VaccinationAppointment::with(['owner.pets', 'user', 'address', 'assignedVet']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -333,6 +333,7 @@ class AdminController extends Controller
                     ', ' . ($appointment->address->city ?? '')
                 ) : 'N/A',
                 'submitted_by' => $appointment->user->name ?? 'N/A',
+                'assigned_vet_name' => $appointment->assigned_vet_name,
                 'selected_pets' => $selectedPets,
                 'metadata' => $appointment->metadata,
             ]
@@ -344,7 +345,7 @@ class AdminController extends Controller
      */
     public function filterVaccinationAppointments(Request $request)
     {
-        $query = VaccinationAppointment::with(['owner', 'user', 'address.barangay']);
+        $query = VaccinationAppointment::with(['owner.pets', 'user', 'address.barangay', 'assignedVet']);
 
         if ($request->filled('search')) {
             $terms = array_values(array_filter(explode(' ', $request->search)));
@@ -374,7 +375,7 @@ class AdminController extends Controller
         try {
             $html = view('dashboard.partials.vaccination-appointments-table', compact('appointments'))->render();
         } catch (\Throwable $e) {
-            $html = '<tr><td colspan="7" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+            $html = '<tr><td colspan="6" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
         }
 
         return response()->json([
@@ -657,10 +658,27 @@ class AdminController extends Controller
     /**
      * List all meat establishments.
      */
-    public function indexMeatInspectionReports()
+    public function indexMeatInspectionReports(Request $request)
     {
         $user = Auth::user();
         $query = MeatEstablishment::with('barangay');
+
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('establishment_name', 'like', "%{$term}%")
+                            ->orWhere('owner_name', 'like', "%{$term}%")
+                            ->orWhere('establishment_type', 'like', "%{$term}%")
+                            ->orWhereHas('barangay', function ($q2) use ($term) {
+                                $q2->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('status', 'like', "%{$term}%");
+                    });
+                }
+            });
+        }
 
         $establishments = $query->latest()->paginate(10);
 
@@ -671,65 +689,43 @@ class AdminController extends Controller
             'pending_inspection' => MeatEstablishment::where('status', 'Pending Inspection')->count(),
         ];
 
-        $establishmentTypes = MeatEstablishment::select('establishment_type')
-            ->distinct()
-            ->orderBy('establishment_type')
-            ->pluck('establishment_type');
-
-        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get(['barangay_id', 'barangay_name']);
-
-        return view('dashboard.meat-inspection', compact('user', 'establishments', 'stats', 'establishmentTypes', 'barangays'));
+        return view('dashboard.meat-inspection', compact('user', 'establishments', 'stats'));
     }
 
     public function filterMeatInspectionReports(Request $request)
     {
-        $user = Auth::user();
-
         $query = MeatEstablishment::with('barangay');
 
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('establishment_name', 'like', '%' . $search . '%')
-                  ->orWhere('owner_name', 'like', '%' . $search . '%');
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('establishment_name', 'like', "%{$term}%")
+                            ->orWhere('owner_name', 'like', "%{$term}%")
+                            ->orWhere('establishment_type', 'like', "%{$term}%")
+                            ->orWhereHas('barangay', function ($q2) use ($term) {
+                                $q2->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('status', 'like', "%{$term}%");
+                    });
+                }
             });
-        }
-
-        if ($request->filled('type')) {
-            $query->where('establishment_type', $request->type);
-        }
-
-        if ($request->filled('barangay')) {
-            $barangayNames = explode(',', $request->barangay);
-            $barangayNames = array_map('trim', $barangayNames);
-            $query->whereHas('barangay', function ($q) use ($barangayNames) {
-                $q->whereIn('barangay_name', $barangayNames);
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
         }
 
         $establishments = $query->latest()->paginate(10);
 
-        $stats = [
-            'total' => (clone $query)->count(),
-            'active' => (clone $query)->where('status', 'Active')->count(),
-            'expired' => (clone $query)->where('status', 'Expired')->count(),
-            'pending_inspection' => (clone $query)->where('status', 'Pending Inspection')->count(),
-        ];
-
-        $tableHtml = view('dashboard.partials.meat-inspection-table', compact('establishments'))->render();
-        $paginationHtml = $establishments->links()->render();
+        try {
+            $html = view('dashboard.partials.meat-inspection-table', compact('establishments'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="6" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
 
         return response()->json([
             'success' => true,
-            'table_html' => $tableHtml,
-            'pagination_html' => $paginationHtml,
-            'total_count' => $establishments->total(),
+            'html' => $html,
+            'pagination' => $establishments->links()->render(),
             'has_results' => $establishments->count() > 0,
-            'stats' => $stats,
         ]);
     }
 

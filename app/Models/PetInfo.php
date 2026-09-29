@@ -17,7 +17,7 @@ class PetInfo extends Model
         'pet_id',
         'is_neutered',
         'is_crossbreed',
-        'estimated_age',
+        'pet_age',
         'pet_weight',
         'training',
         'insurance',

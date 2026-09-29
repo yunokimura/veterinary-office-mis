@@ -441,22 +441,8 @@
             
             // Calculate age
             let ageDisplay = 'Unknown';
-            if (pet.petInfo?.estimated_age) {
-                const ageMap = {
-                    'less_than_3_months': 'Less than 3 months',
-                    '3_to_12_months': '3 to 12 months',
-                    '1_year': '1 year old',
-                    '2_years': '2 years old',
-                    '3_years': '3 years old',
-                    '4_years': '4 years old',
-                    '5_years': '5 years old',
-                    '6_years': '6 years old',
-                    '7_years': '7 years old',
-                    '8_years': '8 years old',
-                    '9_years': '9 years old',
-                    '10_years': '10 years old',
-                };
-                ageDisplay = ageMap[pet.petInfo?.estimated_age] || pet.petInfo?.estimated_age;
+            if (pet.petInfo?.pet_age) {
+                ageDisplay = pet.petInfo.pet_age;
             } else if (pet.birthdate) {
                 const birthYear = new Date(pet.birthdate).getFullYear();
                 const age = new Date().getFullYear() - birthYear;

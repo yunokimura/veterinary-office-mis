@@ -287,34 +287,14 @@
                     <input type="date" id="petBirthdate" name="pet_birthdate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
                 </div>
 
-                <!-- Estimated Pet Age (shown if birthdate is NOT checked) -->
+                <!-- Exact Pet Age -->
                 <div id="ageSection" class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Pet Age <span class="text-red-500">*</span></label>
-                    <select id="estimatedAge" name="estimated_age" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
-                        <option value="">Select estimated age</option>
-                        <option value="less_than_3_months">Less than 3 months old</option>
-                        <option value="3_to_12_months">3 to 12 months old</option>
-                        <option value="1_year">1 year old</option>
-                        <option value="2_years">2 years old</option>
-                        <option value="3_years">3 years old</option>
-                        <option value="4_years">4 years old</option>
-                        <option value="5_years">5 years old</option>
-                        <option value="6_years">6 years old</option>
-                        <option value="7_years">7 years old</option>
-                        <option value="8_years">8 years old</option>
-                        <option value="9_years">9 years old</option>
-                        <option value="10_years">10 years old</option>
-                        <option value="11_years">11 years old</option>
-                        <option value="12_years">12 years old</option>
-                        <option value="13_years">13 years old</option>
-                        <option value="14_years">14 years old</option>
-                        <option value="15_years">15 years old</option>
-                        <option value="16_years">16 years old</option>
-                        <option value="17_years">17 years old</option>
-                        <option value="18_years">18 years old</option>
-                        <option value="19_years">19 years old</option>
-                        <option value="20_years">20 years old</option>
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Pet Age</label>
+                    <input type="text" id="petAge" name="pet_age" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="e.g. 2 years 3 months">
+                    <p class="text-xs text-gray-500 mt-1">Enter exact age, e.g. "3 months", "1 year", "2 years 6 months"</p>
+                </div>
+
+                <!-- Pet Weight -->
                 </div>
 
                 <!-- Pet Weight -->

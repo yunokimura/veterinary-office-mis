@@ -103,37 +103,37 @@
                         </td>
                         <td class="px-4 py-3">
                             @if($report->procedure_type == 'spay')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-700">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
                                 Spay (F)
                             </span>
                             @elseif($report->procedure_type == 'neuter')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                 Neuter (M)
                             </span>
                             @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 Both
                             </span>
                             @endif
                         </td>
                         <td class="px-4 py-3">
                             @if($report->status == 'completed')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
                                 Completed
                             </span>
                             @elseif($report->status == 'scheduled')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                 <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
                                 Scheduled
                             </span>
                             @elseif($report->status == 'cancelled')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></span>
                                 Cancelled
                             </span>
                             @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                                 <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5"></span>
                                 Pending
                             </span>

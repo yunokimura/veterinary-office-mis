@@ -29,11 +29,11 @@ class AdoptionPetController extends Controller
             $imagePath = $request->file('image')->store('adoption-pets', 'public');
         }
 
-        // Convert age to estimated_age string format or compute from DOB
-        $estimatedAge = $validated['age'].' years';
+        // Convert age to exact pet_age string format or compute from DOB
+        $petAge = $validated['age'].' years';
         if (! empty($validated['date_of_birth'])) {
-            // Optionally compute from date_of_birth but store as estimated_age based on provided age
-            $estimatedAge = $validated['age'].' years';
+            // Optionally compute from date_of_birth but store as pet_age based on provided age
+            $petAge = $validated['age'].' years';
         }
 
         $now = now();
@@ -55,7 +55,7 @@ class AdoptionPetController extends Controller
 
         $pet->petInfo()->create([
             'pet_weight' => $validated['weight'] ?? null,
-            'estimated_age' => $estimatedAge,
+            'pet_age' => $petAge,
             'is_neutered' => false,
         ]);
 
