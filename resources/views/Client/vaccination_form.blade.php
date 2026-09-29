@@ -157,8 +157,9 @@
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-lg font-semibold">Pet Medical History & Screening</h3>
                                 <div class="flex items-center gap-3">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-900 text-white text-xs font-semibold">
-                                        <span id="headerSelectedCount">0 </span> Pets Selected
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-900 text-white text-xs font-semibold">
+                                        <span id="headerSelectedCount">0</span>
+                                        <span>Pets Selected</span>
                                     </span>
                                     <button type="button" onclick="openPetModal()" 
                                             class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
