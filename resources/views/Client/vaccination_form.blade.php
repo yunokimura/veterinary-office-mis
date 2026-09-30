@@ -168,18 +168,16 @@
                         <div class="p-6">
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-900 text-white text-xs font-semibold">
-                                            <span id="headerSelectedCount">0 Pets Selected</span>
-                                        </span>
-                                        <button type="button" onclick="openPetModal()" 
-                                                class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                            </svg>
-                                            Select Pet
-                                        </button>
-                                    </div>
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-900 text-white text-xs font-semibold">
+                                        <span id="headerSelectedCount">0 Pets Selected</span>
+                                    </span>
+                                    <button type="button" onclick="openPetModal()" 
+                                            class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        Select Pet
+                                    </button>
                                 </div>
 
                                 <!-- Medical History Per Pet -->
@@ -205,7 +203,7 @@
                                 <h4 class="text-sm font-semibold text-white">Appointment Scheduling</h4>
                             </div>
                             <span id="slotPetCountBadge" class="text-xs bg-emerald-800 text-emerald-200 font-medium px-2.5 py-1 rounded-full border border-emerald-700">
-                                Pet Selected
+                                0 Pets Selected
                             </span>
                         </div>
                         <div class="p-6">
@@ -275,7 +273,7 @@
                             <!-- Confirmation Checkbox -->
                             <div class="mt-6">
                                 <label class="inline-flex items-start cursor-pointer">
-                                     <input type="checkbox" name="confirmation" class="h-5 w-5 rounded mt-1">
+                                     <input type="checkbox" name="confirmation" id="termsCheckbox" class="h-5 w-5 rounded mt-1">
                                     <span class="ml-3 text-gray-700 text-sm">
                                         By confirming, you acknowledge that the provided information is accurate and that your pet will be available for vaccination on the selected date(s). <span class="text-red-500">*</span>
                                     </span>
@@ -284,8 +282,11 @@
 
                             <!-- Submit Button -->
                             <div class="flex justify-center mt-8">
-                                <button type="submit" class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
-                                    Submit
+                                <button type="submit" id="submitBtn" disabled class="bg-gray-300 text-gray-500 px-12 py-3 rounded-lg font-semibold cursor-not-allowed transition-colors flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Submit Vaccination Pre-Registration
                                 </button>
                             </div>
                         </div>
@@ -1344,6 +1345,27 @@
 
         setupPhoneFormatting('owner_contact');
         setupPhoneFormatting('alt_mobile_number');
+
+        updateSelectedCount();
+        updateSlotPetCountBadge();
+
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        const submitBtn = document.getElementById('submitBtn');
+        if (termsCheckbox && submitBtn) {
+            function updateSubmitButton() {
+                if (termsCheckbox.checked) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                    submitBtn.classList.add('bg-primary', 'text-white', 'hover:bg-primary-light');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                    submitBtn.classList.remove('bg-primary', 'text-white', 'hover:bg-primary-light');
+                }
+            }
+            termsCheckbox.addEventListener('change', updateSubmitButton);
+            updateSubmitButton();
+        }
 
         // Close modal on escape key
         document.addEventListener('keydown', function(e) {
