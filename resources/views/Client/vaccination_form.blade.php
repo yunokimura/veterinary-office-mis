@@ -145,69 +145,142 @@
         @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            <!-- Left Column -->
-            <div class="lg:col-span-2">
-                <div class="bg-white border border-gray-200 rounded-lg p-6 lg:p-8">
-                    <form id="vaccinationForm" method="POST" action="{{ url('/vaccination/form') }}" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="selected_pets" id="selectedPetsData" value="">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-6">
+                <form id="vaccinationForm" method="POST" action="{{ url('/vaccination/form') }}" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="selected_pets" id="selectedPetsData" value="">
 
-                        <!-- PET MEDICAL HISTORY & SCREENING -->
-                        <div class="mb-8">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold">Pet Medical History & Screening</h3>
-                                <div class="flex items-center gap-3">
-                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-900 text-white text-xs font-semibold">
-                                        <span id="headerSelectedCount">0</span>
-                                        <span>Pets Selected</span>
-                                    </span>
-                                    <button type="button" onclick="openPetModal()" 
-                                            class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    <!-- Card 1: Pet Medical History & Screening -->
+                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <div class="bg-emerald-900 px-5 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Pet Medical History & Screening</h4>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-900 text-white text-xs font-semibold">
+                                            <span id="headerSelectedCount">0</span>
+                                            <span>Pets Selected</span>
+                                        </span>
+                                        <button type="button" onclick="openPetModal()" 
+                                                class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                            Select Pet
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Medical History Per Pet -->
+                                <div id="petMedicalHistoryContainer">
+                                    <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        Select Pet
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Medical History Per Pet -->
-                            <div id="petMedicalHistoryContainer">
-                                <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    <p class="text-gray-500 text-sm">Select pets first to see medical history forms.</p>
+                                        <p class="text-gray-500 text-sm">Select pets first to see medical history forms.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- GLOBAL APPOINTMENT SCHEDULING -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Appointment Scheduling</h3>
+                    <!-- Card 2: Appointment Scheduling -->
+                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <div class="bg-emerald-900 px-5 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Appointment Scheduling</h4>
+                            </div>
+                        </div>
+                        <div class="p-5">
                             <div id="globalSchedulerContainer">
-                                <!-- This will be populated by JS when pets are selected -->
+                                <div class="mb-3">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Date <span class="text-red-500">*</span></label>
+                                    <input type="date" 
+                                           id="globalAppointmentDate" 
+                                           min="${new Date().toISOString().split('T')[0]}"
+                                           onchange="loadGlobalSlots()"
+                                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                </div>
+                                
+                                <div id="globalSlotStatus" class="mb-3 hidden">
+                                    <span id="globalDailyCapacity" class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700">
+                                        Loading...
+                                    </span>
+                                </div>
+                                
+                                <div id="globalTimeSlots" class="mb-3 hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Time <span class="text-red-500">*</span></label>
+                                    <div class="grid grid-cols-3 gap-2" id="globalSlotsGrid">
+                                        <!-- Slots will be loaded dynamically -->
+                                    </div>
+                                </div>
+                                
+                                <div id="globalSelectedSummary" class="hidden bg-green-50 border border-green-200 rounded-lg p-3">
+                                    <p class="text-sm text-green-700 font-medium">
+                                        Selected: <span id="globalSelectedDate">-</span> at <span id="globalSelectedTime">-</span>
+                                    </p>
+                                </div>
+                                
+                                <input type="hidden" name="appointment_date" id="appointment_date" value="">
+                                <input type="hidden" name="appointment_time" id="globalAppointmentTime" value="">
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Confirmation Checkbox -->
-                        <div class="mt-6">
-                            <label class="inline-flex items-start cursor-pointer">
-                                <input type="checkbox" name="confirmation" class="form-checkbox h-5 w-5 text-primary rounded mt-1">
-                                <span class="ml-3 text-gray-700 text-sm">
-                                    By confirming, you acknowledge that the provided information is accurate and that your pet will be available for vaccination on the selected date(s). <span class="text-red-500">*</span>
-                                </span>
-                            </label>
+                    <!-- Card 3: Terms & Condition -->
+                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <div class="bg-emerald-900 px-5 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Terms & Condition</h4>
+                            </div>
                         </div>
+                        <div class="p-5">
+                            <div class="text-sm text-gray-700 space-y-2">
+                                <p>By submitting this form, you agree to the following terms and conditions:</p>
+                                <ul class="list-disc pl-5 mt-2 space-y-1">
+                                    <li>The vaccination appointment is subject to availability and confirmation by Dasmariñas City Veterinary Services.</li>
+                                    <li>Please arrive on time for your scheduled appointment. Late arrivals may result in rescheduling.</li>
+                                    <li>Ensure your pet is in good health and has not undergone any surgery within the last two (2) weeks prior to vaccination.</li>
+                                    <li>All information provided must be accurate. False information may lead to cancellation of the appointment.</li>
+                                    <li>Vaccination certificates, if available, must be presented during the appointment.</li>
+                                    <li>A maximum of 3 pets may be vaccinated per appointment slot to ensure proper handling and safety.</li>
+                                    <li>The veterinary office reserves the right to refuse vaccination if the pet appears unfit or unsafe for the procedure.</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Confirmation Checkbox -->
+                            <div class="mt-6">
+                                <label class="inline-flex items-start cursor-pointer">
+                                    <input type="checkbox" name="confirmation" class="form-checkbox h-5 w-5 text-primary rounded mt-1">
+                                    <span class="ml-3 text-gray-700 text-sm">
+                                        By confirming, you acknowledge that the provided information is accurate and that your pet will be available for vaccination on the selected date(s). <span class="text-red-500">*</span>
+                                    </span>
+                                </label>
+                            </div>
 
-                        <!-- Submit Button -->
-                        <div class="flex justify-center mt-8">
-                            <button type="submit" class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
-                                Submit
-                            </button>
+                            <!-- Submit Button -->
+                            <div class="flex justify-center mt-8">
+                                <button type="submit" class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
+                                    Submit
+                                </button>
+                            </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
 
             <!-- Right Sidebar -->
@@ -300,42 +373,6 @@
                         </div>
                     </div>
 
-                    <!-- Global Appointment Scheduler -->
-                    <div class="bg-white border border-gray-200 rounded-lg p-5">
-                        <h4 class="text-sm font-semibold text-gray-900 mb-3">Appointment</h4>
-                        <div id="globalSchedulerContainer">
-                            <div class="mb-3">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Date <span class="text-red-500">*</span></label>
-                                <input type="date" 
-                                       id="globalAppointmentDate" 
-                                       min="${new Date().toISOString().split('T')[0]}"
-                                       onchange="loadGlobalSlots()"
-                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            </div>
-                            
-                            <div id="globalSlotStatus" class="mb-3 hidden">
-                                <span id="globalDailyCapacity" class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700">
-                                    Loading...
-                                </span>
-                            </div>
-                            
-                            <div id="globalTimeSlots" class="mb-3 hidden">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Time <span class="text-red-500">*</span></label>
-                                <div class="grid grid-cols-3 gap-2" id="globalSlotsGrid">
-                                    <!-- Slots will be loaded dynamically -->
-                                </div>
-                            </div>
-                            
-                            <div id="globalSelectedSummary" class="hidden bg-green-50 border border-green-200 rounded-lg p-3">
-                                <p class="text-sm text-green-700 font-medium">
-                                    Selected: <span id="globalSelectedDate">-</span> at <span id="globalSelectedTime">-</span>
-                                </p>
-                            </div>
-                            
-                            <input type="hidden" name="appointment_date" id="appointment_date" value="">
-                            <input type="hidden" name="appointment_time" id="globalAppointmentTime" value="">
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
