@@ -148,16 +148,16 @@
             </div>
         @endif
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Main Content -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-8 space-y-6">
                 <form id="vaccinationForm" method="POST" action="{{ url('/vaccination/form') }}" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="selected_pets" id="selectedPetsData" value="">
 
                     <!-- Card 1: Pet Medical History & Screening -->
-                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div class="bg-emerald-900 px-5 py-3 flex items-center justify-between">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -165,7 +165,7 @@
                                 <h4 class="text-sm font-semibold text-white">Pet Medical History & Screening</h4>
                             </div>
                         </div>
-                        <div class="p-5">
+                        <div class="p-6">
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
@@ -197,8 +197,8 @@
                     </div>
 
                     <!-- Card 2: Appointment Scheduling -->
-                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div class="bg-emerald-900 px-5 py-3 flex items-center justify-between">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -206,7 +206,7 @@
                                 <h4 class="text-sm font-semibold text-white">Appointment Scheduling</h4>
                             </div>
                         </div>
-                        <div class="p-5">
+                        <div class="p-6">
                             <div id="globalSchedulerContainer">
                                 <div class="mb-3">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Select Date <span class="text-red-500">*</span></label>
@@ -243,8 +243,8 @@
                     </div>
 
                     <!-- Card 3: Terms & Condition -->
-                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div class="bg-emerald-900 px-5 py-3 flex items-center justify-between">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -252,7 +252,7 @@
                                 <h4 class="text-sm font-semibold text-white">Terms & Condition</h4>
                             </div>
                         </div>
-                        <div class="p-5">
+                        <div class="p-6">
                             <div class="text-sm text-gray-700 space-y-2">
                                 <p>By submitting this form, you agree to the following terms and conditions:</p>
                                 <ul class="list-disc pl-5 mt-2 space-y-1">
@@ -288,11 +288,11 @@
             </div>
 
             <!-- Right Sidebar -->
-            <div class="lg:col-span-1 space-y-6">
+            <div class="lg:col-span-4 space-y-6">
                 <div class="lg:sticky lg:top-6 space-y-6">
                     <!-- Owner Summary Card -->
-                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div class="bg-emerald-900 px-5 py-3 flex items-center justify-between">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -301,7 +301,7 @@
                             </div>
                             <span class="text-xs text-emerald-300">Read-Only</span>
                         </div>
-                        <div class="p-5 space-y-4">
+                        <div class="p-6 space-y-4">
                             <div>
                                 <p class="text-xs text-gray-500 mb-1">Pet Owner Name</p>
                                 <p class="text-sm font-semibold text-gray-900">{{ $petOwner->first_name ?? '' }} {{ $petOwner->last_name ?? '' }}</p>
@@ -355,8 +355,8 @@
                     </div>
 
                     <!-- Selected Pets Mini Summary -->
-                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div class="bg-emerald-900 px-5 py-3 flex items-center justify-between">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -364,7 +364,7 @@
                                 <h4 class="text-sm font-semibold text-white">SELECTED PETS (<span id="selectedPetCount">0</span>)</h4>
                             </div>
                         </div>
-                        <div class="p-4">
+                        <div class="p-6">
                             <div id="sidebarSelectedPets" class="space-y-3">
                                 <p class="text-sm text-gray-500">No pets selected yet.</p>
                             </div>
