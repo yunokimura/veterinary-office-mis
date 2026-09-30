@@ -1042,15 +1042,22 @@
                                         <p class="text-xs text-gray-600 mt-1">Age: ${ageDisplay} • Weight: ${weightDisplay}</p>
                                     </div>
                                 </div>
-                                <button type="button" onclick="removePet(${pet.id})" class="text-gray-400 hover:text-red-500 p-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="event.stopPropagation(); removePet(${pet.id})" class="text-gray-400 hover:text-red-500 p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" onclick="toggleMedicalAccordion(${pet.id})" class="text-gray-500 hover:text-gray-700 p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" id="medicalArrow_${pet.id}" class="w-5 h-5 transform transition-transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="p-5">
+                        <div id="medicalContent_${pet.id}" class="p-5">
                             <div class="mb-5">
                                 <label class="block text-sm font-medium text-gray-700 mb-3">Has ${pet.name || 'this pet'} received an anti-rabies vaccine before? <span class="text-red-500">*</span></label>
                                 <div class="flex space-x-6">
@@ -1142,6 +1149,20 @@
                     container.appendChild(medicalCard);
                 }
             });
+        }
+
+        function toggleMedicalAccordion(petId) {
+            const content = document.getElementById('medicalContent_' + petId);
+            const arrow = document.getElementById('medicalArrow_' + petId);
+            if (!content || !arrow) return;
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
         }
 
         function togglePreviousVaccineFields(radio, petId) {
