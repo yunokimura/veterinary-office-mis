@@ -1312,6 +1312,7 @@ Route::post('/vaccination/form', function (Request $request) {
         'pet_medical_history.*.vaccine_lot_number' => 'nullable|string|max:255',
         'pet_medical_history.*.special_notes' => 'nullable|string|max:1000',
         'pet_medical_history.*.recent_surgery' => 'required|in:yes,no',
+        'pet_medical_history.*.vaccination_certificate_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         'alt_mobile_number' => 'nullable|string|max:12',
         // Address fields to create a new Address record
         'blk_lot_ph' => 'required|string|max:255',
@@ -1327,27 +1328,61 @@ Route::post('/vaccination/form', function (Request $request) {
         $selectedPets = $selectedPetsInput ?? [];
     }
 
+    $user = auth()->user();
+
+    // Check for duplicate appointment for the same user and datetime
+    $scheduledAt = Carbon::parse($validated['appointment_date'].' '.$validated['appointment_time']);
+    $existingAppointment = VaccinationAppointment::where('user_id', $user->id)
+        ->where('scheduled_at', $scheduledAt)
+        ->whereIn('status', ['pending', 'scheduled'])
+        ->exists();
+
+    if ($existingAppointment) {
+        return redirect()->back()->with('error', 'You already have a vaccination appointment scheduled for this date and time.')->withInput();
+    }
+
     // Check for slot availability with locking to prevent race conditions
     try {
         $bookingService = new AppointmentBookingService;
         $bookingService->checkAndBookVaccinationSlot(
             $validated['appointment_date'],
-            $validated['appointment_time']
+            $validated['appointment_time'],
+            $user->id
         );
     } catch (AppointmentSlotTakenException $e) {
         return redirect()->back()->with('error', $e->getMessage())->withInput();
     }
 
-    $user = auth()->user();
     $petOwner = $user->petOwner;
 
-    // Combine date and time into scheduled_at
-    $scheduledAt = Carbon::parse($validated['appointment_date'].' '.$validated['appointment_time']);
+    // Handle vaccination certificate file uploads
+    $vaccinationCertificatePath = null;
+    $petMedicalHistory = $validated['pet_medical_history'] ?? [];
+    
+    if (!empty($request->file('pet_medical_history'))) {
+        foreach ($request->file('pet_medical_history') as $petId => $petFiles) {
+            if (isset($petFiles['vaccination_certificate_file']) && $petFiles['vaccination_certificate_file']->isValid()) {
+                $file = $petFiles['vaccination_certificate_file'];
+                $path = $file->store('vaccination-certificates', 'public');
+                
+                // Store path in metadata for the specific pet
+                if (!isset($petMedicalHistory[$petId])) {
+                    $petMedicalHistory[$petId] = [];
+                }
+                $petMedicalHistory[$petId]['vaccination_certificate_path'] = $path;
+                
+                // Keep the first uploaded file path for the appointment-level column
+                if (!$vaccinationCertificatePath) {
+                    $vaccinationCertificatePath = $path;
+                }
+            }
+        }
+    }
 
     // Store selected pets, per-pet medical history, and optional alt_mobile_number in metadata JSON
     $metadata = [
         'selected_pets' => $selectedPets,
-        'pet_medical_history' => $validated['pet_medical_history'] ?? [],
+        'pet_medical_history' => $petMedicalHistory,
     ];
     if (! empty($validated['alt_mobile_number'])) {
         $metadata['alt_mobile_number'] = $validated['alt_mobile_number'];
@@ -1378,6 +1413,7 @@ Route::post('/vaccination/form', function (Request $request) {
         'scheduled_at' => $scheduledAt,
         'status' => 'pending',
         'metadata' => $metadata,
+        'vaccination_certificate_path' => $vaccinationCertificatePath,
     ]);
 
     return redirect()->back()->with('success', 'Vaccination request submitted successfully!');

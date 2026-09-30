@@ -50,10 +50,24 @@ class AppointmentBookingService
         });
     }
 
-    public function checkAndBookVaccinationSlot(string $date, string $time): void
+    public function checkAndBookVaccinationSlot(string $date, string $time, ?int $userId = null): void
     {
-        DB::transaction(function () use ($date, $time) {
+        DB::transaction(function () use ($date, $time, $userId) {
             $scheduledAt = Carbon::parse("{$date} {$time}");
+
+            if ($userId) {
+                $existingUserAppointment = VaccinationAppointment::where('user_id', $userId)
+                    ->where('scheduled_at', $scheduledAt)
+                    ->whereIn('status', ['pending', 'scheduled'])
+                    ->lockForUpdate()
+                    ->exists();
+
+                if ($existingUserAppointment) {
+                    throw new AppointmentSlotTakenException(
+                        'You already have a vaccination appointment scheduled for this date and time.'
+                    );
+                }
+            }
 
             $existingVaccination = VaccinationReport::whereDate('scheduled_at', $date)
                 ->whereTime('scheduled_at', '>=', $scheduledAt)
