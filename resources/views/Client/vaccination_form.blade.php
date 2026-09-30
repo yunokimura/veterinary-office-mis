@@ -171,20 +171,6 @@
                                 </div>
                             </div>
 
-                            <!-- Selected Pets Display Area -->
-                            <div id="selectedPetsContainer" class="mb-6">
-                                <!-- Display selected pet cards here -->
-                                <div id="selectedPetsList" class="grid md:grid-cols-2 gap-4">
-                                    <!-- Empty state -->
-                                    <div id="noPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        <p class="text-gray-500">No pets selected yet. Click "Select Pet" to choose from your registered pets.</p>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Medical History Per Pet -->
                             <div id="petMedicalHistoryContainer">
                                 <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -964,8 +950,6 @@
         }
 
         function confirmPetSelection() {
-            const container = document.getElementById('selectedPetsList');
-            const noPetsMessage = document.getElementById('noPetsSelected');
             const modalFooter = document.querySelector('#petModal .bg-gray-50');
             const medicalHistoryContainer = document.getElementById('petMedicalHistoryContainer');
 
@@ -974,24 +958,7 @@
                 modalFooter.classList.remove('hidden');
             }
 
-            if (selectedPets.length > 0) {
-                if (noPetsMessage) {
-                    noPetsMessage.remove();
-                }
-            }
-
-            // Clear current selections and rebuild
-            container.innerHTML = '';
-
             if (selectedPets.length === 0) {
-                container.innerHTML = `
-                    <div id="noPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <p class="text-gray-500">No pets selected yet. Click "Select Pet" to choose from your registered pets.</p>
-                    </div>
-                `;
                 // Reset medical history to empty state
                 medicalHistoryContainer.innerHTML = `
                     <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -1000,54 +967,11 @@
                         </svg>
                         <p class="text-gray-500 text-sm">Select pets first to see medical history forms.</p>
                     </div>
-                    `;
+                `;
                 updateSidebarSelectedPets();
                 closePetModal();
                 return;
             }
-
-            selectedPets.forEach(petId => {
-                const pet = petsData.find(p => String(p.id) === String(petId));
-                if (pet) {
-                    // Determine image source
-                    let imageHtml = '';
-                    if (pet.image) {
-                        let imgPath = pet.image;
-                        if (!imgPath.includes('images/pets') && !imgPath.includes('http')) {
-                            imgPath = 'images/pets/' + pet.image.split('/').pop();
-                        }
-                        const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
-                        imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-12 h-12 rounded-full object-cover">`;
-                    } else {
-                        imageHtml = `<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>`;
-                    }
-                    
-                    // Add pet card
-                    const petCard = document.createElement('div');
-                    petCard.className = 'bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between cursor-pointer hover:border-primary hover:shadow-sm transition-colors';
-                    const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
-                    petCard.innerHTML = `
-                        <div class="flex items-center flex-1 min-w-0" onclick="showPetInfoModal(${pet.id})">
-                            ${imageHtml}
-                            <div class="ml-3 min-w-0">
-                                <p class="font-semibold text-gray-900 truncate">${pet.name || 'Unknown'}</p>
-                                <p class="text-xs text-gray-500">${speciesDisplay} • ${pet.breed || 'Unknown'}</p>
-                                <p class="text-xs text-gray-600 mt-1">Age: ${formatAge(pet.age)} • Weight: ${formatWeight(pet.weight)}</p>
-                            </div>
-                        </div>
-                        <button type="button" onclick="event.stopPropagation(); removePet(${pet.id})" class="text-red-500 hover:text-red-700 p-1 flex-shrink-0 ml-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    `;
-                    container.appendChild(petCard);
-                }
-            });
 
             // Generate medical history cards for each selected pet
             generateMedicalHistoryCards();
