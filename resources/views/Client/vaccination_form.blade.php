@@ -1171,10 +1171,17 @@
                             </div>
                         </div>
                     `;
-                    container.appendChild(medicalCard);
-                }
-            });
-        }
+                     container.appendChild(medicalCard);
+                 }
+             });
+             
+             selectedPets.forEach(petId => {
+                 const dateInput = container.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`);
+                 if (dateInput && dateInput.value) {
+                     formatDateDisplay(dateInput, 'antiRabiesDateDisplay_' + petId);
+                 }
+             });
+         }
 
         function toggleMedicalAccordion(petId) {
             const content = document.getElementById('medicalContent_' + petId);
