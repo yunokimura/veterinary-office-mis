@@ -150,13 +150,13 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Main Content -->
-            <div class="lg:col-span-8 space-y-6">
+            <div class="lg:col-span-8">
                 <form id="vaccinationForm" method="POST" action="{{ url('/vaccination/form') }}" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="selected_pets" id="selectedPetsData" value="">
 
                     <!-- Card 1: Pet Medical History & Screening -->
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
                         <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -197,7 +197,7 @@
                     </div>
 
                     <!-- Card 2: Appointment Scheduling -->
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
                         <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -289,7 +289,7 @@
 
             <!-- Right Sidebar -->
             <div class="lg:col-span-4 space-y-6">
-                <div class="lg:sticky lg:top-6 space-y-6">
+                <div class="lg:sticky lg:top-20 space-y-6">
                     <!-- Owner Summary Card -->
                     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
                         <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
