@@ -205,37 +205,57 @@
                                 </svg>
                                 <h4 class="text-sm font-semibold text-white">Appointment Scheduling</h4>
                             </div>
+                            <span id="slotPetCountBadge" class="text-xs bg-emerald-800 text-emerald-200 font-medium px-2.5 py-1 rounded-full border border-emerald-700">
+                                Single Slot for Pets
+                            </span>
                         </div>
                         <div class="p-6">
                             <div id="globalSchedulerContainer">
-                                <div class="mb-3">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Date <span class="text-red-500">*</span></label>
-                                    <input type="date" 
-                                           id="globalAppointmentDate" 
-                                           min="{{ date('Y-m-d') }}"
-                                           onchange="loadGlobalSlots()"
-                                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
+                                        Select Appointment Date <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative max-w-sm">
+                                        <input type="date"
+                                               id="globalAppointmentDate"
+                                               min="{{ date('Y-m-d') }}"
+                                               onchange="loadGlobalSlots()"
+                                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                                               required>
+                                    </div>
+                                    <p id="selectedDateText" class="text-xs text-emerald-700 mt-1.5 font-medium flex items-center gap-1 hidden">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Selected Date: <span id="globalSelectedDate">-</span>
+                                    </p>
                                 </div>
-                                
-                                <div id="globalSlotStatus" class="mb-3 hidden">
-                                    <span id="globalDailyCapacity" class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700">
-                                        Loading...
-                                    </span>
+
+                                <div id="groupBookingBanner" class="mb-4 bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-2.5 text-xs text-emerald-900 hidden">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <div>
+                                        <span class="font-bold">Group Booking Policy:</span> Selecting <span id="bannerSelectedTime" class="font-bold">-</span> will reserve slot capacity for all <span id="bannerPetCount" class="font-bold">-</span> selected pets (<span id="bannerPetNames" class="font-bold">-</span>) during this same 1-hour clinic block.
+                                    </div>
                                 </div>
-                                
+
                                 <div id="globalTimeSlots" class="mb-3 hidden">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Time <span class="text-red-500">*</span></label>
-                                    <div class="grid grid-cols-3 gap-2" id="globalSlotsGrid">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
+                                        Select Preferred Time Slot <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="globalSlotsGrid">
                                         <!-- Slots will be loaded dynamically -->
                                     </div>
                                 </div>
-                                
-                                <div id="globalSelectedSummary" class="hidden bg-green-50 border border-green-200 rounded-lg p-3">
-                                    <p class="text-sm text-green-700 font-medium">
-                                        Selected: <span id="globalSelectedDate">-</span> at <span id="globalSelectedTime">-</span>
+
+                                <div id="globalSelectedSummary" class="hidden bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                                    <p class="text-sm text-emerald-700 font-medium">
+                                        Selected: <span id="globalSelectedDateSummary">-</span>
                                     </p>
+                                    <div id="selectedSlotsList" class="mt-1 space-y-1"></div>
                                 </div>
-                                
+
                                 <input type="hidden" name="appointment_date" id="appointment_date" value="">
                                 <input type="hidden" name="appointment_time" id="globalAppointmentTime" value="">
                             </div>
@@ -582,23 +602,68 @@
 
         // Global appointment slot functions
         let globalSlotsData = [];
+        let selectedSlotTime = null;
+
+        function updateSlotPetCountBadge() {
+            const badge = document.getElementById('slotPetCountBadge');
+            if (!badge) return;
+            const count = selectedPets.length;
+            badge.textContent = count === 1 ? 'Single Slot for 1 Pet' : 'Single Slot for ' + count + ' Pets';
+        }
+
+        function getPetNamesString() {
+            if (!selectedPets.length) return 'no pets';
+            return selectedPets.map(pid => {
+                const pet = petsData.find(p => String(p.id) === String(pid));
+                return pet ? pet.name : 'Pet ' + pid;
+            }).join(', ');
+        }
+
+        function updateGroupBookingBanner(timeText) {
+            const banner = document.getElementById('groupBookingBanner');
+            const bannerTime = document.getElementById('bannerSelectedTime');
+            const bannerCount = document.getElementById('bannerPetCount');
+            const bannerNames = document.getElementById('bannerPetNames');
+            
+            if (!banner || !bannerTime || !bannerCount || !bannerNames) return;
+            
+            if (!timeText) {
+                banner.classList.add('hidden');
+                return;
+            }
+            
+            banner.classList.remove('hidden');
+            bannerTime.textContent = timeText;
+            bannerCount.textContent = selectedPets.length;
+            bannerNames.textContent = getPetNamesString();
+        }
 
         async function loadGlobalSlots() {
             const dateInput = document.getElementById('globalAppointmentDate');
             const selectedDate = dateInput.value;
             if (!selectedDate) return;
 
-            const slotStatuses = document.querySelectorAll('#globalSlotStatus');
-            const slotsGrids = document.querySelectorAll('#globalSlotsGrid');
+            const slotStatus = document.getElementById('globalDailyCapacity');
+            const slotsGrid = document.getElementById('globalSlotsGrid');
+            const selectedDateText = document.getElementById('selectedDateText');
+            const globalSelectedDate = document.getElementById('globalSelectedDate');
+            const globalTimeSlots = document.getElementById('globalTimeSlots');
             
-            slotStatuses.forEach(el => el.classList.remove('hidden'));
-            slotsGrids.forEach(el => el.classList.add('hidden'));
+            slotsGrid.innerHTML = '';
+            slotsGrid.classList.add('hidden');
+            globalTimeSlots.classList.add('hidden');
             
-            const capacityBadges = document.querySelectorAll('#globalDailyCapacity');
-            capacityBadges.forEach(el => {
-                el.textContent = 'Loading...';
-                el.className = 'inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700';
-            });
+            if (slotStatus) {
+                slotStatus.classList.remove('hidden');
+                slotStatus.textContent = 'Loading...';
+                slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700';
+            }
+            
+            if (selectedDateText && globalSelectedDate) {
+                selectedDateText.classList.remove('hidden');
+                const dateObj = new Date(selectedDate + 'T00:00:00');
+                globalSelectedDate.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            }
 
             try {
                 const response = await fetch(`/api/appointments/slots?date=${selectedDate}&service_type=vaccination`);
@@ -608,18 +673,18 @@
                     globalSlotsData = data.slots;
                     const dailyRemaining = data.daily_remaining || 0;
                     
-                    capacityBadges.forEach(el => {
+                    if (slotStatus) {
                         if (dailyRemaining <= 0) {
-                            el.textContent = 'Fully Booked';
-                            el.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700';
+                            slotStatus.textContent = 'Fully Booked';
+                            slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700';
                         } else if (dailyRemaining === 1) {
-                            el.textContent = '1 slot left';
-                            el.className = 'inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700';
+                            slotStatus.textContent = '1 slot left';
+                            slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700';
                         } else {
-                            el.textContent = 'Available';
-                            el.className = 'inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700';
+                            slotStatus.textContent = 'Available';
+                            slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700';
                         }
-                    });
+                    }
                     
                     if (data.slots && data.slots.length > 0) {
                         const currentTime = new Date();
@@ -630,68 +695,116 @@
                         
                         const sortedSlots = [...data.slots].sort((a, b) => a.time.localeCompare(b.time));
                         
-                        slotsGrids.forEach(slotsGrid => {
-                            slotsGrid.innerHTML = '';
+                        sortedSlots.forEach(slot => {
+                            const [slotHour, slotMinute] = slot.time.split(':').map(Number);
+                            const slotTimeInMinutes = slotHour * 60 + slotMinute;
+                            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+                            const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
                             
-                            sortedSlots.forEach(slot => {
-                                const [slotHour, slotMinute] = slot.time.split(':').map(Number);
-                                const slotTimeInMinutes = slotHour * 60 + slotMinute;
-                                const currentTimeInMinutes = currentHour * 60 + currentMinute;
-                                const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
-                                
-                                const isDisabled = slot.status === 'blocked' || slot.status === 'full' || isPast || slot.is_past;
-                                
-                                let btnClass = 'py-3 px-2 rounded-lg border-2 text-sm font-medium transition-all ';
-                                if (isDisabled) {
-                                    btnClass += 'border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50';
-                                } else if (slot.status === 'limited') {
-                                    btnClass += 'border-yellow-300 text-yellow-700 bg-yellow-50 hover:border-yellow-500';
-                                } else if (slot.status === 'full') {
-                                    btnClass += 'border-red-200 text-red-400 cursor-not-allowed bg-red-50';
-                                } else {
-                                    btnClass += 'border-green-300 text-green-700 bg-green-50 hover:border-green-500';
-                                }
-                                
-                                const slotBtn = document.createElement('button');
-                                slotBtn.type = 'button';
-                                slotBtn.className = btnClass;
-                                slotBtn.disabled = isDisabled;
-                                slotBtn.textContent = slot.display_time || slot.time;
+                            const isDisabled = slot.status === 'blocked' || slot.status === 'full' || isPast || slot.is_past;
+                            const isSelected = selectedSlotTime === slot.time;
+                            
+                            const slotBtn = document.createElement('button');
+                            slotBtn.type = 'button';
+                            slotBtn.className = 'p-3 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center relative ';
+                            
+                            if (isDisabled) {
+                                slotBtn.className += 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed opacity-60';
+                            } else if (isSelected) {
+                                slotBtn.className += 'bg-emerald-700 border-emerald-800 text-white font-bold ring-2 ring-emerald-600 shadow-sm';
+                            } else {
+                                slotBtn.className += 'bg-white border-slate-200 text-slate-800 hover:border-emerald-400 hover:bg-emerald-50/50';
+                            }
+                            
+                            slotBtn.disabled = isDisabled;
+                            
+                            const timeLabel = document.createElement('span');
+                            timeLabel.className = 'text-sm font-bold';
+                            timeLabel.textContent = slot.display_time || slot.time;
+                            slotBtn.appendChild(timeLabel);
+                            
+                            const statusLabel = document.createElement('span');
+                            statusLabel.className = 'text-[10px] mt-1 ';
+                            if (isSelected) {
+                                statusLabel.className += 'text-emerald-100';
+                            } else if (isDisabled) {
+                                statusLabel.className += 'text-slate-400';
+                            } else {
+                                statusLabel.className += 'text-slate-500';
+                            }
+                            
+                            if (slot.status === 'full' || dailyRemaining <= 0) {
+                                statusLabel.textContent = 'Fully Booked';
+                            } else if (slot.status === 'limited') {
+                                statusLabel.textContent = 'Limited';
+                            } else {
+                                const remaining = (typeof slot.capacity === 'number' && typeof slot.booked === 'number')
+                                    ? (slot.capacity - slot.booked)
+                                    : null;
+                                statusLabel.textContent = remaining !== null ? remaining + ' slots left' : 'Available';
+                            }
+                            slotBtn.appendChild(statusLabel);
+                            
+                            if (isSelected) {
+                                const checkBadge = document.createElement('span');
+                                checkBadge.className = 'absolute -top-2 -right-1 bg-emerald-500 text-white p-0.5 rounded-full shadow-xs';
+                                checkBadge.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
+                                slotBtn.appendChild(checkBadge);
+                            }
+                            
+                            if (!isDisabled) {
                                 slotBtn.onclick = () => selectGlobalSlot(slot);
-                                
-                                slotsGrid.appendChild(slotBtn);
-                            });
+                            }
+                            
+                            slotsGrid.appendChild(slotBtn);
                         });
                         
-                        slotsGrids.forEach(el => el.classList.remove('hidden'));
+                        slotsGrid.classList.remove('hidden');
+                        globalTimeSlots.classList.remove('hidden');
                     }
                 }
             } catch (error) {
                 console.error('Failed to load global slots:', error);
-                capacityBadges.forEach(el => {
-                    el.textContent = 'Error loading slots';
-                    el.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700';
-                });
+                if (slotStatus) {
+                    slotStatus.textContent = 'Error loading slots';
+                    slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700';
+                }
             }
         }
 
         function selectGlobalSlot(slot) {
             const date = document.getElementById('globalAppointmentDate').value;
+            selectedSlotTime = slot.time;
             
-            document.querySelectorAll('input[name="appointment_date"]').forEach(el => el.value = date);
-            document.querySelectorAll('input[name="appointment_time"]').forEach(el => el.value = slot.time);
-            
-            const summaries = document.querySelectorAll('#globalSelectedSummary');
-            const selectedDates = document.querySelectorAll('#globalSelectedDate');
-            const selectedTimes = document.querySelectorAll('#globalSelectedTime');
+            document.getElementById('appointment_date').value = date;
+            document.getElementById('globalAppointmentTime').value = slot.time;
             
             const dateObj = new Date(date + 'T00:00:00');
             const dateText = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
             const timeText = slot.display_time || slot.time;
             
-            summaries.forEach(el => el.classList.remove('hidden'));
-            selectedDates.forEach(el => el.textContent = dateText);
-            selectedTimes.forEach(el => el.textContent = timeText);
+            const summary = document.getElementById('globalSelectedSummary');
+            const selectedSlotsList = document.getElementById('selectedSlotsList');
+            const globalSelectedDateSummary = document.getElementById('globalSelectedDateSummary');
+            
+            if (summary) summary.classList.remove('hidden');
+            if (globalSelectedDateSummary) globalSelectedDateSummary.textContent = dateText + ' at ' + timeText;
+            
+            if (selectedSlotsList) {
+                selectedSlotsList.innerHTML = '';
+                selectedPets.forEach(pid => {
+                    const pet = petsData.find(p => String(p.id) === String(pid));
+                    const petName = pet ? pet.name : 'Pet ' + pid;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'text-xs text-emerald-700';
+                    item.textContent = petName + ': ' + timeText;
+                    selectedSlotsList.appendChild(item);
+                });
+            }
+            
+            updateGroupBookingBanner(timeText);
+            loadGlobalSlots();
         }
         
         let selectedPets = [];
@@ -917,6 +1030,7 @@
             if (headerCountEl) {
                 headerCountEl.textContent = selectedPets.length;
             }
+            updateSlotPetCountBadge();
         }
 
         function updateSidebarSelectedPets() {
