@@ -170,8 +170,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
                                         <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-900 text-white text-xs font-semibold">
-                                            <span id="headerSelectedCount">0</span>
-                                            <span>Pets Selected</span>
+                                            <span id="headerSelectedCount">0 Pets Selected</span>
                                         </span>
                                         <button type="button" onclick="openPetModal()" 
                                                 class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
@@ -206,7 +205,7 @@
                                 <h4 class="text-sm font-semibold text-white">Appointment Scheduling</h4>
                             </div>
                             <span id="slotPetCountBadge" class="text-xs bg-emerald-800 text-emerald-200 font-medium px-2.5 py-1 rounded-full border border-emerald-700">
-                                Single Slot for Pets
+                                Pet Selected
                             </span>
                         </div>
                         <div class="p-6">
@@ -273,19 +272,6 @@
                             </div>
                         </div>
                         <div class="p-6">
-                            <div class="text-sm text-gray-700 space-y-2">
-                                <p>By submitting this form, you agree to the following terms and conditions:</p>
-                                <ul class="list-disc pl-5 mt-2 space-y-1">
-                                    <li>The vaccination appointment is subject to availability and confirmation by Dasmariñas City Veterinary Services.</li>
-                                    <li>Please arrive on time for your scheduled appointment. Late arrivals may result in rescheduling.</li>
-                                    <li>Ensure your pet is in good health and has not undergone any surgery within the last two (2) weeks prior to vaccination.</li>
-                                    <li>All information provided must be accurate. False information may lead to cancellation of the appointment.</li>
-                                    <li>Vaccination certificates, if available, must be presented during the appointment.</li>
-                                    <li>A maximum of 3 pets may be vaccinated per appointment slot to ensure proper handling and safety.</li>
-                                    <li>The veterinary office reserves the right to refuse vaccination if the pet appears unfit or unsafe for the procedure.</li>
-                                </ul>
-                            </div>
-                            
                             <!-- Confirmation Checkbox -->
                             <div class="mt-6">
                                 <label class="inline-flex items-start cursor-pointer">
@@ -608,7 +594,7 @@
             const badge = document.getElementById('slotPetCountBadge');
             if (!badge) return;
             const count = selectedPets.length;
-            badge.textContent = count === 1 ? 'Single Slot for 1 Pet' : 'Single Slot for ' + count + ' Pets';
+            badge.textContent = count + ' Pet' + (count === 1 ? ' Selected' : 's Selected');
         }
 
         function getPetNamesString() {
@@ -738,10 +724,8 @@
                             } else if (slot.status === 'limited') {
                                 statusLabel.textContent = 'Limited';
                             } else {
-                                const remaining = (typeof slot.capacity === 'number' && typeof slot.booked === 'number')
-                                    ? (slot.capacity - slot.booked)
-                                    : null;
-                                statusLabel.textContent = remaining !== null ? remaining + ' slots left' : 'Available';
+                                const remaining = slot.capacity - slot.booked;
+                                statusLabel.textContent = Number.isNaN(remaining) ? 'Available' : remaining + ' slots left';
                             }
                             slotBtn.appendChild(statusLabel);
                             
@@ -1028,7 +1012,8 @@
             }
             const headerCountEl = document.getElementById('headerSelectedCount');
             if (headerCountEl) {
-                headerCountEl.textContent = selectedPets.length;
+                const count = selectedPets.length;
+                headerCountEl.textContent = count + ' Pet' + (count === 1 ? ' Selected' : 's Selected');
             }
             updateSlotPetCountBadge();
         }
