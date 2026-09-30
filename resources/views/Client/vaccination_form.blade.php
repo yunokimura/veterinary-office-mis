@@ -41,6 +41,10 @@
         .dropdown-option.selected {
             background-color: #e8f5e9;
         }
+
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: #066D33;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50">
@@ -208,7 +212,7 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Select Date <span class="text-red-500">*</span></label>
                                     <input type="date" 
                                            id="globalAppointmentDate" 
-                                           min="${new Date().toISOString().split('T')[0]}"
+                                           min="{{ date('Y-m-d') }}"
                                            onchange="loadGlobalSlots()"
                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                 </div>
@@ -265,7 +269,7 @@
                             <!-- Confirmation Checkbox -->
                             <div class="mt-6">
                                 <label class="inline-flex items-start cursor-pointer">
-                                    <input type="checkbox" name="confirmation" class="form-checkbox h-5 w-5 text-primary rounded mt-1">
+                                     <input type="checkbox" name="confirmation" class="h-5 w-5 rounded mt-1">
                                     <span class="ml-3 text-gray-700 text-sm">
                                         By confirming, you acknowledge that the provided information is accurate and that your pet will be available for vaccination on the selected date(s). <span class="text-red-500">*</span>
                                     </span>
@@ -496,25 +500,6 @@
                         <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end">
                             <button type="button" onclick="closePetInfoModal()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">
                                 Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pet Limit Modal -->
-            <div id="petLimitModal" class="fixed inset-0 z-50 hidden">
-                <div class="fixed inset-0 bg-black bg-opacity-50"></div>
-                <div class="fixed inset-0 flex items-center justify-center p-4">
-                    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-                        <div class="text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Pet Limit Reached</h3>
-                            <p class="text-gray-600 mb-4">You can only select up to 3 pets per vaccination appointment.</p>
-                            <button type="button" onclick="closePetLimitModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
-                                I Understand
                             </button>
                         </div>
                     </div>
@@ -816,6 +801,10 @@
                     </div>
                 </div>
             `;
+            const existingModal = document.getElementById('alreadyBookedModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             document.body.style.overflow = 'hidden';
         }
@@ -986,7 +975,7 @@
             });
         }
 
-        function confirmPetSelection() {
+        function refreshPetUI() {
             const modalFooter = document.querySelector('#petModal .bg-gray-50');
             const medicalHistoryContainer = document.getElementById('petMedicalHistoryContainer');
 
@@ -996,7 +985,6 @@
             }
 
             if (selectedPets.length === 0) {
-                // Reset medical history to empty state
                 medicalHistoryContainer.innerHTML = `
                     <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1005,13 +993,9 @@
                         <p class="text-gray-500 text-sm">Select pets first to see medical history forms.</p>
                     </div>
                 `;
-                updateSidebarSelectedPets();
-                closePetModal();
-                return;
+            } else {
+                generateMedicalHistoryCards();
             }
-
-            // Generate medical history cards for each selected pet
-            generateMedicalHistoryCards();
 
             // Update hidden selected_pets field for form submission
             const selectedPetsData = document.getElementById('selectedPetsData');
@@ -1021,6 +1005,10 @@
 
             updateSelectedCount();
             updateSidebarSelectedPets();
+        }
+
+        function confirmPetSelection() {
+            refreshPetUI();
             closePetModal();
         }
 
@@ -1100,12 +1088,12 @@
                                 <div class="flex space-x-6">
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="radio" name="pet_medical_history[${pet.id}][has_previous_vaccine]" value="yes" 
-                                               class="form-radio h-5 w-5 text-primary" onchange="togglePreviousVaccineFields(this, ${pet.id})">
+                                               class="h-5 w-5" onchange="togglePreviousVaccineFields(this, ${pet.id})">
                                         <span class="ml-3 text-gray-700 font-medium">Yes, has received before</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="radio" name="pet_medical_history[${pet.id}][has_previous_vaccine]" value="no" 
-                                               class="form-radio h-5 w-5 text-primary" onchange="togglePreviousVaccineFields(this, ${pet.id})">
+                                               class="h-5 w-5" onchange="togglePreviousVaccineFields(this, ${pet.id})">
                                         <span class="ml-3 text-gray-700 font-medium">No history / First time</span>
                                     </label>
                                 </div>
@@ -1166,11 +1154,11 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-3">Did ${pet.name || 'this pet'} undergo any surgery in the last two (2) weeks? <span class="text-red-500">*</span></label>
                                 <div class="flex space-x-6">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="yes" class="form-radio h-5 w-5 text-primary">
+                                        <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="yes" class="h-5 w-5">
                                         <span class="ml-3 text-gray-700 font-medium">Yes</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="no" class="form-radio h-5 w-5 text-primary">
+                                        <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="no" class="h-5 w-5">
                                         <span class="ml-3 text-gray-700 font-medium">No</span>
                                     </label>
                                 </div>
@@ -1231,10 +1219,7 @@
                 checkbox.checked = false;
             }
             
-            // Rebuild the display
-            confirmPetSelection();
-            updateSelectedCount();
-            updateSidebarSelectedPets();
+            refreshPetUI();
         }
 
         // Phone number formatting
