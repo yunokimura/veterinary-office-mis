@@ -1311,24 +1311,15 @@ Route::post('/vaccination/form', function (Request $request) {
         'pet_medical_history.*.last_anti_rabies_date' => 'nullable|date',
         'pet_medical_history.*.clinic_name' => 'nullable|string|max:255',
         'pet_medical_history.*.vaccination_certificate' => 'nullable|string|max:255',
-        'pet_medical_history.*.vaccine_lot_number' => 'nullable|string|max:255',
+        'pet_medical_history.*.vaccine_lot_number' => 'nullable|string|max:6',
         'pet_medical_history.*.special_notes' => 'nullable|string|max:1000',
         'pet_medical_history.*.recent_surgery' => 'required|in:yes,no',
         'pet_medical_history.*.vaccination_certificate_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         'alt_mobile_number' => 'nullable|string|max:12',
-        // Address fields to create a new Address record
-        'blk_lot_ph' => 'required|string|max:255',
-        'street' => 'required|string|max:255',
-        'barangay' => 'required|string|max:255',
     ]);
 
-    // Parse selected_pets - could be array or JSON string from hidden input
-    $selectedPetsInput = $request->input('selected_pets');
-    if (is_string($selectedPetsInput)) {
-        $selectedPets = json_decode($selectedPetsInput, true);
-    } else {
-        $selectedPets = $selectedPetsInput ?? [];
-    }
+    // Parse selected_pets - now received as real array input
+    $selectedPets = $validated['selected_pets'] ?? [];
 
     $user = auth()->user();
 
@@ -1390,28 +1381,17 @@ Route::post('/vaccination/form', function (Request $request) {
         $metadata['alt_mobile_number'] = $validated['alt_mobile_number'];
     }
 
-    // Resolve or create Address record
-    $barangayRecord = Barangay::firstOrCreate(
-        ['barangay_name' => $validated['barangay']],
-        ['city' => 'Dasmariñas City', 'province' => 'Cavite', 'status' => 'active']
-    );
-
-    $address = Address::create([
-        'block_lot_phase' => $validated['blk_lot_ph'],
-        'street' => $validated['street'],
-        'subdivision' => null,
-        'barangay_id' => $barangayRecord->barangay_id,
-        'city' => 'Dasmariñas City',
-        'province' => 'Cavite',
-        'postal_code' => null,
-        'is_primary' => true,
-    ]);
+    // Use existing owner address instead of creating a new one
+    $addressId = $petOwner->address_id ?? null;
+    if (!$addressId && $petOwner->address) {
+        $addressId = $petOwner->address->id ?? null;
+    }
 
     // Create vaccination appointment using foreign keys
     VaccinationAppointment::create([
         'user_id' => $user->id,
         'owner_id' => $petOwner->owner_id,
-        'address_id' => $address->id,
+        'address_id' => $addressId,
         'scheduled_at' => $scheduledAt,
         'status' => 'pending',
         'metadata' => $metadata,

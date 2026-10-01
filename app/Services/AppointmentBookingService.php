@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\AppointmentSlotTakenException;
 use App\Models\Appointment;
 use App\Models\SpayNeuterReport;
+use App\Models\VaccinationAppointment;
 use App\Models\VaccinationReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -69,7 +70,7 @@ class AppointmentBookingService
                 }
             }
 
-            $existingVaccination = VaccinationReport::whereDate('scheduled_at', $date)
+            $existingVaccination = VaccinationAppointment::whereDate('scheduled_at', $date)
                 ->whereTime('scheduled_at', '>=', $scheduledAt)
                 ->whereTime('scheduled_at', '<', $scheduledAt->copy()->addHour())
                 ->whereIn('status', ['pending', 'scheduled'])
@@ -86,7 +87,7 @@ class AppointmentBookingService
             $hourStart = Carbon::parse($time);
             $hourEnd = $hourStart->copy()->addHour();
 
-            $vaccinationsInHour = VaccinationReport::whereDate('scheduled_at', $date)
+            $vaccinationsInHour = VaccinationAppointment::whereDate('scheduled_at', $date)
                 ->whereTime('scheduled_at', '>=', $hourStart)
                 ->whereTime('scheduled_at', '<', $hourEnd)
                 ->whereIn('status', ['pending', 'scheduled'])

@@ -154,6 +154,7 @@
                 <form id="vaccinationForm" method="POST" action="{{ url('/vaccination/form') }}" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="selected_pets" id="selectedPetsData" value="">
+                    <div id="selectedPetsArrayContainer"></div>
 
                     <!-- Card 1: Pet Medical History & Screening -->
                     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
@@ -1117,6 +1118,18 @@
                 selectedPetsData.value = JSON.stringify(selectedPets);
             }
 
+            const arrayContainer = document.getElementById('selectedPetsArrayContainer');
+            if (arrayContainer) {
+                arrayContainer.innerHTML = '';
+                selectedPets.forEach(petId => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'selected_pets[]';
+                    input.value = petId;
+                    arrayContainer.appendChild(input);
+                });
+            }
+
             updateSelectedCount();
             updateSidebarSelectedPets();
         }
@@ -1256,8 +1269,9 @@
 
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Vaccine Lot / Batch Number <span class="text-gray-400 font-normal">(Optional)</span></label>
-                                            <input type="text" name="pet_medical_history[${pet.id}][vaccine_lot_number]" placeholder="e.g., G64884"
-                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                             <input type="text" name="pet_medical_history[${pet.id}][vaccine_lot_number]" placeholder="e.g., G64884"
+                                                    maxlength="6"
+                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                             <p class="text-xs text-gray-500 mt-1">Found in the Vaccination Certificate</p>
                                         </div>
                                     </div>
