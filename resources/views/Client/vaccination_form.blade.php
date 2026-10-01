@@ -913,6 +913,7 @@
         }
         
         let selectedPets = [];
+        let ineligiblePets = {};
 
         function openPetModal() {
             // Check if user has no pets registered
@@ -1163,7 +1164,15 @@
                 if (!pet) return;
 
                 const petItem = document.createElement('div');
-                petItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+                const isIneligible = !!ineligiblePets[petId];
+                const reason = ineligiblePets[petId] || '';
+
+                if (isIneligible) {
+                    petItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg opacity-50';
+                    petItem.style.backgroundColor = '#f3f4f6';
+                } else {
+                    petItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+                }
 
                 let imageHtml = '';
                 if (pet.image) {
@@ -1190,6 +1199,7 @@
                         <div>
                             <p class="text-sm font-semibold text-gray-900">${pet.name || 'Unknown'}</p>
                             <p class="text-xs text-gray-500">${speciesDisplay} • ${breedDisplay}</p>
+                            ${isIneligible ? `<span class="eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold mt-1" title="${reason}">Not Eligible for Rabies Shot</span>` : ''}
                         </div>
                     </div>
                     <button type="button" onclick="removePet(${pet.id})" class="text-gray-400 hover:text-red-500 p-1">
@@ -1295,10 +1305,11 @@
                     const weightDisplay = formatWeight(pet.weight);
 
                     const medicalCard = document.createElement('div');
-                    medicalCard.className = 'bg-white border border-gray-200 rounded-2xl mb-4 overflow-hidden';
+                    medicalCard.className = 'bg-white border border-gray-200 rounded-2xl mb-4';
+                    medicalCard.style.position = 'relative';
                     medicalCard.id = 'medical-history-' + petId;
                     medicalCard.innerHTML = `
-                        <div class="bg-green-50 px-5 py-4 border-b border-gray-200">
+                        <div class="bg-green-50 px-5 py-4 border-b border-gray-200 rounded-t-2xl">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-4">
                                     ${imageHtml}
@@ -1655,18 +1666,22 @@
                 // Add or update eligibility badge
                 let badge = medicalCard.querySelector('.eligibility-badge');
                 if (!badge) {
-                    const header = medicalCard.querySelector('.bg-green-50');
-                    if (header) {
-                        badge = document.createElement('span');
-                        badge.className = 'eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold ml-2';
-                        badge.title = reason;
-                        header.appendChild(badge);
-                    }
+                    badge = document.createElement('span');
+                    badge.className = 'eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold ml-2';
+                    badge.title = reason;
+                    medicalCard.appendChild(badge);
                 }
                 if (badge) {
                     badge.textContent = 'Not Eligible for Rabies Shot';
                     badge.title = reason;
+                    badge.style.position = 'absolute';
+                    badge.style.top = '-8px';
+                    badge.style.left = '50%';
+                    badge.style.transform = 'translateX(-50%)';
+                    badge.style.zIndex = '10';
                 }
+                
+                ineligiblePets[petId] = reason;
             } else {
                 medicalCard.style.opacity = '1';
                 medicalCard.style.backgroundColor = '';
@@ -1681,7 +1696,11 @@
                 if (badge) {
                     badge.remove();
                 }
+                
+                delete ineligiblePets[petId];
             }
+            
+            updateSidebarSelectedPets();
         }
 
         function showSuccessModal() {
