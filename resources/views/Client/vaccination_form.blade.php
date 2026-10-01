@@ -1472,15 +1472,6 @@
                                         <span class="ml-3 text-gray-700 font-medium">No</span>
                                     </label>
                                 </div>
-                                
-                                <!-- Surgery Date Input (shown when Yes is selected) -->
-                                <div id="surgeryDateContainer_${pet.id}" class="mt-3 hidden">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Date of Surgery <span class="text-red-500">*</span></label>
-                                    <input type="date" name="pet_medical_history[${pet.id}][surgery_date]" 
-                                           max="{{ date('Y-m-d') }}"
-                                           onchange="updatePetEligibilityState('${pet.id}')"
-                                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                </div>
                             </div>
 
                             <div class="border-t border-gray-100 mt-4 pt-4">
@@ -1645,22 +1636,15 @@
         }
 
         function handleSurgeryRadioChange(radio, petId) {
-            const surgeryDateContainer = document.getElementById('surgeryDateContainer_' + petId);
             if (radio.value === 'yes') {
-                if (surgeryDateContainer) {
-                    surgeryDateContainer.classList.remove('hidden');
-                }
                 const pet = petsData.find(p => String(p.id) === String(petId));
                 const petName = pet ? pet.name : 'this pet';
                 surgeryWarningPetId = petId;
                 showSurgeryWarningModal(petName);
             } else {
-                if (surgeryDateContainer) {
-                    surgeryDateContainer.classList.add('hidden');
-                }
                 surgeryWarningPetId = null;
+                updatePetEligibilityState(petId);
             }
-            updatePetEligibilityState(petId);
         }
 
         function updatePetEligibilityState(petId) {
@@ -1676,7 +1660,6 @@
             const historyContainer = document.getElementById('petMedicalHistoryContainer');
             const rabiesDateInput = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
             const surgeryRadio = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][recent_surgery]"]:checked`) : null;
-            const surgeryDateInput = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][surgery_date]"]`) : null;
             
             let isEligible = true;
             let reason = '';
@@ -1693,20 +1676,9 @@
             }
             
             // Check surgery eligibility
-            if (surgeryRadio && surgeryRadio.value === 'yes' && surgeryDateInput && surgeryDateInput.value) {
-                const surgeryDate = new Date(surgeryDateInput.value + 'T00:00:00');
-                const eligibleDate = new Date(surgeryDate);
-                eligibleDate.setDate(eligibleDate.getDate() + 14);
-                
-                if (appointmentDate) {
-                    const appointment = new Date(appointmentDate + 'T00:00:00');
-                    if (appointment < eligibleDate) {
-                        isEligible = false;
-                        const surgeryDateText = surgeryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                        const eligibleDateText = eligibleDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                        reason = `${pet.name} underwent surgery on ${surgeryDateText}. Vaccinations must be scheduled at least 14 days post-surgery (Eligible after ${eligibleDateText}).`;
-                    }
-                }
+            if (surgeryRadio && surgeryRadio.value === 'yes') {
+                isEligible = false;
+                reason = `${pet.name} recently underwent surgery. Vaccinations must be scheduled at least 14 days post-surgery.`;
             }
             
             // Apply eligibility state with inline styles to avoid CSS conflicts
