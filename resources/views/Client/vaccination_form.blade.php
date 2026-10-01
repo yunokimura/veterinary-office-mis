@@ -915,6 +915,61 @@
         let selectedPets = [];
         let ineligiblePets = {};
 
+        function applyIneligibleStateToSelectionCard(petId, reason) {
+            const card = document.querySelector(`#petSelectionList .pet-selection-card[data-pet-id="${petId}"]`);
+            if (!card) return;
+
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            if (checkbox) {
+                checkbox.disabled = true;
+                checkbox.checked = false;
+            }
+
+            card.style.opacity = '1';
+            card.style.backgroundColor = '#f3f4f6';
+            card.style.borderColor = '#fecaca';
+            card.style.pointerEvents = 'none';
+            card.classList.add('cursor-not-allowed');
+
+            let badge = card.querySelector('.eligibility-badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold mt-1 ml-1';
+                const details = card.querySelector('.flex-1 > div:last-child');
+                if (details) details.appendChild(badge);
+            }
+            if (badge) {
+                badge.textContent = 'Not Eligible for Rabies Shot';
+                badge.title = reason;
+            }
+        }
+
+        function removeIneligibleStateFromSelectionCard(petId) {
+            const card = document.querySelector(`#petSelectionList .pet-selection-card[data-pet-id="${petId}"]`);
+            if (!card) return;
+
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            if (checkbox) {
+                checkbox.disabled = false;
+            }
+
+            card.style.backgroundColor = '';
+            card.style.borderColor = '';
+            card.style.pointerEvents = '';
+            card.classList.remove('cursor-not-allowed');
+
+            const badge = card.querySelector('.eligibility-badge');
+            if (badge) {
+                badge.remove();
+            }
+        }
+
+        function refreshModalIneligibleStates() {
+            Object.keys(ineligiblePets).forEach(petId => {
+                applyIneligibleStateToSelectionCard(petId, ineligiblePets[petId]);
+            });
+        }
+
         function openPetModal() {
             // Check if user has no pets registered
             if (petsData.length === 0) {
@@ -947,6 +1002,8 @@
                     checkbox.checked = true;
                 }
             });
+
+            refreshModalIneligibleStates();
         }
 
         function closePetModal() {
@@ -1168,7 +1225,7 @@
                 const reason = ineligiblePets[petId] || '';
 
                 if (isIneligible) {
-                    petItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg opacity-50';
+                    petItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
                     petItem.style.backgroundColor = '#f3f4f6';
                 } else {
                     petItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
@@ -1654,7 +1711,6 @@
             
             // Apply eligibility state with inline styles to avoid CSS conflicts
             if (!isEligible) {
-                medicalCard.style.opacity = '0.5';
                 medicalCard.style.backgroundColor = '#f3f4f6';
                 medicalCard.style.borderColor = '#fecaca';
                 medicalCard.style.pointerEvents = 'none';
