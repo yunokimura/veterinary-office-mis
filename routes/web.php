@@ -1349,36 +1349,20 @@ Route::post('/vaccination/form', function (Request $request) {
     $petOwner = $user->petOwner;
 
     // Handle vaccination certificate file uploads
-    $vaccinationCertificatePath = null;
     $petMedicalHistory = $validated['pet_medical_history'] ?? [];
-    
+
     if (!empty($request->file('pet_medical_history'))) {
         foreach ($request->file('pet_medical_history') as $petId => $petFiles) {
             if (isset($petFiles['vaccination_certificate_file']) && $petFiles['vaccination_certificate_file']->isValid()) {
                 $file = $petFiles['vaccination_certificate_file'];
                 $path = $file->store('vaccination-certificates', 'public');
-                
-                // Store path in metadata for the specific pet
+
                 if (!isset($petMedicalHistory[$petId])) {
                     $petMedicalHistory[$petId] = [];
                 }
                 $petMedicalHistory[$petId]['vaccination_certificate_path'] = $path;
-                
-                // Keep the first uploaded file path for the appointment-level column
-                if (!$vaccinationCertificatePath) {
-                    $vaccinationCertificatePath = $path;
-                }
             }
         }
-    }
-
-    // Store selected pets, per-pet medical history, and optional alt_mobile_number in metadata JSON
-    $metadata = [
-        'selected_pets' => $selectedPets,
-        'pet_medical_history' => $petMedicalHistory,
-    ];
-    if (! empty($validated['alt_mobile_number'])) {
-        $metadata['alt_mobile_number'] = $validated['alt_mobile_number'];
     }
 
     // Use existing owner address instead of creating a new one
@@ -1387,16 +1371,33 @@ Route::post('/vaccination/form', function (Request $request) {
         $addressId = $petOwner->address->id ?? null;
     }
 
-    // Create vaccination appointment using foreign keys
-    VaccinationAppointment::create([
-        'user_id' => $user->id,
-        'owner_id' => $petOwner->owner_id,
-        'address_id' => $addressId,
-        'scheduled_at' => $scheduledAt,
-        'status' => 'pending',
-        'metadata' => $metadata,
-        'vaccination_certificate_path' => $vaccinationCertificatePath,
-    ]);
+    foreach ($selectedPets as $petId) {
+        $history = $petMedicalHistory[$petId] ?? [];
+
+        $recentSurgery = null;
+        if (isset($history['recent_surgery'])) {
+            $recentSurgery = $history['recent_surgery'] === 'yes';
+        } elseif (isset($history['recentSurgery'])) {
+            $recentSurgery = $history['recentSurgery'] === true || $history['recentSurgery'] === 'true' || $history['recentSurgery'] === 'yes';
+        }
+
+        VaccinationAppointment::create([
+            'user_id' => $user->id,
+            'owner_id' => $petOwner->owner_id,
+            'address_id' => $addressId,
+            'scheduled_at' => $scheduledAt,
+            'status' => 'pending',
+            'last_anti_rabies_date' => $history['last_anti_rabies_date'] ?? null,
+            'recent_surgery' => $recentSurgery,
+            'clinic_name' => $history['clinic_name'] ?? null,
+            'vaccination_certificate' => $history['vaccination_certificate'] ?? null,
+            'vaccine_lot_number' => $history['vaccine_lot_number'] ?? null,
+            'vaccination_certificate_path' => $history['vaccination_certificate_path'] ?? null,
+            'metadata' => [
+                'pet_id' => $petId,
+            ],
+        ]);
+    }
 
     return redirect('/vaccination?booked=1')->with('success', 'Vaccination request submitted successfully!');
 })->middleware(['auth'])->name('vaccination.form.submit');

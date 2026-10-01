@@ -447,7 +447,7 @@
                                             $speciesDisplay = isset($pet['species']) ? ucfirst($pet['species']) : 'Unknown';
                                         @endphp
                                         <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet['id'] }}">
-                                            <input type="checkbox" name="selected_pets[]" value="{{ $pet['id'] }}" 
+                                            <input type="checkbox" value="{{ $pet['id'] }}" 
                                                    class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary pet-checkbox"
                                                    onchange="togglePetSelection(this)">
                                             <div class="ml-3 flex-1">
@@ -1135,6 +1135,7 @@
         }
 
         function confirmPetSelection() {
+            document.querySelectorAll('#petSelectionList input[type="checkbox"]').forEach(cb => cb.checked = false);
             refreshPetUI();
             closePetModal();
         }
@@ -1181,7 +1182,7 @@
                     const weightDisplay = formatWeight(pet.weight);
 
                     const medicalCard = document.createElement('div');
-                    medicalCard.className = 'bg-white border border-gray-200 rounded-lg mb-4 overflow-hidden';
+                    medicalCard.className = 'bg-white border border-gray-200 rounded-2xl mb-4 overflow-hidden';
                     medicalCard.id = 'medical-history-' + petId;
                     medicalCard.innerHTML = `
                         <div class="bg-green-50 px-5 py-4 border-b border-gray-200">
@@ -1357,22 +1358,7 @@
             refreshPetUI();
         }
 
-        // Phone number formatting
-        function setupPhoneFormatting(inputName) {
-            const input = document.querySelector(`input[name="${inputName}"]`);
-            if (!input) return;
-            
-            input.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/[^\d]/g, '');
-                if (value.startsWith('0')) {
-                    value = value.substring(1);
-                }
-                e.target.value = value.substring(0, 12);
-            });
-        }
-
-        setupPhoneFormatting('owner_contact');
-        setupPhoneFormatting('alt_mobile_number');
+        // Phone number formatting removed - no matching inputs in form
 
         updateSelectedCount();
         updateSlotPetCountBadge();
@@ -1490,6 +1476,24 @@
             const errorReason = "{{ session('error_reason', 'system_error') }}";
             const errorMessage = "{{ session('error') }}";
             showErrorModal(errorReason, errorMessage);
+        });
+        @endif
+
+        @if ($errors->any())
+        window.addEventListener('DOMContentLoaded', function() {
+            const firstErrorInput = document.querySelector('#vaccinationForm input:not([type="hidden"]):not([type="submit"]), #vaccinationForm select, #vaccinationForm textarea');
+            if (firstErrorInput) {
+                const targetId = firstErrorInput.id || '';
+                if (targetId) {
+                    scrollToError(targetId);
+                } else {
+                    firstErrorInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstErrorInput.classList.add('ring-2', 'ring-red-500', 'ring-offset-2');
+                    setTimeout(() => {
+                        firstErrorInput.classList.remove('ring-2', 'ring-red-500', 'ring-offset-2');
+                    }, 3000);
+                }
+            }
         });
         @endif
 
