@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use App\Models\Pet;
+
 /**
  * @property int $id
  * @property int|null $user_id
  * @property int|null $owner_id
  * @property int|null $address_id
+ * @property int|null $pet_id
  * @property \Illuminate\Support\Carbon|null $scheduled_at
  * @property string $status
- * @property array<array-key, mixed>|null $metadata
  * @property \Illuminate\Support\Carbon|null $last_anti_rabies_date
  * @property bool $recent_surgery
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -20,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\User|null $user
  * @property-read \App\Models\PetOwner|null $owner
  * @property-read \App\Models\Address|null $address
+ * @property-read \App\Models\Pet|null $pet
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\VaccinationReport> $vaccinationReports
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment newQuery()
@@ -28,8 +31,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereLastAntiRabiesDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereMetadata($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment wherePetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereRecentSurgery($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereScheduledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereStatus($value)
@@ -45,9 +48,9 @@ class VaccinationAppointment extends Model
         'user_id',
         'owner_id',
         'address_id',
+        'pet_id',
         'scheduled_at',
         'status',
-        'metadata',
         'last_anti_rabies_date',
         'recent_surgery',
         'assigned_vet',
@@ -61,7 +64,6 @@ class VaccinationAppointment extends Model
         'scheduled_at' => 'datetime',
         'last_anti_rabies_date' => 'date',
         'recent_surgery' => 'boolean',
-        'metadata' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -81,6 +83,11 @@ class VaccinationAppointment extends Model
         return $this->belongsTo(Address::class);
     }
 
+    public function pet(): BelongsTo
+    {
+        return $this->belongsTo(Pet::class, 'pet_id', 'pet_id');
+    }
+
     public function vaccinationReports(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(VaccinationReport::class, 'vaccination_appointment_id');
@@ -89,11 +96,6 @@ class VaccinationAppointment extends Model
     public function assignedVet(): BelongsTo
     {
         return $this->belongsTo(Admin::class, 'assigned_vet');
-    }
-
-    public function getSelectedPetsAttribute(): array
-    {
-        return $this->metadata['selected_pets'] ?? [];
     }
 
     public function getOwnerNameAttribute(): string

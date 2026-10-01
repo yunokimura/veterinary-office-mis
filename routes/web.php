@@ -1385,6 +1385,7 @@ Route::post('/vaccination/form', function (Request $request) {
             'user_id' => $user->id,
             'owner_id' => $petOwner->owner_id,
             'address_id' => $addressId,
+            'pet_id' => $petId,
             'scheduled_at' => $scheduledAt,
             'status' => 'pending',
             'last_anti_rabies_date' => $history['last_anti_rabies_date'] ?? null,
@@ -1393,9 +1394,6 @@ Route::post('/vaccination/form', function (Request $request) {
             'vaccination_certificate' => $history['vaccination_certificate'] ?? null,
             'vaccine_lot_number' => $history['vaccine_lot_number'] ?? null,
             'vaccination_certificate_path' => $history['vaccination_certificate_path'] ?? null,
-            'metadata' => [
-                'pet_id' => $petId,
-            ],
         ]);
     }
 
