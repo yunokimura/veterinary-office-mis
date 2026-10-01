@@ -1924,6 +1924,34 @@
         const vaccinationForm = document.getElementById('vaccinationForm');
         if (vaccinationForm) {
             vaccinationForm.addEventListener('submit', function(e) {
+                const eligiblePetIds = selectedPets.filter(petId => !ineligiblePets[petId]);
+                
+                if (eligiblePetIds.length === 0) {
+                    e.preventDefault();
+                    showErrorModal('validation', 'No eligible pets selected for vaccination.');
+                    return;
+                }
+                
+                selectedPets.length = 0;
+                eligiblePetIds.forEach(id => selectedPets.push(id));
+                
+                const selectedPetsData = document.getElementById('selectedPetsData');
+                if (selectedPetsData) {
+                    selectedPetsData.value = JSON.stringify(selectedPets);
+                }
+                
+                const arrayContainer = document.getElementById('selectedPetsArrayContainer');
+                if (arrayContainer) {
+                    arrayContainer.innerHTML = '';
+                    selectedPets.forEach(petId => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'selected_pets[]';
+                        input.value = petId;
+                        arrayContainer.appendChild(input);
+                    });
+                }
+                
                 const termsCheckbox = document.getElementById('termsCheckbox');
                 if (!termsCheckbox || !termsCheckbox.checked) {
                     e.preventDefault();
