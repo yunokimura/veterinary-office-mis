@@ -530,6 +530,44 @@
         </div>
     </div>
 
+    <!-- Rabies Early Vaccination Warning Modal -->
+    <div id="rabiesWarningModal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+                <div class="mb-4">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Notice</h3>
+                <p id="rabiesWarningMessage" class="text-sm text-gray-700 text-left mb-6"></p>
+                <button type="button" onclick="closeRabiesWarningModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors w-full">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Surgery Warning Modal -->
+    <div id="surgeryWarningModal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+                <div class="mb-4">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Vaccine Safety Warning</h3>
+                <p id="surgeryWarningMessage" class="text-sm text-gray-700 text-left mb-6"></p>
+                <button type="button" onclick="closeSurgeryWarningModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors w-full">I Understand</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -602,6 +640,44 @@
             }
         }
 
+        function validateRabiesVaccinationGap(petId, lastVaccinationDate, appointmentDate) {
+            if (!lastVaccinationDate || !appointmentDate) {
+                return { valid: true, protectionUntil: null, monthsRemaining: null };
+            }
+
+            const lastDate = new Date(lastVaccinationDate + 'T00:00:00');
+            const appointment = new Date(appointmentDate + 'T00:00:00');
+            const protectionUntil = new Date(lastDate);
+            protectionUntil.setMonth(protectionUntil.getMonth() + 12);
+            
+            const diffTime = appointment - lastDate;
+            const diffMonths = diffTime / (1000 * 60 * 60 * 24 * 30.44);
+            
+            return {
+                valid: diffMonths >= 11,
+                protectionUntil: protectionUntil.toISOString().split('T')[0],
+                monthsRemaining: Math.max(0, 12 - Math.floor(diffMonths))
+            };
+        }
+
+        function validateRabiesDateOnChange(petId) {
+            const appointmentDateInput = document.getElementById('globalAppointmentDate');
+            const appointmentDate = appointmentDateInput ? appointmentDateInput.value : null;
+            
+            const historyContainer = document.getElementById('petMedicalHistoryContainer');
+            const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
+            
+            if (dateInputEl && dateInputEl.value && appointmentDate) {
+                const pet = petsData.find(p => String(p.id) === String(petId));
+                const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
+                if (!result.valid && pet) {
+                    showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
+                }
+            }
+            
+            updatePetEligibilityState(petId);
+        }
+
         // Global appointment slot functions
         let globalSlotsData = [];
         let selectedSlotTime = null;
@@ -644,6 +720,28 @@
             const dateInput = document.getElementById('globalAppointmentDate');
             const selectedDate = dateInput.value;
             if (!selectedDate) return;
+
+            // Validate rabies vaccination gaps for all selected pets
+            let hasRabiesWarning = false;
+            selectedPets.forEach(petId => {
+                const pet = petsData.find(p => String(p.id) === String(petId));
+                if (!pet) return;
+                
+                const historyContainer = document.getElementById('petMedicalHistoryContainer');
+                const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
+                
+                if (dateInputEl && dateInputEl.value) {
+                    const result = validateRabiesVaccinationGap(petId, dateInputEl.value, selectedDate);
+                    if (!result.valid) {
+                        hasRabiesWarning = true;
+                        showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
+                    }
+                }
+            });
+            
+            if (hasRabiesWarning) {
+                return;
+            }
 
             const slotStatus = document.getElementById('globalDailyCapacity');
             const slotsGrid = document.getElementById('globalSlotsGrid');
@@ -1231,10 +1329,10 @@
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Date of Last Anti-Rabies Vaccination <span class="text-red-500">*</span></label>
                                             <div class="relative">
-                                                <input type="date" name="pet_medical_history[${pet.id}][last_anti_rabies_date]" 
-                                                       max="${antiRabiesMaxDate}" min="${antiRabiesMinDateStr}"
-                                                       onchange="formatDateDisplay(this, 'antiRabiesDateDisplay_${pet.id}')"
-                                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                            <input type="date" name="pet_medical_history[${pet.id}][last_anti_rabies_date]" 
+                                                   max="${antiRabiesMaxDate}" min="${antiRabiesMinDateStr}"
+                                                   onchange="formatDateDisplay(this, 'antiRabiesDateDisplay_${pet.id}'); validateRabiesDateOnChange('${pet.id}')"
+                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                             </div>
                                             <p id="antiRabiesDateDisplay_${pet.id}" class="text-xs text-gray-500 mt-1"></p>
                                         </div>
@@ -1283,13 +1381,22 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-3">Did ${pet.name || 'this pet'} undergo any surgery in the last two (2) weeks? <span class="text-red-500">*</span></label>
                                 <div class="flex space-x-6">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="yes" class="h-5 w-5">
+                                        <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="yes" class="h-5 w-5" onchange="handleSurgeryRadioChange(this, '${pet.id}')">
                                         <span class="ml-3 text-gray-700 font-medium">Yes</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="no" class="h-5 w-5">
+                                        <input type="radio" name="pet_medical_history[${pet.id}][recent_surgery]" value="no" class="h-5 w-5" onchange="handleSurgeryRadioChange(this, '${pet.id}')">
                                         <span class="ml-3 text-gray-700 font-medium">No</span>
                                     </label>
+                                </div>
+                                
+                                <!-- Surgery Date Input (shown when Yes is selected) -->
+                                <div id="surgeryDateContainer_${pet.id}" class="mt-3 hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Date of Surgery <span class="text-red-500">*</span></label>
+                                    <input type="date" name="pet_medical_history[${pet.id}][surgery_date]" 
+                                           max="{{ date('Y-m-d') }}"
+                                           onchange="updatePetEligibilityState('${pet.id}')"
+                                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                 </div>
                             </div>
 
@@ -1389,12 +1496,151 @@
                 closeAlreadyBookedModal();
                 closePetLimitModal();
                 closeSubmissionModal();
+                closeRabiesWarningModal();
+                closeSurgeryWarningModal();
             }
         });
 
         function closeSubmissionModal() {
             const modal = document.getElementById('submissionModal');
             if (modal) modal.classList.add('hidden');
+        }
+
+        function closeRabiesWarningModal() {
+            const modal = document.getElementById('rabiesWarningModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function showRabiesWarningModal(petName, lastVaccinationDate, protectionUntil) {
+            const modal = document.getElementById('rabiesWarningModal');
+            const message = document.getElementById('rabiesWarningMessage');
+            
+            const lastDate = new Date(lastVaccinationDate + 'T00:00:00');
+            const lastDateText = lastDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const protectionDate = new Date(protectionUntil + 'T00:00:00');
+            const protectionText = protectionDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            message.innerHTML = `
+                <strong>For the safety and health of your pet, anti-rabies vaccinations are administered annually (every 12 months).</strong><br><br>
+                Based on the date provided (${lastDateText}), your pet <strong>${petName}</strong> is fully protected until <strong>${protectionText}</strong>. Early re-vaccination is not recommended.<br><br>
+                If you believe this date is an error or need special clearance from the City Veterinarian, please contact the office directly.
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeSurgeryWarningModal() {
+            const modal = document.getElementById('surgeryWarningModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function showSurgeryWarningModal(petName) {
+            const modal = document.getElementById('surgeryWarningModal');
+            const message = document.getElementById('surgeryWarningMessage');
+            
+            message.innerHTML = `
+                For <strong>${petName}</strong>'s health and safety, pets undergoing surgery or general anesthesia within the last 14 days cannot receive an anti-rabies vaccination.<br><br>
+                <strong>Why?</strong> Post-surgical stress suppresses the immune system, preventing the vaccine from creating full immunity and increasing the risk of side effects.<br><br>
+                <strong>Recommendation:</strong> Please reschedule the vaccination appointment at least 14 days after ${petName}'s surgery date. If this is an urgent situation, please consult the City Veterinarian directly.
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function handleSurgeryRadioChange(radio, petId) {
+            const surgeryDateContainer = document.getElementById('surgeryDateContainer_' + petId);
+            if (radio.value === 'yes') {
+                if (surgeryDateContainer) {
+                    surgeryDateContainer.classList.remove('hidden');
+                }
+                const pet = petsData.find(p => String(p.id) === String(petId));
+                const petName = pet ? pet.name : 'this pet';
+                showSurgeryWarningModal(petName);
+            } else {
+                if (surgeryDateContainer) {
+                    surgeryDateContainer.classList.add('hidden');
+                }
+            }
+            updatePetEligibilityState(petId);
+        }
+
+        function updatePetEligibilityState(petId) {
+            const medicalCard = document.getElementById('medical-history-' + petId);
+            if (!medicalCard) return;
+            
+            const pet = petsData.find(p => String(p.id) === String(petId));
+            if (!pet) return;
+            
+            const appointmentDateInput = document.getElementById('globalAppointmentDate');
+            const appointmentDate = appointmentDateInput ? appointmentDateInput.value : null;
+            
+            const historyContainer = document.getElementById('petMedicalHistoryContainer');
+            const rabiesDateInput = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
+            const surgeryRadio = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][recent_surgery]"]:checked`) : null;
+            const surgeryDateInput = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][surgery_date]"]`) : null;
+            
+            let isEligible = true;
+            let reason = '';
+            
+            // Check rabies vaccination gap
+            if (rabiesDateInput && rabiesDateInput.value && appointmentDate) {
+                const result = validateRabiesVaccinationGap(petId, rabiesDateInput.value, appointmentDate);
+                if (!result.valid) {
+                    isEligible = false;
+                    const lastDate = new Date(rabiesDateInput.value + 'T00:00:00');
+                    const lastDateText = lastDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    reason = `${pet.name}'s last rabies shot was ${lastDateText}. Early re-vaccination is not recommended.`;
+                }
+            }
+            
+            // Check surgery eligibility
+            if (surgeryRadio && surgeryRadio.value === 'yes' && surgeryDateInput && surgeryDateInput.value) {
+                const surgeryDate = new Date(surgeryDateInput.value + 'T00:00:00');
+                const eligibleDate = new Date(surgeryDate);
+                eligibleDate.setDate(eligibleDate.getDate() + 14);
+                
+                if (appointmentDate) {
+                    const appointment = new Date(appointmentDate + 'T00:00:00');
+                    if (appointment < eligibleDate) {
+                        isEligible = false;
+                        const surgeryDateText = surgeryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                        const eligibleDateText = eligibleDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                        reason = `${pet.name} underwent surgery on ${surgeryDateText}. Vaccinations must be scheduled at least 14 days post-surgery (Eligible after ${eligibleDateText}).`;
+                    }
+                }
+            }
+            
+            // Apply eligibility state
+            if (!isEligible) {
+                medicalCard.classList.add('opacity-50', 'bg-gray-100');
+                medicalCard.classList.remove('bg-white', 'border-gray-200');
+                medicalCard.classList.add('border-red-200');
+                
+                // Add or update eligibility badge
+                let badge = medicalCard.querySelector('.eligibility-badge');
+                if (!badge) {
+                    const header = medicalCard.querySelector('.bg-green-50');
+                    if (header) {
+                        badge = document.createElement('span');
+                        badge.className = 'eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold ml-2';
+                        badge.title = reason;
+                        header.appendChild(badge);
+                    }
+                }
+                if (badge) {
+                    badge.textContent = 'Not Eligible for Rabies Shot';
+                    badge.title = reason;
+                }
+            } else {
+                medicalCard.classList.remove('opacity-50', 'bg-gray-100');
+                medicalCard.classList.add('bg-white', 'border-gray-200');
+                medicalCard.classList.remove('border-red-200');
+                
+                const badge = medicalCard.querySelector('.eligibility-badge');
+                if (badge) {
+                    badge.remove();
+                }
+            }
         }
 
         function showSuccessModal() {
@@ -1506,6 +1752,29 @@
                     e.preventDefault();
                     showErrorModal('validation', 'Please accept the terms and conditions before submitting.');
                     return;
+                }
+
+                // Validate rabies vaccination gaps
+                const appointmentDateInput = document.getElementById('globalAppointmentDate');
+                const appointmentDate = appointmentDateInput ? appointmentDateInput.value : null;
+                
+                if (appointmentDate) {
+                    selectedPets.forEach(petId => {
+                        const pet = petsData.find(p => String(p.id) === String(petId));
+                        if (!pet) return;
+                        
+                        const historyContainer = document.getElementById('petMedicalHistoryContainer');
+                        const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
+                        
+                        if (dateInputEl && dateInputEl.value) {
+                            const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
+                            if (!result.valid) {
+                                e.preventDefault();
+                                showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
+                                return;
+                            }
+                        }
+                    });
                 }
 
                 setSubmitLoading(true);

@@ -1314,6 +1314,7 @@ Route::post('/vaccination/form', function (Request $request) {
         'pet_medical_history.*.vaccine_lot_number' => 'nullable|string|max:6',
         'pet_medical_history.*.special_notes' => 'nullable|string|max:1000',
         'pet_medical_history.*.recent_surgery' => 'required|in:yes,no',
+        'pet_medical_history.*.surgery_date' => 'nullable|date|before_or_equal:today',
         'pet_medical_history.*.vaccination_certificate_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         'alt_mobile_number' => 'nullable|string|max:12',
     ]);
@@ -1373,6 +1374,22 @@ Route::post('/vaccination/form', function (Request $request) {
 
     foreach ($selectedPets as $petId) {
         $history = $petMedicalHistory[$petId] ?? [];
+
+        // Backend validation: rabies vaccination gap
+        if (!empty($history['last_anti_rabies_date']) && !empty($validated['appointment_date'])) {
+            $lastVaccinationDate = Carbon::parse($history['last_anti_rabies_date']);
+            $appointmentDate = Carbon::parse($validated['appointment_date']);
+            $monthsDiff = $lastVaccinationDate->diffInMonths($appointmentDate);
+            
+            if ($monthsDiff < 11) {
+                return redirect()->back()->with('error', 'Rabies vaccination gap is too short for pet ' . $petId . '.')->with('error_reason', 'vaccination_too_early')->withInput();
+            }
+        }
+
+        // Backend validation: recent surgery
+        if (isset($history['recent_surgery']) && $history['recent_surgery'] === 'yes') {
+            return redirect()->back()->with('error', 'Pet ' . $petId . ' has recent surgery and is not eligible for vaccination.')->with('error_reason', 'recent_surgery')->withInput();
+        }
 
         $recentSurgery = null;
         if (isset($history['recent_surgery'])) {
