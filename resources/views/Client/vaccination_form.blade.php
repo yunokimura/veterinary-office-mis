@@ -909,7 +909,7 @@
                         item.appendChild(nameSpan);
                         const badge = document.createElement('span');
                         badge.className = 'eligibility-badge inline-flex items-center px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[10px] font-semibold';
-                        badge.textContent = 'Not Eligible for Rabies Booster Shot';
+                        badge.textContent = reason.includes('surgery') ? 'Not Eligible for Anti-rabies Vaccination' : 'Not Eligible for Anti-rabies Booster Shot';
                         badge.title = reason;
                         item.appendChild(badge);
                     } else {
@@ -951,7 +951,11 @@
                 if (details) details.appendChild(badge);
             }
             if (badge) {
-                badge.textContent = 'Not Eligible for Rabies Booster Shot';
+                if (reason.includes('surgery')) {
+                    badge.textContent = 'Not Eligible for Anti-rabies Vaccination';
+                } else {
+                    badge.textContent = 'Not Eligible for Anti-rabies Booster Shot';
+                }
                 badge.title = reason;
             }
         }
@@ -1235,6 +1239,7 @@
                 const petItem = document.createElement('div');
                 const isIneligible = !!ineligiblePets[petId];
                 const reason = ineligiblePets[petId] || '';
+                const ineligibleType = reason.includes('surgery') ? 'surgery' : 'booster';
 
                 if (isIneligible) {
                     petItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
@@ -1268,7 +1273,7 @@
                         <div>
                             <p class="text-sm font-semibold text-gray-900">${pet.name || 'Unknown'}</p>
                             <p class="text-xs text-gray-500">${speciesDisplay} • ${breedDisplay}</p>
-                            ${isIneligible ? `<span class="eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold mt-1" title="${reason}">Not Eligible for Rabies Booster Shot</span>` : ''}
+                            ${isIneligible ? `<span class="eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold mt-1" title="${reason}">${ineligibleType === 'surgery' ? 'Not Eligible for Anti-rabies Vaccination' : 'Not Eligible for Anti-rabies Booster Shot'}</span>` : ''}
                         </div>
                     </div>
                     <button type="button" onclick="removePet(${pet.id})" class="text-gray-400 hover:text-red-500 p-1">
@@ -1740,6 +1745,7 @@
             
             let isEligible = true;
             let reason = '';
+            let ineligibleType = '';
             
             // Check rabies vaccination gap
             if (rabiesDateInput && rabiesDateInput.value && appointmentDate) {
@@ -1749,6 +1755,7 @@
                     const lastDate = new Date(rabiesDateInput.value + 'T00:00:00');
                     const lastDateText = lastDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                     reason = `${pet.name}'s last rabies shot was ${lastDateText}. Early re-vaccination is not recommended.`;
+                    ineligibleType = 'booster';
                 }
             }
             
@@ -1756,6 +1763,7 @@
             if (surgeryRadio && surgeryRadio.value === 'yes') {
                 isEligible = false;
                 reason = `${pet.name} recently underwent surgery. Vaccinations must be scheduled at least 14 days post-surgery.`;
+                ineligibleType = 'surgery';
             }
             
             // Apply eligibility state with inline styles to avoid CSS conflicts
@@ -1777,7 +1785,11 @@
                     medicalCard.appendChild(badge);
                 }
                 if (badge) {
-                    badge.textContent = 'Not Eligible for Rabies Booster Shot';
+                    if (ineligibleType === 'surgery') {
+                        badge.textContent = 'Not Eligible for Anti-rabies Vaccination';
+                    } else {
+                        badge.textContent = 'Not Eligible for Anti-rabies Booster Shot';
+                    }
                     badge.title = reason;
                     badge.style.position = 'absolute';
                     badge.style.top = '-8px';
@@ -1917,30 +1929,6 @@
                     e.preventDefault();
                     showErrorModal('validation', 'Please accept the terms and conditions before submitting.');
                     return;
-                }
-
-                // Validate rabies vaccination gaps
-                const appointmentDateInput = document.getElementById('globalAppointmentDate');
-                const appointmentDate = appointmentDateInput ? appointmentDateInput.value : null;
-                
-                if (appointmentDate) {
-                    selectedPets.forEach(petId => {
-                        const pet = petsData.find(p => String(p.id) === String(petId));
-                        if (!pet) return;
-                        
-                        const historyContainer = document.getElementById('petMedicalHistoryContainer');
-                        const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
-                        
-                        if (dateInputEl && dateInputEl.value) {
-                            const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
-                            if (!result.valid) {
-                                rabiesWarningPetId = petId;
-                                e.preventDefault();
-                                showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
-                                return;
-                            }
-                        }
-                    });
                 }
 
                 setSubmitLoading(true);
