@@ -898,10 +898,24 @@
                 selectedPets.forEach(pid => {
                     const pet = petsData.find(p => String(p.id) === String(pid));
                     const petName = pet ? pet.name : 'Pet ' + pid;
+                    const isIneligible = !!ineligiblePets[pid];
+                    const reason = ineligiblePets[pid] || '';
                     
                     const item = document.createElement('div');
-                    item.className = 'text-xs text-emerald-700';
-                    item.textContent = petName + ': ' + timeText;
+                    if (isIneligible) {
+                        item.className = 'text-xs text-gray-500 flex items-center gap-2 flex-wrap';
+                        const nameSpan = document.createElement('span');
+                        nameSpan.textContent = petName + ':';
+                        item.appendChild(nameSpan);
+                        const badge = document.createElement('span');
+                        badge.className = 'eligibility-badge inline-flex items-center px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[10px] font-semibold';
+                        badge.textContent = 'Not Eligible for Rabies Booster Shot';
+                        badge.title = reason;
+                        item.appendChild(badge);
+                    } else {
+                        item.className = 'text-xs text-emerald-700';
+                        item.textContent = petName + ': ' + timeText;
+                    }
                     selectedSlotsList.appendChild(item);
                 });
             }
@@ -937,7 +951,7 @@
                 if (details) details.appendChild(badge);
             }
             if (badge) {
-                badge.textContent = 'Not Eligible for Rabies Shot';
+                badge.textContent = 'Not Eligible for Rabies Booster Shot';
                 badge.title = reason;
             }
         }
@@ -1254,7 +1268,7 @@
                         <div>
                             <p class="text-sm font-semibold text-gray-900">${pet.name || 'Unknown'}</p>
                             <p class="text-xs text-gray-500">${speciesDisplay} • ${breedDisplay}</p>
-                            ${isIneligible ? `<span class="eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold mt-1" title="${reason}">Not Eligible for Rabies Shot</span>` : ''}
+                            ${isIneligible ? `<span class="eligibility-badge inline-flex items-center px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold mt-1" title="${reason}">Not Eligible for Rabies Booster Shot</span>` : ''}
                         </div>
                     </div>
                     <button type="button" onclick="removePet(${pet.id})" class="text-gray-400 hover:text-red-500 p-1">
@@ -1763,7 +1777,7 @@
                     medicalCard.appendChild(badge);
                 }
                 if (badge) {
-                    badge.textContent = 'Not Eligible for Rabies Shot';
+                    badge.textContent = 'Not Eligible for Rabies Booster Shot';
                     badge.title = reason;
                     badge.style.position = 'absolute';
                     badge.style.top = '-8px';
