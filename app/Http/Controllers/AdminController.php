@@ -18,6 +18,7 @@ use App\Models\StrayReport;
 use App\Models\SystemLog;
 use App\Models\MissingPetsReport;
 use App\Models\AdoptionApplication;
+use App\Models\Admin;
 
 class AdminController extends Controller
 {
@@ -400,6 +401,7 @@ class AdminController extends Controller
         $appointment->update(['status' => $request->status]);
 
         if ($request->status === 'completed') {
+            $appointment->update(['last_anti_rabies_date' => now()->toDateString()]);
             if ($appointment->vaccinationReports()->exists()) {
                 return response()->json([
                     'success' => false,
@@ -489,7 +491,19 @@ class AdminController extends Controller
 
     public function editVaccinationAppointmentJson(VaccinationAppointment $appointment)
     {
-        $appointment->load(['address.barangay']);
+        $appointment->load(['address.barangay', 'assignedVet']);
+
+        $vets = Admin::whereHas('user', function ($query) {
+                $query->whereIn('role_type', ['city_vet', 'assistant_vet']);
+            })
+            ->with('user')
+            ->get()
+            ->map(fn ($admin) => [
+                'id' => $admin->id,
+                'name' => trim(($admin->user->name ?? '') . ' (' . ($admin->user->role_type === 'city_vet' ? 'City Veterinarian' : 'Assistant Veterinarian') . ')'),
+            ])
+            ->values()
+            ->all();
 
         return response()->json([
             'success' => true,
@@ -499,6 +513,8 @@ class AdminController extends Controller
                 'status' => $appointment->status,
                 'last_anti_rabies_date' => $appointment->last_anti_rabies_date ? $appointment->last_anti_rabies_date->format('Y-m-d') : null,
                 'recent_surgery' => $appointment->recent_surgery,
+                'assigned_vet' => $appointment->assigned_vet,
+                'vets' => $vets,
             ]
         ]);
     }
@@ -510,6 +526,7 @@ class AdminController extends Controller
             'status' => 'required|in:pending,approved,completed,cancelled,no_show',
             'last_anti_rabies_date' => 'nullable|date',
             'recent_surgery' => 'required|boolean',
+            'assigned_vet' => 'nullable|exists:admins,id',
         ]);
 
         $appointment->update([
@@ -517,6 +534,7 @@ class AdminController extends Controller
             'status' => $validated['status'],
             'last_anti_rabies_date' => $validated['last_anti_rabies_date'],
             'recent_surgery' => $validated['recent_surgery'],
+            'assigned_vet' => $validated['assigned_vet'],
         ]);
 
         return response()->json([

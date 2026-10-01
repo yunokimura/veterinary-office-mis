@@ -450,6 +450,11 @@ function editAppointment(appointmentId) {
         }
 
         const a = data.appointment;
+        const vetOptions = (a.vets || []).map(vet => {
+            const selected = a.assigned_vet == vet.id ? 'selected' : '';
+            return `<option value="${escapeHtml(vet.id)}" ${selected}>${escapeHtml(vet.name)}</option>`;
+        }).join('');
+
         modalBody.innerHTML = `
             <form id="editAppointmentForm" onsubmit="submitEditForm(event, ${escapeHtml(a.id)})">
                 <div class="space-y-4">
@@ -467,6 +472,14 @@ function editAppointment(appointmentId) {
                             <option value="completed" ${a.status === 'completed' ? 'selected' : ''}>Completed</option>
                             <option value="cancelled" ${a.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
                             <option value="no_show" ${a.status === 'no_show' ? 'selected' : ''}>No Show</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Veterinarian</label>
+                        <select name="assigned_vet"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">N/A</option>
+                            ${vetOptions}
                         </select>
                     </div>
                     <div>
@@ -507,6 +520,7 @@ function submitEditForm(event, appointmentId) {
         status: formData.get('status'),
         last_anti_rabies_date: formData.get('last_anti_rabies_date') || null,
         recent_surgery: formData.get('recent_surgery') === '1',
+        assigned_vet: formData.get('assigned_vet') || null,
     };
 
     const url = `{{ route($routePrefix . '.vaccination-appointments.update', ':id') }}`.replace(':id', appointmentId);

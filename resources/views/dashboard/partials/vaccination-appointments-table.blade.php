@@ -34,7 +34,10 @@
                 <div class="text-xs text-gray-500">{{ $appointment->user->contact_number ?? 'N/A' }}</div>
             </td>
             <td class="px-4 py-3 text-sm text-gray-600">
-                {{ $appointment->assigned_vet_name }}
+                <button type="button" class="inline-flex items-center gap-1 hover:text-green-700 transition" onclick="editAppointment({{ $appointment->id }})">
+                    <span>{{ $appointment->assigned_vet_name }}</span>
+                    <i class="bi bi-chevron-down text-xs"></i>
+                </button>
             </td>
             <td class="px-4 py-3">
                 @php
