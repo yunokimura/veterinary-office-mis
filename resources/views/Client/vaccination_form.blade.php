@@ -214,10 +214,10 @@
                                         Select Appointment Date <span class="text-red-500">*</span>
                                     </label>
                                     <div class="relative max-w-sm">
-                                        <input type="date"
-                                               id="globalAppointmentDate"
-                                               min="{{ date('Y-m-d') }}"
-                                               onchange="loadGlobalSlots()"
+                                         <input type="date"
+                                                id="globalAppointmentDate"
+                                                min="{{ date('Y-m-d') }}"
+                                                onchange="validateRabiesGaps(); loadGlobalSlots()"
                                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                                required>
                                     </div>
@@ -668,7 +668,6 @@
             const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
             
             if (dateInputEl && dateInputEl.value && appointmentDate) {
-                // Only validate if the date looks complete
                 if (/^\d{4}-\d{2}-\d{2}$/.test(dateInputEl.value)) {
                     const pet = petsData.find(p => String(p.id) === String(petId));
                     const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
@@ -681,6 +680,29 @@
             }
             
             updatePetEligibilityState(petId);
+        }
+
+        function validateRabiesGaps() {
+            const appointmentDateInput = document.getElementById('globalAppointmentDate');
+            const appointmentDate = appointmentDateInput ? appointmentDateInput.value : null;
+            if (!appointmentDate) return false;
+
+            const historyContainer = document.getElementById('petMedicalHistoryContainer');
+            for (const petId of selectedPets) {
+                const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
+                if (dateInputEl && dateInputEl.value && /^\d{4}-\d{2}-\d{2}$/.test(dateInputEl.value)) {
+                    const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
+                    if (!result.valid) {
+                        const pet = petsData.find(p => String(p.id) === String(petId));
+                        if (pet) {
+                            rabiesWarningPetId = petId;
+                            showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         // Global appointment slot functions
@@ -725,30 +747,6 @@
             const dateInput = document.getElementById('globalAppointmentDate');
             const selectedDate = dateInput.value;
             if (!selectedDate) return;
-
-            // Validate rabies vaccination gaps for all selected pets
-            let hasRabiesWarning = false;
-            for (const petId of selectedPets) {
-                const pet = petsData.find(p => String(p.id) === String(petId));
-                if (!pet) continue;
-                
-                const historyContainer = document.getElementById('petMedicalHistoryContainer');
-                const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
-                
-                if (dateInputEl && dateInputEl.value) {
-                    const result = validateRabiesVaccinationGap(petId, dateInputEl.value, selectedDate);
-                    if (!result.valid) {
-                        hasRabiesWarning = true;
-                        rabiesWarningPetId = petId;
-                        showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
-                        break;
-                    }
-                }
-            }
-            
-            if (hasRabiesWarning) {
-                return;
-            }
 
             const slotStatus = document.getElementById('globalDailyCapacity');
             const slotsGrid = document.getElementById('globalSlotsGrid');
@@ -1270,6 +1268,64 @@
             });
         }
 
+        function saveMedicalHistoryState() {
+            const state = {};
+            selectedPets.forEach(petId => {
+                const card = document.getElementById('medical-history-' + petId);
+                if (!card) return;
+                
+                const historyContainer = document.getElementById('petMedicalHistoryContainer');
+                const hasPrevious = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][has_previous_vaccine]"]:checked`) : null;
+                const rabiesDate = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
+                const surgeryRadio = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][recent_surgery]"]:checked`) : null;
+                const previousFields = document.getElementById('previousVaccineFields_' + petId);
+                const surgeryContainer = document.getElementById('surgeryDateContainer_' + petId);
+                
+                state[petId] = {
+                    has_previous_vaccine: hasPrevious ? hasPrevious.value : null,
+                    last_anti_rabies_date: rabiesDate ? rabiesDate.value : null,
+                    recent_surgery: surgeryRadio ? surgeryRadio.value : null,
+                    previous_fields_visible: previousFields ? !previousFields.classList.contains('hidden') : false,
+                    surgery_container_visible: surgeryContainer ? !surgeryContainer.classList.contains('hidden') : false
+                };
+            });
+            return state;
+        }
+
+        function restoreMedicalHistoryState(state) {
+            Object.keys(state).forEach(petId => {
+                const cardState = state[petId];
+                if (!cardState) return;
+                
+                const historyContainer = document.getElementById('petMedicalHistoryContainer');
+                const hasPrevious = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][has_previous_vaccine]"][value="${cardState.has_previous_vaccine}"]`) : null;
+                const rabiesDate = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
+                const surgeryRadio = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][recent_surgery]"][value="${cardState.recent_surgery}"]`) : null;
+                const previousFields = document.getElementById('previousVaccineFields_' + petId);
+                const surgeryContainer = document.getElementById('surgeryDateContainer_' + petId);
+                
+                if (hasPrevious) hasPrevious.checked = true;
+                if (rabiesDate && cardState.last_anti_rabies_date) {
+                    rabiesDate.value = cardState.last_anti_rabies_date;
+                }
+                if (surgeryRadio) surgeryRadio.checked = true;
+                if (previousFields) {
+                    if (cardState.previous_fields_visible) {
+                        previousFields.classList.remove('hidden');
+                    } else {
+                        previousFields.classList.add('hidden');
+                    }
+                }
+                if (surgeryContainer) {
+                    if (cardState.surgery_container_visible) {
+                        surgeryContainer.classList.remove('hidden');
+                    } else {
+                        surgeryContainer.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
         function refreshPetUI() {
             const modalFooter = document.querySelector('#petModal .bg-gray-50');
             const medicalHistoryContainer = document.getElementById('petMedicalHistoryContainer');
@@ -1289,7 +1345,12 @@
                     </div>
                 `;
             } else {
+                const savedState = saveMedicalHistoryState();
                 generateMedicalHistoryCards();
+                restoreMedicalHistoryState(savedState);
+                Object.keys(ineligiblePets).forEach(petId => {
+                    updatePetEligibilityState(petId);
+                });
             }
 
             // Update hidden selected_pets field for form submission
@@ -1590,6 +1651,8 @@
                 updatePetEligibilityState(rabiesWarningPetId);
                 rabiesWarningPetId = null;
             }
+            
+            loadGlobalSlots();
         }
 
         function showRabiesWarningModal(petName, lastVaccinationDate, protectionUntil) {
