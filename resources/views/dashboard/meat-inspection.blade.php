@@ -5,7 +5,7 @@
 @section('subheader', 'View and manage meat inspection records')
 
 @php
-$routePrefix = request()->routeIs('admin.*') ? 'admin' : 'meat-inspection.reports';
+$routePrefix = request()->routeIs('admin.*') ? 'admin' : 'meat-inspection';
 @endphp
 
 @section('content')
@@ -115,7 +115,7 @@ $routePrefix = request()->routeIs('admin.*') ? 'admin' : 'meat-inspection.report
 
 <script>
 let searchDebounce;
-const meatFilterUrl = `{{ route($routePrefix . '.meat-inspection-reports.filter') }}`;
+const meatFilterUrl = `{{ route($routePrefix . '.establishments.filter') }}`;
 
 function getMeatFilterParams() {
     return {
@@ -256,7 +256,7 @@ function openEstablishmentModal(establishmentId) {
     `;
     modal.show();
 
-    fetch(`{{ route($routePrefix . '.meat-inspection-reports.show-json', ':id') }}`.replace(':id', establishmentId))
+    fetch(`{{ route($routePrefix . '.establishments.show-json', ':id') }}`.replace(':id', establishmentId))
         .then(response => response.json())
         .then(data => {
             if (data.success) {

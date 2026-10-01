@@ -23,13 +23,13 @@
                         <i class="bi bi-person text-purple-600"></i>
                     </div>
                     <div>
-                        <p class="font-medium text-gray-800">{{ $report->user->name ?? 'Unknown' }}</p>
-                        <p class="text-sm text-gray-500">{{ $report->user->email ?? 'N/A' }}</p>
+                        <p class="font-medium text-gray-800">{{ trim(($report->first_name ?? '') . ' ' . ($report->last_name ?? '')) ?: 'Unknown' }}</p>
+                        <p class="text-sm text-gray-500">{{ $report->email ?? 'N/A' }}</p>
                     </div>
                 </div>
             </td>
             <td class="px-4 py-3 text-gray-600 whitespace-nowrap">
-                <p class="text-gray-800">{{ $report->created_at ? \Carbon\Carbon::parse($report->created_at)->format('M d, Y') : 'N/A' }}</p>
+                <p class="text-gray-800">{{ $report->created_at ? \Carbon\Carbon::parse($report->created_at)->format('F d, Y') : 'N/A' }}</p>
                 <p class="text-xs text-gray-500">{{ $report->created_at ? \Carbon\Carbon::parse($report->created_at)->format('h:i A') : '' }}</p>
             </td>
             <td class="px-4 py-3">

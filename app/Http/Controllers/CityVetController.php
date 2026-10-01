@@ -1147,22 +1147,45 @@ class CityVetController extends Controller
     {
         $user = Auth::user();
 
-        $query = \App\Models\AdoptionApplication::with(['user', 'pet']);
+        $query = \App\Models\AdoptionApplication::with(['user', 'pet', 'owner']);
 
         if ($request->filled('search')) {
-            $terms = array_values(array_filter(explode(' ', $request->search)));
-            $query->where(function ($q) use ($terms) {
+            $search = $request->search;
+            $terms = array_values(array_filter(explode(' ', $search)));
+
+            $dateFilter = null;
+            if (preg_match('/\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/i', $search)) {
+                $dateStr = str_replace([',', '  '], [' ', ' '], $search);
+
+                try {
+                    $dateFilter = \Carbon\Carbon::parse(trim($dateStr))->format('Y-m-d');
+                } catch (\Throwable $e) {
+                    $dateFilter = null;
+                }
+            }
+
+            $query->where(function ($q) use ($terms, $dateFilter) {
+                if ($dateFilter) {
+                    $q->orWhereDate('created_at', $dateFilter);
+                }
+
                 foreach ($terms as $term) {
-                    $q->where(function ($sub) use ($term) {
-                        $sub->whereHas('user', function ($q2) use ($term) {
-                            $q2->where('name', 'like', "%{$term}%");
-                        })
-                        ->orWhereHas('pet', function ($q2) use ($term) {
-                            $q2->where('pet_name', 'like', "%{$term}%")
-                                ->orWhere('breed', 'like', "%{$term}%")
-                                ->orWhere('species', 'like', "%{$term}%");
-                        })
-                        ->orWhere('status', 'like', "%{$term}%");
+                    $q->orWhere(function ($sub) use ($term) {
+                        $sub->orWhere('status', 'like', "%{$term}%")
+                            ->orWhere('created_at', 'like', "%{$term}%")
+                            ->orWhereHas('pet', function ($q2) use ($term) {
+                                $q2->where('pet_name', 'like', "%{$term}%")
+                                    ->orWhere('breed', 'like', "%{$term}%")
+                                    ->orWhere('species', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('owner', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%")
+                                    ->orWhere('phone_number', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('user', function ($q2) use ($term) {
+                                $q2->where('email', 'like', "%{$term}%");
+                            });
                     });
                 }
             });
@@ -1193,22 +1216,45 @@ class CityVetController extends Controller
 
     public function filterAdoptionReports(Request $request)
     {
-        $query = \App\Models\AdoptionApplication::with(['user', 'pet']);
+        $query = \App\Models\AdoptionApplication::with(['user', 'pet', 'owner']);
 
         if ($request->filled('search')) {
-            $terms = array_values(array_filter(explode(' ', $request->search)));
-            $query->where(function ($q) use ($terms) {
+            $search = $request->search;
+            $terms = array_values(array_filter(explode(' ', $search)));
+
+            $dateFilter = null;
+            if (preg_match('/\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/i', $search)) {
+                $dateStr = str_replace([',', '  '], [' ', ' '], $search);
+
+                try {
+                    $dateFilter = \Carbon\Carbon::parse(trim($dateStr))->format('Y-m-d');
+                } catch (\Throwable $e) {
+                    $dateFilter = null;
+                }
+            }
+
+            $query->where(function ($q) use ($terms, $dateFilter) {
+                if ($dateFilter) {
+                    $q->orWhereDate('created_at', $dateFilter);
+                }
+
                 foreach ($terms as $term) {
-                    $q->where(function ($sub) use ($term) {
-                        $sub->whereHas('user', function ($q2) use ($term) {
-                            $q2->where('name', 'like', "%{$term}%");
-                        })
-                        ->orWhereHas('pet', function ($q2) use ($term) {
-                            $q2->where('pet_name', 'like', "%{$term}%")
-                                ->orWhere('breed', 'like', "%{$term}%")
-                                ->orWhere('species', 'like', "%{$term}%");
-                        })
-                        ->orWhere('status', 'like', "%{$term}%");
+                    $q->orWhere(function ($sub) use ($term) {
+                        $sub->orWhere('status', 'like', "%{$term}%")
+                            ->orWhere('created_at', 'like', "%{$term}%")
+                            ->orWhereHas('pet', function ($q2) use ($term) {
+                                $q2->where('pet_name', 'like', "%{$term}%")
+                                    ->orWhere('breed', 'like', "%{$term}%")
+                                    ->orWhere('species', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('owner', function ($q2) use ($term) {
+                                $q2->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%")
+                                    ->orWhere('phone_number', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('user', function ($q2) use ($term) {
+                                $q2->where('email', 'like', "%{$term}%");
+                            });
                     });
                 }
             });
@@ -1252,9 +1298,9 @@ class CityVetController extends Controller
                 'id' => $adoption->id,
                 'report_number' => 'AD-' . str_pad($adoption->id, 5, '0', STR_PAD_LEFT),
                 'status' => $adoption->status,
-                'applicant_name' => $adoption->user->name ?? 'N/A',
-                'applicant_email' => $adoption->user->email ?? 'N/A',
-                'applicant_contact' => $adoption->user->contact_number ?? 'N/A',
+                'applicant_name' => trim(($adoption->first_name ?? '') . ' ' . ($adoption->last_name ?? '')) ?: 'N/A',
+                'applicant_email' => $adoption->email ?? 'N/A',
+                'applicant_contact' => $adoption->mobile_number ?? ($adoption->owner?->phone_number ?? 'N/A'),
                 'pet_name' => $adoption->pet->pet_name ?? 'N/A',
                 'pet_species' => ucfirst($adoption->pet->species ?? 'N/A'),
                 'pet_breed' => $adoption->pet->breed ?? 'N/A',

@@ -575,6 +575,7 @@ Route::middleware(['auth', 'role:meat_inspector'])->prefix('meat-inspection')->n
     Route::post('/establishments', [MeatInspectionController::class, 'storeEstablishment'])->name('establishments.store');
     Route::get('/establishments/{establishment}', [MeatInspectionController::class, 'showEstablishment'])->name('establishments.show');
     Route::put('/establishments/{establishment}', [MeatInspectionController::class, 'updateEstablishment'])->name('establishments.update');
+    Route::get('/establishments/filter', [MeatInspectionController::class, 'filterEstablishments'])->name('establishments.filter');
 });
 
 // ==============================
@@ -1262,8 +1263,9 @@ Route::get('/pet-registration/form', function () {
 Route::post('/pet-registration/form', [PetRegistrationController::class, 'store'])->name('pet.registration.store')->middleware('auth');
 
 // Vaccination Page Route - Public
-Route::get('/vaccination', function () {
-    return view('Client.vaccination_page');
+Route::get('/vaccination', function (Request $request) {
+    $showSuccessModal = $request->query('booked') === '1';
+    return view('Client.vaccination_page', compact('showSuccessModal'));
 });
 
 // Vaccination Form Page Route - Public
@@ -1338,7 +1340,7 @@ Route::post('/vaccination/form', function (Request $request) {
         ->exists();
 
     if ($existingAppointment) {
-        return redirect()->back()->with('error', 'You already have a vaccination appointment scheduled for this date and time.')->withInput();
+        return redirect()->back()->with('error', 'You already have a vaccination appointment scheduled for this date and time.')->with('error_reason', 'slot_overbooked')->withInput();
     }
 
     // Check for slot availability with locking to prevent race conditions
@@ -1350,7 +1352,7 @@ Route::post('/vaccination/form', function (Request $request) {
             $user->id
         );
     } catch (AppointmentSlotTakenException $e) {
-        return redirect()->back()->with('error', $e->getMessage())->withInput();
+        return redirect()->back()->with('error', $e->getMessage())->with('error_reason', 'slot_overbooked')->withInput();
     }
 
     $petOwner = $user->petOwner;
@@ -1416,7 +1418,7 @@ Route::post('/vaccination/form', function (Request $request) {
         'vaccination_certificate_path' => $vaccinationCertificatePath,
     ]);
 
-    return redirect()->back()->with('success', 'Vaccination request submitted successfully!');
+    return redirect('/vaccination?booked=1')->with('success', 'Vaccination request submitted successfully!');
 })->middleware(['auth'])->name('vaccination.form.submit');
 
 // Owner Dashboard Route - Protected (any authenticated user)

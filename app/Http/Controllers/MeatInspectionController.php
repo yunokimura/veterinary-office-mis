@@ -19,7 +19,13 @@ class MeatInspectionController extends Controller
     {
         $user = Auth::user();
         $establishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
-        return view('dashboard.meat-inspection', compact('user', 'establishments'));
+        $stats = [
+            'total' => MeatEstablishment::count(),
+            'active' => MeatEstablishment::where('status', 'Active')->count(),
+            'expired' => MeatEstablishment::where('status', 'Expired')->count(),
+            'pending_inspection' => MeatEstablishment::where('status', 'Pending Inspection')->count(),
+        ];
+        return view('dashboard.meat-inspection', compact('user', 'establishments', 'stats'));
     }
 
     /**
@@ -29,6 +35,51 @@ class MeatInspectionController extends Controller
     {
         $establishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
         return view('dashboard.meat-inspection', compact('establishments'));
+    }
+
+    public function filterEstablishments(Request $request)
+    {
+        $query = MeatEstablishment::with('barangay');
+
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->where('establishment_name', 'like', "%{$term}%")
+                            ->orWhere('owner_name', 'like', "%{$term}%")
+                            ->orWhere('establishment_type', 'like', "%{$term}%")
+                            ->orWhereHas('barangay', function ($q2) use ($term) {
+                                $q2->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('status', 'like', "%{$term}%");
+                    });
+                }
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('inspection_date', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('inspection_date', '<=', $request->date_to);
+        }
+
+        $establishments = $query->latest()->paginate(10);
+
+        try {
+            $html = view('dashboard.partials.meat-inspection-table', compact('establishments'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="6" class="px-4 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'pagination' => $establishments->links()->render(),
+            'has_results' => $establishments->count() > 0,
+        ]);
     }
 
     /**

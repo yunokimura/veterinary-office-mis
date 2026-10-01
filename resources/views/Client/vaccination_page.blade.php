@@ -399,6 +399,34 @@
                 dropdown.classList.add('hidden');
             }
         });
+
+        @if($showSuccessModal ?? false)
+        window.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('successModal');
+            if (modal) modal.classList.remove('hidden');
+        });
+        @endif
     </script>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+                <div class="mb-4">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Success</h3>
+                <p class="text-gray-600 mb-6">Your vaccination pre-registration has been submitted successfully.</p>
+                <button type="button" onclick="document.getElementById('successModal').classList.add('hidden'); window.location.href='/vaccination';" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors w-full">
+                    Okay
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

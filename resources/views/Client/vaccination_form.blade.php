@@ -515,6 +515,20 @@
         </div>
     </main>
 
+    <!-- Submission Result Modal -->
+    <div id="submissionModal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+                <div id="submissionModalIcon" class="mb-4"></div>
+                <h3 id="submissionModalTitle" class="text-lg font-semibold text-gray-900 mb-2"></h3>
+                <p id="submissionModalMessage" class="text-gray-600 mb-2"></p>
+                <p id="submissionModalReason" class="text-sm text-gray-500 mb-6 hidden"></p>
+                <div id="submissionModalActions" class="flex flex-col gap-2"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1374,8 +1388,111 @@
                 closePetInfoModal();
                 closeAlreadyBookedModal();
                 closePetLimitModal();
+                closeSubmissionModal();
             }
         });
+
+        function closeSubmissionModal() {
+            const modal = document.getElementById('submissionModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function showSuccessModal() {
+            const modal = document.getElementById('submissionModal');
+            const icon = document.getElementById('submissionModalIcon');
+            const title = document.getElementById('submissionModalTitle');
+            const message = document.getElementById('submissionModalMessage');
+            const reason = document.getElementById('submissionModalReason');
+            const actions = document.getElementById('submissionModalActions');
+
+            icon.innerHTML = '<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></div>';
+            title.textContent = 'Success';
+            message.textContent = 'Your vaccination pre-registration has been submitted successfully.';
+            reason.classList.add('hidden');
+            actions.innerHTML = '<button type="button" onclick="window.location.href=\'/vaccination\'" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors w-full">Okay</button>';
+
+            modal.classList.remove('hidden');
+        }
+
+        function showErrorModal(reason, detail) {
+            const modal = document.getElementById('submissionModal');
+            const icon = document.getElementById('submissionModalIcon');
+            const title = document.getElementById('submissionModalTitle');
+            const message = document.getElementById('submissionModalMessage');
+            const reasonEl = document.getElementById('submissionModalReason');
+            const actions = document.getElementById('submissionModalActions');
+
+            const reasonMessages = {
+                'slot_overbooked': 'The selected time slot just filled up while you were booking.',
+                'network_timeout': 'Connection lost. Please check your internet connection and try again.',
+                'file_upload_error': 'Uploaded image exceeds the 5MB limit or is an invalid file format.',
+                'system_error': 'Our clinic system is experiencing temporary maintenance. Your form data is saved.',
+            };
+
+            const messageText = reasonMessages[reason] || 'We couldn\'t process your appointment booking.';
+            const reasonText = detail ? `Reason: ${detail}` : `Reason: ${messageText}`;
+
+            icon.innerHTML = '<div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></div>';
+            title.textContent = 'Booking Failed';
+            message.textContent = 'We couldn\'t process your appointment booking.';
+            reasonEl.textContent = reasonText;
+            reasonEl.classList.remove('hidden');
+            actions.innerHTML = '<button type="button" onclick="closeSubmissionModal(); setSubmitLoading(false);" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors w-full">Try Again</button>';
+
+            modal.classList.remove('hidden');
+        }
+
+        function setSubmitLoading(isLoading) {
+            const submitBtn = document.getElementById('submitBtn');
+            if (!submitBtn) return;
+
+            if (isLoading) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Booking your appointment...';
+                submitBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                submitBtn.classList.remove('bg-primary', 'text-white', 'hover:bg-primary-light');
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> Submit Vaccination Pre-Registration';
+                submitBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                submitBtn.classList.add('bg-primary', 'text-white', 'hover:bg-primary-light');
+            }
+        }
+
+        function scrollToError(targetId) {
+            if (!targetId) return;
+            const element = document.getElementById(targetId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.classList.add('ring-2', 'ring-red-500', 'ring-offset-2');
+                setTimeout(() => {
+                    element.classList.remove('ring-2', 'ring-red-500', 'ring-offset-2');
+                }, 3000);
+            }
+        }
+
+        @if(session('error'))
+        window.addEventListener('DOMContentLoaded', function() {
+            const errorReason = "{{ session('error_reason', 'system_error') }}";
+            const errorMessage = "{{ session('error') }}";
+            showErrorModal(errorReason, errorMessage);
+        });
+        @endif
+
+        // Form submission handler
+        const vaccinationForm = document.getElementById('vaccinationForm');
+        if (vaccinationForm) {
+            vaccinationForm.addEventListener('submit', function(e) {
+                const termsCheckbox = document.getElementById('termsCheckbox');
+                if (!termsCheckbox || !termsCheckbox.checked) {
+                    e.preventDefault();
+                    showErrorModal('validation', 'Please accept the terms and conditions before submitting.');
+                    return;
+                }
+
+                setSubmitLoading(true);
+            });
+        }
     </script>
 </body>
 </html>
