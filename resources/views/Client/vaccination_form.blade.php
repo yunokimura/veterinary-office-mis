@@ -673,7 +673,7 @@
                     const pet = petsData.find(p => String(p.id) === String(petId));
                     const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
                     if (!result.valid && pet) {
-                        updatePetEligibilityState(petId);
+                        rabiesWarningPetId = petId;
                         showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
                         return;
                     }
@@ -728,9 +728,9 @@
 
             // Validate rabies vaccination gaps for all selected pets
             let hasRabiesWarning = false;
-            selectedPets.forEach(petId => {
+            for (const petId of selectedPets) {
                 const pet = petsData.find(p => String(p.id) === String(petId));
-                if (!pet) return;
+                if (!pet) continue;
                 
                 const historyContainer = document.getElementById('petMedicalHistoryContainer');
                 const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
@@ -739,10 +739,12 @@
                     const result = validateRabiesVaccinationGap(petId, dateInputEl.value, selectedDate);
                     if (!result.valid) {
                         hasRabiesWarning = true;
+                        rabiesWarningPetId = petId;
                         showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
+                        break;
                     }
                 }
-            });
+            }
             
             if (hasRabiesWarning) {
                 return;
@@ -1519,9 +1521,16 @@
             if (modal) modal.classList.add('hidden');
         }
 
+        let rabiesWarningPetId = null;
+
         function closeRabiesWarningModal() {
             const modal = document.getElementById('rabiesWarningModal');
             if (modal) modal.classList.add('hidden');
+            
+            if (rabiesWarningPetId) {
+                updatePetEligibilityState(rabiesWarningPetId);
+                rabiesWarningPetId = null;
+            }
         }
 
         function showRabiesWarningModal(petName, lastVaccinationDate, protectionUntil) {
@@ -1542,9 +1551,16 @@
             modal.classList.remove('hidden');
         }
 
+        let surgeryWarningPetId = null;
+
         function closeSurgeryWarningModal() {
             const modal = document.getElementById('surgeryWarningModal');
             if (modal) modal.classList.add('hidden');
+            
+            if (surgeryWarningPetId) {
+                updatePetEligibilityState(surgeryWarningPetId);
+                surgeryWarningPetId = null;
+            }
         }
 
         function showSurgeryWarningModal(petName) {
@@ -1568,11 +1584,13 @@
                 }
                 const pet = petsData.find(p => String(p.id) === String(petId));
                 const petName = pet ? pet.name : 'this pet';
+                surgeryWarningPetId = petId;
                 showSurgeryWarningModal(petName);
             } else {
                 if (surgeryDateContainer) {
                     surgeryDateContainer.classList.add('hidden');
                 }
+                surgeryWarningPetId = null;
             }
             updatePetEligibilityState(petId);
         }
@@ -1623,11 +1641,16 @@
                 }
             }
             
-            // Apply eligibility state
+            // Apply eligibility state with inline styles to avoid CSS conflicts
             if (!isEligible) {
-                medicalCard.classList.add('opacity-50', 'bg-gray-100');
-                medicalCard.classList.remove('bg-white', 'border-gray-200');
-                medicalCard.classList.add('border-red-200');
+                medicalCard.style.opacity = '0.5';
+                medicalCard.style.backgroundColor = '#f3f4f6';
+                medicalCard.style.borderColor = '#fecaca';
+                medicalCard.style.pointerEvents = 'none';
+                
+                // Disable all inputs in this card
+                const inputs = medicalCard.querySelectorAll('input, select, textarea, button');
+                inputs.forEach(input => input.disabled = true);
                 
                 // Add or update eligibility badge
                 let badge = medicalCard.querySelector('.eligibility-badge');
@@ -1645,9 +1668,14 @@
                     badge.title = reason;
                 }
             } else {
-                medicalCard.classList.remove('opacity-50', 'bg-gray-100');
-                medicalCard.classList.add('bg-white', 'border-gray-200');
-                medicalCard.classList.remove('border-red-200');
+                medicalCard.style.opacity = '1';
+                medicalCard.style.backgroundColor = '';
+                medicalCard.style.borderColor = '';
+                medicalCard.style.pointerEvents = '';
+                
+                // Enable all inputs in this card
+                const inputs = medicalCard.querySelectorAll('input, select, textarea, button');
+                inputs.forEach(input => input.disabled = false);
                 
                 const badge = medicalCard.querySelector('.eligibility-badge');
                 if (badge) {
@@ -1782,6 +1810,7 @@
                         if (dateInputEl && dateInputEl.value) {
                             const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
                             if (!result.valid) {
+                                rabiesWarningPetId = petId;
                                 e.preventDefault();
                                 showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
                                 return;
