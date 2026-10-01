@@ -669,15 +669,14 @@
             
             if (dateInputEl && dateInputEl.value && appointmentDate) {
                 // Only validate if the date looks complete
-                if (!/^\d{4}-\d{2}-\d{2}$/.test(dateInputEl.value)) {
-                    updatePetEligibilityState(petId);
-                    return;
-                }
-                
-                const pet = petsData.find(p => String(p.id) === String(petId));
-                const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
-                if (!result.valid && pet) {
-                    showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateInputEl.value)) {
+                    const pet = petsData.find(p => String(p.id) === String(petId));
+                    const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
+                    if (!result.valid && pet) {
+                        updatePetEligibilityState(petId);
+                        showRabiesWarningModal(pet.name, dateInputEl.value, result.protectionUntil);
+                        return;
+                    }
                 }
             }
             
@@ -1536,7 +1535,7 @@
             
             message.innerHTML = `
                 <strong>For the safety and health of your pet, anti-rabies vaccinations are administered annually (every 12 months).</strong><br><br>
-                Based on the date provided (${lastDateText}), your pet <strong>${petName}</strong> is fully protected until <strong>${protectionText}</strong>. Early re-vaccination is not recommended.<br><br>
+                Based on the date provided (${lastDateText}), your pet <strong>${petName}</strong> is fully protected until <strong>${protectionText}</strong>. Early re-vaccination is <strong class="text-red-600">not recommended</strong>.<br><br>
                 If you believe this date is an error or need special clearance from the City Veterinarian, please contact the office directly.
             `;
             
