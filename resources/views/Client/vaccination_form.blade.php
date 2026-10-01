@@ -668,6 +668,12 @@
             const dateInputEl = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
             
             if (dateInputEl && dateInputEl.value && appointmentDate) {
+                // Only validate if the date looks complete
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(dateInputEl.value)) {
+                    updatePetEligibilityState(petId);
+                    return;
+                }
+                
                 const pet = petsData.find(p => String(p.id) === String(petId));
                 const result = validateRabiesVaccinationGap(petId, dateInputEl.value, appointmentDate);
                 if (!result.valid && pet) {
@@ -931,6 +937,14 @@
             // Show normal modal with pets
             document.getElementById('petModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+
+            // Re-check already selected pets
+            selectedPets.forEach(petId => {
+                const checkbox = document.querySelector(`#petSelectionList input[value="${petId}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
         }
 
         function closePetModal() {
