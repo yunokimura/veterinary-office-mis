@@ -20,33 +20,10 @@
                 <div class="text-xs text-gray-500">{{ $scheduled->format('h:i A') }}</div>
             </td>
             <td class="px-4 py-3 text-gray-600">
-                @php
-                    $rawPets = $appointment->selected_pets ?? [];
-                    $ownerPets = $appointment->owner->pets ?? collect();
-                    $petsMap = $ownerPets->keyBy('pet_id');
-                    $displayPets = [];
-                    foreach ($rawPets as $pet) {
-                        if (!is_array($pet)) continue;
-                        $petId = isset($pet['id']) ? (int) $pet['id'] : null;
-                        $petModel = $petId && $petsMap->has($petId) ? $petsMap[$petId] : null;
-                        $displayPets[] = [
-                            'name' => $pet['name'] ?? ($petModel->pet_name ?? 'N/A'),
-                            'species' => $pet['species'] ?? ($petModel->species ?? 'N/A'),
-                            'breed' => $petModel->breed ?? ($pet['breed'] ?? 'N/A'),
-                        ];
-                    }
-                @endphp
-                @if(count($displayPets) > 0)
-                    <div class="space-y-1">
-                        @foreach(array_slice($displayPets, 0, 2) as $pet)
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">{{ $pet['name'] }}</div>
-                                <div class="text-xs text-gray-500">{{ $pet['species'] }} • {{ $pet['breed'] }}</div>
-                            </div>
-                        @endforeach
-                        @if(count($rawPets) > 2)
-                            <span class="text-gray-400 text-xs">+{{ count($rawPets) - 2 }} more</span>
-                        @endif
+                @if($appointment->pet)
+                    <div>
+                        <div class="text-sm font-medium text-gray-900">{{ $appointment->pet->pet_name }}</div>
+                        <div class="text-xs text-gray-500">{{ $appointment->pet->species }} • {{ $appointment->pet->breed }}</div>
                     </div>
                 @else
                     <span class="text-gray-400">N/A</span>

@@ -312,18 +312,6 @@ function viewAppointment(appointmentId) {
 
 function displayAppointmentDetails(appointment) {
     const modalBody = document.getElementById('appointmentModalBody');
-    const pets = appointment.selected_pets || [];
-
-    let petsHtml = '';
-    if (pets.length > 0) {
-        petsHtml = '<ul class="list-disc list-inside space-y-1">';
-        pets.forEach(pet => {
-            petsHtml += `<li><strong>${escapeHtml(pet.name || 'N/A')}</strong> - ${escapeHtml(pet.species || 'N/A')} (${escapeHtml(pet.breed || 'N/A')})</li>`;
-        });
-        petsHtml += '</ul>';
-    } else {
-        petsHtml = '<p class="text-gray-500">No pets specified</p>';
-    }
 
     const statusBadgeClass = getStatusBadgeClasses(appointment.status);
 
@@ -345,21 +333,23 @@ function displayAppointmentDetails(appointment) {
                 <div class="grid grid-cols-2 gap-6">
                     <div>
                         <p class="text-sm text-gray-500">Scheduled At</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.scheduled_at)}</p>
+                        <p class="font-medium text-gray-800 mt-1">Date: ${escapeHtml(appointment.scheduled_at_date || '')}</p>
+                        <p class="font-medium text-gray-800">Time: ${escapeHtml(appointment.scheduled_at_time || '')}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Last Anti-Rabies Vaccination</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.last_anti_rabies_date)}</p>
+                        <p class="text-sm text-gray-500">Submitted At</p>
+                        <p class="font-medium text-gray-800 mt-1">Date: ${escapeHtml(appointment.created_at_date || '')}</p>
+                        <p class="font-medium text-gray-800">Time: ${escapeHtml(appointment.created_at_time || '')}</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-6 mt-4">
                     <div>
-                        <p class="text-sm text-gray-500">Recent Surgery</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.recent_surgery)}</p>
+                        <p class="text-sm text-gray-500">Last Anti-Rabies Vaccination</p>
+                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.last_anti_rabies_date)}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Submitted At</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.created_at)}</p>
+                        <p class="text-sm text-gray-500">Recent Surgery</p>
+                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.recent_surgery)}</p>
                     </div>
                 </div>
             </div>
@@ -385,13 +375,6 @@ function displayAppointmentDetails(appointment) {
                         <p class="text-sm text-gray-500">Address</p>
                         <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.address)}</p>
                     </div>
-                </div>
-            </div>
-            <hr class="border-gray-100">
-            <div class="bg-yellow-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Selected Pets</h4>
-                <div>
-                    ${petsHtml}
                 </div>
             </div>
         </div>

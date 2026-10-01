@@ -310,19 +310,22 @@ class AdminController extends Controller
      */
     public function showVaccinationAppointmentJson(VaccinationAppointment $appointment)
     {
-        $appointment->load(['address.barangay']);
+        $appointment->load(['address.barangay', 'pet']);
 
-        $selectedPets = $appointment->selected_pets ?? [];
+        $scheduledAt = \Carbon\Carbon::parse($appointment->scheduled_at);
+        $createdAt = \Carbon\Carbon::parse($appointment->created_at);
 
         return response()->json([
             'success' => true,
             'appointment' => [
                 'id' => $appointment->id,
                 'status' => ucfirst($appointment->status),
-                'scheduled_at' => \Carbon\Carbon::parse($appointment->scheduled_at)->format('M d, Y h:i A'),
+                'scheduled_at_date' => $scheduledAt->format('M d, Y'),
+                'scheduled_at_time' => $scheduledAt->format('h:i A'),
                 'last_anti_rabies_date' => $appointment->last_anti_rabies_date ? \Carbon\Carbon::parse($appointment->last_anti_rabies_date)->format('M d, Y') : 'N/A',
                 'recent_surgery' => $appointment->recent_surgery ? 'Yes' : 'No',
-                'created_at' => $appointment->created_at->format('M d, Y h:i A'),
+                'created_at_date' => $createdAt->format('M d, Y'),
+                'created_at_time' => $createdAt->format('h:i A'),
                 'owner_name' => $appointment->owner_name,
                 'owner_contact' => $appointment->user->contact_number ?? 'N/A',
                 'owner_email' => $appointment->user->email ?? 'N/A',
@@ -334,8 +337,6 @@ class AdminController extends Controller
                 ) : 'N/A',
                 'submitted_by' => $appointment->user->name ?? 'N/A',
                 'assigned_vet_name' => $appointment->assigned_vet_name,
-                'selected_pets' => $selectedPets,
-                'metadata' => $appointment->metadata,
             ]
         ]);
     }
