@@ -189,7 +189,20 @@
         @endphp
 
         <!-- Navigation -->
-        <nav class="px-3 py-2 overflow-y-auto space-y-2" style="height: calc(100vh - 140px);">
+        <nav x-data="{ 
+            scrollToActive() {
+                this.$nextTick(() => {
+                    const active = this.$el.querySelector('.active-nav');
+                    if (active) {
+                        const nav = this.$el;
+                        const activeTop = active.offsetTop;
+                        const navHeight = nav.clientHeight;
+                        const activeHeight = active.clientHeight;
+                        nav.scrollTop = activeTop - (navHeight / 2) + (activeHeight / 2);
+                    }
+                });
+            }
+        }" x-init="scrollToActive()" class="px-3 py-2 overflow-y-auto space-y-2" style="height: calc(100vh - 140px);">
             <a href="{{ route($dashboardRoute) }}"
                class="nav-item {{ request()->routeIs($prefix.'.dashboard') ? 'active-nav' : '' }}">
                 <i class="bi bi-grid-1x2"></i>
