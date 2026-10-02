@@ -245,24 +245,36 @@
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Reports</div>
 
-            <a href="{{ route('admin.bite-reports.index') }}" class="nav-item {{ request()->routeIs('admin.bite-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-exclamation-triangle"></i><span>Confirmed Rabies Reports</span>
-            </a>
-            <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('admin.vaccination-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-shield-check"></i><span>Anti-Rabies Vaccination</span>
-            </a>
-            <a href="{{ route('admin.missing-pet-reports.index') }}" class="nav-item {{ request()->routeIs('admin.missing-pet-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-search"></i><span>Missing Pet Reports</span>
-            </a>
-            <a href="{{ route('admin.adoption-reports.index') }}" class="nav-item {{ request()->routeIs('admin.adoption-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-heart-fill"></i><span>Adoption Reports</span>
-            </a>
-            <a href="{{ route('admin.meat-inspection-reports.index') }}" class="nav-item {{ request()->routeIs('admin.meat-inspection-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-clipboard-check"></i><span>Meat Inspection</span>
-            </a>
-            <a href="{{ route('admin.all-reports') }}" class="nav-item {{ request()->routeIs('admin.all-reports') ? 'active-nav' : '' }}">
-                <i class="bi bi-file-earmark-bar-graph"></i><span>All Reports</span>
-            </a>
+            <div x-data="{ open: @json(request()->routeIs('admin.bite-reports.*') || request()->routeIs('admin.vaccination-reports.*') || request()->routeIs('admin.missing-pet-reports.*') || request()->routeIs('admin.adoption-reports.*') || request()->routeIs('admin.meat-inspection-reports.*') || request()->routeIs('admin.all-reports')) }">
+                <button @click="open = !open"
+                        class="nav-item w-full justify-between {{ request()->routeIs('admin.bite-reports.*') || request()->routeIs('admin.vaccination-reports.*') || request()->routeIs('admin.missing-pet-reports.*') || request()->routeIs('admin.adoption-reports.*') || request()->routeIs('admin.meat-inspection-reports.*') || request()->routeIs('admin.all-reports') ? 'active-nav' : '' }}">
+                    <span class="flex items-center gap-2 whitespace-nowrap">
+                        <i class="bi bi-file-earmark-bar-graph"></i><span>All Reports</span>
+                    </span>
+                    <i class="bi text-xs transition-transform duration-200"
+                       :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                </button>
+                <div x-show="open" x-cloak class="ml-4 mt-1 mb-3 space-y-3">
+                    <a href="{{ route('admin.bite-reports.index') }}" class="block text-sm rounded-md px-2 py-1 transition-colors {{ request()->routeIs('admin.bite-reports.*') ? 'text-white bg-white/10' : 'text-white hover:bg-white/10 hover:text-white' }}">
+                        <i class="bi bi-exclamation-triangle mr-2 text-xs"></i>Confirmed Rabies Reports
+                    </a>
+                    <a href="{{ route('admin.vaccination-reports.index') }}" class="block text-sm rounded-md px-2 py-1 transition-colors {{ request()->routeIs('admin.vaccination-reports.*') ? 'text-white bg-white/10' : 'text-white hover:bg-white/10 hover:text-white' }}">
+                        <i class="bi bi-shield-check mr-2 text-xs"></i>Anti-Rabies Vaccination
+                    </a>
+                    <a href="{{ route('admin.missing-pet-reports.index') }}" class="block text-sm rounded-md px-2 py-1 transition-colors {{ request()->routeIs('admin.missing-pet-reports.*') ? 'text-white bg-white/10' : 'text-white hover:bg-white/10 hover:text-white' }}">
+                        <i class="bi bi-search mr-2 text-xs"></i>Missing Pet Reports
+                    </a>
+                    <a href="{{ route('admin.adoption-reports.index') }}" class="block text-sm rounded-md px-2 py-1 transition-colors {{ request()->routeIs('admin.adoption-reports.*') ? 'text-white bg-white/10' : 'text-white hover:bg-white/10 hover:text-white' }}">
+                        <i class="bi bi-heart-fill mr-2 text-xs"></i>Adoption Reports
+                    </a>
+                    <a href="{{ route('admin.meat-inspection-reports.index') }}" class="block text-sm rounded-md px-2 py-1 transition-colors {{ request()->routeIs('admin.meat-inspection-reports.*') ? 'text-white bg-white/10' : 'text-white hover:bg-white/10 hover:text-white' }}">
+                        <i class="bi bi-clipboard-check mr-2 text-xs"></i>Meat Inspection
+                    </a>
+                    <a href="{{ route('admin.all-reports') }}" class="block text-sm rounded-md px-2 py-1 transition-colors {{ request()->routeIs('admin.all-reports') ? 'text-white bg-white/10' : 'text-white hover:bg-white/10 hover:text-white' }}">
+                        <i class="bi bi-file-earmark-bar-graph mr-2 text-xs"></i>All Reports
+                    </a>
+                </div>
+            </div>
 
             @elseif(auth()->check() && auth()->user()->hasRole('assistant_vet'))
             <div class="sidebar-divider"></div>
