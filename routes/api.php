@@ -278,8 +278,7 @@ Route::get('/appointments/check-vaccination-pet/{petName}/{userId}', function ($
         ->get();
     
     foreach ($existingAppointments as $appointment) {
-        $selectedPets = $appointment->metadata['selected_pets'] ?? [];
-        if (in_array($pet->pet_id, $selectedPets) || in_array((string)$pet->pet_id, $selectedPets)) {
+        if ($appointment->pet_id == $pet->pet_id || (string)$appointment->pet_id == (string)$pet->pet_id) {
             return response()->json([
                 'success' => true,
                 'already_booked' => true,

@@ -53,7 +53,7 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" id="appointmentSearchInput" value="{{ request('search') }}" placeholder="Search owner, status..."
+                <input type="text" id="appointmentSearchInput" value="{{ request('search') }}" placeholder="Search pet, owner, vet, status..."
                        class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
             </div>
             <div class="flex gap-3 items-end">

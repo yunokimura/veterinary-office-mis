@@ -10,6 +10,7 @@ use App\Models\BiteRabiesReport;
 use App\Models\VaccinationReport;
 use App\Models\MeatInspectionReport;
 use App\Models\VaccinationAppointment;
+use App\Models\Pet;
 use App\Models\MeatEstablishment;
 use App\Models\ImpoundRecord;
 use App\Models\User;
@@ -70,7 +71,8 @@ class AdminController extends Controller
         $totalMeatEstablishments = MeatEstablishment::count();
         $meatEstablishments = MeatEstablishment::with('barangay')->latest()->paginate(10);
 
-        $missingPetReports = MissingPetsReport::with(['pet', 'user'])->latest()->paginate(10);
+        $missingPetReports = MissingPetsReport::whereRaw('0 = 1')->paginate(10);
+        $missingPetsReportRecords = MissingPetsReport::with(['pet', 'user'])->latest()->paginate(10);
         $missingPetStats = [
             'total' => MissingPetsReport::count(),
             'pending' => MissingPetsReport::where('status', 'pending review')->count(),
@@ -347,19 +349,25 @@ class AdminController extends Controller
      */
     public function filterVaccinationAppointments(Request $request)
     {
-        $query = VaccinationAppointment::with(['owner.pets', 'user', 'address.barangay', 'assignedVet']);
+        $query = VaccinationAppointment::with(['owner', 'user', 'address.barangay', 'assignedVet', 'pet']);
 
         if ($request->filled('search')) {
             $terms = array_values(array_filter(explode(' ', $request->search)));
             $query->where(function ($q) use ($terms) {
                 foreach ($terms as $term) {
                     $q->where(function ($sub) use ($term) {
-                        $sub->where('owner_name', 'like', "%{$term}%")
+                        $sub->where('status', 'like', "%{$term}%")
                             ->orWhereHas('owner', function ($q2) use ($term) {
                                 $q2->where('first_name', 'like', "%{$term}%")
                                     ->orWhere('last_name', 'like', "%{$term}%");
                             })
-                            ->orWhere('status', 'like', "%{$term}%");
+                            ->orWhereHas('pet', function ($q4) use ($term) {
+                                $q4->where('pet_name', 'like', "%{$term}%");
+                            })
+                            ->orWhereHas('assignedVet', function ($q5) use ($term) {
+                                $q5->where('first_name', 'like', "%{$term}%")
+                                    ->orWhere('last_name', 'like', "%{$term}%");
+                            });
                     });
                 }
             });
@@ -409,11 +417,10 @@ class AdminController extends Controller
                 ]);
             }
 
-            $selectedPets = $appointment->metadata['selected_pets'] ?? [];
-            if (empty($selectedPets)) {
+            if (!$appointment->pet_id) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No pets selected for this appointment.',
+                    'message' => 'No pet assigned to this appointment.',
                 ]);
             }
 
@@ -421,61 +428,37 @@ class AdminController extends Controller
             $address = $appointment->address;
             $barangay = $address->barangay ?? null;
 
-            $validPets = [];
-            foreach ($selectedPets as $petData) {
-                $petId = is_array($petData) ? ($petData['id'] ?? null) : $petData;
-                if (!$petId) {
-                    continue;
-                }
-
-                $pet = Pet::withTrashed()->find($petId);
-                if (!$pet) {
-                    continue;
-                }
-
-                $validPets[] = [
-                    'pet' => $pet,
-                    'metadata' => is_array($petData) ? $petData : [],
-                ];
-            }
-
-            if (empty($validPets)) {
+            $pet = Pet::withTrashed()->find($appointment->pet_id);
+            if (!$pet) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No valid pets found for this appointment.',
+                    'message' => 'Assigned pet not found.',
                 ]);
             }
 
-            DB::transaction(function () use ($appointment, $owner, $address, $barangay, $validPets) {
-                $now = now();
-
-                foreach ($validPets as $item) {
-                    $pet = $item['pet'];
-                    $petMeta = $item['metadata'];
-
-                    VaccinationReport::create([
-                        'vaccination_appointment_id' => $appointment->id,
-                        'pet_id' => $pet->pet_id,
-                        'barangay_id' => $barangay?->barangay_id,
-                        'pet_name' => $pet->pet_name,
-                        'pet_species' => $pet->species,
-                        'pet_breed' => $pet->breed,
-                        'pet_gender' => $pet->gender,
-                        'pet_age' => $pet->age,
-                        'vaccine_brand' => null,
-                        'vaccine_batch_number' => null,
-                        'vaccination_date' => $appointment->scheduled_at->toDateString(),
-                        'vaccination_time' => $appointment->scheduled_at->toTimeString(),
-                        'next_vaccination_date' => null,
-                        'weight' => $petMeta['weight'] ?? null,
-                        'vaccination_type' => null,
-                        'status' => 'completed',
-                        'observations' => null,
-                        'notes' => null,
-                        'administered_by' => Auth::id(),
-                        'inventory_control_id' => null,
-                    ]);
-                }
+            DB::transaction(function () use ($appointment, $owner, $address, $barangay, $pet) {
+                VaccinationReport::create([
+                    'vaccination_appointment_id' => $appointment->id,
+                    'pet_id' => $pet->pet_id,
+                    'barangay_id' => $barangay?->barangay_id,
+                    'pet_name' => $pet->pet_name,
+                    'pet_species' => $pet->species,
+                    'pet_breed' => $pet->breed,
+                    'pet_gender' => $pet->gender,
+                    'pet_age' => $pet->age,
+                    'vaccine_brand' => null,
+                    'vaccine_batch_number' => null,
+                    'vaccination_date' => $appointment->scheduled_at->toDateString(),
+                    'vaccination_time' => $appointment->scheduled_at->toTimeString(),
+                    'next_vaccination_date' => null,
+                    'weight' => null,
+                    'vaccination_type' => null,
+                    'status' => 'completed',
+                    'observations' => null,
+                    'notes' => null,
+                    'administered_by' => Auth::id(),
+                    'inventory_control_id' => null,
+                ]);
             });
         }
 
@@ -536,6 +519,41 @@ class AdminController extends Controller
             'recent_surgery' => $validated['recent_surgery'],
             'assigned_vet' => $validated['assigned_vet'],
         ]);
+
+        if ($validated['status'] === 'completed' && !$appointment->vaccinationReports()->exists() && $appointment->pet_id) {
+            $owner = $appointment->owner;
+            $address = $appointment->address;
+            $barangay = $address->barangay ?? null;
+
+            $pet = Pet::withTrashed()->find($appointment->pet_id);
+
+            if ($pet) {
+                DB::transaction(function () use ($appointment, $owner, $address, $barangay, $pet) {
+                    VaccinationReport::create([
+                        'vaccination_appointment_id' => $appointment->id,
+                        'pet_id' => $pet->pet_id,
+                        'barangay_id' => $barangay?->barangay_id,
+                        'pet_name' => $pet->pet_name,
+                        'pet_species' => $pet->species,
+                        'pet_breed' => $pet->breed,
+                        'pet_gender' => $pet->gender,
+                        'pet_age' => $pet->age,
+                        'vaccine_brand' => null,
+                        'vaccine_batch_number' => null,
+                        'vaccination_date' => $appointment->scheduled_at->toDateString(),
+                        'vaccination_time' => $appointment->scheduled_at->toTimeString(),
+                        'next_vaccination_date' => null,
+                        'weight' => null,
+                        'vaccination_type' => null,
+                        'status' => 'completed',
+                        'observations' => null,
+                        'notes' => null,
+                        'administered_by' => Auth::id(),
+                        'inventory_control_id' => null,
+                    ]);
+                });
+            }
+        }
 
         return response()->json([
             'success' => true,

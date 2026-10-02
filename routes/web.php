@@ -302,6 +302,10 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
     Route::get('/meat-inspection-reports/{report}', [AdminController::class, 'showMeatInspectionReport'])->name('meat-inspection-reports.show');
     Route::get('/meat-inspection-reports/{establishment}/json', [AdminController::class, 'showMeatEstablishmentJson'])->name('meat-inspection-reports.show-json');
 
+    // Meat Establishments (shared view compatibility)
+    Route::get('/establishments/filter', [AdminController::class, 'filterMeatInspectionReports'])->name('establishments.filter');
+    Route::get('/establishments/{establishment}/json', [AdminController::class, 'showMeatEstablishmentJson'])->name('establishments.show-json');
+
     // Missing Pet Reports
     Route::get('/missing-pet-reports', [CityVetController::class, 'indexMissingPetReports'])->name('missing-pet-reports.index');
     Route::get('/missing-pet-reports/filter', [CityVetController::class, 'filterMissingPetReports'])->name('missing-pet-reports.filter');

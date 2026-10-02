@@ -331,17 +331,19 @@
                             @forelse($missingPetReports as $report)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-700">Bulletin</span></td>
-                                <td class="px-4 py-3 text-sm font-medium">#{{ $report->missing_id }}</td>
-                                <td class="px-4 py-3 text-sm">{{ $report->pet_name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ ucfirst($report->species ?? 'N/A') }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->breed ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm font-medium">#{{ $report->report_id }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $report->pet->pet_name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->pet ? ucfirst($report->pet->species ?? 'N/A') : 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->pet->breed ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $report->last_seen_at ? \Carbon\Carbon::parse($report->last_seen_at)->format('M d, Y') : 'N/A' }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->location ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay->barangay_name ?? ($report->location_description ?? 'N/A') }}</td>
                                 <td class="px-4 py-3">
-                                    @if($report->status == 'pending')
+                                    @if($report->status == 'pending review')
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
                                     @elseif($report->status == 'approved')
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Approved</span>
+                                    @elseif($report->status == 'rejected')
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Rejected</span>
                                     @else
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ ucfirst($report->status) }}</span>
                                     @endif
