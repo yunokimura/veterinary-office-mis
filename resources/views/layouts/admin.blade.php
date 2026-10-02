@@ -20,8 +20,12 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"></noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"></noscript>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
@@ -139,7 +143,7 @@
                     <i class="bi bi-list text-xl text-slate-600"></i>
                 </button>
                 <div class="flex items-center gap-2">
-                    <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-7 h-7 rounded object-contain">
+                    <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-7 h-7 rounded object-contain" fetchpriority="high">
                     <span class="font-bold text-slate-800 text-sm">City Vet MIS</span>
                 </div>
             </div>
@@ -167,7 +171,7 @@
     <aside id="sidebar" class="sidebar bg-green-800 text-white">
         <!-- Brand -->
         <div class="flex items-center justify-start gap-3 px-3 h-16 border-b border-green-700">
-            <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 rounded-full object-contain ring-1 ring-white">
+            <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 rounded-full object-contain ring-1 ring-white" loading="lazy">
             <div class="min-w-0">
                 <h1 class="font-bold text-[14px] leading-tight truncate">Dasmariñas City Vet</h1>
                 <p class="text-[10px] text-green-200 leading-tight">Veterinary Office MIS</p>
@@ -198,7 +202,7 @@
                         const activeTop = active.offsetTop;
                         const navHeight = nav.clientHeight;
                         const activeHeight = active.clientHeight;
-                        nav.scrollTop = activeTop - (navHeight / 2) + (activeHeight / 2);
+                        nav.scrollTo({ top: activeTop - (navHeight / 2) + (activeHeight / 2), behavior: 'smooth' });
                     }
                 });
             }
@@ -430,8 +434,23 @@
         </header>
 
         <!-- Page Content -->
-        <div class="content-wrapper">
-            @yield('content')
+        <div x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 50)" class="content-wrapper">
+            <div x-show="loading" x-cloak class="animate-pulse space-y-4">
+                <div class="h-8 bg-slate-200 rounded w-1/3"></div>
+                <div class="space-y-3">
+                    <div class="h-4 bg-slate-200 rounded"></div>
+                    <div class="h-4 bg-slate-200 rounded w-5/6"></div>
+                    <div class="h-4 bg-slate-200 rounded w-4/6"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 pt-4">
+                    <div class="h-32 bg-slate-200 rounded"></div>
+                    <div class="h-32 bg-slate-200 rounded"></div>
+                    <div class="h-32 bg-slate-200 rounded"></div>
+                </div>
+            </div>
+            <div x-show="!loading" x-cloak>
+                @yield('content')
+            </div>
         </div>
     </main>
 
@@ -450,7 +469,7 @@
             }
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <div class="modal fade" id="globalCreateUserModal" tabindex="-1" aria-labelledby="globalCreateUserModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
