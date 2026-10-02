@@ -239,7 +239,7 @@
                         <img src="{{ asset('images/Dasmalogof.png') }}" alt="Dasmariñas City Logo" class="w-full h-full object-contain">
                     </div>
                     <div>
-                        <span class="block font-extrabold text-lg tracking-tight text-slate-900 group-hover:text-primary transition-colors">Dasmariñas City Vet</span>
+                        <span class="block font-extrabold text-lg tracking-tight text-slate-900 group-hover:text-primary transition-colors">City of Dasmariñas</span>
                         <span class="block text-xs font-medium text-slate-500 uppercase tracking-wider">Veterinary Services</span>
                     </div>
                 </a>
@@ -335,7 +335,7 @@
     <section id="home" class="relative bg-slate-900 min-h-[560px] flex items-center justify-center overflow-hidden">
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 z-0">
-            <img src="{{ asset('images/herobg2.jpg') }}" alt="Veterinary Care Services" class="w-full h-full object-cover object-center scale-105" onerror="this.src='https://placehold.co/1920x1080/166534/ffffff?text=Dasmariñas+Veterinary+Services'">
+            <img src="{{ asset('images/hero-bg.jpg') }}" alt="Veterinary Care Services" class="w-full h-full object-cover object-center scale-105" onerror="this.src='https://placehold.co/1920x1080/166534/ffffff?text=Dasmariñas+Veterinary+Services'">
             <div class="absolute inset-0 hero-gradient"></div>
         </div>
 
@@ -350,12 +350,12 @@
                     </div>
 
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-                        Caring for Animals, <br class="hidden sm:inline">
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-secondary">Protecting Public Health</span>
+                        One Health, <br class="hidden sm:inline">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-white">One Community</span>
                     </h1>
 
                     <p class="text-slate-200 text-base sm:text-lg max-w-2xl font-light leading-relaxed">
-                        Dasmariñas City Veterinary Services is committed to responsible pet ownership, public health protection, and animal welfare. Register your pets, access vaccination programs, and join our community initiatives.
+                        Dasmariñas City Veterinary Services supports the "Zero by 2030" goal by offering pet registration, anti-rabies vaccinations, and spay/neuter (<em>kapon</em>) services across all 75 barangays for a rabies-free community.
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
@@ -363,7 +363,7 @@
                             <span>Book Veterinary Services</span>
                             <i class="fa-solid fa-arrow-right text-sm"></i>
                         </a>
-                        <a href="#services" class="w-full sm:w-auto border border-white/30 hover:bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-4 rounded-xl transition-all text-center">
+                        <a href="#services" class="w-full sm:w-auto border-2 border-white/50 hover:bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-4 rounded-xl transition-all text-center">
                             Explore Services
                         </a>
                     </div>
@@ -380,7 +380,7 @@
                         </div>
                         <div>
                             <span class="block text-2xl font-bold text-white">{{ number_format($barangayCount) }}</span>
-                            <span class="text-xs text-slate-300">Barangay Outreach</span>
+                            <span class="text-xs text-slate-300">Barangay Coverage</span>
                         </div>
                     </div>
                 </div>
@@ -680,7 +680,7 @@
             </div>
 
             <div class="text-center mt-10">
-                <a href="{{ url('/missing-pets') }}" class="inline-flex items-center bg-primary hover:bg-primary-light text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link" data-tab="missing">
+                <a href="{{ url('/missing-pets') }}" class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link" data-tab="missing">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
