@@ -249,7 +249,6 @@
                     <a href="{{ route('public.home') }}" class="text-primary font-semibold hover:text-primary transition-colors">Home</a>
                     <a href="{{ url('/about-us') }}" class="hover:text-primary transition-colors">About Us</a>
                     <a href="{{ url('/services') }}" class="hover:text-primary transition-colors">Services</a>
-                    <a href="#updates" class="hover:text-primary transition-colors">Updates & Events</a>
                     <a href="{{ url('/missing-pets') }}" class="hover:text-primary transition-colors">Missing Pets</a>
                 </nav>
 
@@ -317,7 +316,6 @@
             <a href="{{ route('public.home') }}" class="block py-2 px-3 rounded-lg bg-primary/10 text-primary font-semibold">Home</a>
             <a href="{{ url('/about-us') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">About Us</a>
             <a href="{{ url('/services') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Services</a>
-            <a href="#updates" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Updates & Events</a>
             <a href="{{ url('/missing-pets') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Missing Pets</a>
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 @auth
@@ -337,7 +335,7 @@
     <section id="home" class="relative bg-slate-900 min-h-[560px] flex items-center justify-center overflow-hidden">
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 z-0">
-            <img src="{{ asset('images/hero-bg.jpg') }}" alt="Veterinary Care Services" class="w-full h-full object-cover object-center scale-105" onerror="this.src='https://placehold.co/1920x1080/166534/ffffff?text=Dasmariñas+Veterinary+Services'">
+            <img src="{{ asset('images/herobg2.jpg') }}" alt="Veterinary Care Services" class="w-full h-full object-cover object-center scale-105" onerror="this.src='https://placehold.co/1920x1080/166534/ffffff?text=Dasmariñas+Veterinary+Services'">
             <div class="absolute inset-0 hero-gradient"></div>
         </div>
 
@@ -362,7 +360,7 @@
 
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
                         <a href="{{ url('/pet-registration') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                            <span>Book Clinic Services</span>
+                            <span>Book Veterinary Services</span>
                             <i class="fa-solid fa-arrow-right text-sm"></i>
                         </a>
                         <a href="#services" class="w-full sm:w-auto border border-white/30 hover:bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-4 rounded-xl transition-all text-center">
@@ -373,12 +371,12 @@
                     <!-- Quick Stats -->
                     <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-lg">
                         <div>
-                            <span class="block text-2xl font-bold text-white">{{ number_format($vaccinationReportsCount) }}+</span>
-                            <span class="text-xs text-slate-300">Pets Vaccinated</span>
+                            <span class="block text-2xl font-bold text-white">{{ number_format($petsRegisteredCount) }}{{ $petsRegisteredCount >= 10 ? '+' : '' }}</span>
+                            <span class="text-xs text-slate-300">Pets Registered</span>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-white">{{ number_format($petsRegisteredCount) }}+</span>
-                            <span class="text-xs text-slate-300">Pets Registered</span>
+                            <span class="block text-2xl font-bold text-white">{{ number_format($vaccinationReportsCount) }}{{ $vaccinationReportsCount >= 10 ? '+' : '' }}</span>
+                            <span class="text-xs text-slate-300">Pets Vaccinated</span>
                         </div>
                         <div>
                             <span class="block text-2xl font-bold text-white">{{ number_format($barangayCount) }}</span>
@@ -429,7 +427,7 @@
                         </p>
                     </div>
                     <a href="{{ url('/kapon') }}" class="w-full bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm">
-                        <span>Book Clinic</span>
+                        <span>Book Spay/Neuter</span>
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </a>
                 </div>
@@ -440,7 +438,7 @@
                         <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors">
                             <i class="fa-solid fa-syringe"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Anti-Rabies Drive</h3>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Anti-Rabies Vaccination</h3>
                         <p class="text-slate-600 text-sm leading-relaxed mb-6">
                             Protect your pets with comprehensive anti-rabies vaccination services. Required annually for pet registration.
                         </p>
@@ -588,7 +586,7 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Community Alert</span>
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Missing Pets</h2>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900" id="missingPetsTitle">Missing Pets</h2>
                 <p class="text-slate-600 mt-2 tab-description" data-tab="missing">Help reunite lost pets with their families. If you have seen any of these pets, please contact us immediately.</p>
                 <p class="text-slate-600 mt-2 tab-description hidden" data-tab="adoption">Give these adorable pets a loving forever home. Browse our available pets for adoption and visit the shelter.</p>
             </div>
@@ -613,9 +611,9 @@
             </div>
 
             <!-- Pet Cards Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6" id="missingPetsGrid">
-                <!-- Missing Pets Tab -->
-                <div class="tab-content" data-tab="missing">
+            <!-- Missing Pets Tab -->
+            <div class="tab-content" data-tab="missing">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                     @forelse($missingPets as $pet)
                     <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="{{ strtolower($pet->pet_status) }}" onclick="showPetModal({{ $pet->pet_id }})">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
@@ -649,9 +647,11 @@
                     <p class="col-span-5 text-center text-slate-500">No missing pets found.</p>
                     @endforelse
                 </div>
+            </div>
 
-                <!-- Adoption Pets Tab -->
-                <div class="tab-content hidden" data-tab="adoption">
+            <!-- Adoption Pets Tab -->
+            <div class="tab-content hidden" data-tab="adoption">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                     @forelse($adoptionPets as $pet)
                     <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" onclick="showPetModal({{ $pet->pet_id }})">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
@@ -1006,6 +1006,12 @@
                             link.classList.remove('hidden');
                         }
                     });
+
+                    // Update section title
+                    const titleEl = document.getElementById('missingPetsTitle');
+                    if (titleEl) {
+                        titleEl.textContent = filter === 'adoption' ? 'Adoption' : 'Missing Pets';
+                    }
                 }
             });
         });
