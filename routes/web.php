@@ -139,13 +139,24 @@ Route::get('/home', function () {
         ->limit(5)
         ->get();
 
+    // Get adoption pets for the landing page
+    $adoptionPets = Pet::availableForAdoption()
+        ->with(['barangay'])
+        ->limit(5)
+        ->get();
+
     // Get active announcements for public
     $announcements = Announcement::where('is_active', true)
         ->where('status', 'Published')
         ->orderBy('created_at', 'desc')
         ->get();
 
-    return view('Client.welcome', compact('missingPets', 'announcements'));
+    // Dynamic stats
+    $vaccinationReportsCount = \App\Models\VaccinationReport::count();
+    $petsRegisteredCount = Pet::whereHas('owner')->count();
+    $barangayCount = \App\Models\Barangay::count();
+
+    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'barangayCount'));
 })->name('public.home');
 
 // ==============================

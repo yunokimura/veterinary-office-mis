@@ -47,7 +47,7 @@
             border-radius: 4px;
         }
         .hero-gradient {
-            background: linear-gradient(135deg, rgba(6, 109, 51, 0.92) 0%, rgba(5, 42, 28, 0.85) 100%);
+            background: linear-gradient(135deg, rgba(6, 109, 51, 0.80) 0%, rgba(5, 42, 28, 0.70) 100%);
         }
         .card-hover {
             transition: all 0.3s ease;
@@ -235,8 +235,8 @@
             <div class="flex items-center justify-between h-20">
                 <!-- Brand Logo -->
                 <a href="{{ route('public.home') }}" class="flex items-center space-x-3 group">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
-                        <i class="fa-solid fa-paw text-2xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform overflow-hidden">
+                        <img src="{{ asset('images/Dasmalogof.png') }}" alt="Dasmariñas City Logo" class="w-full h-full object-contain">
                     </div>
                     <div>
                         <span class="block font-extrabold text-lg tracking-tight text-slate-900 group-hover:text-primary transition-colors">Dasmariñas City Vet</span>
@@ -346,7 +346,7 @@
             <div class="grid md:grid-cols-12 gap-8 items-center">
                 <div class="md:col-span-8 lg:col-span-7 space-y-6">
                     <!-- Status Badge -->
-                    <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 text-brand-100 px-4 py-1.5 rounded-full text-xs font-medium">
+                    <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full text-xs font-medium">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                         <span>Dasmariñas Mobile Veterinary Clinic Active Today</span>
                     </div>
@@ -373,15 +373,15 @@
                     <!-- Quick Stats -->
                     <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-lg">
                         <div>
-                            <span class="block text-2xl font-bold text-white">45,000+</span>
+                            <span class="block text-2xl font-bold text-white">{{ number_format($vaccinationReportsCount) }}+</span>
                             <span class="text-xs text-slate-300">Pets Vaccinated</span>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-white">12,000+</span>
-                            <span class="text-xs text-slate-300">Free Checkups</span>
+                            <span class="block text-2xl font-bold text-white">{{ number_format($petsRegisteredCount) }}+</span>
+                            <span class="text-xs text-slate-300">Pets Registered</span>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-white">6 Districts</span>
+                            <span class="block text-2xl font-bold text-white">{{ number_format($barangayCount) }}</span>
                             <span class="text-xs text-slate-300">Barangay Outreach</span>
                         </div>
                     </div>
@@ -395,7 +395,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-14">
                 <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">Core Services</span>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3">Quick Municipal Services</h2>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3">Our Veterinary Services</h2>
                 <p class="text-slate-600 mt-2">Access convenient veterinary care and municipal programs for your household pets.</p>
             </div>
 
@@ -423,7 +423,7 @@
                         <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                             <i class="fa-solid fa-truck-medical"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Mobile Clinic</h3>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Spay/Neuter (Kapon)</h3>
                         <p class="text-slate-600 text-sm leading-relaxed mb-6">
                             Free spay & neuter (Kapon), general consultation, and minor medical treatment in barangays.
                         </p>
@@ -565,8 +565,8 @@
 
                     <div class="lg:col-span-5">
                         <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 group">
-                            @if($featuredAnnouncement && $featuredAnnouncement->image)
-                                <img src="{{ asset('storage/' . $featuredAnnouncement->image) }}" alt="Campaign Feature" class="w-full h-64 sm:h-80 object-cover transform group-hover:scale-105 transition-transform duration-500">
+                            @if($featuredAnnouncement && $featuredAnnouncement->photo_path)
+                                <img src="{{ asset('storage/' . $featuredAnnouncement->photo_path) }}" alt="Campaign Feature" class="w-full h-64 sm:h-80 object-cover transform group-hover:scale-105 transition-transform duration-500">
                             @else
                                 <img src="{{ asset('images/recentcamp.jpg') }}" alt="Campaign Feature" class="w-full h-64 sm:h-80 object-cover transform group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/800x600/166534/ffffff?text=Dasmariñas+Pet+Clinic'">
                             @endif
@@ -588,68 +588,109 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Community Alert</span>
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Missing Pets Radar</h2>
-                <p class="text-slate-600 mt-2">Help reunite lost pets with their families. If you have seen any of these pets, please contact us immediately.</p>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Missing Pets</h2>
+                <p class="text-slate-600 mt-2 tab-description" data-tab="missing">Help reunite lost pets with their families. If you have seen any of these pets, please contact us immediately.</p>
+                <p class="text-slate-600 mt-2 tab-description hidden" data-tab="adoption">Give these adorable pets a loving forever home. Browse our available pets for adoption and visit the shelter.</p>
             </div>
 
             <!-- Header Controls & Filters -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
                 <!-- Filter Tabs -->
                 <div class="flex items-center bg-slate-100 p-1 rounded-xl w-full sm:w-auto">
-                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-semibold bg-white text-slate-900 shadow-sm" data-filter="all">All</button>
-                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="lost">Lost Pets</button>
-                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="found">Found Pets</button>
+                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-semibold bg-white text-slate-900 shadow-sm" data-filter="missing">Missing Pets</button>
+                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="adoption">Pets for Adoption</button>
                 </div>
 
                 <!-- Report Missing Pet CTA -->
-                <button onclick="openModal('reportPetModal')" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center justify-center space-x-2">
+                <button onclick="openModal('reportPetModal')" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center justify-center space-x-2 tab-cta" data-tab="missing">
                     <i class="fa-solid fa-bullhorn"></i>
                     <span>Report Missing Pet</span>
                 </button>
+                <a href="{{ url('/adoption') ?? '#' }}" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2 tab-cta hidden" data-tab="adoption">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Adopt a Pet</span>
+                </a>
             </div>
 
             <!-- Pet Cards Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6" id="missingPetsGrid">
-                @forelse($missingPets as $pet)
-                <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="{{ strtolower($pet->pet_status) }}" onclick="showPetModal({{ $pet->pet_id }})">
-                    <div class="relative h-44 bg-slate-200 overflow-hidden">
-                        <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
-                        <span class="absolute top-2 right-2 {{ strtolower($pet->pet_status) == 'found' ? 'bg-emerald-600' : 'bg-rose-600' }} text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">{{ strtoupper($pet->pet_status) }}</span>
-                    </div>
-                    <div class="p-4">
-                        <h4 class="font-bold text-slate-900 text-lg">{{ $pet->pet_name }}</h4>
-                        <p class="text-xs text-slate-500 font-medium">{{ $pet->breed ?? $pet->species }} • {{ $pet->age }} yrs</p>
-                        <div class="mt-3 text-xs text-slate-600 space-y-1">
-                            <p class="flex items-center">
-                                <i class="fa-solid fa-location-dot text-rose-500 mr-1.5 w-3"></i>
-                                @if($pet->missingReport->first())
-                                    {{ $pet->missingReport->first()->barangay->barangay_name ?? 'N/A' }}
-                                @else
-                                    N/A
-                                @endif
-                            </p>
-                            <p class="flex items-center">
-                                <i class="fa-regular fa-clock text-slate-400 mr-1.5 w-3"></i>
-                                @if($pet->missingReport->first() && $pet->missingReport->first()->last_seen_at)
-                                    {{ $pet->missingReport->first()->last_seen_at->format('M d, Y') }}
-                                @else
-                                    N/A
-                                @endif
-                            </p>
+                <!-- Missing Pets Tab -->
+                <div class="tab-content" data-tab="missing">
+                    @forelse($missingPets as $pet)
+                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="{{ strtolower($pet->pet_status) }}" onclick="showPetModal({{ $pet->pet_id }})">
+                        <div class="relative h-44 bg-slate-200 overflow-hidden">
+                            <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
+                            <span class="absolute top-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">{{ strtoupper($pet->pet_status) }}</span>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-slate-900 text-lg">{{ $pet->pet_name }}</h4>
+                            <p class="text-xs text-slate-500 font-medium">{{ $pet->breed ?? $pet->species }} • {{ $pet->age }} yrs</p>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1">
+                                <p class="flex items-center">
+                                    <i class="fa-solid fa-location-dot text-rose-500 mr-1.5 w-3"></i>
+                                    @if($pet->missingReport->first())
+                                        {{ $pet->missingReport->first()->barangay->barangay_name ?? 'N/A' }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </p>
+                                <p class="flex items-center">
+                                    <i class="fa-regular fa-clock text-slate-400 mr-1.5 w-3"></i>
+                                    @if($pet->missingReport->first() && $pet->missingReport->first()->last_seen_at)
+                                        {{ $pet->missingReport->first()->last_seen_at->format('M d, Y') }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </p>
+                            </div>
                         </div>
                     </div>
+                    @empty
+                    <p class="col-span-5 text-center text-slate-500">No missing pets found.</p>
+                    @endforelse
                 </div>
-                @empty
-                <p class="col-span-5 text-center text-slate-500">No missing pets found.</p>
-                @endforelse
+
+                <!-- Adoption Pets Tab -->
+                <div class="tab-content hidden" data-tab="adoption">
+                    @forelse($adoptionPets as $pet)
+                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" onclick="showPetModal({{ $pet->pet_id }})">
+                        <div class="relative h-44 bg-slate-200 overflow-hidden">
+                            <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
+                            <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">For Adoption</span>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-slate-900 text-lg">{{ $pet->pet_name }}</h4>
+                            <p class="text-xs text-slate-500 font-medium">{{ $pet->breed ?? $pet->species }} • {{ $pet->age }} yrs</p>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1">
+                                <p class="flex items-center">
+                                    <i class="fa-solid fa-location-dot text-emerald-500 mr-1.5 w-3"></i>
+                                    {{ $pet->barangay->barangay_name ?? 'N/A' }}
+                                </p>
+                                <p class="flex items-center">
+                                    <i class="fa-regular fa-clock text-slate-400 mr-1.5 w-3"></i>
+                                    {{ $pet->created_at->format('M d, Y') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <p class="col-span-5 text-center text-slate-500">No pets currently available for adoption.</p>
+                    @endforelse
+                </div>
             </div>
 
             <div class="text-center mt-10">
-                <a href="{{ url('/missing-pets') }}" class="inline-flex items-center bg-primary hover:bg-primary-light text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md">
+                <a href="{{ url('/missing-pets') }}" class="inline-flex items-center bg-primary hover:bg-primary-light text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link" data-tab="missing">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     View All Missing Pets
+                </a>
+                <a href="{{ url('/adoption') ?? '#' }}" class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link hidden" data-tab="adoption">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    View All Adoption Pets
                 </a>
             </div>
         </div>
@@ -926,12 +967,46 @@
         // Filter tabs visual toggle
         document.querySelectorAll('.filter-tab').forEach(tab => {
             tab.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+
+                // Update tab styles
                 document.querySelectorAll('.filter-tab').forEach(t => {
                     t.classList.remove('bg-white', 'text-slate-900', 'shadow-sm', 'font-semibold');
                     t.classList.add('text-slate-600', 'font-medium');
                 });
                 this.classList.remove('text-slate-600', 'font-medium');
                 this.classList.add('bg-white', 'text-slate-900', 'shadow-sm', 'font-semibold');
+
+                // Show/hide content based on tab
+                if (filter === 'missing' || filter === 'adoption') {
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                        if (content.getAttribute('data-tab') === filter) {
+                            content.classList.remove('hidden');
+                        }
+                    });
+
+                    document.querySelectorAll('.tab-description').forEach(desc => {
+                        desc.classList.add('hidden');
+                        if (desc.getAttribute('data-tab') === filter) {
+                            desc.classList.remove('hidden');
+                        }
+                    });
+
+                    document.querySelectorAll('.tab-cta').forEach(cta => {
+                        cta.classList.add('hidden');
+                        if (cta.getAttribute('data-tab') === filter) {
+                            cta.classList.remove('hidden');
+                        }
+                    });
+
+                    document.querySelectorAll('.tab-link').forEach(link => {
+                        link.classList.add('hidden');
+                        if (link.getAttribute('data-tab') === filter) {
+                            link.classList.remove('hidden');
+                        }
+                    });
+                }
             });
         });
     </script>
@@ -1085,8 +1160,29 @@
             ];
         })->toArray()) !!};
 
+        const adoptionPetsData = {!! json_encode($adoptionPets->map(function($pet) {
+            return [
+                'pet_id' => $pet->pet_id,
+                'pet_name' => $pet->pet_name,
+                'species' => $pet->species,
+                'breed' => $pet->breed,
+                'gender' => $pet->gender,
+                'age' => $pet->age,
+                'weight' => $pet->weight,
+                'color' => $pet->color,
+                'description' => $pet->notes,
+                'location_barangay' => $pet->barangay ? $pet->barangay->barangay_name : null,
+                'location_description' => null,
+                'last_seen_at' => $pet->created_at,
+                'pet_image' => $pet->pet_image,
+                'pet_status' => $pet->pet_status,
+            ];
+        })->toArray()) !!};
+
+        const allPetsData = [...missingPetsData, ...adoptionPetsData];
+
         function showPetModal(petId) {
-            const pet = missingPetsData.find(p => p.pet_id === petId);
+            const pet = allPetsData.find(p => p.pet_id === petId);
             if (!pet) return;
 
             const imageUrl = pet.pet_image
