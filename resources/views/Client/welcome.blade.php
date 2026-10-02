@@ -254,10 +254,12 @@
 
                 <!-- Action Buttons -->
                 <div class="hidden sm:flex items-center space-x-3">
+                    @auth
                     <a href="{{ url('/pet-registration') }}" class="bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-primary/20 hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center space-x-2">
                         <i class="fa-solid fa-calendar-check"></i>
                         <span>Book Appointment</span>
                     </a>
+                    @endauth
                     @auth
                         <div class="relative">
                             <button onclick="toggleDropdown()" class="flex items-center space-x-3 focus:outline-none">
