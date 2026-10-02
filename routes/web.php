@@ -120,13 +120,24 @@ Route::get('/', function () {
         ->limit(5)
         ->get();
 
+    // Get adoption pets for the landing page
+    $adoptionPets = Pet::availableForAdoption()
+        ->with(['barangay'])
+        ->limit(5)
+        ->get();
+
     // Get active announcements for public
     $announcements = Announcement::where('is_active', true)
         ->where('status', 'Published')
         ->orderBy('created_at', 'desc')
         ->get();
 
-    return view('Client.welcome', compact('missingPets', 'announcements'));
+    // Dynamic stats
+    $vaccinationReportsCount = \App\Models\VaccinationReport::count();
+    $petsRegisteredCount = Pet::whereHas('owner')->count();
+    $spayNeuterCount = SpayNeuterReport::count();
+
+    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayNeuterCount'));
 })->name('landing');
 
 // Public Home Route - Always shows welcome page
@@ -154,9 +165,9 @@ Route::get('/home', function () {
     // Dynamic stats
     $vaccinationReportsCount = \App\Models\VaccinationReport::count();
     $petsRegisteredCount = Pet::whereHas('owner')->count();
-    $barangayCount = \App\Models\Barangay::count();
+    $spayNeuterCount = SpayNeuterReport::count();
 
-    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'barangayCount'));
+    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayNeuterCount'));
 })->name('public.home');
 
 // ==============================
@@ -704,12 +715,22 @@ Route::get('/client', function () {
         ->limit(5)
         ->get();
 
+    $adoptionPets = Pet::availableForAdoption()
+        ->with(['barangay'])
+        ->limit(5)
+        ->get();
+
     $announcements = Announcement::where('is_active', true)
         ->where('status', 'Published')
         ->orderBy('created_at', 'desc')
         ->get();
 
-    return view('Client.welcome', compact('missingPets', 'announcements'));
+    // Dynamic stats
+    $vaccinationReportsCount = \App\Models\VaccinationReport::count();
+    $petsRegisteredCount = Pet::whereHas('owner')->count();
+    $spayNeuterCount = SpayNeuterReport::count();
+
+    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayNeuterCount'));
 });
 
 // OTP Routes - Only for citizens/clients

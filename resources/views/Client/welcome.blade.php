@@ -249,7 +249,6 @@
                     <a href="{{ route('public.home') }}" class="text-primary font-semibold hover:text-primary transition-colors">Home</a>
                     <a href="{{ url('/about-us') }}" class="hover:text-primary transition-colors">About Us</a>
                     <a href="{{ url('/services') }}" class="hover:text-primary transition-colors">Services</a>
-                    <a href="{{ url('/missing-pets') }}" class="hover:text-primary transition-colors">Missing Pets</a>
                 </nav>
 
                 <!-- Action Buttons -->
@@ -318,7 +317,6 @@
             <a href="{{ route('public.home') }}" class="block py-2 px-3 rounded-lg bg-primary/10 text-primary font-semibold">Home</a>
             <a href="{{ url('/about-us') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">About Us</a>
             <a href="{{ url('/services') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Services</a>
-            <a href="{{ url('/missing-pets') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Missing Pets</a>
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 @auth
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
@@ -374,15 +372,15 @@
                     <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-lg">
                         <div>
                             <span class="block text-2xl font-bold text-white">{{ number_format($petsRegisteredCount) }}{{ $petsRegisteredCount >= 10 ? '+' : '' }}</span>
-                            <span class="text-xs text-slate-300">Pets Registered</span>
+                            <span class="text-xs text-slate-300">Registered Pets</span>
                         </div>
                         <div>
                             <span class="block text-2xl font-bold text-white">{{ number_format($vaccinationReportsCount) }}{{ $vaccinationReportsCount >= 10 ? '+' : '' }}</span>
                             <span class="text-xs text-slate-300">Pets Vaccinated</span>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-white">{{ number_format($barangayCount) }}</span>
-                            <span class="text-xs text-slate-300">Barangay Coverage</span>
+                            <span class="block text-2xl font-bold text-white">{{ number_format($spayNeuterCount) }}{{ $spayNeuterCount >= 10 ? '+' : '' }}</span>
+                            <span class="text-xs text-slate-300">Spayed/Neutered</span>
                         </div>
                     </div>
                 </div>
@@ -780,13 +778,16 @@
                 <!-- Brand Info -->
                 <div class="lg:col-span-2 space-y-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white">
-                            <i class="fa-solid fa-paw"></i>
+                        <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white overflow-hidden">
+                            <img src="{{ asset('images/Dasmalogof.png') }}" alt="Dasmariñas City Logo" class="w-full h-full object-contain">
                         </div>
-                        <span class="font-extrabold text-xl text-white">Dasmariñas City Vet</span>
+                        <div>
+                            <span class="block font-extrabold text-xl text-white">City of Dasmariñas</span>
+                            <span class="block text-xs font-medium text-slate-400 uppercase tracking-wider">Veterinary Services</span>
+                        </div>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed max-w-sm">
-                        Promoting responsible pet ownership and protecting public health since 2010. Serving the Dasmariñas community with dedication and compassion.
+                        Supporting the "Zero by 2030" goal by delivering accessible anti-rabies vaccinations, spay/neuter (kapon) services, and pet registration across all 75 barangays for a rabies-free community.
                     </p>
                     <div class="flex space-x-3 pt-2">
                         <a href="#" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-primary text-slate-300 hover:text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-facebook-f text-sm"></i></a>
@@ -802,8 +803,6 @@
                         <li><a href="{{ route('public.home') }}" class="hover:text-white transition-colors">Home Page</a></li>
                         <li><a href="{{ url('/about-us') }}" class="hover:text-white transition-colors">About Us</a></li>
                         <li><a href="{{ url('/services') }}" class="hover:text-white transition-colors">Services Overview</a></li>
-                        <li><a href="{{ url('/missing-pets') }}" class="hover:text-white transition-colors">Missing Pets Radar</a></li>
-                        <li><a href="#location" class="hover:text-white transition-colors">Clinic Locations</a></li>
                     </ul>
                 </div>
 
@@ -812,10 +811,10 @@
                     <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Services</h4>
                     <ul class="space-y-2.5 text-sm">
                         <li><a href="{{ url('/pet-registration') }}" class="hover:text-white transition-colors">Pet Registration</a></li>
-                        <li><a href="{{ url('/vaccination') }}" class="hover:text-white transition-colors">Anti-Rabies Drive</a></li>
-                        <li><a href="{{ url('/kapon') }}" class="hover:text-white transition-colors">Mobile Clinic Schedule</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Shelter Adoption</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Bite Incident Reporting</a></li>
+                        <li><a href="{{ url('/vaccination') }}" class="hover:text-white transition-colors">Anti-Rabies Vaccination</a></li>
+                        <li><a href="{{ url('/kapon') }}" class="hover:text-white transition-colors">Spay/Neuter (Kapon)</a></li>
+                        <li><a href="{{ url('/missing-pets') }}" class="hover:text-white transition-colors">Missing Pets</a></li>
+                        <li><a href="{{ url('/adoption') ?? '#' }}" class="hover:text-white transition-colors">Adoption</a></li>
                     </ul>
                 </div>
 
@@ -831,7 +830,7 @@
             </div>
 
             <div class="pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500">
-                <p>&copy; 2025 Dasmariñas City Veterinary Services. All rights reserved.</p>
+                <p>&copy; 2025 City of Dasmariñas Veterinary Services. All rights reserved.</p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
                     <a href="#" class="hover:text-slate-400">Privacy Policy</a>
                     <a href="#" class="hover:text-slate-400">Terms of Service</a>
