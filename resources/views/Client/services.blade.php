@@ -60,7 +60,7 @@
                 
                 <!-- Desktop Navigation Links -->
                 <nav class="hidden lg:flex items-center space-x-8 font-medium text-slate-600 text-sm">
-                    <a href="{{ route('public.home') }}" class="text-primary font-semibold hover:text-primary transition-colors">Home</a>
+                    <a href="{{ route('public.home') }}" class="hover:text-primary transition-colors">Home</a>
                     <a href="{{ url('/about-us') }}" class="hover:text-primary transition-colors">About Us</a>
                     <a href="{{ url('/services') }}" class="text-primary font-semibold transition-colors">Services</a>
                     <a href="{{ url('/missing-pets') }}" class="hover:text-primary transition-colors">Missing Pets</a>
@@ -129,7 +129,7 @@
 
         <!-- Mobile Navigation Menu -->
         <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3">
-            <a href="{{ route('public.home') }}" class="block py-2 px-3 rounded-lg bg-primary/10 text-primary font-semibold">Home</a>
+            <a href="{{ route('public.home') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Home</a>
             <a href="{{ url('/about-us') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">About Us</a>
             <a href="{{ url('/services') }}" class="block py-2 px-3 rounded-lg text-primary font-semibold">Services</a>
             <a href="{{ url('/missing-pets') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Missing Pets</a>

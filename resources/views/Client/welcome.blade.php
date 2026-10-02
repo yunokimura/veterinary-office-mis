@@ -249,6 +249,7 @@
                     <a href="{{ route('public.home') }}" class="text-primary font-semibold hover:text-primary transition-colors">Home</a>
                     <a href="{{ url('/about-us') }}" class="hover:text-primary transition-colors">About Us</a>
                     <a href="{{ url('/services') }}" class="hover:text-primary transition-colors">Services</a>
+                    <a href="{{ url('/missing-pets') }}" class="hover:text-primary transition-colors">Missing Pets</a>
                 </nav>
 
                 <!-- Action Buttons -->
@@ -317,6 +318,7 @@
             <a href="{{ route('public.home') }}" class="block py-2 px-3 rounded-lg bg-primary/10 text-primary font-semibold">Home</a>
             <a href="{{ url('/about-us') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">About Us</a>
             <a href="{{ url('/services') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Services</a>
+            <a href="{{ url('/missing-pets') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Missing Pets</a>
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 @auth
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
