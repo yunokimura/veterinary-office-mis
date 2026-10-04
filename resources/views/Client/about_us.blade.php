@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -32,6 +33,9 @@
         }
     </script>
     <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(6, 109, 51, 0.80) 0%, rgba(5, 42, 28, 0.70) 100%);
+        }
         .card-hover {
             transition: all 0.3s ease;
         }
@@ -41,69 +45,74 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased bg-gray-50">
+<body class="font-sans antialiased bg-gray-50 text-slate-800">
     @include('Client.partials.navbar')
 
-     <!-- Page Banner -->
-     <section class="py-16" style="background: linear-gradient(135deg, #066D33 0%, #077a40 100%);">
-         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                   <!-- Left Column: Text Content -->
-                   <div class="max-w-2xl">
-                       <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white pb-5">Leading the way in animal welfare and public health.</h1>
-    <p class="text-lg text-gray-100 leading-relaxed">
-    Discover how the Dasmariñas City Veterinary Office serves our community by bridging the gap between animal care and 
-    human well-being under the One Health initiative.
-    </p>
-<div class="flex flex-col sm:flex-row gap-4 pt-10">
-    <a href="{{ url('/services') }}" class="bg-white text-primary px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all shadow-lg text-center border border-primary">
-        View Our Services
-    </a>
-</div>
-</div>
-                   
+     <!-- Hero Section -->
+     <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, #22c55e 0%, #14532d 100%);">
+         <!-- Hero Content -->
+         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center md:text-left">
+             <div class="grid md:grid-cols-12 gap-8 items-center">
+                 <div class="md:col-span-8 lg:col-span-7 space-y-6">
+                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                         Leading the way in animal welfare and public health.
+                     </h1>
 
-                 <!-- Right Column: Carousel -->
-                 <div class="relative">
-                     <div class="rounded-2xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm">
-                         <!-- Carousel Container -->
-                         <div id="aboutCarousel" class="relative h-96 overflow-hidden">
-                             <!-- Carousel Slide 1 -->
-                             <div class="carousel-slide absolute w-full h-full">
-                                 <img src="{{ asset('images/carousel pics/carousel_1.jpg') }}" alt="Dasmariñas City Veterinary Services 1" class="w-full h-full object-cover">
-                             </div>
-                             <!-- Carousel Slide 2 -->
-                             <div class="carousel-slide absolute w-full h-full">
-                                 <img src="{{ asset('images/carousel pics/carousel_2.jpg') }}" alt="Dasmariñas City Veterinary Services 2" class="w-full h-full object-cover">
-                             </div>
-                             <!-- Carousel Slide 3 -->
-                             <div class="carousel-slide absolute w-full h-full">
-                                 <img src="{{ asset('images/carousel pics/carousel_3.jpg') }}" alt="Dasmariñas City Veterinary Services 3" class="w-full h-full object-cover">
-                             </div>
-                             <!-- Carousel Slide 4 -->
-                             <div class="carousel-slide absolute w-full h-full">
-                                 <img src="{{ asset('images/carousel pics/carousel_4.jpg') }}" alt="Dasmariñas City Veterinary Services 4" class="w-full h-full object-cover">
-                             </div>
-                         </div>
+                     <p class="text-slate-200 text-base sm:text-lg max-w-2xl font-light leading-relaxed">
+                         Discover how the Dasmariñas City Veterinary Office serves our community by bridging the gap between animal care and 
+                         human well-being under the One Health initiative.
+                     </p>
 
-                         <!-- Carousel Controls -->
-                         <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110" aria-label="Previous slide">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                             </svg>
-                         </button>
-                         <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110" aria-label="Next slide">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                             </svg>
-                         </button>
+                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
+                         <a href="{{ url('/services') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                             <span>View Our Services</span>
+                             <i class="fa-solid fa-arrow-right text-sm"></i>
+                         </a>
+                     </div>
+                 </div>
 
-                         <!-- Carousel Indicators -->
-                         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                             <button onclick="goToSlide(0)" class="carousel-indicator w-3 h-3 rounded-full bg-white/70 hover:bg-white transition-colors" aria-label="Go to slide 1"></button>
-                             <button onclick="goToSlide(1)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 2"></button>
-                             <button onclick="goToSlide(2)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 3"></button>
-                             <button onclick="goToSlide(3)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 4"></button>
+                 <div class="md:col-span-4 lg:col-span-5">
+                     <div class="relative">
+                         <div class="rounded-2xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm">
+                             <!-- Carousel Container -->
+                             <div id="aboutCarousel" class="relative h-96 overflow-hidden">
+                                 <!-- Carousel Slide 1 -->
+                                 <div class="carousel-slide absolute w-full h-full">
+                                     <img src="{{ asset('images/carousel pics/carousel_1.jpg') }}" alt="Dasmariñas City Veterinary Services 1" class="w-full h-full object-cover">
+                                 </div>
+                                 <!-- Carousel Slide 2 -->
+                                 <div class="carousel-slide absolute w-full h-full">
+                                     <img src="{{ asset('images/carousel pics/carousel_2.jpg') }}" alt="Dasmariñas City Veterinary Services 2" class="w-full h-full object-cover">
+                                 </div>
+                                 <!-- Carousel Slide 3 -->
+                                 <div class="carousel-slide absolute w-full h-full">
+                                     <img src="{{ asset('images/carousel pics/carousel_3.jpg') }}" alt="Dasmariñas City Veterinary Services 3" class="w-full h-full object-cover">
+                                 </div>
+                                 <!-- Carousel Slide 4 -->
+                                 <div class="carousel-slide absolute w-full h-full">
+                                     <img src="{{ asset('images/carousel pics/carousel_4.jpg') }}" alt="Dasmariñas City Veterinary Services 4" class="w-full h-full object-cover">
+                                 </div>
+                             </div>
+
+                             <!-- Carousel Controls -->
+                             <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110" aria-label="Previous slide">
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                 </svg>
+                             </button>
+                             <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110" aria-label="Next slide">
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                 </svg>
+                             </button>
+
+                             <!-- Carousel Indicators -->
+                             <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                                 <button onclick="goToSlide(0)" class="carousel-indicator w-3 h-3 rounded-full bg-white/70 hover:bg-white transition-colors" aria-label="Go to slide 1"></button>
+                                 <button onclick="goToSlide(1)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 2"></button>
+                                 <button onclick="goToSlide(2)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 3"></button>
+                                 <button onclick="goToSlide(3)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 4"></button>
+                             </div>
                          </div>
                      </div>
                  </div>
