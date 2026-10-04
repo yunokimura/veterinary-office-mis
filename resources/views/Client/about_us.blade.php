@@ -182,16 +182,11 @@
       <!-- Main Content -->
       <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <!-- II. Demographic & Service Coverage -->
+               <!-- Demographic & Service Coverage -->
             <div class="mb-16">
-                <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
-                        <span class="text-white font-bold">II</span>
-                    </span>
-                    Demographic & Service Coverage
-                </h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                     <div class="bg-red-50 rounded-xl p-5 flex items-start space-x-3">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Demographic & Service Coverage</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     <div class="bg-red-50 rounded-xl p-5 border border-gray-100 card-hover">
                          <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -199,15 +194,13 @@
                          </div>
                          <span class="text-red-700">Urban and suburban pet-owning households</span>
                      </div>
-                     <div class="bg-purple-100 rounded-xl p-5 flex items-start space-x-3">
+                     <div class="bg-purple-100 rounded-xl p-5 border border-gray-100 card-hover">
                          <div class="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center flex-shrink-0">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                             </svg>
+                             <i class="fa-solid fa-cow text-purple-600"></i>
                          </div>
                          <span class="text-purple-700">Livestock and poultry raisers</span>
                      </div>
-                     <div class="bg-blue-50 rounded-xl p-5 flex items-start space-x-3">
+                     <div class="bg-blue-50 rounded-xl p-5 border border-gray-100 card-hover">
                          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -215,7 +208,7 @@
                          </div>
                          <span class="text-blue-700">Meat vendors and food business operators</span>
                      </div>
-                     <div class="bg-amber-50 rounded-xl p-5 flex items-start space-x-3">
+                     <div class="bg-amber-50 rounded-xl p-5 border border-gray-100 card-hover">
                          <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -223,7 +216,7 @@
                          </div>
                          <span class="text-amber-700">Barangay officials and designated animal welfare officers</span>
                      </div>
-                     <div class="bg-green-50 rounded-xl p-5 flex items-start space-x-3">
+                     <div class="bg-green-50 rounded-xl p-5 border border-gray-100 card-hover">
                          <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -334,7 +327,7 @@
                         <div class="h-16 bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center">
                             <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                 </svg>
                             </div>
                             <h3 class="text-xl font-bold text-white ml-4">Community Education & Advocacy</h3>
