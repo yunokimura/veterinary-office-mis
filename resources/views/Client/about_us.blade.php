@@ -49,29 +49,29 @@
     @include('Client.partials.navbar')
 
      <!-- Hero Section -->
-     <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, #22c55e 0%, #14532d 100%);">
+     <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.8) 0%, rgba(20, 83, 45, 0.8) 100%);">
          <!-- Hero Content -->
          <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center md:text-left">
-             <div class="grid md:grid-cols-12 gap-8 items-center">
-                 <div class="md:col-span-8 lg:col-span-7 space-y-6">
+              <div class="grid md:grid-cols-12 gap-8 items-center">
+                  <div class="md:col-span-7 lg:col-span-6 space-y-6">
                      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
                          Leading the way in animal welfare and public health.
                      </h1>
 
-                     <p class="text-slate-200 text-base sm:text-lg max-w-2xl font-light leading-relaxed">
+                      <p class="text-white text-base sm:text-lg max-w-2xl font-light leading-relaxed">
                          Discover how the Dasmariñas City Veterinary Office serves our community by bridging the gap between animal care and 
                          human well-being under the One Health initiative.
                      </p>
 
                      <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
                          <a href="{{ url('/services') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                             <span>View Our Services</span>
+                              <span>Explore Our Services</span>
                              <i class="fa-solid fa-arrow-right text-sm"></i>
                          </a>
                      </div>
                  </div>
 
-                 <div class="md:col-span-4 lg:col-span-5">
+                  <div class="md:col-span-5 lg:col-span-6">
                      <div class="relative">
                          <div class="rounded-2xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm">
                              <!-- Carousel Container -->
@@ -333,46 +333,58 @@
              }
          });
 
-         // Carousel functionality
-         let currentSlide = 0;
-         const slides = document.querySelectorAll('.carousel-slide');
-         const indicators = document.querySelectorAll('.carousel-indicator');
+          // Carousel functionality
+          let currentSlide = 0;
+          const slides = document.querySelectorAll('.carousel-slide');
+          const indicators = document.querySelectorAll('.carousel-indicator');
+          let carouselInterval;
 
-         function showSlide(index) {
-             slides.forEach((slide, i) => {
-                 slide.style.display = i === index ? 'block' : 'none';
-             });
-             indicators.forEach((indicator, i) => {
-                 if (i === index) {
-                     indicator.classList.remove('bg-white/30');
-                     indicator.classList.add('bg-white/70');
-                 } else {
-                     indicator.classList.remove('bg-white/70');
-                     indicator.classList.add('bg-white/30');
-                 }
-             });
-         }
+          function resetCarouselTimer() {
+              clearInterval(carouselInterval);
+              carouselInterval = setInterval(nextSlide, 5000);
+          }
 
-         function nextSlide() {
-             currentSlide = (currentSlide + 1) % slides.length;
-             showSlide(currentSlide);
-         }
+          function showSlide(index) {
+              slides.forEach((slide, i) => {
+                  slide.style.display = i === index ? 'block' : 'none';
+              });
+              indicators.forEach((indicator, i) => {
+                  if (i === index) {
+                      indicator.classList.remove('bg-white/30');
+                      indicator.classList.add('bg-white/70');
+                  } else {
+                      indicator.classList.remove('bg-white/70');
+                      indicator.classList.add('bg-white/30');
+                  }
+              });
+          }
 
-         function prevSlide() {
-             currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-             showSlide(currentSlide);
-         }
+          function nextSlide() {
+              currentSlide = (currentSlide + 1) % slides.length;
+              showSlide(currentSlide);
+          }
 
-         function goToSlide(index) {
-             currentSlide = index;
-             showSlide(currentSlide);
-         }
+          function prevSlide() {
+              currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+              showSlide(currentSlide);
+          }
 
-         // Auto-advance carousel every 5 seconds
-         setInterval(nextSlide, 5000);
+          function goToSlide(index) {
+              currentSlide = index;
+              showSlide(currentSlide);
+              resetCarouselTimer();
+          }
 
-         // Initialize carousel
-         showSlide(0);
+          // Auto-advance carousel every 5 seconds
+          carouselInterval = setInterval(nextSlide, 5000);
+
+          // Reset timer when navigation buttons are clicked
+          document.querySelectorAll('#aboutCarousel button[onclick="prevSlide()"], #aboutCarousel button[onclick="nextSlide()"]').forEach(button => {
+              button.addEventListener('click', resetCarouselTimer);
+          });
+
+          // Initialize carousel
+          showSlide(0);
      </script>
 </body>
 </html>
