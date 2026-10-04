@@ -528,22 +528,18 @@
               
               communityTrack.style.transform = `translateX(${offset}px)`;
               
-              // Style cards
-              Array.from(communityTrack.children).forEach((card, i) => {
-                  const isActive = i === communityCurrentIndex;
-                  const isSide = visibleCards === 3 && (i === (communityCurrentIndex - 1 + communityTotalSlides) % communityTotalSlides || i === (communityCurrentIndex + 1) % communityTotalSlides);
-                  
-                  if (isActive) {
-                      card.classList.add('scale-105', 'opacity-100');
-                      card.classList.remove('scale-95', 'opacity-60', 'grayscale');
-                  } else if (isSide) {
-                      card.classList.add('scale-95', 'opacity-60');
-                      card.classList.remove('scale-105', 'opacity-100', 'grayscale');
-                  } else {
-                      card.classList.add('scale-95', 'opacity-0');
-                      card.classList.remove('scale-105', 'opacity-100', 'opacity-60', 'grayscale');
-                  }
-              });
+               // Style cards
+               Array.from(communityTrack.children).forEach((card, i) => {
+                   const isActive = i === communityCurrentIndex;
+                   
+                   if (isActive) {
+                       card.classList.add('scale-105', 'opacity-100');
+                       card.classList.remove('scale-95', 'opacity-60');
+                   } else {
+                       card.classList.add('scale-95', 'opacity-60');
+                       card.classList.remove('scale-105', 'opacity-100');
+                   }
+               });
           }
 
           function nextCommunitySlide() {
