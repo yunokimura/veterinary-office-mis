@@ -44,6 +44,7 @@
                         </div>
                     </div>
                     <a href="{{ url('/missing-pets') }}" class="hover:text-primary transition-colors">Missing Pets</a>
+                    <a href="{{ url('/adoption') }}" class="hover:text-primary transition-colors">Adoption</a>
                 </nav>
 
                 <!-- Action Buttons -->
@@ -138,6 +139,7 @@
                 </div>
             </div>
             <a href="{{ url('/missing-pets') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Missing Pets</a>
+            <a href="{{ url('/adoption') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Adoption</a>
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 @auth
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
