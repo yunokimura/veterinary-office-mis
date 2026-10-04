@@ -15,7 +15,7 @@
                 </a>
 
                 <!-- Desktop Navigation Links -->
-                <nav class="hidden lg:flex items-center space-x-8 font-medium text-slate-600 text-sm">
+                <nav class="hidden lg:flex items-center space-x-8 font-medium text-slate-600 text-base">
                     <a href="{{ route('public.home') }}" class="{{ request()->routeIs('public.home') ? 'text-primary font-semibold' : '' }} hover:text-primary transition-colors">Home</a>
                     <a href="{{ url('/about-us') }}" class="{{ request()->is('about-us') ? 'text-primary font-semibold' : '' }} hover:text-primary transition-colors">About Us</a>
                     <div class="relative">
@@ -111,10 +111,10 @@
 
         <!-- Mobile Navigation Menu -->
         <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3">
-            <a href="{{ route('public.home') }}" class="{{ request()->routeIs('public.home') ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} block py-2 px-3 rounded-lg">Home</a>
-            <a href="{{ url('/about-us') }}" class="{{ request()->is('about-us') ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} block py-2 px-3 rounded-lg">About Us</a>
+            <a href="{{ route('public.home') }}" class="{{ request()->routeIs('public.home') ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Home</a>
+            <a href="{{ url('/about-us') }}" class="{{ request()->is('about-us') ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">About Us</a>
             <div>
-                <button id="mobileServicesBtn" class="w-full text-left py-2 px-3 rounded-lg {{ request()->is('services*') ? 'text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} inline-flex items-center justify-between">
+                <button id="mobileServicesBtn" class="w-full text-left py-2 px-3 rounded-lg {{ request()->is('services*') ? 'text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base inline-flex items-center justify-between">
                     <span>Services</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -139,8 +139,8 @@
                     </a>
                 </div>
             </div>
-            <a href="{{ url('/missing-pets') }}" class="{{ request()->is('missing-pets*') ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} block py-2 px-3 rounded-lg">Missing Pets</a>
-            <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} block py-2 px-3 rounded-lg">Adoption</a>
+            <a href="{{ url('/missing-pets') }}" class="{{ request()->is('missing-pets*') ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Missing Pets</a>
+            <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Adoption</a>
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 @auth
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
