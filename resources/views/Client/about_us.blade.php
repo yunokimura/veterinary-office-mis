@@ -228,41 +228,54 @@
             </div>
 
             <!-- Mission & Vision Section -->
-            <section class="py-16 bg-gray-50">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-7">
-                    <div class="text-center mb-12">
-                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Mission & Vision</h2>
-                        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Guiding principles that drive our commitment to animal welfare and public health</p>
+            <section class="py-16 sm:py-24 bg-teal-50/50 border-b border-slate-200/60 relative">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+                        <span class="text-teal-600 font-extrabold text-xs uppercase tracking-widest block mb-2">Purpose & Future</span>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Our Mission & Vision</h2>
+                        <p class="text-slate-600 mt-3 text-base">Guiding every diagnosis, treatment plan, and community initiative with clarity and heart.</p>
                     </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-8">
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
                         <!-- Mission Card -->
-                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8">
-                            <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
+                        <div class="bg-white rounded-3xl p-8 sm:p-10 border border-teal-100 shadow-lg shadow-teal-900/5 relative overflow-hidden flex flex-col justify-between group hover:border-teal-300 transition-all card-hover">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl shadow-md shadow-teal-600/30">
+                                        <i class="fa-solid fa-bullseye"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-bold text-teal-600 uppercase tracking-widest">Our Purpose</span>
+                                        <h3 class="text-2xl font-extrabold text-slate-900">Our Mission</h3>
+                                    </div>
+                                </div>
+                                <p class="text-slate-600 text-base leading-relaxed mb-6">
+                                    To uphold the principles of One Health by protecting human health, promoting animal welfare, and
+                                    safeguarding the environment through accessible veterinary services, disease prevention and
+                                    control, responsible pet ownership advocacy, food safety regulation, and strong community
+                                    partnerships.
+                                </p>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
-                            <p class="text-gray-600 text-lg leading-relaxed">
-                                To uphold the principles of One Health by protecting human health, promoting animal welfare, and
-                                safeguarding the environment through accessible veterinary services, disease prevention and
-                                control, responsible pet ownership advocacy, food safety regulation, and strong community
-                                partnerships.
-                            </p>
                         </div>
-                        
+
                         <!-- Vision Card -->
-                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8">
-                            <div class="w-16 h-16 bg-secondary/10 rounded-xl flex items-center justify-center mb-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                                </svg>
+                        <div class="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-amber-400/40 transition-all card-hover">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shadow-amber-500/30">
+                                        <i class="fa-solid fa-compass"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Looking Ahead</span>
+                                        <h3 class="text-2xl font-extrabold text-white">Our Vision</h3>
+                                    </div>
+                                </div>
+                                <p class="text-slate-300 text-base leading-relaxed mb-6">
+                                    A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
+                                </p>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
-                            <p class="text-gray-600 text-lg leading-relaxed">
-                                A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
-                            </p>
                         </div>
                     </div>
                 </div>
