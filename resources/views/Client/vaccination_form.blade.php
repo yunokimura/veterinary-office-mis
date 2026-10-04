@@ -497,22 +497,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <p class="text-sm">&copy; 2026 Dasmariñas City Veterinary Services. All rights reserved.</p>
-                </div>
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Us</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <script>
         // Dropdown toggle for user menu
         function toggleDropdown() {
@@ -1892,6 +1876,7 @@
             });
         }
     </script>
+    @include('Client.partials.footer')
 </body>
 </html>
 
