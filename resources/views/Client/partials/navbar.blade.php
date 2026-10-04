@@ -17,7 +17,32 @@
                 <nav class="hidden lg:flex items-center space-x-8 font-medium text-slate-600 text-sm">
                     <a href="{{ route('public.home') }}" class="text-primary font-semibold hover:text-primary transition-colors">Home</a>
                     <a href="{{ url('/about-us') }}" class="hover:text-primary transition-colors">About Us</a>
-                    <a href="{{ url('/services') }}" class="hover:text-primary transition-colors">Services</a>
+                    <div class="relative">
+                        <button id="servicesDropdownBtn" class="hover:text-primary transition-colors inline-flex items-center space-x-1">
+                            <span>Services</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div id="servicesDropdown" class="hidden absolute top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            <a href="{{ url('/services') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <i class="fa-solid fa-circle-info text-blue-500 w-4"></i>
+                                <span>Service Overview</span>
+                            </a>
+                            <a href="{{ url('/pet-registration') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <i class="fa-solid fa-clipboard-list text-emerald-500 w-4"></i>
+                                <span>Pet Registration</span>
+                            </a>
+                            <a href="{{ url('/kapon') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <i class="fa-solid fa-scissors text-pink-500 w-4"></i>
+                                <span>Spay/Neuter (<i>Kapon</i>)</span>
+                            </a>
+                            <a href="{{ url('/vaccination') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <i class="fa-solid fa-syringe text-purple-500 w-4"></i>
+                                <span>Anti-Rabies Vaccination</span>
+                            </a>
+                        </div>
+                    </div>
                     <a href="{{ url('/missing-pets') }}" class="hover:text-primary transition-colors">Missing Pets</a>
                 </nav>
 
@@ -86,7 +111,32 @@
         <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3">
             <a href="{{ route('public.home') }}" class="block py-2 px-3 rounded-lg bg-primary/10 text-primary font-semibold">Home</a>
             <a href="{{ url('/about-us') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">About Us</a>
-            <a href="{{ url('/services') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Services</a>
+            <div>
+                <button id="mobileServicesBtn" class="w-full text-left py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium inline-flex items-center justify-between">
+                    <span>Services</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div id="mobileServicesMenu" class="hidden pl-4 space-y-1">
+                    <a href="{{ url('/services') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <i class="fa-solid fa-circle-info text-blue-500 w-4"></i>
+                        <span>Service Overview</span>
+                    </a>
+                    <a href="{{ url('/pet-registration') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <i class="fa-solid fa-clipboard-list text-emerald-500 w-4"></i>
+                        <span>Pet Registration</span>
+                    </a>
+                    <a href="{{ url('/kapon') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <i class="fa-solid fa-scissors text-pink-500 w-4"></i>
+                        <span>Spay/Neuter (<i>Kapon</i>)</span>
+                    </a>
+                    <a href="{{ url('/vaccination') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <i class="fa-solid fa-syringe text-purple-500 w-4"></i>
+                        <span>Anti-Rabies Vaccination</span>
+                    </a>
+                </div>
+            </div>
             <a href="{{ url('/missing-pets') }}" class="block py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">Missing Pets</a>
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 @auth
@@ -101,3 +151,30 @@
             </div>
         </div>
     </header>
+
+    <script>
+        // Services dropdown toggles
+        const servicesDropdownBtn = document.getElementById('servicesDropdownBtn');
+        const servicesDropdown = document.getElementById('servicesDropdown');
+        const mobileServicesBtn = document.getElementById('mobileServicesBtn');
+        const mobileServicesMenu = document.getElementById('mobileServicesMenu');
+
+        if (servicesDropdownBtn && servicesDropdown) {
+            servicesDropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                servicesDropdown.classList.toggle('hidden');
+            });
+        }
+
+        if (mobileServicesBtn && mobileServicesMenu) {
+            mobileServicesBtn.addEventListener('click', function() {
+                mobileServicesMenu.classList.toggle('hidden');
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (servicesDropdown && !servicesDropdownBtn.contains(e.target) && !servicesDropdown.contains(e.target)) {
+                servicesDropdown.classList.add('hidden');
+            }
+        });
+    </script>
