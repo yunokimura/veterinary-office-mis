@@ -297,7 +297,7 @@
                 <p class="text-slate-600 mt-2">Access convenient veterinary care and municipal programs for your household pets.</p>
             </div>
 
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                 <!-- Card 1: Register Pet -->
                 <div class="service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
                     <div>
@@ -362,6 +362,23 @@
                     </div>
                     <a href="{{ url('/missing-pets') }}" class="w-full bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm">
                         <span>Report Missing Pet</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Card 5: Adoption -->
+                <div class="service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Adoption</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                            Find your new best friend. Browse adoptable pets and give them a loving forever home.
+                        </p>
+                    </div>
+                    <a href="{{ url('/adoption') }}" class="w-full bg-slate-100 hover:bg-amber-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm">
+                        <span>Adopt a Pet</span>
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </a>
                 </div>
