@@ -357,9 +357,9 @@
                   <p class="text-slate-600 mt-3">Protecting Dasmariñas starts with caring pet owners across our 75 barangays. Here are the real stories and moments from our community drives.</p>
               </div>
 
-              <div class="relative">
-                  <!-- Carousel Container -->
-                  <div id="communityCarousel" class="overflow-hidden">
+               <div class="relative px-2 md:px-8 overflow-hidden">
+                   <!-- Carousel Container -->
+                   <div id="communityCarousel">
                       <div id="communityCarouselTrack" class="flex transition-transform duration-500 ease-in-out">
                           <!-- Card 1: Responsible Pet Ownership -->
                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
@@ -367,64 +367,59 @@
                                   <div class="aspect-square relative">
                                       <img src="{{ asset('images/carousel2/responsible.jpg') }}" alt="Responsible Pet Ownership" class="w-full h-full object-cover">
                                   </div>
-                                  <div class="p-5 text-center">
-                                      <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest">Community</span>
-                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Responsible Pet Ownership</h3>
-                                  </div>
-                              </div>
-                          </div>
+                                   <div class="p-5 text-center">
+                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Responsible Pet Ownership</h3>
+                                   </div>
+                               </div>
+                           </div>
 
-                          <!-- Card 2: Anti-Rabies Vaccination -->
-                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                  <div class="aspect-square relative">
-                                      <img src="{{ asset('images/carousel2/vaccine.jpg') }}" alt="Anti-Rabies Vaccination" class="w-full h-full object-cover">
-                                  </div>
-                                  <div class="p-5 text-center">
-                                      <span class="text-xs font-bold text-teal-600 uppercase tracking-widest">Wellness</span>
-                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Anti-Rabies Vaccination</h3>
-                                  </div>
-                              </div>
-                          </div>
+                           <!-- Card 2: Anti-Rabies Vaccination -->
+                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                   <div class="aspect-square relative">
+                                       <img src="{{ asset('images/carousel2/vaccine.jpg') }}" alt="Anti-Rabies Vaccination" class="w-full h-full object-cover">
+                                   </div>
+                                   <div class="p-5 text-center">
+                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Anti-Rabies Vaccination</h3>
+                                   </div>
+                               </div>
+                           </div>
 
-                          <!-- Card 3: Spay & Neuter (Kapon) -->
-                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                  <div class="aspect-square relative">
-                                      <img src="{{ asset('images/carousel2/spay-neuter.jpg') }}" alt="Spay & Neuter (Kapon)" class="w-full h-full object-cover">
-                                  </div>
-                                  <div class="p-5 text-center">
-                                      <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Wellness</span>
-                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Spay & Neuter (Kapon)</h3>
-                                  </div>
-                              </div>
-                          </div>
+                           <!-- Card 3: Spay & Neuter (Kapon) -->
+                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                   <div class="aspect-square relative">
+                                       <img src="{{ asset('images/carousel2/spay-neuter.jpg') }}" alt="Spay & Neuter (Kapon)" class="w-full h-full object-cover">
+                                   </div>
+                                   <div class="p-5 text-center">
+                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Spay & Neuter (Kapon)</h3>
+                                   </div>
+                               </div>
+                           </div>
 
-                          <!-- Card 4: Pet Adoption -->
-                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                  <div class="aspect-square relative">
-                                      <img src="{{ asset('images/carousel2/adoption.jpg') }}" alt="Pet Adoption" class="w-full h-full object-cover">
-                                  </div>
-                                  <div class="p-5 text-center">
-                                      <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Rescue</span>
-                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Pet Adoption</h3>
-                                  </div>
-                              </div>
-                          </div>
+                           <!-- Card 4: Pet Adoption -->
+                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                   <div class="aspect-square relative">
+                                       <img src="{{ asset('images/carousel2/adoption.jpg') }}" alt="Pet Adoption" class="w-full h-full object-cover">
+                                   </div>
+                                   <div class="p-5 text-center">
+                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Pet Adoption</h3>
+                                   </div>
+                               </div>
+                           </div>
 
-                          <!-- Card 5: Missing Pet Reporting -->
-                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                  <div class="aspect-square relative">
-                                      <img src="{{ asset('images/carousel2/missing.jpg') }}" alt="Missing Pet Reporting" class="w-full h-full object-cover">
-                                  </div>
-                                  <div class="p-5 text-center">
-                                      <span class="text-xs font-bold text-purple-600 uppercase tracking-widest">Rescue</span>
-                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Missing Pet Reporting</h3>
-                                  </div>
-                              </div>
-                          </div>
+                           <!-- Card 5: Missing Pet Reporting -->
+                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                   <div class="aspect-square relative">
+                                       <img src="{{ asset('images/carousel2/missing.jpg') }}" alt="Missing Pet Reporting" class="w-full h-full object-cover">
+                                   </div>
+                                   <div class="p-5 text-center">
+                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Missing Pet Reporting</h3>
+                                   </div>
+                               </div>
+                           </div>
                       </div>
                   </div>
 
@@ -564,10 +559,10 @@
           // Auto-advance every 5 seconds
           communityInterval = setInterval(nextCommunitySlide, 5000);
 
-          // Reset timer on navigation
-          document.querySelectorAll('#communityCarousel button[onclick="prevCommunitySlide()"], #communityCarousel button[onclick="nextCommunitySlide()"]').forEach(button => {
-              button.addEventListener('click', resetCommunityTimer);
-          });
+           // Reset timer on navigation
+           document.querySelectorAll('button[onclick="prevCommunitySlide()"], button[onclick="nextCommunitySlide()"]').forEach(button => {
+               button.addEventListener('click', resetCommunityTimer);
+           });
 
           // Initialize
           updateCommunityCarousel();
