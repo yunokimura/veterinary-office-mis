@@ -343,79 +343,237 @@
                              A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
                          </p>
                      </div>
-                 </div>
-             </div>
-         </div>
-     </section>
+                  </div>
+              </div>
+          </div>
+      </section>
 
-     @include('Client.partials.footer')
+      <!-- Community Spotlight Section -->
+      <section class="py-16 sm:py-24 bg-white border-t border-slate-100">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div class="text-center max-w-2xl mx-auto mb-12">
+                  <span class="text-primary font-bold text-xs uppercase tracking-widest">Community Spotlight</span>
+                  <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Our Partners in Public Health</h2>
+                  <p class="text-slate-600 mt-3">Protecting Dasmariñas starts with caring pet owners across our 75 barangays. Here are the real stories and moments from our community drives.</p>
+              </div>
 
-     <script>
-         function toggleDropdown() {
-             document.getElementById('userDropdown').classList.toggle('hidden');
-         }
+              <div class="relative">
+                  <!-- Carousel Container -->
+                  <div id="communityCarousel" class="overflow-hidden">
+                      <div id="communityCarouselTrack" class="flex transition-transform duration-500 ease-in-out">
+                          <!-- Card 1: Responsible Pet Ownership -->
+                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                  <div class="aspect-square relative">
+                                      <img src="{{ asset('images/carousel2/responsible.jpg') }}" alt="Responsible Pet Ownership" class="w-full h-full object-cover">
+                                  </div>
+                                  <div class="p-5 text-center">
+                                      <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest">Community</span>
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Responsible Pet Ownership</h3>
+                                  </div>
+                              </div>
+                          </div>
 
-         // Close dropdown when clicking outside
-         document.addEventListener('click', function(event) {
-             const dropdown = document.getElementById('userDropdown');
-             const button = event.target.closest('button');
-             if (!button && !dropdown.contains(event.target)) {
-                 dropdown.classList.add('hidden');
-             }
-         });
+                          <!-- Card 2: Anti-Rabies Vaccination -->
+                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                  <div class="aspect-square relative">
+                                      <img src="{{ asset('images/carousel2/vaccine.jpg') }}" alt="Anti-Rabies Vaccination" class="w-full h-full object-cover">
+                                  </div>
+                                  <div class="p-5 text-center">
+                                      <span class="text-xs font-bold text-teal-600 uppercase tracking-widest">Wellness</span>
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Anti-Rabies Vaccination</h3>
+                                  </div>
+                              </div>
+                          </div>
 
-          // Carousel functionality
-          let currentSlide = 0;
-          const slides = document.querySelectorAll('.carousel-slide');
-          const indicators = document.querySelectorAll('.carousel-indicator');
-          let carouselInterval;
+                          <!-- Card 3: Spay & Neuter (Kapon) -->
+                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                  <div class="aspect-square relative">
+                                      <img src="{{ asset('images/carousel2/spay-neuter.jpg') }}" alt="Spay & Neuter (Kapon)" class="w-full h-full object-cover">
+                                  </div>
+                                  <div class="p-5 text-center">
+                                      <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Wellness</span>
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Spay & Neuter (Kapon)</h3>
+                                  </div>
+                              </div>
+                          </div>
 
-          function resetCarouselTimer() {
-              clearInterval(carouselInterval);
-              carouselInterval = setInterval(nextSlide, 5000);
+                          <!-- Card 4: Pet Adoption -->
+                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                  <div class="aspect-square relative">
+                                      <img src="{{ asset('images/carousel2/adoption.jpg') }}" alt="Pet Adoption" class="w-full h-full object-cover">
+                                  </div>
+                                  <div class="p-5 text-center">
+                                      <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Rescue</span>
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Pet Adoption</h3>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <!-- Card 5: Missing Pet Reporting -->
+                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                  <div class="aspect-square relative">
+                                      <img src="{{ asset('images/carousel2/missing.jpg') }}" alt="Missing Pet Reporting" class="w-full h-full object-cover">
+                                  </div>
+                                  <div class="p-5 text-center">
+                                      <span class="text-xs font-bold text-purple-600 uppercase tracking-widest">Rescue</span>
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Missing Pet Reporting</h3>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Navigation Buttons -->
+                  <button onclick="prevCommunitySlide()" class="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-10" aria-label="Previous slide">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                      </svg>
+                  </button>
+                  <button onclick="nextCommunitySlide()" class="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-10" aria-label="Next slide">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                  </button>
+              </div>
+          </div>
+      </section>
+
+      @include('Client.partials.footer')
+
+      <script>
+          function toggleDropdown() {
+              document.getElementById('userDropdown').classList.toggle('hidden');
           }
 
-          function showSlide(index) {
-              slides.forEach((slide, i) => {
-                  slide.style.display = i === index ? 'block' : 'none';
-              });
-              indicators.forEach((indicator, i) => {
-                  if (i === index) {
-                      indicator.classList.remove('bg-white/30');
-                      indicator.classList.add('bg-white/70');
+          // Close dropdown when clicking outside
+          document.addEventListener('click', function(event) {
+              const dropdown = document.getElementById('userDropdown');
+              const button = event.target.closest('button');
+              if (!button && !dropdown.contains(event.target)) {
+                  dropdown.classList.add('hidden');
+              }
+          });
+
+           // Carousel functionality
+           let currentSlide = 0;
+           const slides = document.querySelectorAll('.carousel-slide');
+           const indicators = document.querySelectorAll('.carousel-indicator');
+           let carouselInterval;
+
+           function resetCarouselTimer() {
+               clearInterval(carouselInterval);
+               carouselInterval = setInterval(nextSlide, 5000);
+           }
+
+           function showSlide(index) {
+               slides.forEach((slide, i) => {
+                   slide.style.display = i === index ? 'block' : 'none';
+               });
+               indicators.forEach((indicator, i) => {
+                   if (i === index) {
+                       indicator.classList.remove('bg-white/30');
+                       indicator.classList.add('bg-white/70');
+                   } else {
+                       indicator.classList.remove('bg-white/70');
+                       indicator.classList.add('bg-white/30');
+                   }
+               });
+           }
+
+           function nextSlide() {
+               currentSlide = (currentSlide + 1) % slides.length;
+               showSlide(currentSlide);
+           }
+
+           function prevSlide() {
+               currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+               showSlide(currentSlide);
+           }
+
+           function goToSlide(index) {
+               currentSlide = index;
+               showSlide(currentSlide);
+               resetCarouselTimer();
+           }
+
+           // Auto-advance carousel every 5 seconds
+           carouselInterval = setInterval(nextSlide, 5000);
+
+           // Reset timer when navigation buttons are clicked
+           document.querySelectorAll('#aboutCarousel button[onclick="prevSlide()"], #aboutCarousel button[onclick="nextSlide()"]').forEach(button => {
+               button.addEventListener('click', resetCarouselTimer);
+           });
+
+           // Initialize carousel
+           showSlide(0);
+
+          // Community Spotlight Carousel
+          let communityCurrentIndex = 0;
+          const communityTotalSlides = 5;
+          const communityTrack = document.getElementById('communityCarouselTrack');
+          let communityInterval;
+
+          function resetCommunityTimer() {
+              clearInterval(communityInterval);
+              communityInterval = setInterval(nextCommunitySlide, 5000);
+          }
+
+          function updateCommunityCarousel() {
+              if (!communityTrack) return;
+              
+              const isMobile = window.innerWidth < 768;
+              const cardWidth = communityTrack.children[0].getBoundingClientRect().width;
+              const visibleCards = isMobile ? 1 : 3;
+              const offset = -communityCurrentIndex * cardWidth + (visibleCards === 3 ? cardWidth : 0);
+              
+              communityTrack.style.transform = `translateX(${offset}px)`;
+              
+              // Style cards
+              Array.from(communityTrack.children).forEach((card, i) => {
+                  const isActive = i === communityCurrentIndex;
+                  const isSide = visibleCards === 3 && (i === (communityCurrentIndex - 1 + communityTotalSlides) % communityTotalSlides || i === (communityCurrentIndex + 1) % communityTotalSlides);
+                  
+                  if (isActive) {
+                      card.classList.add('scale-105', 'opacity-100');
+                      card.classList.remove('scale-95', 'opacity-60', 'grayscale');
+                  } else if (isSide) {
+                      card.classList.add('scale-95', 'opacity-60');
+                      card.classList.remove('scale-105', 'opacity-100', 'grayscale');
                   } else {
-                      indicator.classList.remove('bg-white/70');
-                      indicator.classList.add('bg-white/30');
+                      card.classList.add('scale-95', 'opacity-0');
+                      card.classList.remove('scale-105', 'opacity-100', 'opacity-60', 'grayscale');
                   }
               });
           }
 
-          function nextSlide() {
-              currentSlide = (currentSlide + 1) % slides.length;
-              showSlide(currentSlide);
+          function nextCommunitySlide() {
+              communityCurrentIndex = (communityCurrentIndex + 1) % communityTotalSlides;
+              updateCommunityCarousel();
           }
 
-          function prevSlide() {
-              currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-              showSlide(currentSlide);
+          function prevCommunitySlide() {
+              communityCurrentIndex = (communityCurrentIndex - 1 + communityTotalSlides) % communityTotalSlides;
+              updateCommunityCarousel();
           }
 
-          function goToSlide(index) {
-              currentSlide = index;
-              showSlide(currentSlide);
-              resetCarouselTimer();
-          }
+          // Auto-advance every 5 seconds
+          communityInterval = setInterval(nextCommunitySlide, 5000);
 
-          // Auto-advance carousel every 5 seconds
-          carouselInterval = setInterval(nextSlide, 5000);
-
-          // Reset timer when navigation buttons are clicked
-          document.querySelectorAll('#aboutCarousel button[onclick="prevSlide()"], #aboutCarousel button[onclick="nextSlide()"]').forEach(button => {
-              button.addEventListener('click', resetCarouselTimer);
+          // Reset timer on navigation
+          document.querySelectorAll('#communityCarousel button[onclick="prevCommunitySlide()"], #communityCarousel button[onclick="nextCommunitySlide()"]').forEach(button => {
+              button.addEventListener('click', resetCommunityTimer);
           });
 
-          // Initialize carousel
-          showSlide(0);
-     </script>
+          // Initialize
+          updateCommunityCarousel();
+
+          // Update on resize
+          window.addEventListener('resize', updateCommunityCarousel);
+      </script>
 </body>
 </html>
