@@ -177,6 +177,74 @@
                  </div>
              </div>
          </div>
+      </section>
+
+     <!-- Core Functional Areas -->
+     <section class="py-16 bg-white">
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <h2 class="text-3xl font-bold text-gray-900 mb-6">Core Functional Areas</h2>
+             <div class="grid md:grid-cols-2 gap-6">
+                 <!-- Zoonotic Disease Control -->
+                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                     <div class="h-16 bg-gradient-to-r from-red-500 to-red-600 p-4 flex items-center">
+                         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                             </svg>
+                         </div>
+                         <h3 class="text-xl font-bold text-white ml-4">Zoonotic Disease Control</h3>
+                     </div>
+                     <div class="p-6">
+                         <p class="text-gray-600">Rabies elimination, surveillance, and outbreak preparedness.</p>
+                     </div>
+                 </div>
+
+                 <!-- Animal Welfare & Population Management -->
+                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                     <div class="h-16 bg-gradient-to-r from-purple-500 to-purple-600 p-4 flex items-center">
+                         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                             </svg>
+                         </div>
+                         <h3 class="text-xl font-bold text-white ml-4">Animal Welfare & Population Management</h3>
+                     </div>
+                     <div class="p-6">
+                         <p class="text-gray-600">High-volume spay/neuter programs, rescue operations, and humane enforcement.</p>
+                     </div>
+                 </div>
+
+                 <!-- Veterinary Public Health & Food Safety -->
+                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                     <div class="h-16 bg-gradient-to-r from-blue-500 to-blue-600 p-4 flex items-center">
+                         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                             </svg>
+                         </div>
+                         <h3 class="text-xl font-bold text-white ml-4">Veterinary Public Health & Food Safety</h3>
+                     </div>
+                     <div class="p-6">
+                         <p class="text-gray-600">Meat inspection coordination and food-borne disease prevention.</p>
+                     </div>
+                 </div>
+
+                 <!-- Community Education & Advocacy -->
+                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                     <div class="h-16 bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center">
+                         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                             </svg>
+                         </div>
+                         <h3 class="text-xl font-bold text-white ml-4">Community Education & Advocacy</h3>
+                     </div>
+                     <div class="p-6">
+                         <p class="text-gray-600">Responsible pet ownership campaigns and barangay-level engagement.</p>
+                     </div>
+                 </div>
+             </div>
+         </div>
      </section>
 
       <!-- Main Content -->
@@ -216,145 +284,73 @@
                          </div>
                          <span class="text-amber-700">Barangay officials and designated animal welfare officers</span>
                      </div>
-                     <div class="bg-green-50 rounded-xl p-5 border border-gray-100 card-hover">
-                         <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                             </svg>
+                      <div class="bg-green-50 rounded-xl p-5 border border-gray-100 card-hover">
+                          <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                              </svg>
+                          </div>
+                          <span class="text-green-700">General public at risk of zoonotic diseases</span>
+                      </div>
+             </div>
+         </div>
+     </section>
+
+     <!-- Mission & Vision Section -->
+     <section class="py-16 sm:py-24 bg-teal-50/50 border-b border-slate-200/60 relative">
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+                 <span class="text-teal-600 font-extrabold text-xs uppercase tracking-widest block mb-2">Purpose & Future</span>
+                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Our Mission & Vision</h2>
+                 <p class="text-slate-600 mt-3 text-base">Guiding every diagnosis, treatment plan, and community initiative with clarity and heart.</p>
+             </div>
+
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
+                 <!-- Mission Card -->
+                 <div class="bg-white rounded-3xl p-8 sm:p-10 border border-teal-100 shadow-lg shadow-teal-900/5 relative overflow-hidden flex flex-col justify-between group hover:border-teal-300 transition-all card-hover">
+                     <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
+                     <div class="relative z-10">
+                         <div class="flex items-center gap-4 mb-6">
+                             <div class="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl shadow-md shadow-teal-600/30">
+                                 <i class="fa-solid fa-bullseye"></i>
+                             </div>
+                             <div>
+                                 <span class="text-xs font-bold text-teal-600 uppercase tracking-widest">Our Purpose</span>
+                                 <h3 class="text-2xl font-extrabold text-slate-900">Our Mission</h3>
+                             </div>
                          </div>
-                         <span class="text-green-700">General public at risk of zoonotic diseases</span>
+                         <p class="text-slate-600 text-base leading-relaxed mb-6">
+                             To uphold the principles of One Health by protecting human health, promoting animal welfare, and
+                             safeguarding the environment through accessible veterinary services, disease prevention and
+                             control, responsible pet ownership advocacy, food safety regulation, and strong community
+                             partnerships.
+                         </p>
                      </div>
-                </div>
-            </div>
+                 </div>
 
-            <!-- Mission & Vision Section -->
-            <section class="py-16 sm:py-24 bg-teal-50/50 border-b border-slate-200/60 relative">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-                        <span class="text-teal-600 font-extrabold text-xs uppercase tracking-widest block mb-2">Purpose & Future</span>
-                        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Our Mission & Vision</h2>
-                        <p class="text-slate-600 mt-3 text-base">Guiding every diagnosis, treatment plan, and community initiative with clarity and heart.</p>
-                    </div>
+                 <!-- Vision Card -->
+                 <div class="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-amber-400/40 transition-all card-hover">
+                     <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
+                     <div class="relative z-10">
+                         <div class="flex items-center gap-4 mb-6">
+                             <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shadow-amber-500/30">
+                                 <i class="fa-solid fa-compass"></i>
+                             </div>
+                             <div>
+                                 <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Looking Ahead</span>
+                                 <h3 class="text-2xl font-extrabold text-white">Our Vision</h3>
+                             </div>
+                         </div>
+                         <p class="text-slate-300 text-base leading-relaxed mb-6">
+                             A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
+                         </p>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </section>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
-                        <!-- Mission Card -->
-                        <div class="bg-white rounded-3xl p-8 sm:p-10 border border-teal-100 shadow-lg shadow-teal-900/5 relative overflow-hidden flex flex-col justify-between group hover:border-teal-300 transition-all card-hover">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-center gap-4 mb-6">
-                                    <div class="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl shadow-md shadow-teal-600/30">
-                                        <i class="fa-solid fa-bullseye"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-xs font-bold text-teal-600 uppercase tracking-widest">Our Purpose</span>
-                                        <h3 class="text-2xl font-extrabold text-slate-900">Our Mission</h3>
-                                    </div>
-                                </div>
-                                <p class="text-slate-600 text-base leading-relaxed mb-6">
-                                    To uphold the principles of One Health by protecting human health, promoting animal welfare, and
-                                    safeguarding the environment through accessible veterinary services, disease prevention and
-                                    control, responsible pet ownership advocacy, food safety regulation, and strong community
-                                    partnerships.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Vision Card -->
-                        <div class="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-amber-400/40 transition-all card-hover">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-center gap-4 mb-6">
-                                    <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shadow-amber-500/30">
-                                        <i class="fa-solid fa-compass"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Looking Ahead</span>
-                                        <h3 class="text-2xl font-extrabold text-white">Our Vision</h3>
-                                    </div>
-                                </div>
-                                <p class="text-slate-300 text-base leading-relaxed mb-6">
-                                    A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- V. Core Functional Areas -->
-            <div class="mb-8 pt-20">
-                <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
-                        <span class="text-white font-bold">III</span>
-                    </span>
-                    Core Functional Areas
-                </h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <!-- Zoonotic Disease Control -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                        <div class="h-16 bg-gradient-to-r from-red-500 to-red-600 p-4 flex items-center">
-                            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-white ml-4">Zoonotic Disease Control</h3>
-                        </div>
-                        <div class="p-6">
-                            <p class="text-gray-600">Rabies elimination, surveillance, and outbreak preparedness.</p>
-                        </div>
-                    </div>
-
-                    <!-- Animal Welfare & Population Management -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                        <div class="h-16 bg-gradient-to-r from-purple-500 to-purple-600 p-4 flex items-center">
-                            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                </svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-white ml-4">Animal Welfare & Population Management</h3>
-                        </div>
-                        <div class="p-6">
-                            <p class="text-gray-600">High-volume spay/neuter programs, rescue operations, and humane enforcement.</p>
-                        </div>
-                    </div>
-
-                    <!-- Veterinary Public Health & Food Safety -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                        <div class="h-16 bg-gradient-to-r from-blue-500 to-blue-600 p-4 flex items-center">
-                            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-white ml-4">Veterinary Public Health & Food Safety</h3>
-                        </div>
-                        <div class="p-6">
-                            <p class="text-gray-600">Meat inspection coordination and food-borne disease prevention.</p>
-                        </div>
-                    </div>
-
-                    <!-- Community Education & Advocacy -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                        <div class="h-16 bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center">
-                            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                </svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-white ml-4">Community Education & Advocacy</h3>
-                        </div>
-                        <div class="p-6">
-                            <p class="text-gray-600">Responsible pet ownership campaigns and barangay-level engagement.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    @include('Client.partials.footer')
+     @include('Client.partials.footer')
 
      <script>
          function toggleDropdown() {
