@@ -43,6 +43,13 @@
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(6, 109, 51, 0.15);
         }
+        .service-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(6, 109, 51, 0.25);
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50 text-slate-800">
@@ -120,38 +127,62 @@
          </div>
      </section>
 
-     <!-- Main Content -->
-     <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-             <!-- I. Office Background -->
-             <div class="mb-16">
-                 <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-                     <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
-                         <span class="text-white font-bold">I</span>
-                     </span>
-                     Office Background
-                 </h2>
-                  <div class="flex flex-col lg:flex-row gap-8">
-                    <div class="flex-1">
-                        <p class="text-gray-700 text-lg leading-relaxed">
-                            The Dasmariñas City Veterinary Office (CVO) serves as the primary local government unit
-                            responsible for implementing animal health, animal welfare, veterinary public health, and food
-                            safety programs within the jurisdiction of Dasmariñas City, Cavite. Operating under national laws
-                            such as the Local Government Code of 1991 (RA 7160), the Animal Welfare Act (RA 8485 as
-                            amended), and the Anti-Rabies Act of 2007 (RA 9482), the office acts as the frontline regulatory
-                            and service arm for zoonotic disease control, responsible pet ownership, and public health
-                            protection under the One Health framework.
-                        </p>
-                    </div>
-                     <div class="lg:w-1/3">
-                         <div class="rounded-2xl h-80 overflow-hidden shadow-lg -mt-20">
-                             <img src="{{ asset('images/about_us1.jpg') }}" alt="About Us - Dasmariñas City Veterinary Services" class="w-full h-full object-cover">
-                         </div>
-                     </div>
-                </div>
-            </div>
+     <!-- Our Core Pillars -->
+     <section id="philosophy" class="py-16 sm:py-20 bg-slate-50 border-y border-slate-100">
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <div class="text-center max-w-2xl mx-auto mb-14">
+                 <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">Our Core Pillars</span>
+                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3">Anchored on Global & Municipal Health Goals</h2>
+                 <p class="text-slate-600 mt-2">Strategic priorities guiding our work toward a rabies-free, healthier community.</p>
+             </div>
 
-            <!-- II. Demographic & Service Coverage -->
+             <div class="flex flex-wrap justify-center gap-6">
+                 <!-- Card 1: Zero by 2030 -->
+                 <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                     <div>
+                         <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                             <i class="fa-solid fa-bullseye"></i>
+                         </div>
+                         <h3 class="text-xl font-bold text-slate-900 mb-2">"Zero by 2030" Global Goal</h3>
+                         <p class="text-slate-600 text-sm leading-relaxed">
+                             Aligning local municipal efforts with the global strategy to eliminate dog-mediated human rabies by 2030 through proactive surveillance, mass ant-rabies vaccination, and community engagement.
+                         </p>
+                     </div>
+                 </div>
+
+                 <!-- Card 2: 70% Herd Immunity -->
+                 <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                     <div>
+                         <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                             <i class="fa-solid fa-shield-virus"></i>
+                         </div>
+                         <h3 class="text-xl font-bold text-slate-900 mb-2">70% Herd Immunity Target</h3>
+                         <p class="text-slate-600 text-sm leading-relaxed">
+                             Utilizing geospatial mapping across all 75 barangays to monitor vaccination coverage, identify high-risk clusters, and ensure our pet population reaches the 70% herd immunity threshold.
+                         </p>
+                     </div>
+                 </div>
+
+                 <!-- Card 3: One Health Framework -->
+                 <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                     <div>
+                         <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                             <i class="fa-solid fa-handshake"></i>
+                         </div>
+                         <h3 class="text-xl font-bold text-slate-900 mb-2">The One Health Framework</h3>
+                         <p class="text-slate-600 text-sm leading-relaxed">
+                             Bridging the gap between animal care, human health, and environmental safety — recognizing that protecting pets directly safeguards human life.
+                         </p>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </section>
+
+      <!-- Main Content -->
+      <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <!-- II. Demographic & Service Coverage -->
             <div class="mb-16">
                 <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
                     <span class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
