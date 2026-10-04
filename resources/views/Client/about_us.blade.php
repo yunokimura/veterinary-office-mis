@@ -185,7 +185,7 @@
              <h2 class="text-3xl font-bold text-gray-900 mb-6">Core Functional Areas</h2>
              <div class="grid md:grid-cols-2 gap-6">
                  <!-- Zoonotic Disease Control -->
-                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
                      <div class="h-16 bg-gradient-to-r from-red-500 to-red-600 p-4 flex items-center">
                          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
                              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -195,12 +195,12 @@
                          <h3 class="text-xl font-bold text-white ml-4">Zoonotic Disease Control</h3>
                      </div>
                      <div class="p-6">
-                         <p class="text-gray-600">Rabies elimination, surveillance, and outbreak preparedness.</p>
+                         <p class="text-gray-600 leading-relaxed">Rabies elimination under the "Zero by 2030" global target, geospatial map surveillance, and maintaining 70% herd immunity across 75 barangays.</p>
                      </div>
                  </div>
 
                  <!-- Animal Welfare & Population Management -->
-                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
                      <div class="h-16 bg-gradient-to-r from-purple-500 to-purple-600 p-4 flex items-center">
                          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
                              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -210,12 +210,12 @@
                          <h3 class="text-xl font-bold text-white ml-4">Animal Welfare & Population Management</h3>
                      </div>
                      <div class="p-6">
-                         <p class="text-gray-600">High-volume spay/neuter programs, rescue operations, and humane enforcement.</p>
+                         <p class="text-gray-600 leading-relaxed">Mass anti-rabies vaccination and spay/neuter (kapon) programs, humane stray population control, pet adoption services, and missing pet monitoring.</p>
                      </div>
                  </div>
 
                  <!-- Veterinary Public Health & Food Safety -->
-                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
                      <div class="h-16 bg-gradient-to-r from-blue-500 to-blue-600 p-4 flex items-center">
                          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
                              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -225,30 +225,28 @@
                          <h3 class="text-xl font-bold text-white ml-4">Veterinary Public Health & Food Safety</h3>
                      </div>
                      <div class="p-6">
-                         <p class="text-gray-600">Meat inspection coordination and food-borne disease prevention.</p>
+                         <p class="text-gray-600 leading-relaxed">Meat inspections across slaughterhouses and markets to prevent food-borne pathogens and protect consumer health under national standards.</p>
                      </div>
                  </div>
 
-                 <!-- Community Education & Advocacy -->
-                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                     <div class="h-16 bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center">
-                         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                             </svg>
-                         </div>
-                         <h3 class="text-xl font-bold text-white ml-4">Community Education & Advocacy</h3>
-                     </div>
-                     <div class="p-6">
-                         <p class="text-gray-600">Responsible pet ownership campaigns and barangay-level engagement.</p>
-                     </div>
-                 </div>
+                  <!-- Community Education & Advocacy -->
+                  <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
+                      <div class="h-16 bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center">
+                          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                              <i class="fa-solid fa-users text-white text-xl"></i>
+                          </div>
+                          <h3 class="text-xl font-bold text-white ml-4">Community Education & Advocacy</h3>
+                      </div>
+                      <div class="p-6">
+                          <p class="text-gray-600 leading-relaxed">Promoting responsible pet ownership and barangay-level engagement under the unified One Health Framework.</p>
+                      </div>
+                  </div>
              </div>
          </div>
      </section>
 
-      <!-- Main Content -->
-      <section class="py-16 bg-white">
+       <!-- Main Content -->
+       <section class="pt-8 pb-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                <!-- Demographic & Service Coverage -->
             <div class="mb-16">
