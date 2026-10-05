@@ -68,7 +68,7 @@
                       <p class="text-white text-base sm:text-lg max-w-2xl font-light leading-relaxed">
                          Discover how the Dasmariñas City Veterinary Office serves our community by bridging the gap between animal care and 
                          human well-being under the One Health initiative.
-                     </p>
+                      </p>
 
                      <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
                          <a href="{{ url('/services') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
@@ -121,6 +121,60 @@
                                  <button onclick="goToSlide(3)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 4"></button>
                              </div>
                          </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </section>
+
+     <!-- Mission & Vision Section -->
+     <section class="py-16 sm:py-24 bg-teal-50/50 border-b border-slate-200/60 relative">
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+                 <span class="text-teal-600 font-extrabold text-xs uppercase tracking-widest block mb-2">Purpose & Future</span>
+                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Our Mission & Vision</h2>
+                 <p class="text-slate-600 mt-3 text-base">Guiding every diagnosis, treatment plan, and community initiative with clarity and heart.</p>
+             </div>
+
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
+                 <!-- Mission Card -->
+                 <div class="bg-white rounded-3xl p-8 sm:p-10 border border-teal-100 shadow-lg shadow-teal-900/5 relative overflow-hidden flex flex-col justify-between group hover:border-teal-300 transition-all card-hover">
+                     <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
+                     <div class="relative z-10">
+                         <div class="flex items-center gap-4 mb-6">
+                             <div class="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl shadow-md shadow-teal-600/30">
+                                 <i class="fa-solid fa-bullseye"></i>
+                             </div>
+                             <div>
+                                 <span class="text-xs font-bold text-teal-600 uppercase tracking-widest">Our Purpose</span>
+                                 <h3 class="text-2xl font-extrabold text-slate-900">Our Mission</h3>
+                             </div>
+                         </div>
+                         <p class="text-slate-600 text-base leading-relaxed mb-6">
+                             To uphold the principles of One Health by protecting human health, promoting animal welfare, and
+                             safeguarding the environment through accessible veterinary services, disease prevention and
+                             control, responsible pet ownership advocacy, food safety regulation, and strong community
+                             partnerships.
+                         </p>
+                     </div>
+                 </div>
+
+                 <!-- Vision Card -->
+                 <div class="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-amber-400/40 transition-all card-hover">
+                     <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
+                     <div class="relative z-10">
+                         <div class="flex items-center gap-4 mb-6">
+                             <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shadow-amber-500/30">
+                                 <i class="fa-solid fa-compass"></i>
+                             </div>
+                             <div>
+                                 <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Looking Ahead</span>
+                                 <h3 class="text-2xl font-extrabold text-white">Our Vision</h3>
+                             </div>
+                         </div>
+                         <p class="text-slate-300 text-base leading-relaxed mb-6">
+                             A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
+                         </p>
                      </div>
                  </div>
              </div>
@@ -229,198 +283,145 @@
                      </div>
                  </div>
 
-                  <!-- Community Education & Advocacy -->
-                  <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
-                      <div class="h-16 bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center">
-                          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                              <i class="fa-solid fa-users text-white text-xl"></i>
-                          </div>
-                          <h3 class="text-xl font-bold text-white ml-4">Community Education & Advocacy</h3>
-                      </div>
-                      <div class="p-6">
-                          <p class="text-gray-600 leading-relaxed">Promoting responsible pet ownership and barangay-level engagement under the unified One Health Framework.</p>
-                      </div>
-                  </div>
+                 <!-- Community Education & Advocacy -->
+                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
+                     <div class="h-16 bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center">
+                         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                             <i class="fa-solid fa-users text-white text-xl"></i>
+                         </div>
+                         <h3 class="text-xl font-bold text-white ml-4">Community Education & Advocacy</h3>
+                     </div>
+                     <div class="p-6">
+                         <p class="text-gray-600 leading-relaxed">Promoting responsible pet ownership and barangay-level engagement under the unified One Health Framework.</p>
+                     </div>
+                 </div>
              </div>
          </div>
      </section>
 
        <!-- Main Content -->
        <section class="pt-8 pb-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-               <!-- Demographic & Service Coverage -->
-            <div class="mb-16">
-                <h2 class="text-3xl font-bold text-gray-900 mb-6">Demographic & Service Coverage</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                     <div class="bg-red-50 rounded-xl p-5 border border-gray-100 card-hover">
-                         <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                             </svg>
-                         </div>
-                         <span class="text-red-700">Urban and suburban pet-owning households</span>
-                     </div>
-                     <div class="bg-purple-100 rounded-xl p-5 border border-gray-100 card-hover">
-                         <div class="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center flex-shrink-0">
-                             <i class="fa-solid fa-cow text-purple-600"></i>
-                         </div>
-                         <span class="text-purple-700">Livestock and poultry raisers</span>
-                     </div>
-                     <div class="bg-blue-50 rounded-xl p-5 border border-gray-100 card-hover">
-                         <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                             </svg>
-                         </div>
-                         <span class="text-blue-700">Meat vendors and food business operators</span>
-                     </div>
-                     <div class="bg-amber-50 rounded-xl p-5 border border-gray-100 card-hover">
-                         <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                             </svg>
-                         </div>
-                         <span class="text-amber-700">Barangay officials and designated animal welfare officers</span>
-                     </div>
-                      <div class="bg-green-50 rounded-xl p-5 border border-gray-100 card-hover">
-                          <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Demographic & Service Coverage -->
+             <div class="mb-16">
+                 <h2 class="text-3xl font-bold text-gray-900 mb-6">Demographic & Service Coverage</h2>
+                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div class="bg-red-50 rounded-xl p-5 border border-gray-100 card-hover">
+                          <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                               </svg>
                           </div>
-                          <span class="text-green-700">General public at risk of zoonotic diseases</span>
+                          <span class="text-red-700">Urban and suburban pet-owning households</span>
                       </div>
+                      <div class="bg-purple-100 rounded-xl p-5 border border-gray-100 card-hover">
+                          <div class="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center flex-shrink-0">
+                              <i class="fa-solid fa-cow text-purple-600"></i>
+                          </div>
+                          <span class="text-purple-700">Livestock and poultry raisers</span>
+                      </div>
+                      <div class="bg-blue-50 rounded-xl p-5 border border-gray-100 card-hover">
+                          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                              </svg>
+                          </div>
+                          <span class="text-blue-700">Meat vendors and food business operators</span>
+                      </div>
+                      <div class="bg-amber-50 rounded-xl p-5 border border-gray-100 card-hover">
+                          <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                              </svg>
+                          </div>
+                          <span class="text-amber-700">Barangay officials and designated animal welfare officers</span>
+                      </div>
+                       <div class="bg-green-50 rounded-xl p-5 border border-gray-100 card-hover">
+                           <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                               </svg>
+                           </div>
+                           <span class="text-green-700">General public at risk of zoonotic diseases</span>
+                       </div>
+                 </div>
              </div>
-         </div>
+        </div>
      </section>
 
-     <!-- Mission & Vision Section -->
-     <section class="py-16 sm:py-24 bg-teal-50/50 border-b border-slate-200/60 relative">
+     <!-- Community Spotlight Section -->
+     <section class="py-16 sm:py-24 bg-white border-t border-slate-100">
          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-             <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-                 <span class="text-teal-600 font-extrabold text-xs uppercase tracking-widest block mb-2">Purpose & Future</span>
-                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Our Mission & Vision</h2>
-                 <p class="text-slate-600 mt-3 text-base">Guiding every diagnosis, treatment plan, and community initiative with clarity and heart.</p>
+             <div class="text-center max-w-2xl mx-auto mb-12">
+                 <span class="text-primary font-bold text-xs uppercase tracking-widest">Community Spotlight</span>
+                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Our Partners in Public Health</h2>
+                 <p class="text-slate-600 mt-3">Protecting Dasmariñas starts with caring pet owners across our 75 barangays. Here are the real stories and moments from our community drives.</p>
              </div>
 
-             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
-                 <!-- Mission Card -->
-                 <div class="bg-white rounded-3xl p-8 sm:p-10 border border-teal-100 shadow-lg shadow-teal-900/5 relative overflow-hidden flex flex-col justify-between group hover:border-teal-300 transition-all card-hover">
-                     <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
-                     <div class="relative z-10">
-                         <div class="flex items-center gap-4 mb-6">
-                             <div class="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl shadow-md shadow-teal-600/30">
-                                 <i class="fa-solid fa-bullseye"></i>
-                             </div>
-                             <div>
-                                 <span class="text-xs font-bold text-teal-600 uppercase tracking-widest">Our Purpose</span>
-                                 <h3 class="text-2xl font-extrabold text-slate-900">Our Mission</h3>
-                             </div>
-                         </div>
-                         <p class="text-slate-600 text-base leading-relaxed mb-6">
-                             To uphold the principles of One Health by protecting human health, promoting animal welfare, and
-                             safeguarding the environment through accessible veterinary services, disease prevention and
-                             control, responsible pet ownership advocacy, food safety regulation, and strong community
-                             partnerships.
-                         </p>
-                     </div>
-                 </div>
+              <div class="relative px-2 md:px-8 overflow-hidden">
+                  <!-- Carousel Container -->
+                  <div id="communityCarousel">
+                     <div id="communityCarouselTrack" class="flex transition-transform duration-500 ease-in-out">
+                         <!-- Card 1: Responsible Pet Ownership -->
+                         <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                             <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                 <div class="aspect-square relative">
+                                     <img src="{{ asset('images/carousel2/responsible.jpg') }}" alt="Responsible Pet Ownership" class="w-full h-full object-cover">
+                                 </div>
+                                  <div class="p-5 text-center">
+                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Responsible Pet Ownership</h3>
+                                  </div>
+                              </div>
+                          </div>
 
-                 <!-- Vision Card -->
-                 <div class="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between group hover:border-amber-400/40 transition-all card-hover">
-                     <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-full -z-0 group-hover:scale-110 transition-transform"></div>
-                     <div class="relative z-10">
-                         <div class="flex items-center gap-4 mb-6">
-                             <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shadow-amber-500/30">
-                                 <i class="fa-solid fa-compass"></i>
-                             </div>
-                             <div>
-                                 <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Looking Ahead</span>
-                                 <h3 class="text-2xl font-extrabold text-white">Our Vision</h3>
-                             </div>
-                         </div>
-                         <p class="text-slate-300 text-base leading-relaxed mb-6">
-                             A model One Health city where human health, animal welfare, food safety, and environmental protection are fully integrated through proactive disease prevention, responsible stewardship, and sustainable veterinary governance.
-                         </p>
-                     </div>
-                  </div>
-              </div>
-          </div>
-      </section>
-
-      <!-- Community Spotlight Section -->
-      <section class="py-16 sm:py-24 bg-white border-t border-slate-100">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div class="text-center max-w-2xl mx-auto mb-12">
-                  <span class="text-primary font-bold text-xs uppercase tracking-widest">Community Spotlight</span>
-                  <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Our Partners in Public Health</h2>
-                  <p class="text-slate-600 mt-3">Protecting Dasmariñas starts with caring pet owners across our 75 barangays. Here are the real stories and moments from our community drives.</p>
-              </div>
-
-               <div class="relative px-2 md:px-8 overflow-hidden">
-                   <!-- Carousel Container -->
-                   <div id="communityCarousel">
-                      <div id="communityCarouselTrack" class="flex transition-transform duration-500 ease-in-out">
-                          <!-- Card 1: Responsible Pet Ownership -->
+                          <!-- Card 2: Anti-Rabies Vaccination -->
                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
                                   <div class="aspect-square relative">
-                                      <img src="{{ asset('images/carousel2/responsible.jpg') }}" alt="Responsible Pet Ownership" class="w-full h-full object-cover">
+                                      <img src="{{ asset('images/carousel2/vaccine.jpg') }}" alt="Anti-Rabies Vaccination" class="w-full h-full object-cover">
                                   </div>
-                                   <div class="p-5 text-center">
-                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Responsible Pet Ownership</h3>
-                                   </div>
-                               </div>
-                           </div>
+                                  <div class="p-5 text-center">
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Anti-Rabies Vaccination</h3>
+                                  </div>
+                              </div>
+                          </div>
 
-                           <!-- Card 2: Anti-Rabies Vaccination -->
-                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                   <div class="aspect-square relative">
-                                       <img src="{{ asset('images/carousel2/vaccine.jpg') }}" alt="Anti-Rabies Vaccination" class="w-full h-full object-cover">
-                                   </div>
-                                   <div class="p-5 text-center">
-                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Anti-Rabies Vaccination</h3>
-                                   </div>
-                               </div>
-                           </div>
+                          <!-- Card 3: Spay & Neuter (Kapon) -->
+                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                  <div class="aspect-square relative">
+                                      <img src="{{ asset('images/carousel2/spay-neuter.jpg') }}" alt="Spay & Neuter (Kapon)" class="w-full h-full object-cover">
+                                  </div>
+                                  <div class="p-5 text-center">
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Spay & Neuter (Kapon)</h3>
+                                  </div>
+                              </div>
+                          </div>
 
-                           <!-- Card 3: Spay & Neuter (Kapon) -->
-                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                   <div class="aspect-square relative">
-                                       <img src="{{ asset('images/carousel2/spay-neuter.jpg') }}" alt="Spay & Neuter (Kapon)" class="w-full h-full object-cover">
-                                   </div>
-                                   <div class="p-5 text-center">
-                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Spay & Neuter (Kapon)</h3>
-                                   </div>
-                               </div>
-                           </div>
+                          <!-- Card 4: Pet Adoption -->
+                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                  <div class="aspect-square relative">
+                                      <img src="{{ asset('images/carousel2/adoption.jpg') }}" alt="Pet Adoption" class="w-full h-full object-cover">
+                                  </div>
+                                  <div class="p-5 text-center">
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Pet Adoption</h3>
+                                  </div>
+                              </div>
+                          </div>
 
-                           <!-- Card 4: Pet Adoption -->
-                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                   <div class="aspect-square relative">
-                                       <img src="{{ asset('images/carousel2/adoption.jpg') }}" alt="Pet Adoption" class="w-full h-full object-cover">
-                                   </div>
-                                   <div class="p-5 text-center">
-                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Pet Adoption</h3>
-                                   </div>
-                               </div>
-                           </div>
-
-                           <!-- Card 5: Missing Pet Reporting -->
-                           <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                               <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                   <div class="aspect-square relative">
-                                       <img src="{{ asset('images/carousel2/missing.jpg') }}" alt="Missing Pet Reporting" class="w-full h-full object-cover">
-                                   </div>
-                                   <div class="p-5 text-center">
-                                       <h3 class="text-lg font-bold text-slate-900 mt-1">Missing Pet Reporting</h3>
-                                   </div>
-                               </div>
-                           </div>
-                      </div>
+                          <!-- Card 5: Missing Pet Reporting -->
+                          <div class="w-full md:w-1/3 flex-shrink-0 px-3">
+                              <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
+                                  <div class="aspect-square relative">
+                                      <img src="{{ asset('images/carousel2/missing.jpg') }}" alt="Missing Pet Reporting" class="w-full h-full object-cover">
+                                  </div>
+                                  <div class="p-5 text-center">
+                                      <h3 class="text-lg font-bold text-slate-900 mt-1">Missing Pet Reporting</h3>
+                                  </div>
+                              </div>
+                          </div>
+                     </div>
                   </div>
 
                   <!-- Navigation Buttons -->
