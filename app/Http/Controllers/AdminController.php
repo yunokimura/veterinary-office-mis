@@ -11,6 +11,7 @@ use App\Models\VaccinationReport;
 use App\Models\MeatInspectionReport;
 use App\Models\VaccinationAppointment;
 use App\Models\Pet;
+use App\Support\PetAge;
 use App\Models\MeatEstablishment;
 use App\Models\ImpoundRecord;
 use App\Models\User;
@@ -445,7 +446,7 @@ class AdminController extends Controller
                     'pet_species' => $pet->species,
                     'pet_breed' => $pet->breed,
                     'pet_gender' => $pet->gender,
-                    'pet_age' => $pet->age,
+                    'pet_age' => PetAge::compute($pet->birthdate) ?? $pet->age,
                     'vaccine_brand' => null,
                     'vaccine_batch_number' => null,
                     'vaccination_date' => $appointment->scheduled_at->toDateString(),
@@ -537,7 +538,7 @@ class AdminController extends Controller
                         'pet_species' => $pet->species,
                         'pet_breed' => $pet->breed,
                         'pet_gender' => $pet->gender,
-                        'pet_age' => $pet->age,
+                        'pet_age' => PetAge::compute($pet->birthdate) ?? $pet->age,
                         'vaccine_brand' => null,
                         'vaccine_batch_number' => null,
                         'vaccination_date' => $appointment->scheduled_at->toDateString(),

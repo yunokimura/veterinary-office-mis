@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pet;
+use App\Support\PetAge;
 use Illuminate\Http\Request;
 
 class AdoptionPetController extends Controller
@@ -30,11 +31,7 @@ class AdoptionPetController extends Controller
         }
 
         // Convert age to exact pet_age string format or compute from DOB
-        $petAge = $validated['age'].' years';
-        if (! empty($validated['date_of_birth'])) {
-            // Optionally compute from date_of_birth but store as pet_age based on provided age
-            $petAge = $validated['age'].' years';
-        }
+        $petAge = PetAge::compute($validated['date_of_birth'] ?? null) ?? $validated['age'].' years';
 
         $now = now();
         $pet = Pet::create([

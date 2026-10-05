@@ -83,7 +83,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Age</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->pet_age ?? 'N/A' }} years</p>
+                    <p class="text-sm font-medium text-gray-800">{{ is_numeric($report->pet_age) ? $report->pet_age . ' years' : ($report->pet_age ?? 'N/A') }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Gender</p>

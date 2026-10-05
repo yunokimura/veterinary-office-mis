@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Pet;
 use App\Models\PetOwner;
+use App\Support\PetAge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -139,10 +140,12 @@ class PetRegistrationController extends Controller
                 'body_mark_image' => $bodyMarkImagePath,
             ]);
 
+            $petAge = PetAge::compute($birthdate) ?? $validated['pet_age'] ?? null;
+
             $pet->petInfo()->create([
                 'is_neutered' => $request->has('is_neutered') ? 'yes' : 'no',
                 'is_crossbreed' => $request->has('is_crossbreed') ? 'yes' : 'no',
-                'pet_age' => $validated['pet_age'] ?? null,
+                'pet_age' => $petAge,
                 'pet_weight' => $validated['pet_weight'] ?? null,
                 'training' => json_encode($request->input('training', [])),
                 'insurance' => json_encode($request->input('insurance', [])),

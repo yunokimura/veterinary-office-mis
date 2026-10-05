@@ -48,7 +48,7 @@
                         <p class="font-medium text-gray-800">{{ $report->pet_name }}</p>
                         <p class="text-sm text-gray-600">{{ ucfirst($report->pet_species) }} {{ $report->pet_breed ? '• ' . $report->pet_breed : '' }}</p>
                         @if($report->pet_age)
-                        <p class="text-sm text-gray-500">{{ $report->pet_age }} years old</p>
+                        <p class="text-sm text-gray-500">{{ is_numeric($report->pet_age) ? $report->pet_age . ' years old' : $report->pet_age }}</p>
                         @endif
                         @if($report->pet_color)
                         <p class="text-sm text-gray-500">Color: {{ $report->pet_color }}</p>

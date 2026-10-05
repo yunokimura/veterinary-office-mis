@@ -273,7 +273,7 @@
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Age:</span>
-                                    <span class="text-gray-700 font-medium">{{ ($pet->age ?? null) > 50 ? 'N/A' : ($pet->age ?? 'N/A') }} years</span>
+                                    <span class="text-gray-700 font-medium">{{ $pet->petInfo?->pet_age ?? 'N/A' }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Weight:</span>
@@ -479,7 +479,7 @@
                 'species' => $pet->species, 
                 'breed' => $pet->breed, 
                 'gender' => $pet->gender, 
-                'age' => $pet->age, 
+                'age' => $pet->petInfo?->pet_age, 
                 'weight' => $pet->weight, 
                 'color' => $pet->color, 
                 'description' => $pet->notes, 
@@ -748,7 +748,7 @@
                               <div class="space-y-2 text-sm">
                                   <div class="flex justify-between">
                                       <span class="text-gray-500">Age:</span>
-                                      <span class="text-gray-700 font-medium">${pet.age || 'N/A'} years</span>
+                                      <span class="text-gray-700 font-medium">${pet.age || 'N/A'}</span>
                                   </div>
                                   <div class="flex justify-between">
                                       <span class="text-gray-500">Weight:</span>

@@ -93,6 +93,7 @@ class VaccinationReport extends Model
         'vaccination_date' => 'date',
         'vaccination_time' => 'datetime:H:i',
         'next_vaccination_date' => 'date',
+        'pet_age' => 'string',
         'weight' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

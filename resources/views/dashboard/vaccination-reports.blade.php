@@ -337,7 +337,7 @@ function displayVaccinationDetails(report) {
                     </div>
                     <div>
                         <p class="text-sm text-gray-500">Age</p>
-                        <p class="font-medium text-gray-800 mt-1">${report.pet_age ? report.pet_age + ' years' : 'N/A'}</p>
+                        <p class="font-medium text-gray-800 mt-1">${report.pet_age ? (isNaN(report.pet_age) ? report.pet_age : report.pet_age + ' years') : 'N/A'}</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-6 mt-4">

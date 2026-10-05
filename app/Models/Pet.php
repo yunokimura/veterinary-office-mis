@@ -209,6 +209,6 @@ class Pet extends Model
 
     public function getIsAgeEstimatedAttribute()
     {
-        return ! empty($this->petInfo?->pet_age);
+        return false;
     }
 }

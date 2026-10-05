@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Barangay;
 use App\Models\Pet;
 use App\Models\PetOwner;
+use App\Support\PetAge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -103,7 +104,7 @@ class PetRegistrationController extends Controller
 
         if ($request->filled('age') || $request->filled('weight')) {
             $pet->petInfo()->create([
-                'pet_age' => $request->input('age'),
+                'pet_age' => PetAge::compute($pet->birthdate) ?? $request->input('age'),
                 'pet_weight' => $request->input('weight'),
             ]);
         }
@@ -168,7 +169,7 @@ class PetRegistrationController extends Controller
 
         $petInfoData = [];
         if ($request->filled('age')) {
-            $petInfoData['pet_age'] = $request->input('age');
+            $petInfoData['pet_age'] = PetAge::compute($pet->birthdate) ?? $request->input('age');
         }
         if ($request->filled('weight')) {
             $petInfoData['pet_weight'] = $request->input('weight');

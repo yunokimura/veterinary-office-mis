@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Models\Pet;
 use App\Models\PetOwner;
 use App\Http\Controllers\Controller;
+use App\Support\PetAge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -143,8 +144,10 @@ class PetController extends Controller
             'birthdate' => $validated['pet_birthdate'] ?? null,
         ]);
 
+        $petAge = PetAge::compute($validated['pet_birthdate'] ?? null) ?? $validated['pet_age'] ?? null;
+
         $petInfoData = [
-            'pet_age' => $validated['pet_age'] ?? null,
+            'pet_age' => $petAge,
             'pet_weight' => $validated['pet_weight'] ?? null,
             'is_neutered' => $request->has('is_neutered') ? 'yes' : 'no',
             'is_crossbreed' => $request->has('is_crossbreed') ? 'yes' : 'no',

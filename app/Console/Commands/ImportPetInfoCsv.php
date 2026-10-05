@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Pet;
 use App\Models\PetInfo;
+use App\Support\PetAge;
 use Carbon\Carbon;
 
 class ImportPetInfoCsv extends Command
@@ -48,7 +49,7 @@ class ImportPetInfoCsv extends Command
                 continue;
             }
 
-            $petAge = $this->calculateExactAge($pet->birthdate);
+            $petAge = PetAge::compute($pet->birthdate);
 
             $records[] = [
                 'pet_id'        => $petId,
@@ -99,33 +100,6 @@ class ImportPetInfoCsv extends Command
 
         $this->info('Import completed successfully.');
         return 0;
-    }
-
-    private function calculateExactAge($birthdate)
-    {
-        if (!$birthdate) {
-            return null;
-        }
-
-        try {
-            $birth = Carbon::parse($birthdate);
-            $now = now();
-
-            $years = (int) $birth->diffInYears($now);
-            $months = (int) $birth->copy()->addYears($years)->diffInMonths($now);
-
-            $parts = [];
-            if ($years > 0) {
-                $parts[] = $years . ' year' . ($years > 1 ? 's' : '');
-            }
-            if ($months > 0) {
-                $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            }
-
-            return $parts ? implode(' ', $parts) : '0 months';
-        } catch (\Exception $e) {
-            return null;
-        }
     }
 
     private function safeJsonDecode($value, string $label)
