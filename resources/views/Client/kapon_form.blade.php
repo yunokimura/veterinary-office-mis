@@ -49,6 +49,9 @@
 
 <body class="font-sans bg-gray-50 min-h-screen">
 
+<!-- Emergency Alert Bar -->
+@include('Client.partials.emergency_alert')
+
 <!-- Header -->
 @include('Client.partials.navbar')
 

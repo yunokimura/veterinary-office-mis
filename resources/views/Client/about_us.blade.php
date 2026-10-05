@@ -53,6 +53,7 @@
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50 text-slate-800">
+    @include('Client.partials.emergency_alert')
     @include('Client.partials.navbar')
 
      <!-- Hero Section -->
