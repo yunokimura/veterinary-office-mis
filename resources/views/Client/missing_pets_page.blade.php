@@ -273,7 +273,7 @@
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Age:</span>
-                                    <span class="text-gray-700 font-medium">{{ $pet->age ?? 'N/A' }} years</span>
+                                    <span class="text-gray-700 font-medium">{{ ($pet->age ?? null) > 50 ? 'N/A' : ($pet->age ?? 'N/A') }} years</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Weight:</span>
