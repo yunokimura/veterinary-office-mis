@@ -333,6 +333,12 @@
                     </a>
                 </div>
 
+                <div class="w-full text-center mt-8 mb-10">
+                    <span class="text-amber-600 font-bold text-xs uppercase tracking-widest bg-amber-50 px-3 py-1 rounded-full">Community Programs</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3">Community Programs</h2>
+                    <p class="text-slate-600 mt-2 max-w-2xl mx-auto">Compassionate community programs dedicated to pet adoption and reunited families.</p>
+                </div>
+
                 <!-- Card 4: Missing Pets -->
                 <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
                     <div>
