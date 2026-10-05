@@ -276,7 +276,7 @@
                             }
                         }
                     @endphp
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->pet_id }})">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 {{ $pet->gender == 'Male' ? 'border-blue-200' : 'border-pink-200' }} card-hover missing-pet-card" onclick="showPetModal({{ $pet->pet_id }})">
                         <div class="aspect-square bg-gray-200 relative overflow-hidden">
                             <img src="{{ $rawImage ? asset('images/missing pets/'.$rawImage) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
                         </div>
@@ -770,7 +770,7 @@
             } else {
                  pets.forEach(pet => {
                       html += `
-                      <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(${pet.pet_id})">
+                       <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 ${pet.gender === 'Male' ? 'border-blue-200' : 'border-pink-200'} card-hover missing-pet-card" onclick="showPetModal(${pet.pet_id})">
                           <div class="aspect-square bg-gray-200 relative overflow-hidden">
                                 <img src="${pet.pet_image ? pet.pet_image : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image'}" alt="${pet.pet_name}" class="w-full h-full object-cover pet-image">
                           </div>
