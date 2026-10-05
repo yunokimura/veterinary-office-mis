@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -62,44 +63,52 @@
     @include('Client.partials.navbar')
 
      <!-- Hero Section -->
-    <section class="bg-amber-500 min-h-[500px] flex items-center justify-center py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- Left Side: Title and Subtitle -->
-                <div>
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">Report your Missing Pets</h1>
-                    <p class="text-lg md:text-xl text-white/90 max-w-xl mb-8">
-                        Help reunite lost pets with their owners. Report missing pets quickly and reach out to the community for assistance.
-                    </p>
-                    <div class="flex flex-wrap gap-4">
-                        @auth
-                            <a href="{{ url('/missing-pets/form') }}" class="bg-white text-amber-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors">
-                                Report a Missing Pet
-                            </a>
-                        @else
-                            <button onclick="showLoginPrompt()" class="bg-white text-amber-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors">
-                                Report a Missing Pet
-                            </button>
-                        @endauth
-                        <a href="#" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-colors">
-                            View Missing Pets
-                        </a>
-                    </div>
-                </div>
-                <!-- Right Side: Placeholder Image -->
-                <div class="flex justify-center">
-                    <div class="w-full max-w-lg aspect-square bg-white/10 rounded-2xl flex items-center justify-center border border-white/20">
-                        <div class="text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-32 h-32 text-white/50 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <p class="text-white/70 text-lg">Missing Pets</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+     <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, rgba(250, 204, 21, 0.8) 0%, rgba(202, 138, 4, 0.8) 100%);">
+         <!-- Hero Content -->
+         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center md:text-left">
+             <div class="grid md:grid-cols-12 gap-8 items-center">
+                 <div class="md:col-span-7 lg:col-span-6 space-y-6">
+                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                         Report your Missing Pets
+                     </h1>
+
+                     <p class="text-white text-base sm:text-lg max-w-2xl font-light leading-relaxed">
+                         Help reunite lost pets with their owners. Report missing pets quickly and reach out to the community for assistance.
+                     </p>
+
+                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
+                         @auth
+                             <a href="{{ url('/missing-pets/form') }}" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                 <span>Report a Missing Pet</span>
+                                 <i class="fa-solid fa-arrow-right text-sm"></i>
+                             </a>
+                         @else
+                             <button onclick="showLoginPrompt()" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                 <span>Report a Missing Pet</span>
+                                 <i class="fa-solid fa-arrow-right text-sm"></i>
+                             </button>
+                         @endauth
+                         <a href="#" class="w-full sm:w-auto bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center space-x-2">
+                             <span>View Missing Pets</span>
+                         </a>
+                     </div>
+                 </div>
+
+                 <div class="md:col-span-5 lg:col-span-6">
+                     <div class="relative">
+                         <div class="rounded-2xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm flex items-center justify-center" style="min-height: 24rem;">
+                             <div class="text-center">
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-32 h-32 text-white/50 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                 </svg>
+                                 <p class="text-white/70 text-lg">Missing Pets</p>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </section>
 
     <!-- Section Title -->
     <section class="py-8 bg-white border-b border-gray-200">

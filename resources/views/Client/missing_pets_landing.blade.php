@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -20,6 +21,22 @@
             }
         }
     </script>
+    <style>
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(6, 109, 51, 0.15);
+        }
+        .service-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(6, 109, 51, 0.25);
+        }
+    </style>
 </head>
 <body class="font-sans bg-gray-50 min-h-screen">
     <header class="bg-white shadow-sm sticky top-0 z-50">
@@ -51,6 +68,77 @@
             </div>
         </div>
     </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, rgba(250, 204, 21, 0.8) 0%, rgba(202, 138, 4, 0.8) 100%);">
+        <!-- Hero Content -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center md:text-left">
+            <div class="grid md:grid-cols-12 gap-8 items-center">
+                <div class="md:col-span-7 lg:col-span-6 space-y-6">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                        Report a Missing or Found Pet
+                    </h1>
+
+                    <p class="text-white text-base sm:text-lg max-w-2xl font-light leading-relaxed">
+                        Choose the option that best describes your situation. We'll help you connect with the community to reunite pets with their owners.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
+                        <a href="{{ url('/missing-pets') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                            <span>Report Missing Pet</span>
+                            <i class="fa-solid fa-arrow-right text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="md:col-span-5 lg:col-span-6">
+                    <div class="relative">
+                        <div class="rounded-2xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm">
+                            <!-- Carousel Container -->
+                            <div id="aboutCarousel" class="relative h-96 overflow-hidden">
+                                <!-- Carousel Slide 1 -->
+                                <div class="carousel-slide absolute w-full h-full">
+                                    <img src="{{ asset('images/carousel pics/carousel_1.jpg') }}" alt="Dasmariñas City Veterinary Services 1" class="w-full h-full object-cover">
+                                </div>
+                                <!-- Carousel Slide 2 -->
+                                <div class="carousel-slide absolute w-full h-full">
+                                    <img src="{{ asset('images/carousel pics/carousel_2.jpg') }}" alt="Dasmariñas City Veterinary Services 2" class="w-full h-full object-cover">
+                                </div>
+                                <!-- Carousel Slide 3 -->
+                                <div class="carousel-slide absolute w-full h-full">
+                                    <img src="{{ asset('images/carousel pics/carousel_3.jpg') }}" alt="Dasmariñas City Veterinary Services 3" class="w-full h-full object-cover">
+                                </div>
+                                <!-- Carousel Slide 4 -->
+                                <div class="carousel-slide absolute w-full h-full">
+                                    <img src="{{ asset('images/carousel pics/carousel_4.jpg') }}" alt="Dasmariñas City Veterinary Services 4" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+
+                            <!-- Carousel Controls -->
+                            <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110" aria-label="Previous slide">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110" aria-label="Next slide">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+
+                            <!-- Carousel Indicators -->
+                            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                                <button onclick="goToSlide(0)" class="carousel-indicator w-3 h-3 rounded-full bg-white/70 hover:bg-white transition-colors" aria-label="Go to slide 1"></button>
+                                <button onclick="goToSlide(1)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 2"></button>
+                                <button onclick="goToSlide(2)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 3"></button>
+                                <button onclick="goToSlide(3)" class="carousel-indicator w-3 h-3 rounded-full bg-white/30 hover:bg-white/70 transition-colors" aria-label="Go to slide 4"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <main class="py-16">
         <div class="max-w-5xl mx-auto px-6">
@@ -148,5 +236,60 @@
             <p>© 2025 Dasmariñas City Veterinary Services. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            showSlide(currentSlide);
+            resetCarouselTimer();
+        }
+
+        // Carousel functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-slide');
+        const indicators = document.querySelectorAll('.carousel-indicator');
+        let carouselInterval;
+
+        function resetCarouselTimer() {
+            clearInterval(carouselInterval);
+            carouselInterval = setInterval(nextSlide, 5000);
+        }
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.style.display = i === index ? 'block' : 'none';
+            });
+            indicators.forEach((indicator, i) => {
+                if (i === index) {
+                    indicator.classList.remove('bg-white/30');
+                    indicator.classList.add('bg-white/70');
+                } else {
+                    indicator.classList.remove('bg-white/70');
+                    indicator.classList.add('bg-white/30');
+                }
+            });
+        }
+
+        // Auto-advance carousel every 5 seconds
+        carouselInterval = setInterval(nextSlide, 5000);
+
+        // Reset timer when navigation buttons are clicked
+        document.querySelectorAll('#aboutCarousel button[onclick="prevSlide()"], #aboutCarousel button[onclick="nextSlide()"]').forEach(button => {
+            button.addEventListener('click', resetCarouselTimer);
+        });
+
+        // Initialize carousel
+        showSlide(0);
+    </script>
 </body>
 </html>
