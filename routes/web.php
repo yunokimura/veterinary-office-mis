@@ -165,9 +165,11 @@ Route::get('/home', function () {
     // Dynamic stats
     $vaccinationReportsCount = \App\Models\VaccinationReport::count();
     $petsRegisteredCount = Pet::whereHas('owner')->count();
-    $spayNeuterCount = SpayNeuterReport::count();
+    $spayedNeuteredCount = \App\Models\SpayNeuterReport::where('status', 'completed')->count();
+    $reunitedCount = \App\Models\MissingPetsReport::where('status', 'resolved - reunited')->count();
+    $rehomedCount = \App\Models\AdoptionApplication::where('status', 'adopted')->count();
 
-    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayNeuterCount'));
+    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayedNeuteredCount', 'reunitedCount', 'rehomedCount'));
 })->name('public.home');
 
 // ==============================

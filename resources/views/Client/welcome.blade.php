@@ -267,22 +267,6 @@
                             Explore Services
                         </a>
                     </div>
-
-                    <!-- Quick Stats -->
-                    <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-lg">
-                        <div>
-                            <span class="block text-2xl font-bold text-white">{{ number_format($petsRegisteredCount) }}{{ $petsRegisteredCount >= 10 ? '+' : '' }}</span>
-                            <span class="text-xs text-slate-300">Registered Pets</span>
-                        </div>
-                        <div>
-                            <span class="block text-2xl font-bold text-white">{{ number_format($vaccinationReportsCount) }}{{ $vaccinationReportsCount >= 10 ? '+' : '' }}</span>
-                            <span class="text-xs text-slate-300">Pets Vaccinated</span>
-                        </div>
-                        <div>
-                            <span class="block text-2xl font-bold text-white">{{ number_format($spayNeuterCount) }}{{ $spayNeuterCount >= 10 ? '+' : '' }}</span>
-                            <span class="text-xs text-slate-300">Spayed/Neutered</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -381,6 +365,34 @@
                         <span>Adopt a Pet</span>
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="bg-primary py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-5 gap-8 text-center">
+                <div>
+                    <span class="block text-4xl font-extrabold text-white">{{ number_format($petsRegisteredCount) }}{{ $petsRegisteredCount >= 10 ? '+' : '' }}</span>
+                    <span class="text-lg font-bold text-white">Registered Pets</span>
+                </div>
+                <div>
+                    <span class="block text-4xl font-extrabold text-white">{{ number_format($vaccinationReportsCount) }}{{ $vaccinationReportsCount >= 10 ? '+' : '' }}</span>
+                    <span class="text-lg font-bold text-white">Vaccinated Pets</span>
+                </div>
+                <div>
+                    <span class="block text-4xl font-extrabold text-white">{{ number_format($spayedNeuteredCount) }}{{ $spayedNeuteredCount >= 10 ? '+' : '' }}</span>
+                    <span class="text-lg font-bold text-white">Spayed/Neutered</span>
+                </div>
+                <div>
+                    <span class="block text-4xl font-extrabold text-white">{{ number_format($reunitedCount) }}{{ $reunitedCount >= 10 ? '+' : '' }}</span>
+                    <span class="text-lg font-bold text-white">Reunited</span>
+                </div>
+                <div>
+                    <span class="block text-4xl font-extrabold text-white">{{ number_format($rehomedCount) }}{{ $rehomedCount >= 10 ? '+' : '' }}</span>
+                    <span class="text-lg font-bold text-white">Rehomed</span>
                 </div>
             </div>
         </div>
