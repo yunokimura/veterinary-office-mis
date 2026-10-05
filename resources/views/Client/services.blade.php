@@ -33,12 +33,12 @@
         }
     </script>
     <style>
-        .card-hover {
-            transition: all 0.3s ease;
+        .service-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(6, 109, 51, 0.15);
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(6, 109, 51, 0.25);
         }
     </style>
 </head>
@@ -49,7 +49,7 @@
     <section class="hero-bg py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">Our Veterinary Services</h1>
-            <p class="text-lg max-w-2xl mx-auto">Comprehensive veterinary services to keep your pets healthy and happy</p>
+            <p class="text-lg max-w-2xl mx-auto">Comprehensive veterinary services to keep your pets healthy and happy across all 75 barangays in the City of Dasmariñas.</p>
         </div>
     </section>
 
@@ -58,7 +58,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Card 1: Pet Registration -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden service-card hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <div class="h-48 bg-gradient-to-br from-primary to-primary-light p-6 flex items-center justify-center">
                         <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -102,7 +102,7 @@
                 </div>
 
                 <!-- Card 2: Anti-Rabies Vaccination -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden service-card hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <div class="h-48 bg-sky-600 p-6 flex items-center justify-center">
                         <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -146,7 +146,7 @@
                 </div>
 
                 <!-- Card 3: Kapon (Spay/Neuter) -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden service-card hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <div class="h-48 bg-gradient-to-br from-purple-500 to-purple-600 p-6 flex items-center justify-center">
                         <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

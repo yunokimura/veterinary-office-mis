@@ -30,6 +30,8 @@
                         <li><a href="{{ route('public.home') }}" class="hover:text-white transition-colors">Home Page</a></li>
                         <li><a href="{{ url('/about-us') }}" class="hover:text-white transition-colors">About Us</a></li>
                         <li><a href="{{ url('/services') }}" class="hover:text-white transition-colors">Services Overview</a></li>
+                        <li><a href="{{ url('/adoption') ?? '#' }}" class="hover:text-white transition-colors">Adoption</a></li>
+                        <li><a href="{{ url('/missing-pets') }}" class="hover:text-white transition-colors">Missing Pets</a></li>
                     </ul>
                 </div>
 
@@ -40,8 +42,6 @@
                         <li><a href="{{ url('/pet-registration') }}" class="hover:text-white transition-colors">Pet Registration</a></li>
                         <li><a href="{{ url('/vaccination') }}" class="hover:text-white transition-colors">Anti-Rabies Vaccination</a></li>
                         <li><a href="{{ url('/kapon') }}" class="hover:text-white transition-colors">Spay/Neuter (Kapon)</a></li>
-                        <li><a href="{{ url('/missing-pets') }}" class="hover:text-white transition-colors">Missing Pets</a></li>
-                        <li><a href="{{ url('/adoption') ?? '#' }}" class="hover:text-white transition-colors">Adoption</a></li>
                     </ul>
                 </div>
 
