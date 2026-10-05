@@ -258,9 +258,27 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div id="pets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @forelse($missingPets as $pet)
+                    @php
+                        $rawImage = $pet->pet_image;
+                        if ($rawImage) {
+                            $candidate = public_path('images/missing pets/' . $rawImage);
+                            if (!file_exists($candidate)) {
+                                $baseName = pathinfo($rawImage, PATHINFO_FILENAME);
+                                $alternate = public_path('images/missing pets/' . $baseName . '.jpeg');
+                                if (file_exists($alternate)) {
+                                    $rawImage = $baseName . '.jpeg';
+                                } else {
+                                    $alternate = public_path('images/missing pets/' . $baseName . '.jpg');
+                                    if (file_exists($alternate)) {
+                                        $rawImage = $baseName . '.jpg';
+                                    }
+                                }
+                            }
+                        }
+                    @endphp
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->pet_id }})">
                         <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                            <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
+                            <img src="{{ $rawImage ? asset('images/missing pets/'.$rawImage) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
                         </div>
                         <div class="p-4">
                             <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
@@ -471,24 +489,41 @@
     </div>
 
     <script>
-        let missingPetsData = {!! json_encode($missingPets->map(function($pet) { 
-            $report = $pet->missingReport->first(); 
-            return [ 
-                'pet_id' => $pet->pet_id, 
-                'pet_name' => $pet->pet_name, 
-                'species' => $pet->species, 
-                'breed' => $pet->breed, 
-                'gender' => $pet->gender, 
-                'age' => $pet->petInfo?->pet_age, 
-                'weight' => $pet->weight, 
-                'color' => $pet->color, 
-                'description' => $pet->notes, 
-                'location_barangay' => $report && $report->barangay ? $report->barangay->barangay_name : null, 
-                'location_description' => $report ? $report->location_description : null, 
-                'last_seen_at' => $report ? $report->last_seen_at : null, 
-                'pet_image' => $pet->pet_image ? asset('storage/'.$pet->pet_image) : null,
+        let missingPetsData = {!! json_encode($missingPets->map(function($pet) {
+            $report = $pet->missingReport->first();
+            $rawImage = $pet->pet_image;
+            $resolvedImage = null;
+            if ($rawImage) {
+                $candidate = public_path('images/missing pets/' . $rawImage);
+                if (file_exists($candidate)) {
+                    $resolvedImage = asset('images/missing pets/'.$rawImage);
+                } else {
+                    $baseName = pathinfo($rawImage, PATHINFO_FILENAME);
+                    foreach (['jpeg', 'jpg'] as $ext) {
+                        $alt = public_path('images/missing pets/' . $baseName . '.' . $ext);
+                        if (file_exists($alt)) {
+                            $resolvedImage = asset('images/missing pets/' . $baseName . '.' . $ext);
+                            break;
+                        }
+                    }
+                }
+            }
+            return [
+                'pet_id' => $pet->pet_id,
+                'pet_name' => $pet->pet_name,
+                'species' => $pet->species,
+                'breed' => $pet->breed,
+                'gender' => $pet->gender,
+                'age' => $pet->petInfo?->pet_age,
+                'weight' => $pet->weight,
+                'color' => $pet->color,
+                'description' => $pet->notes,
+                'location_barangay' => $report && $report->barangay ? $report->barangay->barangay_name : null,
+                'location_description' => $report ? $report->location_description : null,
+                'last_seen_at' => $report ? $report->last_seen_at : null,
+                'pet_image' => $resolvedImage,
                 'pet_status' => $pet->pet_status,
-            ]; 
+            ];
         })) !!};
         let currentPage = {{ $missingPets->currentPage() }};
         let lastPage = {{ $missingPets->lastPage() }};
