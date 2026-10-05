@@ -258,48 +258,53 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div id="pets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @forelse($missingPets as $pet)
-<div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->pet_id }})">
-    <div class="aspect-square bg-gray-200 relative overflow-hidden">
-         <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
-        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->pet_status) }}</span>
-    </div>
-    <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
-        <div class="space-y-2 text-sm">
-            <div class="flex justify-between">
-                <span class="text-gray-500">Age:</span>
-                <span class="text-gray-700 font-medium">{{ $pet->age }} years</span>
-            </div>
-            <div class="flex justify-between">
-                <span class="text-gray-500">Weight:</span>
-                <span class="text-gray-700 font-medium">{{ $pet->weight }}</span>
-            </div>
-            <div class="border-t pt-2 mt-2">
-                <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                <p class="text-gray-700 font-medium text-xs">
-                    @if($pet->missingReport->first() && $pet->missingReport->first()->last_seen_at)
-                        {{ $pet->missingReport->first()->last_seen_at->format('M d, Y - h:i A') }}
-                    @else
-                        N/A
-                    @endif
-                </p>
-            </div>
-            <div>
-                <p class="text-gray-500 text-xs mb-1">Location:</p>
-                <p class="text-gray-700 font-medium text-xs">
-                    @if($pet->missingReport->first())
-                        {{ $pet->missingReport->first()->barangay->barangay_name ?? 'N/A' }}
-                        @if($pet->missingReport->first()->location_description)
-                            - {{ $pet->missingReport->first()->location_description }}
-                        @endif
-                    @else
-                        N/A
-                    @endif
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->pet_id }})">
+                        <div class="aspect-square bg-gray-200 relative overflow-hidden">
+                            <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ $pet->species }}</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pet->gender == 'Male' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800' }}">
+                                    {{ $pet->gender == 'Male' ? '♂ Male' : '♀ Female' }}
+                                </span>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Age:</span>
+                                    <span class="text-gray-700 font-medium">{{ $pet->age ?? 'N/A' }} years</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Weight:</span>
+                                    <span class="text-gray-700 font-medium">{{ $pet->weight ?? 'N/A' }}</span>
+                                </div>
+                                <div class="border-t pt-2 mt-2">
+                                    <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
+                                    <p class="text-gray-700 font-medium text-xs">
+                                        @if($pet->missingReport->first() && $pet->missingReport->first()->last_seen_at)
+                                            {{ $pet->missingReport->first()->last_seen_at->format('M d, Y - h:i A') }}
+                                        @else
+                                            N/A
+                                        @endif
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs mb-1">Location:</p>
+                                    <p class="text-gray-700 font-medium text-xs">
+                                        @if($pet->missingReport->first())
+                                            {{ $pet->missingReport->first()->barangay->barangay_name ?? 'N/A' }}
+                                            @if($pet->missingReport->first()->location_description)
+                                                - {{ $pet->missingReport->first()->location_description }}
+                                            @endif
+                                        @else
+                                            N/A
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @empty
                 <div class="col-span-full text-center py-12">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -729,34 +734,37 @@
                 </div>`;
             } else {
                  pets.forEach(pet => {
-                     html += `
-                     <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(${pet.pet_id})">
-                         <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                               <img src="${pet.pet_image ? pet.pet_image : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image'}" alt="${pet.pet_name}" class="w-full h-full object-cover pet-image">
-                             <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">${pet.pet_status ? pet.pet_status.toUpperCase() : ''}</span>
-                         </div>
-                         <div class="p-4">
-                              <h3 class="text-lg font-bold text-gray-900 mb-2">${pet.pet_name}</h3>
-                             <div class="space-y-2 text-sm">
-                                 <div class="flex justify-between">
-                                     <span class="text-gray-500">Age:</span>
-                                     <span class="text-gray-700 font-medium">${pet.age || 'N/A'} years</span>
-                                 </div>
-                                 <div class="flex justify-between">
-                                     <span class="text-gray-500">Weight:</span>
-                                     <span class="text-gray-700 font-medium">${pet.weight || 'N/A'}</span>
-                                 </div>
-                                 <div class="border-t pt-2 mt-2">
-                                     <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                                     <p class="text-gray-700 font-medium text-xs">${pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}</p>
-                                 </div>
-                                 <div>
-                                     <p class="text-gray-500 text-xs mb-1">Location:</p>
-                                     <p class="text-gray-700 font-medium text-xs">${pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A'}</p>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>`;
+                      html += `
+                      <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(${pet.pet_id})">
+                          <div class="aspect-square bg-gray-200 relative overflow-hidden">
+                                <img src="${pet.pet_image ? pet.pet_image : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image'}" alt="${pet.pet_name}" class="w-full h-full object-cover pet-image">
+                          </div>
+                          <div class="p-4">
+                               <h3 class="text-lg font-bold text-gray-900 mb-2">${pet.pet_name}</h3>
+                               <div class="flex flex-wrap gap-2 mb-3">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${pet.species}</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${pet.gender === 'Male' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800'}">${pet.gender === 'Male' ? '♂ Male' : '♀ Female'}</span>
+                               </div>
+                              <div class="space-y-2 text-sm">
+                                  <div class="flex justify-between">
+                                      <span class="text-gray-500">Age:</span>
+                                      <span class="text-gray-700 font-medium">${pet.age || 'N/A'} years</span>
+                                  </div>
+                                  <div class="flex justify-between">
+                                      <span class="text-gray-500">Weight:</span>
+                                      <span class="text-gray-700 font-medium">${pet.weight || 'N/A'}</span>
+                                  </div>
+                                  <div class="border-t pt-2 mt-2">
+                                      <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
+                                      <p class="text-gray-700 font-medium text-xs">${pet.last_seen_at ? (() => { const d = new Date(pet.last_seen_at); const datePart = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); const timePart = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); return datePart + ' - ' + timePart; })() : 'N/A'}</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-gray-500 text-xs mb-1">Location:</p>
+                                      <p class="text-gray-700 font-medium text-xs">${pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A'}</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>`;
                 });
             }
             
@@ -829,8 +837,8 @@
             const img = document.getElementById('modalPetImage');
             const placeholder = document.getElementById('modalPetImagePlaceholder');
             
-            if (pet.photo_img) {
-                img.src = pet.photo_img;
+            if (pet.pet_image) {
+                img.src = pet.pet_image;
                 img.classList.remove('hidden');
                 placeholder.classList.add('hidden');
             } else {
