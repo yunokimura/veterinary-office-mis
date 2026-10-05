@@ -46,17 +46,17 @@
     @include('Client.partials.navbar')
 
      <!-- Page Banner -->
-    <section class="hero-bg py-16">
+    <section class="hero-bg py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Our Services</h1>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Our Veterinary Services</h1>
             <p class="text-lg max-w-2xl mx-auto">Comprehensive veterinary services to keep your pets healthy and happy</p>
         </div>
     </section>
 
     <!-- Services Section -->
-    <section class="py-16 bg-gray-50">
+    <section class="py-10 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="grid md:grid-cols-3 gap-8">
                 <!-- Card 1: Pet Registration -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
                     <div class="h-48 bg-gradient-to-br from-primary to-primary-light p-6 flex items-center justify-center">
@@ -101,51 +101,7 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Kapon (Spay/Neuter) -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
-                    <div class="h-48 bg-gradient-to-br from-purple-500 to-purple-600 p-6 flex items-center justify-center">
-                        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Kapon (Spay/Neuter)</h3>
-                        <p class="text-gray-600 mb-4">Help control the pet population and give your furry friends a healthier life with our spay and neuter services.</p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Safe and professional surgery</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Low-cost program available</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Pre and post-surgery care</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span class="text-gray-700 text-sm">Reduces stray animal population</span>
-                            </li>
-                        </ul>
-                        <a href="{{ url('/kapon') }}" class="w-full block text-center bg-purple-500 text-white py-3 rounded-xl font-semibold hover:bg-purple-600 transition-colors">
-                            Learn More
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Card 3: Vaccination -->
+                <!-- Card 2: Anti-Rabies Vaccination -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
                     <div class="h-48 bg-sky-600 p-6 flex items-center justify-center">
                         <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
@@ -189,9 +145,9 @@
                     </div>
                 </div>
 
-                <!-- Card 4: Adoption -->
+                <!-- Card 3: Kapon (Spay/Neuter) -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
-                    <div class="h-48 bg-amber-500 p-6 flex items-center justify-center">
+                    <div class="h-48 bg-gradient-to-br from-purple-500 to-purple-600 p-6 flex items-center justify-center">
                         <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -199,35 +155,35 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Adoption</h3>
-                        <p class="text-gray-600 mb-4">Give a loving home to a furry friend in need. Browse our available pets waiting for their forever families.</p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Kapon (Spay/Neuter)</h3>
+                        <p class="text-gray-600 mb-4">Help control the pet population and give your furry friends a healthier life with our spay and neuter services.</p>
                         <ul class="space-y-2 mb-6">
                             <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span class="text-gray-700 text-sm">Browse available pets</span>
+                                <span class="text-gray-700 text-sm">Safe and professional surgery</span>
                             </li>
                             <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span class="text-gray-700 text-sm">Health checked & vaccinated</span>
+                                <span class="text-gray-700 text-sm">Low-cost program available</span>
                             </li>
                             <li class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span class="text-gray-700 text-sm">Adoption support & guidance</span>
+                                <span class="text-gray-700 text-sm">Pre and post-surgery care</span>
                             </li>
-                            <li class="flex items-center space-x-2 invisible">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <li class="flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span class="text-gray-700 text-sm">&nbsp;</span>
+                                <span class="text-gray-700 text-sm">Reduces stray animal population</span>
                             </li>
                         </ul>
-                        <a href="{{ url('/adoption') }}" class="w-full block text-center bg-amber-500 text-white py-3 rounded-xl font-semibold hover:bg-amber-600 transition-colors">
+                        <a href="{{ url('/kapon') }}" class="w-full block text-center bg-purple-500 text-white py-3 rounded-xl font-semibold hover:bg-purple-600 transition-colors">
                             Learn More
                         </a>
                     </div>
