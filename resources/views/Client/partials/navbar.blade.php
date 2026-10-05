@@ -26,10 +26,6 @@
                             </svg>
                         </button>
                         <div id="servicesDropdown" class="hidden absolute top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                            <a href="{{ url('/services') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fa-solid fa-circle-info text-blue-500 w-4"></i>
-                                <span>Service Overview</span>
-                            </a>
                             <a href="{{ url('/pet-registration') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                 <i class="fa-solid fa-clipboard-list text-emerald-500 w-4"></i>
                                 <span>Pet Registration</span>
@@ -121,10 +117,6 @@
                     </svg>
                 </button>
                 <div id="mobileServicesMenu" class="hidden pl-4 space-y-1">
-                    <a href="{{ url('/services') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
-                        <i class="fa-solid fa-circle-info text-blue-500 w-4"></i>
-                        <span>Service Overview</span>
-                    </a>
                     <a href="{{ url('/pet-registration') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
                         <i class="fa-solid fa-clipboard-list text-emerald-500 w-4"></i>
                         <span>Pet Registration</span>
