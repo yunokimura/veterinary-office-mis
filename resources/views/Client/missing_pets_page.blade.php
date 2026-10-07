@@ -76,22 +76,15 @@
                          Help reunite lost pets with their owners. Report missing pets quickly and reach out to the community for assistance.
                      </p>
 
-                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
-                         @auth
-                             <a href="{{ url('/missing-pets/form') }}" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                                 <span>Report a Missing Pet</span>
-                                 <i class="fa-solid fa-arrow-right text-sm"></i>
-                             </a>
-                         @else
-                             <button onclick="showLoginPrompt()" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                                 <span>Report a Missing Pet</span>
-                                 <i class="fa-solid fa-arrow-right text-sm"></i>
-                             </button>
-                         @endauth
-                         <a href="#" class="w-full sm:w-auto bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center space-x-2">
-                             <span>View Missing Pets</span>
-                         </a>
-                     </div>
+                      <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
+                          <a href="{{ url('/missing-pets/report/guest?type=missing') }}" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                              <span>Report a Missing Pet</span>
+                              <i class="fa-solid fa-arrow-right text-sm"></i>
+                          </a>
+                          <a href="#" class="w-full sm:w-auto bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center space-x-2">
+                              <span>View Missing Pets</span>
+                          </a>
+                      </div>
                  </div>
 
                  <div class="md:col-span-5 lg:col-span-6">
@@ -666,9 +659,9 @@
         
         function filterPets(filterType, filterValue) {
             if (filterType === 'filter') {
-                // Reset species filter when clicking "All Pets"
                 if (filterValue === 'all') {
                     currentSpecies = 'all';
+                    currentGender = 'all';
                 }
             } else if (filterType === 'species') {
                 if (currentSpecies !== 'all' && currentSpecies === filterValue) {
@@ -719,20 +712,21 @@
             const breedsParam = breeds || (currentBreeds.length > 0 ? currentBreeds.join(',') : '');
             const locationsParam = locations || (currentLocations.length > 0 ? currentLocations.join(',') : '');
             
-            let url = '/missing-pets/paginate?page=' + page;
+            const params = new URLSearchParams();
+            params.set('page', page);
+            if (speciesParam && speciesParam !== 'all') params.set('species', speciesParam);
+            if (genderParam && genderParam !== 'all') params.set('gender', genderParam);
+            if (breedsParam) params.set('breeds', breedsParam);
+            if (locationsParam) params.set('location', locationsParam);
             
-            if (speciesParam && speciesParam !== 'all') {
-                url += '&species=' + speciesParam;
+            const queryString = params.toString();
+            const browserUrl = '/missing-pets' + (queryString ? '?' + queryString : '');
+            
+            if (history.pushState) {
+                history.pushState({page: page, species: speciesParam, gender: genderParam, breeds: breedsParam, locations: locationsParam}, '', browserUrl);
             }
-            if (genderParam && genderParam !== 'all') {
-                url += '&gender=' + genderParam;
-            }
-            if (breedsParam) {
-                url += '&breeds=' + breedsParam;
-            }
-            if (locationsParam) {
-                url += '&location=' + locationsParam;
-            }
+            
+            let url = '/missing-pets/paginate?' + queryString;
             
             fetch(url)
                 .then(response => response.json())

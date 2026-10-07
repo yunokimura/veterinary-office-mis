@@ -1204,17 +1204,20 @@ Route::get('/missing-pets/paginate', function (Request $request) {
         $query->where('species', strtolower($request->species));
     }
 
-    if ($request->filled('gender') && in_array($request->gender, ['Male', 'Female'])) {
-        $query->where('gender', strtolower($request->gender));
+    if ($request->filled('gender')) {
+        $gender = strtolower($request->gender);
+        if (in_array($gender, ['male', 'female'])) {
+            $query->where('gender', $gender);
+        }
     }
 
     if ($request->filled('breeds')) {
-        $breeds = explode(',', $request->breeds);
+        $breeds = array_map('trim', explode(',', $request->breeds));
         $query->whereIn('breed', $breeds);
     }
 
     if ($request->filled('location')) {
-        $locations = explode(',', $request->location);
+        $locations = array_map('trim', explode(',', $request->location));
         $query->whereHas('missingReport.barangay', function ($q) use ($locations) {
             $q->whereIn('barangay_name', $locations);
         });
@@ -1224,20 +1227,37 @@ Route::get('/missing-pets/paginate', function (Request $request) {
 
     $pets = $missingPets->map(function ($pet) {
         $report = $pet->missingReport->first();
+        $rawImage = $pet->pet_image;
+        $resolvedImage = null;
+        if ($rawImage) {
+            $candidate = public_path('images/missing pets/' . $rawImage);
+            if (file_exists($candidate)) {
+                $resolvedImage = asset('images/missing pets/'.$rawImage);
+            } else {
+                $baseName = pathinfo($rawImage, PATHINFO_FILENAME);
+                foreach (['jpeg', 'jpg'] as $ext) {
+                    $alt = public_path('images/missing pets/' . $baseName . '.' . $ext);
+                    if (file_exists($alt)) {
+                        $resolvedImage = asset('images/missing pets/' . $baseName . '.' . $ext);
+                        break;
+                    }
+                }
+            }
+        }
         return [
             'pet_id' => $pet->pet_id,
             'pet_name' => $pet->pet_name,
             'species' => $pet->species,
             'breed' => $pet->breed,
             'gender' => $pet->gender,
-            'age' => $pet->age,
+            'age' => $pet->petInfo?->pet_age,
             'weight' => $pet->weight,
             'color' => $pet->color,
             'description' => $pet->notes,
             'location_barangay' => $report && $report->barangay ? $report->barangay->barangay_name : null,
             'location_description' => $report ? $report->location_description : null,
             'last_seen_at' => $report ? $report->last_seen_at : null,
-            'pet_image' => $pet->pet_image ? asset('storage/'.$pet->pet_image) : null,
+            'pet_image' => $resolvedImage,
             'pet_status' => $pet->pet_status,
         ];
     });
