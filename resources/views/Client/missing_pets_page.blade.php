@@ -77,10 +77,17 @@
                      </p>
 
                       <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
-                          <a href="{{ url('/missing-pets/report/guest?type=missing') }}" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                              <span>Report a Missing Pet</span>
-                              <i class="fa-solid fa-arrow-right text-sm"></i>
-                          </a>
+                          @auth
+                              <a href="{{ url('/missing-pets/form') }}" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                  <span>Report a Missing Pet</span>
+                                  <i class="fa-solid fa-arrow-right text-sm"></i>
+                              </a>
+                          @else
+                              <a href="{{ url('/missing-pets/report/guest?type=missing') }}" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                  <span>Report a Missing Pet</span>
+                                  <i class="fa-solid fa-arrow-right text-sm"></i>
+                              </a>
+                          @endauth
                           <a href="#" class="w-full sm:w-auto bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center space-x-2">
                               <span>View Missing Pets</span>
                           </a>

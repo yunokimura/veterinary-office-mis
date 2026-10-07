@@ -22,32 +22,11 @@
     </script>
 </head>
 <body class="font-sans bg-gray-50 min-h-screen">
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
-                        <img src="{{ asset('images/Dasmalogof.png') }}" alt="Dasmariñas City Logo" class="w-full h-full object-contain">
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-bold text-gray-900">Dasmariñas City Veterinary Services</h1>
-                        <p class="text-sm text-gray-500">Official Veterinary Office of Dasmariñas City</p>
-                    </div>
-                </div>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="{{ route('public.home') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>
-                    <a href="{{ url('/about-us') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">About Us</a>
-                    <a href="{{ url('/services') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Services</a>
-                    <a href="{{ url('/missing-pets') }}" class="text-primary font-medium transition-colors">Missing Pets</a>
-                </nav>
-                <div class="flex items-center space-x-4">
-                    <a href="{{ url('/missing-pets/report') }}" class="text-primary font-medium hover:text-primary-light transition-colors">Back to Options</a>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <main class="py-10">
+<!-- Header -->
+@include('Client.partials.navbar')
+
+<main class="py-10">
         <div class="max-w-4xl mx-auto px-6">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold">{{ ucfirst($reportType) }} PET REPORT</h2>
@@ -239,10 +218,7 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-200 mt-12">
-        <div class="max-w-6xl mx-auto px-6 py-6 text-center text-gray-600 text-sm">
-            <p>© 2025 Dasmariñas City Veterinary Services. All rights reserved.</p>
-        </div>
-    </footer>
+    @include('Client.partials.footer')
+
 </body>
 </html>
