@@ -83,99 +83,6 @@
                 <input type="hidden" name="selected_pets" id="selectedPetsData" value="">
                 <div id="selectedPetsArrayContainer"></div>
 
-                <!-- Card 1: Owner's Information -->
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
-                    <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            <h4 class="text-sm font-semibold text-white">OWNER'S INFORMATION</h4>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <!-- Name -->
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Pet Owner's Name <span class="text-red-500">*</span>
-                                    <span class="text-gray-500 text-xs ml-2">(First name and Last name)</span>
-                                </label>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <input type="text" name="first_name" placeholder="First Name" value="{{ old('first_name', $petOwner->first_name ?? '') }}"
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                    <input type="text" name="last_name" placeholder="Last Name" value="{{ old('last_name', $petOwner->last_name ?? '') }}"
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                </div>
-                            </div>
-
-                            <!-- Email -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Email <span class="text-red-500">*</span>
-                                </label>
-                                <input type="email" name="email" placeholder="Enter Email" value="{{ old('email', $user->email ?? '') }}"
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            </div>
-
-                            <!-- Mobile Number -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Mobile Number <span class="text-red-500">*</span>
-                                </label>
-                                <div class="flex">
-                                    <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                                        +63
-                                    </span>
-                                    <input type="tel" name="mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('mobile_number', $petOwner->phone_number ?? '') }}"
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                </div>
-                            </div>
-
-                            <!-- Alternate Mobile Number -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Alternate Mobile Number
-                                </label>
-                                <div class="flex">
-                                    <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                                        +63
-                                    </span>
-                                    <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('alt_mobile_number', $petOwner->alternate_phone_number ?? '') }}"
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                </div>
-                            </div>
-
-                            <!-- House No. / Unit No. -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    House No. / Unit No. <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->blk_lot_ph ?? '') }}"
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            </div>
-
-                            <!-- Street -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Street <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->street ?? '') }}"
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            </div>
-
-                            <!-- Barangay -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Barangay <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->barangay ?? '') }}"
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Card 2: Pet's Information -->
                 <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
                     <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
@@ -478,7 +385,7 @@
                                 <div class="min-w-0">
                                     <p class="text-xs text-gray-500">Address</p>
                                     <p class="text-sm text-gray-900">
-                                        {{ $petOwner->blk_lot_ph ?? '' }}, {{ $petOwner->street ?? '' }}, {{ $petOwner->barangay ?? '' }}, Dasmariñas City
+                                        {{ $petOwner->address->block_lot_phase ?? '' }}, {{ $petOwner->address->street ?? '' }}, {{ $petOwner->address->barangay->barangay_name ?? '' }}, Dasmariñas City
                                     </p>
                                 </div>
                             </div>
@@ -567,8 +474,14 @@
                                     </div>
                                 </div>
                                 @if(!empty($pet['image']))
+                                @php
+                                    $petImagePath = $pet['image'];
+                                    if (!str_contains($petImagePath, 'images/pets') && !str_contains($petImagePath, 'http')) {
+                                        $petImagePath = 'images/pets/' . basename($petImagePath);
+                                    }
+                                @endphp
                                 <div class="ml-2 flex-shrink-0">
-                                    <img src="{{ asset('storage/' . $pet['image']) }}" alt="{{ $pet['name'] }}" class="w-12 h-12 rounded-full object-cover">
+                                    <img src="{{ asset($petImagePath) }}" alt="{{ $pet['name'] }}" class="w-12 h-12 rounded-full object-cover">
                                 </div>
                                 @endif
                             </label>
@@ -720,7 +633,12 @@
 
             let imageHtml = '';
             if (pet.image) {
-                imageHtml = `<img src="{{ asset('storage/' . '') }}${pet.image}" alt="${pet.name}" class="w-10 h-10 rounded-full object-cover">`;
+                let imgPath = pet.image;
+                if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
+                    imgPath = 'images/pets/' + imgPath.split('/').pop();
+                }
+                const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-10 h-10 rounded-full object-cover">`;
             } else {
                 imageHtml = `<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
