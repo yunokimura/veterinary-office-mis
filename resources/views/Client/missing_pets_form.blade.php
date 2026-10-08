@@ -92,7 +92,9 @@
                             </svg>
                             <h4 class="text-sm font-semibold text-white">PET'S INFORMATION</h4>
                         </div>
-                        <span class="text-xs text-emerald-300">Basic Info</span>
+                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-900 text-white text-xs font-semibold">
+                            <span id="petInfoSelectedCount">0 Pets Selected</span>
+                        </span>
                     </div>
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-3">
@@ -610,9 +612,13 @@
     function updateSidebarSelectedPets() {
         const sidebarContainer = document.getElementById('sidebarSelectedPets');
         const countSpan = document.getElementById('selectedPetCount');
+        const petInfoCountSpan = document.getElementById('petInfoSelectedCount');
         if (!sidebarContainer) return;
 
-        countSpan.textContent = selectedPets.length;
+        const count = selectedPets.length;
+        const label = count === 1 ? '1 Pet Selected' : count + ' Pets Selected';
+        if (countSpan) countSpan.textContent = count;
+        if (petInfoCountSpan) petInfoCountSpan.textContent = label;
 
         if (selectedPets.length === 0) {
             sidebarContainer.innerHTML = '<p class="text-sm text-gray-500">No pets selected yet.</p>';
