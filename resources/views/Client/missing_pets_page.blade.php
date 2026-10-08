@@ -904,62 +904,62 @@
     @include('Client.partials.footer')
 
     <!-- Report Type Selection Modal -->
-    <div id="reportTypeModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/60 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 sm:p-8 transform transition-all relative">
+    <div id="reportTypeModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/60 flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 sm:p-8 transform transition-all relative">
             <button type="button" onclick="closeModal('reportTypeModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
 
             <div class="text-center mb-6">
-                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900">Select Report Type</h3>
-                <p class="text-sm text-gray-500 mt-1 max-w-md mx-auto">
+                <h3 class="text-3xl font-bold text-gray-900">Select Report Type</h3>
+                <p class="text-base text-gray-500 mt-1 max-w-lg mx-auto">
                     Please choose whether you are looking for a lost pet or reporting a pet you have found.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
-                <div onclick="selectReportFlow('missing')" class="border-2 border-gray-200 hover:border-amber-500 hover:bg-amber-50/40 rounded-xl p-5 cursor-pointer transition flex flex-col justify-between group">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 my-6">
+                <div onclick="selectReportFlow('missing')" class="border-2 border-gray-200 hover:border-amber-500 hover:bg-amber-50/40 rounded-xl p-6 cursor-pointer transition flex flex-col justify-between group">
                     <div>
-                        <div class="w-10 h-10 rounded-lg bg-amber-500 text-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <div class="w-12 h-12 rounded-lg bg-amber-500 text-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
-                        <h4 class="font-bold text-gray-900 text-base mb-1">Report a Missing Pet</h4>
-                        <p class="text-xs text-gray-500 leading-relaxed">
+                        <h4 class="font-bold text-gray-900 text-lg mb-1">Report a Missing Pet</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">
                             I lost my pet and want to post an alert so the community can help me locate them.
                         </p>
                     </div>
-                    <button type="button" class="mt-4 w-full bg-amber-500 group-hover:bg-amber-600 text-white text-xs font-bold py-2 px-3 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                    <button type="button" class="mt-4 w-full bg-amber-500 group-hover:bg-amber-600 text-white text-sm font-bold py-2.5 px-4 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
                         <span>Start Missing Report</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
                 </div>
 
-                <div onclick="selectReportFlow('found')" class="border-2 border-gray-200 hover:border-emerald-600 hover:bg-emerald-50/40 rounded-xl p-5 cursor-pointer transition flex flex-col justify-between group">
+                <div onclick="selectReportFlow('found')" class="border-2 border-gray-200 hover:border-emerald-600 hover:bg-emerald-50/40 rounded-xl p-6 cursor-pointer transition flex flex-col justify-between group">
                     <div>
-                        <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <div class="w-12 h-12 rounded-lg bg-emerald-600 text-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                         </div>
-                        <h4 class="font-bold text-gray-900 text-base mb-1">Report a Found Pet</h4>
-                        <p class="text-xs text-gray-500 leading-relaxed">
+                        <h4 class="font-bold text-gray-900 text-lg mb-1">Report a Found Pet</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">
                             I found a lost or stray pet and want to help reconnect them with their owner.
                         </p>
                     </div>
-                    <button type="button" class="mt-4 w-full bg-emerald-600 group-hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                    <button type="button" class="mt-4 w-full bg-emerald-600 group-hover:bg-emerald-700 text-white text-sm font-bold py-2.5 px-4 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
                         <span>Start Found Report</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
@@ -967,7 +967,7 @@
             </div>
 
             <div class="text-center pt-2">
-                <button type="button" onclick="closeModal('reportTypeModal')" class="text-xs font-semibold text-gray-400 hover:text-gray-600">
+                <button type="button" onclick="closeModal('reportTypeModal')" class="text-sm font-semibold text-gray-400 hover:text-gray-600">
                     Cancel and go back
                 </button>
             </div>
