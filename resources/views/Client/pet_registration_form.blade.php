@@ -16,15 +16,18 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        primary: {
-                            DEFAULT: '#066D33',
-                            light: '#077a40',
-                            dark: '#055a29',
-                        },
-                        secondary: {
-                            DEFAULT: '#07A13F',
-                            light: '#08b148',
-                            dark: '#068c35',
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
                         }
                     }
                 }
@@ -45,13 +48,36 @@
             background-color: #066D33;
             color: white;
         }
+
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: #066D33;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50">
     @include('Client.partials.navbar')
 
      <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Session Status -->
+        @if (session('status'))
+            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        <!-- Validation Errors -->
+        @if ($errors->any())
+            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
+                <strong>Please fix the following errors:</strong>
+                <ul class="list-disc ml-5 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- Success/Info Messages -->
         @if(session('info'))
             <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -67,352 +93,492 @@
         <!-- Page Title -->
         <div class="text-center mb-8">
             <h2 class="text-3xl font-bold text-gray-900">Pet Registration</h2>
-            <p class="text-gray-600 mt-2">Register your pet with Dasmariñas City Veterinary Services</p>
             <p class="text-gray-500 text-sm mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
         </div>
 
-        <!-- Form Container -->
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-            <form id="petRegistrationForm" method="POST" action="{{ url('/pet-registration/form') }}" enctype="multipart/form-data">
-                @csrf
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Main Content -->
+            <div class="lg:col-span-8 space-y-6">
+                <form id="petRegistrationForm" method="POST" action="{{ url('/pet-registration/form') }}" enctype="multipart/form-data">
+                    @csrf
                 
-                <!-- Profile Picture Section -->
-                <div class="mb-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Profile Picture</label>
-                    <div class="flex items-center space-x-6">
-                        <!-- Placeholder Image (Dog with Cat) -->
-                        <div class="shrink-0">
-                            <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-primary-light relative">
-                                <img id="petImagePreview" src="{{ asset('images/pet.png') }}" alt="Pet Profile" class="w-full h-full object-cover">
-                                <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all flex items-center justify-center cursor-pointer" onclick="document.getElementById('petImage').click()">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white opacity-0 hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
+<!-- Card 1: Pet Profile & Basic Info -->
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Pet Profile & Basic Information</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+
+                            <!-- Profile Picture Section -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Profile Picture</label>
+                                <div class="flex items-center space-x-6">
+                                    <!-- Placeholder Image (Dog with Cat) -->
+                                    <div class="shrink-0">
+                                        <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-emerald-300 relative">
+                                            <img id="petImagePreview" src="{{ asset('images/pet.png') }}" alt="Pet Profile" class="w-full h-full object-cover">
+                                            <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all flex items-center justify-center cursor-pointer" onclick="document.getElementById('petImage').click()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white opacity-0 hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="petImage" name="pet_image" accept="image/*" class="hidden" onchange="previewImage(event)">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Upload a photo of your pet</p>
+                                        <p class="text-xs text-gray-400">Click the image to upload</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <input type="file" id="petImage" name="pet_image" accept="image/*" class="hidden" onchange="previewImage(event)">
-                        <div>
-                            <p class="text-sm text-gray-600">Upload a photo of your pet</p>
-                            <p class="text-xs text-gray-400">Click the image to upload</p>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Pet Name -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Your Pet's Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="pet_name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter your pet's name">
-                </div>
-
-                <!-- Pet Type -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">What kind of pet do you have? <span class="text-red-500">*</span></label>
-                    <div class="flex space-x-6">
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="radio" name="pet_type" value="dog" class="form-radio h-5 w-5 text-primary" onchange="updateBreedOptions()">
-                            <span class="ml-3 text-gray-700 font-medium">Dog</span>
-                        </label>
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="radio" name="pet_type" value="cat" class="form-radio h-5 w-5 text-primary" onchange="updateBreedOptions()">
-                            <span class="ml-3 text-gray-700 font-medium">Cat</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Gender -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Gender <span class="text-red-500">*</span></label>
-                    <div class="flex space-x-6">
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="radio" name="gender" value="male" class="form-radio h-5 w-5 text-primary">
-                            <span class="ml-3 text-gray-700 font-medium">Male</span>
-                        </label>
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="radio" name="gender" value="female" class="form-radio h-5 w-5 text-primary">
-                            <span class="ml-3 text-gray-700 font-medium">Female</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Neutered Checkbox -->
-                <div class="mb-6">
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="isNeutered" name="is_neutered" class="form-checkbox h-5 w-5 text-primary rounded">
-                        <span class="ml-3 text-gray-700 font-medium">My pet is neutered</span>
-                    </label>
-                </div>
-
-                <hr class="border-gray-300 mb-6">
-
-                <!-- Crossbreed Checkbox -->
-                <div class="mb-6">
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="isCrossbreed" name="is_crossbreed" class="form-checkbox h-5 w-5 text-primary rounded" onchange="toggleCrossbreed()">
-                        <span class="ml-3 text-gray-700 font-medium">My pet is a crossbreed</span>
-                    </label>
-                </div>
-
-                <!-- Pet Breed -->
-                <div class="mb-6" id="breedSection">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Pet Breed <span class="text-red-500">*</span>
-                        <span id="breedLimitText" class="text-xs text-gray-500 font-normal ml-1">(select one)</span>
-                    </label>
-                    
-                    <!-- Dropdown trigger and container -->
-                    <div class="relative">
-                        <!-- Display selected breed (click to open) -->
-                        <div id="breedDisplay" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white cursor-pointer hover:border-gray-400" onclick="toggleBreedDropdown()">
-                            <span id="selectedBreedText" class="text-gray-500">Select a breed</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                        
-                        <!-- Dropdown menu -->
-                        <div id="breedDropdown" class="hidden absolute z-10 w-full mt-1 border border-gray-300 rounded-lg bg-white shadow-lg max-h-64">
-                            <!-- Search inside dropdown -->
-                            <div class="p-2 border-b border-gray-200">
-                                <input type="text" id="breedSearch" placeholder="Search breed..." class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary" onkeyup="filterBreeds()" onclick="event.stopPropagation()">
+                            <!-- Pet Name -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Your Pet's Name <span class="text-red-500">*</span></label>
+                                <input type="text" name="pet_name" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter your pet's name" required>
                             </div>
-                            
-                            <!-- Options -->
-                            <div id="breedOptions" class="max-h-48 overflow-y-auto py-1">
-                                <!-- Single breed mode - checkboxes -->
-                                <div id="singleBreedOptions">
-                                    <!-- Options populated by JS -->
-                                </div>
-                                
-                                <!-- Crossbreed mode - checkboxes -->
-                                <div id="crossbreedOptions" class="hidden">
-                                    <!-- Options populated by JS -->
+
+                            <!-- Pet Type -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">What kind of pet do you have? <span class="text-red-500">*</span></label>
+                                <div class="flex space-x-6">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="pet_type" value="dog" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required>
+                                        <span class="ml-3 text-gray-700 font-medium">Dog</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="pet_type" value="cat" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required>
+                                        <span class="ml-3 text-gray-700 font-medium">Cat</span>
+                                    </label>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Hidden input for breed -->
-                    <input type="hidden" id="petBreedInput" name="pet_breed" value="">
-                    
-                    <!-- Display selected breed tags -->
-                    <div id="selectedBreedDisplay" class="mt-3 hidden">
-                        <div class="flex flex-wrap gap-2" id="selectedBreedTags"></div>
-                    </div>
-                </div>
 
-                <!-- I know my pet's birthdate -->
-                <div class="mb-6">
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="knowBirthdate" name="know_birthdate" class="form-checkbox h-5 w-5 text-primary rounded" onchange="toggleBirthdate()">
-                        <span class="ml-3 text-gray-700 font-medium">I know my pet's birthdate</span>
-                    </label>
-                </div>
-
-                <!-- Pet's Birthdate (shown if checkbox is checked) -->
-                <div id="birthdateSection" class="mb-6 hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Pet's Birthdate</label>
-                    <input type="date" id="petBirthdate" name="pet_birthdate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
-                </div>
-
-                <!-- Exact Pet Age -->
-                <div id="ageSection" class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Pet Age</label>
-                    <input type="text" id="petAge" name="pet_age" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="e.g. 2 years 3 months">
-                    <p class="text-xs text-gray-500 mt-1">Enter exact age, e.g. "3 months", "1 year", "2 years 6 months"</p>
-                </div>
-
-                <!-- Pet Weight -->
-                </div>
-
-                <!-- Pet Weight -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Pet's Weight <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <input type="text" id="petWeight" name="pet_weight" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" maxlength="6" oninput="updateWeightSuffix(); validateWeight(this)">
-                        <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none hidden">kg</span>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-1">If you do not know, type "N/A"</p>
-                </div>
-
-                <hr class="border-gray-300 mb-6">
-
-                <h3 class="text-lg font-semibold text-gray-900 mb-6">Unique Identifying Features</h3>
-
-                <!-- Unique Body Mark -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Unique Body Mark <span class="text-red-500">*</span></label>
-                    <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-primary transition-colors inline-block">
-                        <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-48 h-48 object-cover rounded-lg">
-                        <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)" required>
-                        <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn">×</button>
-                        <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-primary text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                            Click to upload
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Body Mark Details -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Body Mark Details <span class="text-red-500">*</span></label>
-                    <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Describe any unique marks, scars, or distinguishing features..." required></textarea>
-                </div>
-
-                <!-- Additional View Photos -->
-                <div class="mb-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Additional Photos</label>
-                    <p class="text-xs text-gray-500 mb-4">Upload front, side, and top-down views of your pet</p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                        <!-- Front View -->
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-2">Front View</label>
-                            <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-primary transition-colors">
-                                <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
-                                <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')">
-                                <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn">×</button>
-                                <button type="button" onclick="document.getElementById('frontImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-primary text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                    Click to upload
-                                </button>
+                            <!-- Gender -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Gender <span class="text-red-500">*</span></label>
+                                <div class="flex space-x-6">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="gender" value="male" class="form-radio h-5 w-5 text-emerald-600" required>
+                                        <span class="ml-3 text-gray-700 font-medium">Male</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="gender" value="female" class="form-radio h-5 w-5 text-emerald-600" required>
+                                        <span class="ml-3 text-gray-700 font-medium">Female</span>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Side View -->
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-2">Side View</label>
-                            <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-primary transition-colors">
-                                <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
-                                <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')">
-                                <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn">×</button>
-                                <button type="button" onclick="document.getElementById('sideImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-primary text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                    Click to upload
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Top-Down View -->
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-2">Top-Down View</label>
-                            <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-2 hover:border-primary transition-colors">
-                                <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
-                                <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')">
-                                <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn">×</button>
-                                <button type="button" onclick="document.getElementById('topImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-primary text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                    Click to upload
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <hr class="border-gray-300 mb-6">
-
-                <!-- Vaccination History -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Vaccination History</h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Core Vaccines -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Core Vaccines</label>
-                            <div id="coreVaccineOptions" class="space-y-2">
+                            <!-- Neutered Checkbox -->
+                            <div>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" class="form-checkbox h-5 w-5 text-primary rounded">
-                                    <span class="ml-3 mr-4 text-gray-700">Anti-Rabies</span>
+                                    <input type="checkbox" id="isNeutered" name="is_neutered" class="form-checkbox h-5 w-5 text-emerald-600 rounded">
+                                    <span class="ml-3 text-gray-700 font-medium">My pet is neutered</span>
                                 </label>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Optional Vaccines -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Optional Vaccines</label>
-                            <div id="optionalVaccineOptions" class="space-y-2">
-                                <!-- Populated by JS -->
+<!-- Card 2: Breed Information -->
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Breed Information</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+
+                            <!-- Crossbreed Checkbox -->
+                            <div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="isCrossbreed" name="is_crossbreed" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleCrossbreed()">
+                                    <span class="ml-3 text-gray-700 font-medium">My pet is a crossbreed</span>
+                                </label>
+                            </div>
+
+                            <!-- Pet Breed -->
+                            <div id="breedSection">
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
+                                    Pet Breed <span class="text-red-500">*</span>
+                                    <span id="breedLimitText" class="text-xs text-gray-500 font-normal ml-1">(select one)</span>
+                                </label>
+
+                                <!-- Dropdown trigger and container -->
+                                <div class="relative">
+                                    <!-- Display selected breed (click to open) -->
+                                    <div id="breedDisplay" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg bg-white cursor-pointer hover:border-slate-400 transition-colors" onclick="toggleBreedDropdown()">
+                                        <span id="selectedBreedText" class="text-gray-500">Select a breed</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+
+                                    <!-- Dropdown menu -->
+                                    <div id="breedDropdown" class="hidden absolute z-10 w-full mt-1 border border-gray-300 rounded-lg bg-white shadow-lg max-h-64">
+                                        <!-- Search inside dropdown -->
+                                        <div class="p-2 border-b border-gray-200">
+                                            <input type="text" id="breedSearch" placeholder="Search breed..." class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-emerald-500 focus:bg-white" onkeyup="filterBreeds()" onclick="event.stopPropagation()">
+                                        </div>
+
+                                        <!-- Options -->
+                                        <div id="breedOptions" class="max-h-48 overflow-y-auto py-1">
+                                            <!-- Single breed mode - checkboxes -->
+                                            <div id="singleBreedOptions">
+                                                <!-- Options populated by JS -->
+                                            </div>
+
+                                            <!-- Crossbreed mode - checkboxes -->
+                                            <div id="crossbreedOptions" class="hidden">
+                                                <!-- Options populated by JS -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden input for breed -->
+                                <input type="hidden" id="petBreedInput" name="pet_breed" value="">
+
+                                <!-- Display selected breed tags -->
+                                <div id="selectedBreedDisplay" class="mt-3 hidden">
+                                    <div class="flex flex-wrap gap-2" id="selectedBreedTags"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<!-- Card 3: Age & Physical Details -->
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Age & Physical Details</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+
+                            <!-- I know my pet's birthdate -->
+                            <div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="knowBirthdate" name="know_birthdate" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleBirthdate()">
+                                    <span class="ml-3 text-gray-700 font-medium">I know my pet's birthdate</span>
+                                </label>
+                            </div>
+
+                            <!-- Pet's Birthdate (shown if checkbox is checked) -->
+                            <div id="birthdateSection" class="hidden">
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Birthdate</label>
+                                <input type="date" id="petBirthdate" name="pet_birthdate" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                            </div>
+
+                            <!-- Exact Pet Age -->
+                            <div id="ageSection">
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet Age</label>
+                                <input type="text" id="petAge" name="pet_age" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g. 2 years 3 months">
+                                <p class="text-xs text-gray-500 mt-1">Enter exact age, e.g. "3 months", "1 year", "2 years 6 months"</p>
+                            </div>
+
+                            <!-- Pet Weight -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Weight <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input type="text" id="petWeight" name="pet_weight" class="w-full px-3.5 py-2.5 pr-12 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter weight" maxlength="6" oninput="updateWeightSuffix(); validateWeight(this)" required>
+                                    <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none hidden">kg</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">If you do not know, type "N/A"</p>
+                            </div>
+                        </div>
+                    </div>
+
+<!-- Card 4: Unique Identifying Features -->
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Unique Identifying Features</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+
+                            <!-- Unique Body Mark -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Unique Body Mark <span class="text-red-500">*</span></label>
+                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors inline-block">
+                                    <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-48 h-48 object-cover rounded-lg">
+                                    <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)" required>
+                                    <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn">×</button>
+                                    <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                        Click to upload
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Body Mark Details -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Body Mark Details <span class="text-red-500">*</span></label>
+                                <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Describe any unique marks, scars, or distinguishing features..." required></textarea>
+                            </div>
+
+                            <!-- Additional View Photos -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Additional Photos</label>
+                                <p class="text-xs text-gray-500 mb-4">Upload front, side, and top-down views of your pet</p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                                    <!-- Front View -->
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-2">Front View</label>
+                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
+                                            <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                            <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')">
+                                            <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn">×</button>
+                                            <button type="button" onclick="document.getElementById('frontImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                                Click to upload
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Side View -->
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-2">Side View</label>
+                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
+                                            <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                            <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')">
+                                            <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn">×</button>
+                                            <button type="button" onclick="document.getElementById('sideImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                                Click to upload
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Top-Down View -->
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-2">Top-Down View</label>
+                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
+                                            <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                            <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')">
+                                            <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn">×</button>
+                                            <button type="button" onclick="document.getElementById('topImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                                Click to upload
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+<!-- Card 5: Vaccination History -->
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Vaccination History</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Core Vaccines -->
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Core Vaccines</label>
+                                    <div id="coreVaccineOptions" class="space-y-2">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" class="form-checkbox h-5 w-5 text-emerald-600 rounded">
+                                            <span class="ml-3 mr-4 text-gray-700">Anti-Rabies</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Optional Vaccines -->
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Optional Vaccines</label>
+                                    <div id="optionalVaccineOptions" class="space-y-2">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<!-- Card 6: Pet Attributes -->
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6" id="petAttributesSection">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Pet Attributes</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+
+                            <!-- Training -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Training</label>
+                                <div class="flex flex-wrap gap-2" id="trainingOptions">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Insurance -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Insurance</label>
+                                <div class="flex flex-wrap gap-2" id="insuranceOptions">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Behavior -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Behavior</label>
+                                <div class="flex flex-wrap gap-2" id="behaviorOptions">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Likes (max 5) -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
+                                    Likes <span class="text-xs text-gray-500 font-normal">(You can pick up to 5)</span>
+                                </label>
+                                <div class="flex flex-wrap gap-2" id="likesOptions">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Dislikes -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Dislikes</label>
+                                <div class="flex flex-wrap gap-2" id="dislikesOptions">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Diet (max 5) -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
+                                    Diet <span class="text-xs text-gray-500 font-normal">(You can pick up to 5)</span>
+                                </label>
+                                <div class="flex flex-wrap gap-2" id="dietOptions">
+                                    <!-- Populated by JS -->
+                                </div>
+                                <button type="button" id="dietShowMore" class="mt-2 text-sm text-emerald-600 hover:underline hidden" onclick="showMoreDiet()">Show More</button>
+                            </div>
+
+                            <!-- Allergy -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Allergy</label>
+                                <div class="flex flex-wrap gap-2" id="allergyOptions">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Submit Button -->
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="p-6 text-center space-y-4">
+                            <button type="button" onclick="showConfirmModal()" class="bg-emerald-600 text-white px-12 py-4 rounded-xl font-semibold text-lg hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2 mx-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Register
+                            </button>
+                            <div>
+                                <a href="{{ url('/pet-registration') }}" class="inline-block text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                    Back to Pet Registration
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="lg:sticky lg:top-20 space-y-6">
+                    <!-- Owner Summary Card -->
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">OWNER'S INFORMATION</h4>
+                            </div>
+                            <span class="text-xs text-emerald-300">Read-Only</span>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">Pet Owner Name</p>
+                                <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->first_name ?? '' }} {{ Auth::user()->last_name ?? '' }}</p>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <div class="min-w-0">
+                                        <p class="text-xs text-gray-500">Email</p>
+                                        <p class="text-sm text-gray-900 truncate">{{ Auth::user()->email ?? '' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                    <div class="min-w-0">
+                                        <p class="text-xs text-gray-500">Primary</p>
+                                        <p class="text-sm text-gray-900">+63 {{ Auth::user()->phone_number ?? '' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <div class="min-w-0">
+                                        <p class="text-xs text-gray-500">Address</p>
+                                        <p class="text-sm text-gray-900">
+                                            {{ Auth::user()->address->block_lot_phase ?? '' }}, {{ Auth::user()->address->street ?? '' }}, {{ Auth::user()->address->barangay->barangay_name ?? '' }}, Dasmariñas City
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                    <div class="min-w-0">
+                                        <p class="text-xs text-gray-500">Alternate Mobile Number</p>
+                                        <p class="text-sm text-gray-900">+63 {{ Auth::user()->alternate_phone_number ?? '' }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <hr class="border-gray-300 mb-6">
-
-                <!-- Pet Attributes based on type -->
-                <div id="petAttributesSection" class="mb-6">
-                    <!-- Training -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Training</label>
-                        <div class="flex flex-wrap gap-2" id="trainingOptions">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Insurance -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Insurance</label>
-                        <div class="flex flex-wrap gap-2" id="insuranceOptions">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Behavior -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Behavior</label>
-                        <div class="flex flex-wrap gap-2" id="behaviorOptions">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Likes (max 5) -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Likes <span class="text-xs text-gray-500 font-normal">(You can pick up to 5)</span>
-                        </label>
-                        <div class="flex flex-wrap gap-2" id="likesOptions">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Dislikes -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Dislikes</label>
-                        <div class="flex flex-wrap gap-2" id="dislikesOptions">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Diet (max 5) -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Diet <span class="text-xs text-gray-500 font-normal">(You can pick up to 5)</span>
-                        </label>
-                        <div class="flex flex-wrap gap-2" id="dietOptions">
-                            <!-- Populated by JS -->
-                        </div>
-                        <button type="button" id="dietShowMore" class="mt-2 text-sm text-primary hover:underline hidden" onclick="showMoreDiet()">Show More</button>
-                    </div>
-
-                    <!-- Allergy -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Allergy</label>
-                        <div class="flex flex-wrap gap-2" id="allergyOptions">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Register Button -->
-                <div class="text-center space-y-4">
-                    <button type="button" onclick="showConfirmModal()" class="px-12 py-4 bg-primary text-white font-semibold rounded-xl text-lg hover:bg-primary-light transition-colors shadow-md hover:shadow-lg">
-                        Register
-                    </button>
-                    <div>
-                        <a href="{{ url('/pet-registration') }}" class="inline-block text-gray-600 hover:text-primary transition-colors">
-                            ← Back to Pet Registration
-                        </a>
-                    </div>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </main>
 
@@ -566,7 +732,7 @@
                 // Populate checkboxes
                 crossOptions.innerHTML = breeds.map(breed => `
                     <label class="flex items-center px-3 py-2 cursor-pointer hover:bg-gray-100">
-                        <input type="checkbox" value="${breed}" class="pet-breed-checkbox h-4 w-4 text-primary rounded border-gray-300" onchange="handleBreedCheckbox(this)">
+                        <input type="checkbox" value="${breed}" class="pet-breed-checkbox h-4 w-4 text-emerald-600 rounded border-gray-300" onchange="handleBreedCheckbox(this)">
                         <span class="ml-3 text-sm text-gray-700">${breed}</span>
                     </label>
                 `).join('');
@@ -579,7 +745,7 @@
                 // Populate radio options
                 singleOptions.innerHTML = breeds.map(breed => `
                     <label class="flex items-center px-3 py-2 cursor-pointer hover:bg-gray-100">
-                        <input type="radio" name="breed_option" value="${breed}" class="pet-breed-radio h-4 w-4 text-primary border-gray-300" onchange="handleSingleBreedSelect('${breed}')">
+                        <input type="radio" name="breed_option" value="${breed}" class="pet-breed-radio h-4 w-4 text-emerald-600 border-gray-300" onchange="handleSingleBreedSelect('${breed}')">
                         <span class="ml-3 text-sm text-gray-700">${breed}</span>
                     </label>
                 `).join('');
@@ -646,9 +812,9 @@
             
             display.classList.remove('hidden');
             tags.innerHTML = selectedBreeds.map(breed => `
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary text-white">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-600 text-white">
                     ${breed}
-                    <button type="button" onclick="removeBreed('${breed}')" class="ml-2 hover:text-red-200">
+                    <button type="button" onclick="removeBreed('${breed}')" class="ml-2 hover:text-emerald-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -777,7 +943,7 @@
             return `
                 <label class="inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="${id}" name="${name}[]" value="${value}" class="pill-checkbox hidden" data-category="${category}" data-value="${value}" ${maxSelect ? `data-max="${maxSelect}"` : ''} onchange="handlePillChange(this)">
-                    <span id="${id}_label" class="px-3 py-1 text-sm rounded-full border border-gray-300 text-gray-700 hover:border-primary transition-colors">${value}</span>
+                    <span id="${id}_label" class="px-3 py-1 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors">${value}</span>
                 </label>
             `;
         }
@@ -801,8 +967,8 @@
                 }
                 
                 // Update styling
-                label.classList.remove('border-gray-300', 'text-gray-700');
-                label.classList.add('bg-primary', 'text-white', 'border-primary');
+                label.classList.remove('border-slate-300', 'text-gray-700');
+                label.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
                 
                 // Add to selected array
                 if (category === 'likes') {
@@ -812,8 +978,8 @@
                 }
             } else {
                 // Remove styling
-                label.classList.remove('bg-primary', 'text-white', 'border-primary');
-                label.classList.add('border-gray-300', 'text-gray-700');
+                label.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+                label.classList.add('border-slate-300', 'text-gray-700');
                 
                 // Remove from selected array
                 if (category === 'likes') {
@@ -842,7 +1008,7 @@
         function createVaccineCheckbox(name, value, checked = false) {
             return `
                 <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="${name}[]" value="${value}" class="form-checkbox h-5 w-5 text-primary rounded" ${checked ? 'checked' : ''}>
+                    <input type="checkbox" name="${name}[]" value="${value}" class="form-checkbox h-5 w-5 text-emerald-600 rounded" ${checked ? 'checked' : ''}>
                     <span class="ml-3 mr-4 text-gray-700">${value}</span>
                 </label>
             `;
@@ -857,7 +1023,7 @@
                 document.getElementById('coreVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_core', 'Anti-Rabies');
                 document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other') + `
                     <div class="mt-3">
-                        <input type="text" name="vaccination_other" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Specify other vaccine">
+                        <input type="text" name="vaccination_other" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
                     </div>
                 `;
                 return;
@@ -871,7 +1037,7 @@
                 if (vaccine === 'Other') {
                     return createVaccineCheckbox('vaccination_optional', vaccine) + `
                         <div class="mt-3">
-                            <input type="text" name="vaccination_other" value="${otherValue}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Specify other vaccine">
+                            <input type="text" name="vaccination_other" value="${otherValue}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
                         </div>
                     `;
                 }
@@ -962,7 +1128,7 @@
                 document.querySelectorAll('#dietOptions .pill-checkbox').forEach(cb => {
                     if (!originalDiet.includes(cb.dataset.value)) {
                         const label = document.getElementById(`${cb.id}_label`);
-                        label.classList.remove('bg-primary', 'text-white', 'border-primary', 'opacity-50', 'cursor-not-allowed');
+                        label.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600', 'opacity-50', 'cursor-not-allowed');
                         label.classList.add('border-gray-300', 'text-gray-700');
                         cb.checked = false;
                         cb.parentElement.remove();
@@ -1089,10 +1255,10 @@
                 <h3 class="text-xl font-bold text-gray-900 mb-2">Confirm Registration</h3>
                 <p class="text-gray-600 mb-6">Are you sure you want to register this pet? Please review all information before submitting.</p>
                 <div class="flex gap-4 justify-center">
-                    <button onclick="closeConfirmModal()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    <button onclick="closeConfirmModal()" class="px-6 py-2 border border-slate-300 text-gray-700 rounded-lg hover:bg-slate-50 transition-colors">
                         Cancel
                     </button>
-                    <button onclick="submitPetForm()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors">
+                    <button onclick="submitPetForm()" class="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
                         Confirm & Register
                     </button>
                 </div>

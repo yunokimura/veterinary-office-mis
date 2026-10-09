@@ -47,7 +47,7 @@
                 <!-- Action Buttons -->
                 <div class="hidden sm:flex items-center space-x-3">
                     @auth
-                    <a href="{{ url('/pet-registration') }}" class="bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-primary/20 hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center space-x-2">
+                    <a href="{{ url('/pet-registration') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-emerald-600/20 hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center space-x-2">
                         <i class="fa-solid fa-calendar-check"></i>
                         <span>Book Appointment</span>
                     </a>
@@ -55,12 +55,12 @@
                     @auth
                         <div class="relative">
                             <button onclick="toggleDropdown()" class="flex items-center space-x-3 focus:outline-none">
-                                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+                                <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white">
                                     <svg xmlns="http://www.svgsvg.com/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                     </svg>
                                 </div>
-                                <span class="text-primary font-medium hidden lg:block">{{ Auth::user()->name }}</span>
+                                <span class="text-emerald-600 font-medium hidden lg:block">{{ Auth::user()->name }}</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 hidden lg:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                 </svg>
