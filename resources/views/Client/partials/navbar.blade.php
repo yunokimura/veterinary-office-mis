@@ -172,4 +172,23 @@
                 servicesDropdown.classList.add('hidden');
             }
         });
+
+        // User dropdown toggle
+        function toggleDropdown() {
+            const userDropdown = document.getElementById('userDropdown');
+            if (userDropdown) {
+                userDropdown.classList.toggle('hidden');
+            }
+        }
+
+        // Close user dropdown when clicking outside
+        const userDropdown = document.getElementById('userDropdown');
+        if (userDropdown) {
+            document.addEventListener('click', function(e) {
+                const userDropdownBtn = document.querySelector('button[onclick="toggleDropdown()"]');
+                if (!userDropdownBtn?.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+        }
     </script>

@@ -511,8 +511,9 @@
     
     // Format age - remove underscores and format naturally
     function formatAge(age) {
-        if (!age) return 'Unknown';
-        return age.replace(/_/g, ' ').replace(/\b(\d)\b/g, '$1 ').trim();
+        if (!age && age !== 0) return 'Unknown';
+        const ageStr = String(age);
+        return ageStr.replace(/_/g, ' ').replace(/\b(\d)\b/g, '$1 ').trim();
     }
     
     // Format weight - append kg if not included
@@ -606,7 +607,78 @@
         }
 
         updateSidebarSelectedPets();
+        updateLeftPetInfoDisplay();
         closePetModal();
+    }
+
+    function updateLeftPetInfoDisplay() {
+        const container = document.getElementById('selectedPetsList');
+        if (!container) return;
+
+        if (selectedPets.length === 0) {
+            container.innerHTML = `
+                <div id="noPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p class="text-gray-500">No pet selected yet. Click "Select Pet" to choose from your registered pets.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = '';
+
+        selectedPets.forEach(petId => {
+            const pet = petsData.find(p => String(p.id) === String(petId));
+            if (!pet) return;
+
+            const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
+            const genderDisplay = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : 'Unknown';
+            const neuteredDisplay = pet.is_neutered ? 'Yes' : 'No';
+
+            let imageHtml = '';
+            if (pet.image) {
+                let imgPath = pet.image;
+                if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
+                    imgPath = 'images/pets/' + imgPath.split('/').pop();
+                }
+                const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-20 h-20 rounded-full object-cover">`;
+            } else {
+                imageHtml = `<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>`;
+            }
+
+            const petCard = document.createElement('div');
+            petCard.className = 'bg-white border border-gray-200 rounded-lg p-6';
+            petCard.innerHTML = `
+                <div class="flex items-start">
+                    ${imageHtml}
+                    <div class="ml-4 flex-1">
+                        <h4 class="font-bold text-lg text-gray-900">${pet.name || 'Unknown'}</h4>
+                        <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                            <div><span class="text-gray-500">Species:</span> <span class="text-gray-900">${speciesDisplay}</span></div>
+                            <div><span class="text-gray-500">Breed:</span> <span class="text-gray-900">${pet.breed || 'Unknown'}</span></div>
+                            <div><span class="text-gray-500">Gender:</span> <span class="text-gray-900">${genderDisplay}</span></div>
+                            <div><span class="text-gray-500">Neutered:</span> <span class="text-gray-900">${neuteredDisplay}</span></div>
+                            <div><span class="text-gray-500">Weight:</span> <span class="text-gray-900">${formatWeight(pet.weight)}</span></div>
+                            <div><span class="text-gray-500">Age:</span> <span class="text-gray-900">${formatAge(pet.age)}</span></div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="removePet(${pet.id})" class="text-red-500 hover:text-red-700 text-sm font-medium flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Remove
+                    </button>
+                </div>
+            `;
+            container.appendChild(petCard);
+        });
     }
 
     function updateSidebarSelectedPets() {
