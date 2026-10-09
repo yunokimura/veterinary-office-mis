@@ -1318,7 +1318,12 @@ Route::get('/pet-registration', function () {
 
 // Pet Registration Form Page Route - Protected
 Route::get('/pet-registration/form', function () {
-    return view('Client.pet_registration_form');
+    $user = auth()->user();
+    $petOwner = $user ? $user->petOwner()->with(['address' => function ($query) {
+        $query->with('barangay');
+    }])->first() : null;
+
+    return view('Client.pet_registration_form', compact('user', 'petOwner'));
 })->middleware('auth')->name('pet.registration.form');
 
 // Pet Registration Form POST Route - Protected

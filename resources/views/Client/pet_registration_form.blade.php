@@ -528,7 +528,7 @@
                         <div class="p-6 space-y-4">
                             <div>
                                 <p class="text-xs text-gray-500 mb-1">Pet Owner Name</p>
-                                <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->first_name ?? '' }} {{ Auth::user()->last_name ?? '' }}</p>
+                                <p class="text-sm font-semibold text-gray-900">{{ $petOwner->first_name ?? '' }} {{ $petOwner->middle_name ? $petOwner->middle_name . ' ' : '' }}{{ $petOwner->last_name ?? '' }}</p>
                             </div>
 
                             <div class="space-y-3">
@@ -538,7 +538,7 @@
                                     </svg>
                                     <div class="min-w-0">
                                         <p class="text-xs text-gray-500">Email</p>
-                                        <p class="text-sm text-gray-900 truncate">{{ Auth::user()->email ?? '' }}</p>
+                                        <p class="text-sm text-gray-900 truncate">{{ $petOwner->email ?? $user->email ?? '' }}</p>
                                     </div>
                                 </div>
 
@@ -548,7 +548,7 @@
                                     </svg>
                                     <div class="min-w-0">
                                         <p class="text-xs text-gray-500">Primary</p>
-                                        <p class="text-sm text-gray-900">+63 {{ Auth::user()->phone_number ?? '' }}</p>
+                                        <p class="text-sm text-gray-900">+63 {{ $petOwner->phone_number ?? '' }}</p>
                                     </div>
                                 </div>
 
@@ -560,7 +560,7 @@
                                     <div class="min-w-0">
                                         <p class="text-xs text-gray-500">Address</p>
                                         <p class="text-sm text-gray-900">
-                                            {{ Auth::user()->address->block_lot_phase ?? '' }}, {{ Auth::user()->address->street ?? '' }}, {{ Auth::user()->address->barangay->barangay_name ?? '' }}, Dasmariñas City
+                                            {{ $petOwner->address->block_lot_phase ?? $petOwner->blk_lot_ph ?? '' }}, {{ $petOwner->address->street ?? $petOwner->street ?? '' }}, {{ $petOwner->address->barangay->barangay_name ?? $petOwner->barangay ?? '' }}, Dasmariñas City
                                         </p>
                                     </div>
                                 </div>
@@ -571,7 +571,7 @@
                                     </svg>
                                     <div class="min-w-0">
                                         <p class="text-xs text-gray-500">Alternate Mobile Number</p>
-                                        <p class="text-sm text-gray-900">+63 {{ Auth::user()->alternate_phone_number ?? '' }}</p>
+                                        <p class="text-sm text-gray-900">+63 {{ $petOwner->alternate_phone_number ?? '' }}</p>
                                     </div>
                                 </div>
                             </div>
