@@ -99,9 +99,69 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Main Content -->
             <div class="lg:col-span-8 space-y-6">
+
+                <!-- Multi-Step Progress Indicator -->
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                    <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                            <h4 class="text-sm font-semibold text-white">REGISTRATION PROGRESS</h4>
+                        </div>
+                        <span id="stepIndicatorText" class="text-xs text-emerald-300 font-medium">Step 1 of 4 — Pet Basics</span>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-start justify-between gap-2">
+                            <button type="button" onclick="goToStep(1)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="1">
+                                <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors flex-shrink-0" data-step="1">1</span>
+                                <span class="hidden sm:block min-w-0">
+                                    <span class="step-title block text-sm font-semibold truncate">Pet Basics</span>
+                                    <span class="step-subtitle block text-xs text-gray-500 truncate">Profile & breed</span>
+                                </span>
+                            </button>
+                            <div class="flex-1 hidden sm:flex items-center pt-4">
+                                <div class="w-full h-0.5 bg-slate-200"></div>
+                            </div>
+                            <button type="button" onclick="goToStep(2)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="2">
+                                <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors flex-shrink-0" data-step="2">2</span>
+                                <span class="hidden sm:block min-w-0">
+                                    <span class="step-title block text-sm font-semibold truncate">Physical Details</span>
+                                    <span class="step-subtitle block text-xs text-gray-500 truncate">Age & photos</span>
+                                </span>
+                            </button>
+                            <div class="flex-1 hidden sm:flex items-center pt-4">
+                                <div class="w-full h-0.5 bg-slate-200"></div>
+                            </div>
+                            <button type="button" onclick="goToStep(3)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="3">
+                                <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors flex-shrink-0" data-step="3">3</span>
+                                <span class="hidden sm:block min-w-0">
+                                    <span class="step-title block text-sm font-semibold truncate">Health & Traits</span>
+                                    <span class="step-subtitle block text-xs text-gray-500 truncate">Vaccines & behavior</span>
+                                </span>
+                            </button>
+                            <div class="flex-1 hidden sm:flex items-center pt-4">
+                                <div class="w-full h-0.5 bg-slate-200"></div>
+                            </div>
+                            <button type="button" onclick="goToStep(4)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="4">
+                                <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors flex-shrink-0" data-step="4">4</span>
+                                <span class="hidden sm:block min-w-0">
+                                    <span class="step-title block text-sm font-semibold truncate">Review & Submit</span>
+                                    <span class="step-subtitle block text-xs text-gray-500 truncate">Confirm details</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div id="progressBar" class="h-full bg-emerald-600 transition-all duration-300" style="width: 25%"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <form id="petRegistrationForm" method="POST" action="{{ url('/pet-registration/form') }}" enctype="multipart/form-data">
                     @csrf
-                
+
+                    <!-- STEP 1: Pet Basics -->
+                    <div id="step-1" class="step-pane space-y-6">
 <!-- Card 1: Pet Profile & Basic Info -->
                     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
                         <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
@@ -244,7 +304,7 @@
                                 </div>
 
                                 <!-- Hidden input for breed -->
-                                <input type="hidden" id="petBreedInput" name="pet_breed" value="">
+                                <input type="hidden" id="petBreedInput" name="pet_breed" value="" required>
 
                                 <!-- Display selected breed tags -->
                                 <div id="selectedBreedDisplay" class="mt-3 hidden">
@@ -254,6 +314,25 @@
                         </div>
                     </div>
 
+                    <!-- Step 1 Navigation -->
+                    <div class="flex items-center justify-between">
+                        <a href="{{ url('/pet-registration') }}" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Cancel
+                        </a>
+                        <button type="button" onclick="changeStep(1)" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+                            Next Step
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </button>
+                    </div>
+                    </div>
+
+                    <!-- STEP 2: Physical Details & Photos -->
+                    <div id="step-2" class="step-pane space-y-6 hidden">
 <!-- Card 3: Age & Physical Details -->
                     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
                         <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
@@ -377,9 +456,63 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Eye Color -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Eye Color <span class="text-red-500">*</span></label>
+                                <div class="flex flex-wrap gap-2" id="eyeColorOptions">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Brown" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Brown</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Blue" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Blue</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Amber / Yellow" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Amber / Yellow</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Green" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Green</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Heterochromia (Two different colors)" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Heterochromia (Two different colors)</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Other" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Other</span>
+                                    </label>
+                                </div>
+                                <div id="eyeColorOtherWrap" class="mt-3 hidden">
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Please specify eye color</label>
+                                    <input type="text" id="eyeColorOther" name="eye_color_other" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                
+
+                    <!-- Step 2 Navigation -->
+                    <div class="flex items-center justify-between">
+                        <button type="button" onclick="changeStep(-1)" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Previous
+                        </button>
+                        <button type="button" onclick="changeStep(1)" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+                            Next Step
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </button>
+                    </div>
+                    </div>
+
+                    <!-- STEP 3: Health & Traits -->
+                    <div id="step-3" class="step-pane space-y-6 hidden">
 <!-- Card 5: Vaccination History -->
                     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
                         <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
@@ -489,17 +622,115 @@
                         </div>
                     </div>
 
-                <!-- Submit Button -->
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                        <div class="p-6 text-center space-y-4">
-                            <button type="button" onclick="showConfirmModal()" class="bg-emerald-600 text-white px-12 py-4 rounded-xl font-semibold text-lg hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2 mx-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Register
-                            </button>
-                            <div>
-                                <a href="{{ url('/pet-registration') }}" class="inline-block text-gray-600 hover:text-emerald-600 transition-colors flex items-center gap-1">
+                    <!-- Step 3 Navigation -->
+                    <div class="flex items-center justify-between">
+                        <button type="button" onclick="changeStep(-1)" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Previous
+                        </button>
+                        <button type="button" onclick="changeStep(1)" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+                            Review & Submit
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </button>
+                    </div>
+                    </div>
+
+                    <!-- STEP 4: Review & Submit -->
+                    <div id="step-4" class="step-pane space-y-6 hidden">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <h4 class="text-sm font-semibold text-white">Review & Submit</h4>
+                                </div>
+                                <span class="text-xs text-emerald-300">Final Verification</span>
+                            </div>
+                            <div class="p-6 space-y-6">
+
+                                <!-- Review: Pet Basics -->
+                                <div>
+                                    <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pet Basics
+                                    </h5>
+                                    <div id="reviewBasics" class="bg-slate-50 border border-slate-200 rounded-xl p-4 divide-y divide-slate-100"></div>
+                                </div>
+
+                                <!-- Review: Physical Details & Photos -->
+                                <div>
+                                    <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Physical Details & Photos
+                                    </h5>
+                                    <div id="reviewPhysical" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
+                                        <div id="reviewPhysicalRows" class="divide-y divide-slate-100"></div>
+                                        <div id="reviewPhysicalImages" class="flex flex-wrap gap-3"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Review: Health & Traits -->
+                                <div>
+                                    <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Health & Traits
+                                    </h5>
+                                    <div id="reviewHealth" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3"></div>
+                                </div>
+
+                                <!-- Review: Owner's Information -->
+                                <div>
+                                    <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Owner's Information
+                                    </h5>
+                                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 divide-y divide-slate-100">
+                                        <div class="flex items-start justify-between gap-4 py-2">
+                                            <span class="text-xs text-gray-500">Pet Owner Name</span>
+                                            <span class="text-sm font-semibold text-gray-900 text-right">{{ $petOwner->first_name ?? '' }} {{ $petOwner && $petOwner->middle_name ? $petOwner->middle_name . ' ' : '' }}{{ $petOwner->last_name ?? '' }}</span>
+                                        </div>
+                                        <div class="flex items-start justify-between gap-4 py-2">
+                                            <span class="text-xs text-gray-500">Email</span>
+                                            <span class="text-sm font-semibold text-gray-900 text-right break-all">{{ $petOwner->email ?? $user->email ?? '' }}</span>
+                                        </div>
+                                        <div class="flex items-start justify-between gap-4 py-2">
+                                            <span class="text-xs text-gray-500">Primary</span>
+                                            <span class="text-sm font-semibold text-gray-900 text-right">+63 {{ $petOwner->phone_number ?? '' }}</span>
+                                        </div>
+                                        <div class="flex items-start justify-between gap-4 py-2">
+                                            <span class="text-xs text-gray-500">Address</span>
+                                            <span class="text-sm font-semibold text-gray-900 text-right">
+                                                {{ $petOwner->address->block_lot_phase ?? $petOwner->blk_lot_ph ?? '' }}, {{ $petOwner->address->street ?? $petOwner->street ?? '' }}, {{ $petOwner->address->barangay->barangay_name ?? $petOwner->barangay ?? '' }}, Dasmariñas City
+                                            </span>
+                                        </div>
+                                        <div class="flex items-start justify-between gap-4 py-2">
+                                            <span class="text-xs text-gray-500">Alternate Mobile Number</span>
+                                            <span class="text-sm font-semibold text-gray-900 text-right">+63 {{ $petOwner->alternate_phone_number ?? '' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 Navigation -->
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div class="p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <button type="button" onclick="changeStep(-1)" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    Previous
+                                </button>
+                                <button type="button" onclick="showConfirmModal()" class="inline-flex items-center justify-center gap-2 px-10 py-3.5 bg-emerald-600 text-white rounded-xl font-semibold text-base hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg w-full sm:w-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Register
+                                </button>
+                            </div>
+                            <div class="px-6 pb-6 text-center">
+                                <a href="{{ url('/pet-registration') }}" class="inline-flex items-center gap-1 text-gray-600 hover:text-emerald-600 transition-colors text-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                                     </svg>
@@ -528,7 +759,7 @@
                         <div class="p-6 space-y-4">
                             <div>
                                 <p class="text-xs text-gray-500 mb-1">Pet Owner Name</p>
-                                <p class="text-sm font-semibold text-gray-900">{{ $petOwner->first_name ?? '' }} {{ $petOwner->middle_name ? $petOwner->middle_name . ' ' : '' }}{{ $petOwner->last_name ?? '' }}</p>
+                                <p class="text-sm font-semibold text-gray-900">{{ $petOwner->first_name ?? '' }} {{ $petOwner && $petOwner->middle_name ? $petOwner->middle_name . ' ' : '' }}{{ $petOwner->last_name ?? '' }}</p>
                             </div>
 
                             <div class="space-y-3">
@@ -803,7 +1034,12 @@
         function updateSelectedBreedDisplay() {
             const display = document.getElementById('selectedBreedDisplay');
             const tags = document.getElementById('selectedBreedTags');
-            
+            const breedDisplay = document.getElementById('breedDisplay');
+
+            if (breedDisplay) {
+                breedDisplay.classList.remove('ring-2', 'ring-red-400', 'border-red-400');
+            }
+
             if (selectedBreeds.length === 0) {
                 display.classList.add('hidden');
                 document.getElementById('petBreedInput').value = '';
@@ -1241,6 +1477,297 @@
                 }
             }
         });
+
+        // ============================================
+        // MULTI-STEP FORM LOGIC
+        // ============================================
+        const stepTitles = ['Pet Basics', 'Physical Details & Photos', 'Health & Traits', 'Review & Submit'];
+        const totalSteps = 4;
+        let currentStep = 1;
+
+        // Eye color "Other" text box toggle
+        function handleEyeColorChange() {
+            const selected = document.querySelector('input[name="eye_color"]:checked');
+            const wrap = document.getElementById('eyeColorOtherWrap');
+            const input = document.getElementById('eyeColorOther');
+
+            if (!wrap || !input) return;
+
+            if (selected && selected.value === 'Other') {
+                wrap.classList.remove('hidden');
+                input.setAttribute('required', 'required');
+            } else {
+                wrap.classList.add('hidden');
+                input.removeAttribute('required');
+                input.value = '';
+            }
+        }
+
+        // Update the step indicator + progress bar
+        const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>`;
+
+        function updateStepIndicator() {
+            const stateClasses = ['bg-emerald-600', 'border-emerald-600', 'text-white', 'ring-2', 'ring-emerald-300', 'ring-offset-1', 'bg-emerald-100', 'text-emerald-700', 'bg-white', 'border-slate-300', 'text-slate-400'];
+            const titleClasses = ['text-emerald-700', 'text-slate-500', 'font-bold', 'text-emerald-900'];
+
+            document.querySelectorAll('.step-item').forEach(item => {
+                const circle = item.querySelector('.step-circle');
+                const title = item.querySelector('.step-title');
+                const subtitle = item.querySelector('.step-subtitle');
+                const step = parseInt((circle && circle.dataset.step) || item.dataset.step, 10);
+
+                circle.classList.remove(...stateClasses);
+                title.classList.remove(...titleClasses);
+                if (subtitle) subtitle.classList.remove('text-emerald-600', 'text-slate-400');
+
+                if (step === currentStep) {
+                    // CURRENT STEP — strongly highlighted
+                    circle.classList.add('bg-emerald-600', 'border-emerald-600', 'text-white', 'ring-2', 'ring-emerald-300', 'ring-offset-1');
+                    circle.innerHTML = String(step);
+                    title.classList.add('text-emerald-900', 'font-bold');
+                    if (subtitle) subtitle.classList.add('text-emerald-600');
+                } else if (step < currentStep) {
+                    // COMPLETED STEP — light green with check mark
+                    circle.classList.add('bg-emerald-100', 'border-emerald-600', 'text-emerald-700');
+                    circle.innerHTML = checkIcon;
+                    title.classList.add('text-emerald-700');
+                    if (subtitle) subtitle.classList.add('text-slate-400');
+                } else {
+                    // UPCOMING STEP — muted outline
+                    circle.classList.add('bg-white', 'border-slate-300', 'text-slate-400');
+                    circle.innerHTML = String(step);
+                    title.classList.add('text-slate-500');
+                    if (subtitle) subtitle.classList.add('text-slate-400');
+                }
+            });
+
+            const bar = document.getElementById('progressBar');
+            if (bar) {
+                bar.style.width = ((currentStep / totalSteps) * 100) + '%';
+            }
+
+            const indicatorText = document.getElementById('stepIndicatorText');
+            if (indicatorText) {
+                indicatorText.textContent = `Step ${currentStep} of ${totalSteps} — ${stepTitles[currentStep - 1]}`;
+            }
+        }
+
+        // Show a specific step pane
+        function showStep(step) {
+            for (let i = 1; i <= totalSteps; i++) {
+                const pane = document.getElementById('step-' + i);
+                if (!pane) continue;
+                if (i === step) {
+                    pane.classList.remove('hidden');
+                } else {
+                    pane.classList.add('hidden');
+                }
+            }
+
+            currentStep = step;
+            updateStepIndicator();
+
+            if (step === totalSteps) {
+                populateReview();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Validate required fields that live inside the visible step pane
+        function validateStep(step) {
+            const pane = document.getElementById('step-' + step);
+            if (!pane) return true;
+
+            let isValid = true;
+            let firstInvalid = null;
+
+            pane.querySelectorAll('input, textarea, select').forEach(el => {
+                if (!el.required) return;
+                if (el.type === 'hidden') return;
+
+                let valid = true;
+
+                if (el.type === 'radio') {
+                    const group = pane.querySelectorAll(`input[name="${el.name}"]`);
+                    valid = Array.from(group).some(r => r.checked);
+                } else if (el.type === 'checkbox') {
+                    valid = true;
+                } else if (el.type === 'file') {
+                    valid = el.files && el.files.length > 0;
+                } else {
+                    valid = el.value.trim() !== '';
+                }
+
+                if (!valid) {
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = el;
+                }
+            });
+
+            // Breed is stored in a hidden input, so validate it separately
+            if (step === 1) {
+                const breedInput = document.getElementById('petBreedInput');
+                if (breedInput && breedInput.value.trim() === '') {
+                    isValid = false;
+                    if (!firstInvalid) firstInvalid = null;
+                    const breedDisplay = document.getElementById('breedDisplay');
+                    if (breedDisplay) breedDisplay.classList.add('ring-2', 'ring-red-400', 'border-red-400');
+                }
+            }
+
+            if (!isValid) {
+                alert('Please fill in all required fields marked with * before continuing.');
+                if (firstInvalid && firstInvalid.type !== 'hidden') {
+                    try { firstInvalid.focus(); } catch (e) {}
+                }
+            }
+
+            return isValid;
+        }
+
+        // Navigate relative to the current step
+        function changeStep(delta) {
+            const target = currentStep + delta;
+            if (target < 1 || target > totalSteps) return;
+            if (delta > 0 && !validateStep(currentStep)) return;
+            showStep(target);
+        }
+
+        // Jump to a specific step (used by the progress indicator)
+        function goToStep(step) {
+            if (step < 1 || step > totalSteps) return;
+            if (step === currentStep) return;
+            if (step > currentStep) {
+                // Only allow jumping forward after every intervening step validates
+                for (let i = currentStep; i < step; i++) {
+                    if (!validateStep(i)) return;
+                }
+            }
+            showStep(step);
+        }
+
+        // Build the Step 4 review summary
+        function populateReview() {
+            const form = document.getElementById('petRegistrationForm');
+            if (!form) return;
+
+            const esc = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+
+            const row = (label, value) => `
+                <div class="flex items-start justify-between gap-4 py-2">
+                    <span class="text-xs text-gray-500">${label}</span>
+                    <span class="text-sm font-semibold text-gray-900 text-right">${esc(value || '—')}</span>
+                </div>`;
+
+            const asText = (value) => {
+                if (value === undefined || value === null || value === '') return '';
+                if (Array.isArray(value)) return value.length ? value.join(', ') : '';
+                if (typeof value === 'object') return Object.values(value).filter(v => v !== '' && v !== null && v !== undefined);
+                return String(value);
+            };
+
+            const selectedPills = (containerId) => {
+                const container = document.getElementById(containerId);
+                if (!container) return [];
+                return Array.from(container.querySelectorAll('input.pill-checkbox:checked')).map(cb => cb.dataset.value || cb.value);
+            };
+
+            // --- Pet Basics ---
+            const petTypeInput = form.querySelector('input[name="pet_type"]:checked');
+            const genderInput = form.querySelector('input[name="gender"]:checked');
+            const neutered = document.getElementById('isNeutered');
+            const crossbreed = document.getElementById('isCrossbreed');
+            const species = petTypeInput ? petTypeInput.value : '';
+            const breed = document.getElementById('petBreedInput') ? document.getElementById('petBreedInput').value : '';
+
+            document.getElementById('reviewBasics').innerHTML =
+                row('Pet Name', form.pet_name ? form.pet_name.value : '') +
+                row('Species', species ? species.charAt(0).toUpperCase() + species.slice(1) : '') +
+                row('Gender', genderInput ? genderInput.value.charAt(0).toUpperCase() + genderInput.value.slice(1) : '') +
+                row('Breed', breed) +
+                row('Crossbreed', crossbreed && crossbreed.checked ? 'Yes' : 'No') +
+                row('Neutered', neutered && neutered.checked ? 'Yes' : 'No');
+
+            // --- Physical Details & Photos ---
+            const knowBirthdate = document.getElementById('knowBirthdate');
+            const birthdate = document.getElementById('petBirthdate');
+            const age = document.getElementById('petAge');
+            const weight = document.getElementById('petWeight');
+            const eyeColorInput = form.querySelector('input[name="eye_color"]:checked');
+            const eyeColorOther = document.getElementById('eyeColorOther');
+            const bodyMarkDetails = document.getElementById('bodyMarkDetails');
+
+            let eyeColor = eyeColorInput ? eyeColorInput.value : '';
+            if (eyeColor === 'Other' && eyeColorOther && eyeColorOther.value.trim() !== '') {
+                eyeColor = eyeColorOther.value.trim();
+            }
+
+            let ageOrBirthdate = '';
+            if (knowBirthdate && knowBirthdate.checked && birthdate && birthdate.value) {
+                const parsed = new Date(birthdate.value + 'T00:00:00');
+                ageOrBirthdate = parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            } else if (age && age.value.trim() !== '') {
+                ageOrBirthdate = age.value.trim();
+            }
+
+            document.getElementById('reviewPhysicalRows').innerHTML =
+                row('Birthdate / Age', ageOrBirthdate) +
+                row('Weight', weight && weight.value.trim() !== '' ? weight.value.trim() + ' kg' : '') +
+                row('Eye Color', eyeColor) +
+                row('Body Mark Details', bodyMarkDetails ? bodyMarkDetails.value : '');
+
+            const images = [
+                { id: 'petImagePreview', label: 'Profile', fallback: '{{ asset('images/pet.png') }}' },
+                { id: 'bodyMarkPreview', label: 'Body Mark', fallback: '{{ asset('images/no-image.png') }}' },
+                { id: 'frontPreview', label: 'Front View', fallback: '{{ asset('images/no-image.png') }}' },
+                { id: 'sidePreview', label: 'Side View', fallback: '{{ asset('images/no-image.png') }}' },
+                { id: 'topPreview', label: 'Top-Down', fallback: '{{ asset('images/no-image.png') }}' }
+            ];
+
+            const imagesHtml = images.map(img => {
+                const el = document.getElementById(img.id);
+                const src = el ? el.getAttribute('src') : img.fallback;
+                const hasUpload = img.id !== 'petImagePreview'
+                    ? !!src && !src.endsWith('no-image.png')
+                    : !!src && !src.endsWith('pet.png');
+                return `
+                <div class="text-center">
+                    <img src="${esc(src)}" alt="${img.label}" class="w-20 h-20 ${img.id === 'petImagePreview' ? 'rounded-full' : 'rounded-xl'} object-cover border-2 ${hasUpload ? 'border-emerald-400' : 'border-slate-200'} mx-auto">
+                    <span class="block text-[10px] text-gray-500 mt-1">${img.label}</span>
+                    <span class="block text-[10px] ${hasUpload ? 'text-emerald-600' : 'text-slate-400'}">${hasUpload ? 'Uploaded' : 'Not uploaded'}</span>
+                </div>`;
+            }).join('');
+
+            document.getElementById('reviewPhysicalImages').innerHTML = imagesHtml;
+
+            // --- Health & Traits ---
+            const coreVaccines = Array.from(document.querySelectorAll('#coreVaccineOptions input[type="checkbox"]:checked')).map(cb => cb.value);
+            const optionalVaccines = Array.from(document.querySelectorAll('#optionalVaccineOptions input[type="checkbox"]:checked')).map(cb => cb.value);
+            const otherVaccine = form.querySelector('input[name="vaccination_other"]');
+
+            let vaccines = coreVaccines.concat(optionalVaccines);
+            if (optionalVaccines.includes('Other') && otherVaccine && otherVaccine.value.trim() !== '') {
+                vaccines.push(otherVaccine.value.trim());
+            }
+
+            const traitRow = (label, containerId) => row(label, asText(selectedPills(containerId)));
+
+            document.getElementById('reviewHealth').innerHTML =
+                row('Core & Optional Vaccines', vaccines.join(', ')) +
+                traitRow('Training', 'trainingOptions') +
+                traitRow('Insurance', 'insuranceOptions') +
+                traitRow('Behavior', 'behaviorOptions') +
+                traitRow('Likes', 'likesOptions') +
+                traitRow('Dislikes', 'dislikesOptions') +
+                traitRow('Diet', 'dietOptions') +
+                traitRow('Allergy', 'allergyOptions');
+        }
+
+        // Initialise the stepper on page load
+        updateStepIndicator();
     </script>
     
     <!-- Confirmation Modal -->
