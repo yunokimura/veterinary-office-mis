@@ -30,6 +30,7 @@ class PetRegistrationController extends Controller
                 'pet_name' => 'required|string|max:255',
                 'pet_type' => 'required|in:dog,cat',
                 'gender' => 'required|in:male,female',
+                'is_neutered' => 'required|in:yes,no',
                 'pet_breed' => 'required|string|max:255',
                 'pet_birthdate' => 'nullable|date',
                 'pet_age' => 'nullable|string',
@@ -143,7 +144,7 @@ class PetRegistrationController extends Controller
             $petAge = PetAge::compute($birthdate) ?? $validated['pet_age'] ?? null;
 
             $pet->petInfo()->create([
-                'is_neutered' => $request->has('is_neutered') ? 'yes' : 'no',
+                'is_neutered' => $request->input('is_neutered'),
                 'is_crossbreed' => $request->has('is_crossbreed') ? 'yes' : 'no',
                 'pet_age' => $petAge,
                 'pet_weight' => $validated['pet_weight'] ?? null,

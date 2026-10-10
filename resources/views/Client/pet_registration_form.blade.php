@@ -219,27 +219,37 @@
                                 </div>
                             </div>
 
-                            <!-- Gender -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Gender <span class="text-red-500">*</span></label>
-                                <div class="flex space-x-6">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="gender" value="male" class="form-radio h-5 w-5 text-emerald-600" required>
-                                        <span class="ml-3 text-gray-700 font-medium">Male</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="gender" value="female" class="form-radio h-5 w-5 text-emerald-600" required>
-                                        <span class="ml-3 text-gray-700 font-medium">Female</span>
-                                    </label>
+                            <!-- Gender & Spayed / Neutered -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Gender -->
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Gender <span class="text-red-500">*</span></label>
+                                    <div class="flex space-x-6">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="gender" value="male" class="form-radio h-5 w-5 text-emerald-600" required>
+                                            <span class="ml-3 text-gray-700 font-medium">Male</span>
+                                        </label>
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="gender" value="female" class="form-radio h-5 w-5 text-emerald-600" required>
+                                            <span class="ml-3 text-gray-700 font-medium">Female</span>
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Neutered Checkbox -->
-                            <div>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="isNeutered" name="is_neutered" class="form-checkbox h-5 w-5 text-emerald-600 rounded">
-                                    <span class="ml-3 text-gray-700 font-medium">My pet is neutered</span>
-                                </label>
+                                <!-- Spayed / Neutered -->
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Spayed / Neutered <span class="text-red-500">*</span></label>
+                                    <div class="flex space-x-6">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="is_neutered" value="yes" class="form-radio h-5 w-5 text-emerald-600" required>
+                                            <span class="ml-3 text-gray-700 font-medium">Yes</span>
+                                        </label>
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="is_neutered" value="no" class="form-radio h-5 w-5 text-emerald-600" required>
+                                            <span class="ml-3 text-gray-700 font-medium">No</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1678,7 +1688,7 @@
             // --- Pet Basics ---
             const petTypeInput = form.querySelector('input[name="pet_type"]:checked');
             const genderInput = form.querySelector('input[name="gender"]:checked');
-            const neutered = document.getElementById('isNeutered');
+            const neuteredInput = form.querySelector('input[name="is_neutered"]:checked');
             const crossbreed = document.getElementById('isCrossbreed');
             const species = petTypeInput ? petTypeInput.value : '';
             const breed = document.getElementById('petBreedInput') ? document.getElementById('petBreedInput').value : '';
@@ -1687,9 +1697,9 @@
                 row('Pet Name', form.pet_name ? form.pet_name.value : '') +
                 row('Species', species ? species.charAt(0).toUpperCase() + species.slice(1) : '') +
                 row('Gender', genderInput ? genderInput.value.charAt(0).toUpperCase() + genderInput.value.slice(1) : '') +
+                row('Spayed / Neutered', neuteredInput ? (neuteredInput.value === 'yes' ? 'Yes' : 'No') : '') +
                 row('Breed', breed) +
-                row('Crossbreed', crossbreed && crossbreed.checked ? 'Yes' : 'No') +
-                row('Neutered', neutered && neutered.checked ? 'Yes' : 'No');
+                row('Crossbreed', crossbreed && crossbreed.checked ? 'Yes' : 'No');
 
             // --- Physical Details & Photos ---
             const knowBirthdate = document.getElementById('knowBirthdate');
