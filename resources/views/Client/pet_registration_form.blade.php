@@ -493,7 +493,6 @@
 
                                 <!-- Left / Right Eye Color (shown for heterochromia) -->
                                 <div id="eyeColorHeterochromiaWrap" class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl hidden">
-                                    <p class="text-xs font-medium text-gray-500 mb-3">Specify the color of each eye separately</p>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <!-- Left Eye -->
                                         <div>
@@ -508,6 +507,7 @@
                                                 <option value="Parti-Colored / Marbled">Parti-Colored / Marbled</option>
                                                 <option value="Other">Other</option>
                                             </select>
+                                            <p class="text-xs text-gray-500 mt-1">Select the predominant color for each eye.</p>
                                             <div id="eyeColorLeftOtherWrap" class="mt-2 hidden">
                                                 <input type="text" id="eyeColorLeftOther" name="eye_color_left_other" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify left eye color">
                                             </div>
