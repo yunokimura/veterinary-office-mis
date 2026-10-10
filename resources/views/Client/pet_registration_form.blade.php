@@ -266,12 +266,19 @@
                         </div>
                         <div class="p-6 space-y-6">
 
-                            <!-- Crossbreed Checkbox -->
+                            <!-- Crossbreed -->
                             <div>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="isCrossbreed" name="is_crossbreed" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleCrossbreed()">
-                                    <span class="ml-3 text-gray-700 font-medium">My pet is a crossbreed</span>
-                                </label>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
+                                <div class="flex space-x-6">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required>
+                                        <span class="ml-3 text-gray-700 font-medium">Yes</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required>
+                                        <span class="ml-3 text-gray-700 font-medium">No</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <!-- Pet Breed -->
@@ -922,6 +929,12 @@
         let selectedBreeds = [];
         let currentPetType = '';
 
+        // Returns true only when the crossbreed answer is "Yes"
+        function isCrossbreedSelected() {
+            const selected = document.querySelector('input[name="is_crossbreed"]:checked');
+            return selected ? selected.value === 'yes' : false;
+        }
+
         // Toggle breed dropdown
         function toggleBreedDropdown() {
             const dropdown = document.getElementById('breedDropdown');
@@ -946,8 +959,8 @@
         function updateBreedOptions() {
             const petType = document.querySelector('input[name="pet_type"]:checked');
             currentPetType = petType ? petType.value : '';
-            
-            const isCrossbreed = document.getElementById('isCrossbreed').checked;
+
+            const isCrossbreed = isCrossbreedSelected();
             const singleOptions = document.getElementById('singleBreedOptions');
             const crossOptions = document.getElementById('crossbreedOptions');
             const breedLimitText = document.getElementById('breedLimitText');
@@ -995,8 +1008,8 @@
 
         // Toggle crossbreed mode
         function toggleCrossbreed() {
-            const isCrossbreed = document.getElementById('isCrossbreed').checked;
-            
+            const isCrossbreed = isCrossbreedSelected();
+
             // Clear selections when toggling
             selectedBreeds = [];
             updateSelectedBreedDisplay();
@@ -1079,8 +1092,8 @@
 
         // Remove breed from selection
         function removeBreed(breed) {
-            const isCrossbreed = document.getElementById('isCrossbreed').checked;
-            
+            const isCrossbreed = isCrossbreedSelected();
+
             selectedBreeds = selectedBreeds.filter(b => b !== breed);
             
             if (isCrossbreed) {
@@ -1114,7 +1127,7 @@
         // Filter breeds based on search
         function filterBreeds() {
             const search = document.getElementById('breedSearch').value.toLowerCase();
-            const isCrossbreed = document.getElementById('isCrossbreed').checked;
+            const isCrossbreed = isCrossbreedSelected();
             
             if (isCrossbreed) {
                 const checkboxes = document.querySelectorAll('#crossbreedOptions label');
@@ -1689,7 +1702,7 @@
             const petTypeInput = form.querySelector('input[name="pet_type"]:checked');
             const genderInput = form.querySelector('input[name="gender"]:checked');
             const neuteredInput = form.querySelector('input[name="is_neutered"]:checked');
-            const crossbreed = document.getElementById('isCrossbreed');
+            const crossbreedInput = form.querySelector('input[name="is_crossbreed"]:checked');
             const species = petTypeInput ? petTypeInput.value : '';
             const breed = document.getElementById('petBreedInput') ? document.getElementById('petBreedInput').value : '';
 
@@ -1699,7 +1712,7 @@
                 row('Gender', genderInput ? genderInput.value.charAt(0).toUpperCase() + genderInput.value.slice(1) : '') +
                 row('Spayed / Neutered', neuteredInput ? (neuteredInput.value === 'yes' ? 'Yes' : 'No') : '') +
                 row('Breed', breed) +
-                row('Crossbreed', crossbreed && crossbreed.checked ? 'Yes' : 'No');
+                row('Crossbreed', crossbreedInput ? (crossbreedInput.value === 'yes' ? 'Yes' : 'No') : '');
 
             // --- Physical Details & Photos ---
             const knowBirthdate = document.getElementById('knowBirthdate');
