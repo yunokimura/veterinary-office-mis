@@ -338,21 +338,28 @@
                         </div>
                         <div class="p-6 space-y-6">
 
-                            <!-- I know my pet's birthdate -->
+                            <!-- Do you know your pet's birthdate -->
                             <div>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="knowBirthdate" name="know_birthdate" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleBirthdate()">
-                                    <span class="ml-3 text-gray-700 font-medium">I know my pet's birthdate</span>
-                                </label>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Do you know your pet's birthdate? <span class="text-red-500">*</span></label>
+                                <div class="flex space-x-6">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="know_birthdate" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" required>
+                                        <span class="ml-3 text-gray-700 font-medium">Yes</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="know_birthdate" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" checked required>
+                                        <span class="ml-3 text-gray-700 font-medium">No</span>
+                                    </label>
+                                </div>
                             </div>
 
-                            <!-- Pet's Birthdate (shown if checkbox is checked) -->
+                            <!-- Pet's Birthdate (shown if "Yes" is selected) -->
                             <div id="birthdateSection" class="hidden">
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Birthdate</label>
                                 <input type="date" id="petBirthdate" name="pet_birthdate" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                             </div>
 
-                            <!-- Exact Pet Age -->
+                            <!-- Exact Pet Age (shown if "No" is selected) -->
                             <div id="ageSection">
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet Age</label>
                                 <input type="text" id="petAge" name="pet_age" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g. 2 years 3 months">
@@ -482,6 +489,48 @@
                                 <div id="eyeColorOtherWrap" class="mt-3 hidden">
                                     <label class="block text-xs font-medium text-gray-500 mb-1">Please specify eye color</label>
                                     <input type="text" id="eyeColorOther" name="eye_color_other" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
+                                </div>
+
+                                <!-- Left / Right Eye Color (shown for heterochromia) -->
+                                <div id="eyeColorHeterochromiaWrap" class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl hidden">
+                                    <p class="text-xs font-medium text-gray-500 mb-3">Specify the color of each eye separately</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <!-- Left Eye -->
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Left Eye Color</label>
+                                            <select id="eyeColorLeft" name="eye_color_left" onchange="handleEyeSideChange('Left')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                                <option value="">Select left eye color</option>
+                                                <option value="Brown">Brown</option>
+                                                <option value="Blue">Blue</option>
+                                                <option value="Amber / Yellow">Amber / Yellow</option>
+                                                <option value="Green">Green</option>
+                                                <option value="Hazel">Hazel</option>
+                                                <option value="Parti-Colored / Marbled">Parti-Colored / Marbled</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <div id="eyeColorLeftOtherWrap" class="mt-2 hidden">
+                                                <input type="text" id="eyeColorLeftOther" name="eye_color_left_other" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify left eye color">
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Eye -->
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Right Eye Color</label>
+                                            <select id="eyeColorRight" name="eye_color_right" onchange="handleEyeSideChange('Right')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                                <option value="">Select right eye color</option>
+                                                <option value="Brown">Brown</option>
+                                                <option value="Blue">Blue</option>
+                                                <option value="Amber / Yellow">Amber / Yellow</option>
+                                                <option value="Green">Green</option>
+                                                <option value="Hazel">Hazel</option>
+                                                <option value="Parti-Colored / Marbled">Parti-Colored / Marbled</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <div id="eyeColorRightOtherWrap" class="mt-2 hidden">
+                                                <input type="text" id="eyeColorRightOther" name="eye_color_right_other" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify right eye color">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1466,11 +1515,12 @@
 
         // Toggle birthdate section
         function toggleBirthdate() {
-            const knowBirthdate = document.getElementById('knowBirthdate').checked;
+            const knowBirthdate = document.querySelector('input[name="know_birthdate"]:checked');
+            const knowsBirthdate = knowBirthdate && knowBirthdate.value === 'yes';
             const birthdateSection = document.getElementById('birthdateSection');
             const ageSection = document.getElementById('ageSection');
-            
-            if (knowBirthdate) {
+
+            if (knowsBirthdate) {
                 birthdateSection.classList.remove('hidden');
                 ageSection.classList.add('hidden');
             } else {
@@ -1562,15 +1612,19 @@
         const totalSteps = 4;
         let currentStep = 1;
 
-        // Eye color "Other" text box toggle
+        // Eye color "Other" text box toggle + heterochromia dropdowns
         function handleEyeColorChange() {
             const selected = document.querySelector('input[name="eye_color"]:checked');
             const wrap = document.getElementById('eyeColorOtherWrap');
             const input = document.getElementById('eyeColorOther');
+            const heteroWrap = document.getElementById('eyeColorHeterochromiaWrap');
 
             if (!wrap || !input) return;
 
-            if (selected && selected.value === 'Other') {
+            const selectedValue = selected ? selected.value : '';
+
+            // "Other" custom text field
+            if (selectedValue === 'Other') {
                 wrap.classList.remove('hidden');
                 input.setAttribute('required', 'required');
             } else {
@@ -1578,6 +1632,78 @@
                 input.removeAttribute('required');
                 input.value = '';
             }
+
+            // "Heterochromia" -> left / right eye color dropdowns
+            if (heteroWrap) {
+                if (selectedValue === 'Heterochromia (Two different colors)') {
+                    heteroWrap.classList.remove('hidden');
+                    setEyeSideRequired('Left', true);
+                    setEyeSideRequired('Right', true);
+                } else {
+                    heteroWrap.classList.add('hidden');
+                    resetEyeSide('Left');
+                    resetEyeSide('Right');
+                }
+            }
+        }
+
+        // Toggle the custom text field for one eye side
+        function handleEyeSideChange(side) {
+            const select = document.getElementById('eyeColor' + side);
+            const wrap = document.getElementById('eyeColor' + side + 'OtherWrap');
+            const input = document.getElementById('eyeColor' + side + 'Other');
+            if (!select || !wrap || !input) return;
+
+            if (select.value === 'Other') {
+                wrap.classList.remove('hidden');
+                input.setAttribute('required', 'required');
+            } else {
+                wrap.classList.add('hidden');
+                input.removeAttribute('required');
+                input.value = '';
+            }
+        }
+
+        // Require / unrequire one eye side dropdown
+        function setEyeSideRequired(side, required) {
+            const select = document.getElementById('eyeColor' + side);
+            if (!select) return;
+
+            if (required) {
+                select.setAttribute('required', 'required');
+            } else {
+                select.removeAttribute('required');
+                resetEyeSide(side);
+            }
+        }
+
+        // Clear one eye side back to its default state
+        function resetEyeSide(side) {
+            const select = document.getElementById('eyeColor' + side);
+            const wrap = document.getElementById('eyeColor' + side + 'OtherWrap');
+            const input = document.getElementById('eyeColor' + side + 'Other');
+
+            if (select) {
+                select.value = '';
+                select.removeAttribute('required');
+            }
+            if (wrap) wrap.classList.add('hidden');
+            if (input) {
+                input.removeAttribute('required');
+                input.value = '';
+            }
+        }
+
+        // Read back one eye side value for the review summary
+        function readEyeSide(side) {
+            const select = document.getElementById('eyeColor' + side);
+            const input = document.getElementById('eyeColor' + side + 'Other');
+
+            if (!select || select.value === '') return '';
+            if (select.value === 'Other' && input && input.value.trim() !== '') {
+                return input.value.trim();
+            }
+            return select.value;
         }
 
         // Update the step indicator + progress bar
@@ -1769,7 +1895,7 @@
                 row('Crossbreed', crossbreedInput ? (crossbreedInput.value === 'yes' ? 'Yes' : 'No') : '');
 
             // --- Physical Details & Photos ---
-            const knowBirthdate = document.getElementById('knowBirthdate');
+            const knowBirthdateInput = form.querySelector('input[name="know_birthdate"]:checked');
             const birthdate = document.getElementById('petBirthdate');
             const age = document.getElementById('petAge');
             const weight = document.getElementById('petWeight');
@@ -1780,10 +1906,14 @@
             let eyeColor = eyeColorInput ? eyeColorInput.value : '';
             if (eyeColor === 'Other' && eyeColorOther && eyeColorOther.value.trim() !== '') {
                 eyeColor = eyeColorOther.value.trim();
+            } else if (eyeColor === 'Heterochromia (Two different colors)') {
+                const leftEye = readEyeSide('Left');
+                const rightEye = readEyeSide('Right');
+                eyeColor = 'Heterochromia — Left: ' + (leftEye || 'N/A') + ', Right: ' + (rightEye || 'N/A');
             }
 
             let ageOrBirthdate = '';
-            if (knowBirthdate && knowBirthdate.checked && birthdate && birthdate.value) {
+            if (knowBirthdateInput && knowBirthdateInput.value === 'yes' && birthdate && birthdate.value) {
                 const parsed = new Date(birthdate.value + 'T00:00:00');
                 ageOrBirthdate = parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
             } else if (age && age.value.trim() !== '') {
@@ -1951,4 +2081,6 @@
         }
     </script>
 </body>
+</html>
+/body>
 </html>

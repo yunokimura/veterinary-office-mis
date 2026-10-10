@@ -32,6 +32,7 @@ class PetRegistrationController extends Controller
                 'gender' => 'required|in:male,female',
                 'is_neutered' => 'required|in:yes,no',
                 'is_crossbreed' => 'required|in:yes,no',
+                'know_birthdate' => 'required|in:yes,no',
                 'pet_breed' => 'required|string|max:255',
                 'pet_birthdate' => 'nullable|date',
                 'pet_age' => 'nullable|string',
