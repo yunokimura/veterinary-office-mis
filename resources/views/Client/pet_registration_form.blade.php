@@ -347,33 +347,54 @@
                                         <span class="ml-3 text-gray-700 font-medium">Yes</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="know_birthdate" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" checked required>
+                                        <input type="radio" name="know_birthdate" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" required>
                                         <span class="ml-3 text-gray-700 font-medium">No</span>
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- Pet's Birthdate (shown if "Yes" is selected) -->
-                            <div id="birthdateSection" class="hidden">
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Birthdate</label>
-                                <input type="date" id="petBirthdate" name="pet_birthdate" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                            </div>
+                            <!-- Pet's Birthdate / Pet Age (shown once an option above is chosen) -->
+                            <div id="ageOrBirthdateWrap" class="hidden border-l-2 border-emerald-300 pl-4">
+                                <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Pet's Birthdate / Pet Age</p>
 
-                            <!-- Exact Pet Age (shown if "No" is selected) -->
-                            <div id="ageSection">
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet Age</label>
-                                <input type="text" id="petAge" name="pet_age" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g. 2 years 3 months">
-                                <p class="text-xs text-gray-500 mt-1">Enter exact age, e.g. "3 months", "1 year", "2 years 6 months"</p>
+                                <!-- Pet's Birthdate (shown if "Yes" is selected) -->
+                                <div id="birthdateSection" class="hidden">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Birthdate</label>
+                                    <input type="date" id="petBirthdate" name="pet_birthdate" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                </div>
+
+                                <!-- Pet Age (shown if "No" is selected) -->
+                                <div id="ageSection" class="hidden">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet Age</label>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Years</label>
+                                            <select id="petAgeYears" name="pet_age_years" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                                <option value="">Select years</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Months</label>
+                                            <select id="petAgeMonths" name="pet_age_months" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                                <option value="">Select months</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <p id="ageHint" class="text-xs text-gray-500 mt-1 hidden">Please specify your pet's age in years or months.</p>
+                                </div>
                             </div>
 
                             <!-- Pet Weight -->
                             <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Weight <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Weight (kg) <span class="text-red-500">*</span></label>
                                 <div class="relative">
-                                    <input type="text" id="petWeight" name="pet_weight" class="w-full px-3.5 py-2.5 pr-12 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter weight" maxlength="6" oninput="updateWeightSuffix(); validateWeight(this)" required>
+                                    <input type="text" id="petWeight" name="pet_weight" class="w-full px-3.5 py-2.5 pr-12 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter weight in kilograms" maxlength="6" oninput="updateWeightSuffix(); validateWeight(this)" required>
                                     <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none hidden">kg</span>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">If you do not know, type "N/A"</p>
+                                <label class="inline-flex items-center cursor-pointer mt-2">
+                                    <input type="checkbox" id="weightUnknown" name="weight_unknown" value="1" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleWeightUnknown()">
+                                    <span class="ml-3 text-gray-700 font-medium">Weight unknown</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -391,29 +412,10 @@
                         </div>
                         <div class="p-6 space-y-6">
 
-                            <!-- Unique Body Mark -->
+                            <!-- Front, Side, Top-down View -->
                             <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Unique Body Mark <span class="text-red-500">*</span></label>
-                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors inline-block">
-                                    <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-48 h-48 object-cover rounded-lg">
-                                    <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)" required>
-                                    <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn">×</button>
-                                    <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                        Click to upload
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Body Mark Details -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Body Mark Details <span class="text-red-500">*</span></label>
-                                <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Describe any unique marks, scars, or distinguishing features..." required></textarea>
-                            </div>
-
-                            <!-- Additional View Photos -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Additional Photos</label>
-                                <p class="text-xs text-gray-500 mb-4">Upload front, side, and top-down views of your pet</p>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Front, Side, Top-down View <span class="text-red-500">*</span></label>
+                                <p class="text-xs text-gray-500 mb-4">Upload the front, side, and top-down views of your pet</p>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                                     <!-- Front View -->
@@ -421,7 +423,7 @@
                                         <label class="block text-xs font-medium text-gray-500 mb-2">Front View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
                                             <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
-                                            <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')">
+                                            <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')" required>
                                             <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn">×</button>
                                             <button type="button" onclick="document.getElementById('frontImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 Click to upload
@@ -434,7 +436,7 @@
                                         <label class="block text-xs font-medium text-gray-500 mb-2">Side View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
                                             <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
-                                            <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')">
+                                            <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')" required>
                                             <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn">×</button>
                                             <button type="button" onclick="document.getElementById('sideImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 Click to upload
@@ -447,7 +449,7 @@
                                         <label class="block text-xs font-medium text-gray-500 mb-2">Top-Down View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
                                             <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
-                                            <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')">
+                                            <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')" required>
                                             <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn">×</button>
                                             <button type="button" onclick="document.getElementById('topImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 Click to upload
@@ -455,6 +457,26 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Unique Body Mark -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Unique Body Mark</label>
+                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors inline-block">
+                                    <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-48 h-48 object-cover rounded-lg">
+                                    <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)">
+                                    <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn">×</button>
+                                    <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                        Click to upload
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Optional — upload a photo of a distinguishing mark if you have one.</p>
+                            </div>
+
+                            <!-- Body Mark Details -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Body Mark Details</label>
+                                <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Describe any unique marks, scars, or distinguishing features..."></textarea>
                             </div>
 
                             <!-- Eye Color -->
@@ -492,7 +514,7 @@
                                 </div>
 
                                 <!-- Left / Right Eye Color (shown for heterochromia) -->
-                                <div id="eyeColorHeterochromiaWrap" class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl hidden">
+                                <div id="eyeColorHeterochromiaWrap" class="mt-2 p-4 bg-emerald-50/60 border border-emerald-200 rounded-xl rounded-tl-none hidden">
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <!-- Left Eye -->
                                         <div>
@@ -1513,28 +1535,140 @@
 
         populateVaccinationHistory();
 
-        // Toggle birthdate section
+        // Initialise the structured age selectors (years / months)
+        initAgeSelectors();
+
+        // Populate the structured age selectors (years / months)
+        function initAgeSelectors() {
+            const years = document.getElementById('petAgeYears');
+            const months = document.getElementById('petAgeMonths');
+            if (!years || !months) return;
+
+            let yearsHtml = '<option value="">Select years</option>';
+            for (let i = 0; i <= 30; i++) {
+                yearsHtml += `<option value="${i}">${i} ${i === 1 ? 'year' : 'years'}</option>`;
+            }
+            years.innerHTML = yearsHtml;
+
+            let monthsHtml = '<option value="">Select months</option>';
+            for (let i = 0; i <= 11; i++) {
+                monthsHtml += `<option value="${i}">${i} ${i === 1 ? 'month' : 'months'}</option>`;
+            }
+            months.innerHTML = monthsHtml;
+
+            years.addEventListener('change', clearAgeHint);
+            months.addEventListener('change', clearAgeHint);
+        }
+
+        // Hide the age hint once the user picks a value
+        function clearAgeHint() {
+            if (document.getElementById('petAgeYears').value !== '' || document.getElementById('petAgeMonths').value !== '') {
+                document.getElementById('ageHint').classList.add('hidden');
+            }
+        }
+
+        // Build the readable age string from the two selectors
+        function readAgeSelection() {
+            const years = document.getElementById('petAgeYears');
+            const months = document.getElementById('petAgeMonths');
+            const parts = [];
+
+            if (years && years.value !== '') {
+                const y = parseInt(years.value, 10);
+                parts.push(`${y} ${y === 1 ? 'year' : 'years'}`);
+            }
+            if (months && months.value !== '') {
+                const m = parseInt(months.value, 10);
+                parts.push(`${m} ${m === 1 ? 'month' : 'months'}`);
+            }
+
+            return parts.join(' ');
+        }
+
+        // True when neither age selector has a value
+        function isAgeEmpty() {
+            const years = document.getElementById('petAgeYears');
+            const months = document.getElementById('petAgeMonths');
+            const emptyYears = !years || years.value === '';
+            const emptyMonths = !months || months.value === '';
+
+            return emptyYears && emptyMonths;
+        }
+
+        // Show the age hint (used by step validation)
+        function showAgeHint() {
+            document.getElementById('ageHint').classList.remove('hidden');
+        }
+
+        // Reset the age selectors back to their placeholder state
+        function resetAgeSelectors() {
+            const years = document.getElementById('petAgeYears');
+            const months = document.getElementById('petAgeMonths');
+            if (years) years.value = '';
+            if (months) months.value = '';
+            document.getElementById('ageHint').classList.add('hidden');
+        }
+
+        // Toggle the birthdate / age block based on the Yes / No answer
         function toggleBirthdate() {
-            const knowBirthdate = document.querySelector('input[name="know_birthdate"]:checked');
-            const knowsBirthdate = knowBirthdate && knowBirthdate.value === 'yes';
+            const selected = document.querySelector('input[name="know_birthdate"]:checked');
+            const wrap = document.getElementById('ageOrBirthdateWrap');
             const birthdateSection = document.getElementById('birthdateSection');
             const ageSection = document.getElementById('ageSection');
+            const birthdateInput = document.getElementById('petBirthdate');
 
-            if (knowsBirthdate) {
+            // Nothing selected yet -> hide the whole block
+            if (!selected) {
+                wrap.classList.add('hidden');
+                birthdateSection.classList.add('hidden');
+                ageSection.classList.add('hidden');
+                if (birthdateInput) birthdateInput.value = '';
+                resetAgeSelectors();
+                return;
+            }
+
+            wrap.classList.remove('hidden');
+            resetAgeSelectors();
+
+            if (selected.value === 'yes') {
+                // Birthdate mode
                 birthdateSection.classList.remove('hidden');
                 ageSection.classList.add('hidden');
             } else {
+                // Age mode
                 birthdateSection.classList.add('hidden');
                 ageSection.classList.remove('hidden');
+                if (birthdateInput) birthdateInput.value = '';
             }
         }
-        
+
+        // Enable / disable the weight field via the "Weight unknown" checkbox
+        function toggleWeightUnknown() {
+            const checkbox = document.getElementById('weightUnknown');
+            const input = document.getElementById('petWeight');
+            if (!checkbox || !input) return;
+
+            if (checkbox.checked) {
+                input.value = 'N/A';
+                input.setAttribute('readonly', 'readonly');
+                input.removeAttribute('required');
+                input.classList.add('bg-slate-100', 'text-gray-400', 'cursor-not-allowed');
+            } else {
+                input.value = '';
+                input.removeAttribute('readonly');
+                input.setAttribute('required', 'required');
+                input.classList.remove('bg-slate-100', 'text-gray-400', 'cursor-not-allowed');
+            }
+
+            updateWeightSuffix();
+        }
+
         // Update weight suffix based on input
         function updateWeightSuffix() {
             const input = document.getElementById('petWeight');
             const suffix = document.getElementById('weightSuffix');
             const value = input.value.trim().toUpperCase();
-            
+
             // Show kg suffix if there's a valid number, hide if empty or N/A
             if (value === '' || value === 'N/A') {
                 suffix.classList.add('hidden');
@@ -1819,6 +1953,15 @@
                 }
             }
 
+            // Age requires at least one of years / months when "No" is chosen
+            if (step === 2 && isAgeEmpty()) {
+                const wrap = document.getElementById('ageOrBirthdateWrap');
+                if (wrap && !wrap.classList.contains('hidden')) {
+                    isValid = false;
+                    showAgeHint();
+                }
+            }
+
             if (!isValid) {
                 alert('Please fill in all required fields marked with * before continuing.');
                 if (firstInvalid && firstInvalid.type !== 'hidden') {
@@ -1897,8 +2040,8 @@
             // --- Physical Details & Photos ---
             const knowBirthdateInput = form.querySelector('input[name="know_birthdate"]:checked');
             const birthdate = document.getElementById('petBirthdate');
-            const age = document.getElementById('petAge');
             const weight = document.getElementById('petWeight');
+            const weightUnknown = document.getElementById('weightUnknown');
             const eyeColorInput = form.querySelector('input[name="eye_color"]:checked');
             const eyeColorOther = document.getElementById('eyeColorOther');
             const bodyMarkDetails = document.getElementById('bodyMarkDetails');
@@ -1916,13 +2059,23 @@
             if (knowBirthdateInput && knowBirthdateInput.value === 'yes' && birthdate && birthdate.value) {
                 const parsed = new Date(birthdate.value + 'T00:00:00');
                 ageOrBirthdate = parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            } else if (age && age.value.trim() !== '') {
-                ageOrBirthdate = age.value.trim();
+            } else {
+                const ageSelection = readAgeSelection();
+                if (ageSelection !== '') ageOrBirthdate = ageSelection;
+            }
+
+            let weightDisplay = '';
+            if (weightUnknown && weightUnknown.checked) {
+                weightDisplay = 'Unknown';
+            } else if (weight && weight.value.trim() !== '') {
+                weightDisplay = weight.value.trim().toUpperCase() === 'N/A'
+                    ? 'Unknown'
+                    : weight.value.trim() + ' kg';
             }
 
             document.getElementById('reviewPhysicalRows').innerHTML =
                 row('Birthdate / Age', ageOrBirthdate) +
-                row('Weight', weight && weight.value.trim() !== '' ? weight.value.trim() + ' kg' : '') +
+                row('Weight', weightDisplay) +
                 row('Eye Color', eyeColor) +
                 row('Body Mark Details', bodyMarkDetails ? bodyMarkDetails.value : '');
 

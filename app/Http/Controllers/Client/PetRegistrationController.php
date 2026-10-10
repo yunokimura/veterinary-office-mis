@@ -35,11 +35,25 @@ class PetRegistrationController extends Controller
                 'know_birthdate' => 'required|in:yes,no',
                 'pet_breed' => 'required|string|max:255',
                 'pet_birthdate' => 'nullable|date',
-                'pet_age' => 'nullable|string',
+                'pet_age_years' => 'nullable|integer|min:0|max:40',
+                'pet_age_months' => 'nullable|integer|min:0|max:11',
                 'pet_weight' => 'nullable|string|max:50',
-                'body_mark_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'body_mark_details' => 'required|string|max:1000',
+                'additional_photos.front' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'additional_photos.side' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'additional_photos.top' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'body_mark_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'body_mark_details' => 'nullable|string|max:1000',
             ]);
+
+            // A pet's age must be known one way or the other
+            $yearsInput = (int) $request->input('pet_age_years');
+            $monthsInput = (int) $request->input('pet_age_months');
+
+            if ($request->input('know_birthdate') !== 'yes' && $yearsInput === 0 && $monthsInput === 0) {
+                return back()->withErrors([
+                    'pet_age_years' => "Please specify your pet's age in years or months.",
+                ])->withInput();
+            }
 
             // Get the authenticated user
             $user = Auth::user();
@@ -122,13 +136,30 @@ class PetRegistrationController extends Controller
                 $bodyMarkImagePath = 'images/pets/'.$filename;
             }
 
-            // Calculate birthdate from exact pet_age if birthdate not provided
+            // Resolve the birthdate: use the date picker, or derive it from the
+            // structured years / months selectors.
             $birthdate = null;
+            $ageInput = null;
 
-            if ($request->filled('pet_birthdate')) {
+            if ($request->input('know_birthdate') === 'yes' && $request->filled('pet_birthdate')) {
                 $birthdate = $request->input('pet_birthdate');
-            } elseif ($request->filled('pet_age')) {
-                $birthdate = $this->calculateBirthdateFromExactAge($request->input('pet_age'));
+            } else {
+                $years = (int) $request->input('pet_age_years');
+                $months = (int) $request->input('pet_age_months');
+
+                if ($years > 0 || $months > 0) {
+                    $ageParts = [];
+
+                    if ($years > 0) {
+                        $ageParts[] = $years.' '.($years === 1 ? 'year' : 'years');
+                    }
+                    if ($months > 0) {
+                        $ageParts[] = $months.' '.($months === 1 ? 'month' : 'months');
+                    }
+
+                    $ageInput = implode(' ', $ageParts);
+                    $birthdate = $this->calculateBirthdateFromExactAge($ageInput);
+                }
             }
 
             $pet = Pet::create([
@@ -143,7 +174,7 @@ class PetRegistrationController extends Controller
                 'body_mark_image' => $bodyMarkImagePath,
             ]);
 
-            $petAge = PetAge::compute($birthdate) ?? $validated['pet_age'] ?? null;
+            $petAge = PetAge::compute($birthdate) ?? $ageInput;
 
             $pet->petInfo()->create([
                 'is_neutered' => $request->input('is_neutered'),
