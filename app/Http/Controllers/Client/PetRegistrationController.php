@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Pet;
 use App\Models\PetOwner;
+use App\Models\VaccinationReport;
 use App\Support\PetAge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +44,20 @@ class PetRegistrationController extends Controller
                 'additional_photos.top' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'body_mark_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'body_mark_details' => 'nullable|string|max:1000',
+                'not_vaccinated' => 'boolean',
+                'vaccination_core' => 'array',
+                'vaccination_core.*' => 'string',
+                'vaccination_optional' => 'array',
+                'vaccination_optional.*' => 'string',
+                'vaccination_other' => 'nullable|string|max:255',
+                'anti_rabies' => 'nullable|array',
+                'anti_rabies.date_administered' => 'required_if:vaccination_core.*,Anti-Rabies|nullable|date_format:d/m/Y',
+                'anti_rabies.lot_no' => 'nullable|string|max:30',
+                'anti_rabies.tag_no' => 'nullable|string|max:30|regex:/^[A-Za-z0-9\-\s]+$/',
+                'vaccination_card' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'vaccination_optional' => 'array',
+                'vaccination_optional.*' => 'string',
+                'vaccination_other' => 'nullable|string|max:255',
             ]);
 
             // A pet's age must be known one way or the other
@@ -210,9 +225,92 @@ class PetRegistrationController extends Controller
                 'additional_photos' => json_encode($additionalPhotos),
             ]);
 
-            Log::info('Pet created successfully with ID: '.$pet->pet_id);
+            // Handle vaccination card upload
+            $vaccinationCardPath = null;
+            if ($request->hasFile('vaccination_card')) {
+                $file = $request->file('vaccination_card');
+                $filename = 'vaccination_card_' . $pet->pet_id . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $uploadPath = public_path('images/vaccination_cards');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0777, true);
+                }
+                $file->move($uploadPath, $filename);
+                $vaccinationCardPath = 'images/vaccination_cards/' . $filename;
+            }
 
-            return redirect()->route('owner.dashboard')->with('success', $pet->pet_name.' is registered successfully!');
+            // Build vaccination records
+            $notVaccinated = $request->boolean('not_vaccinated');
+            $vaccinationRecords = [];
+            $antiRabiesDetails = null;
+
+            if (!$request->boolean('not_vaccinated')) {
+                $coreVaccines = $request->input('vaccination_core', []);
+                $optionalVaccines = $request->input('vaccination_optional', []);
+                $otherVaccine = $request->input('vaccination_other');
+
+                foreach ($coreVaccines as $vaccine) {
+                    $record = ['name' => $vaccine, 'type' => 'core'];
+                    if ($vaccine === 'Anti-Rabies') {
+                        $antiRabiesDate = $request->input('anti_rabies.date_administered');
+                        $antiRabiesLot = $request->input('anti_rabies.lot_no');
+                        $antiRabiesTag = $request->input('anti_rabies.tag_no');
+                        
+                        $record['date_administered'] = $antiRabiesDate;
+                        $record['lot_no'] = $antiRabiesLot;
+                        $record['tag_no'] = $antiRabiesTag;
+
+                        $antiRabiesDetails = [
+                            'date_administered' => $antiRabiesDate,
+                            'lot_no' => $antiRabiesLot,
+                            'tag_no' => $antiRabiesTag,
+                        ];
+                    }
+                    $vaccinationRecords[] = $record;
+                }
+
+                $optionalVaccines = $request->input('vaccination_optional', []);
+                $otherVaccine = $request->input('vaccination_other');
+                foreach ($optionalVaccines as $vaccine) {
+                    if ($vaccine === 'Other' && $request->input('vaccination_other')) {
+                        $vaccinationRecords[] = [
+                            'name' => $request->input('vaccination_other'),
+                            'type' => 'optional',
+                        ];
+                    } else {
+                        $vaccinationRecords[] = [
+                            'name' => $vaccine,
+                            'type' => 'optional',
+                        ];
+                    }
+                }
+            }
+
+            // Handle vaccination card upload
+            $vaccinationCardPath = null;
+            if ($request->hasFile('vaccination_card')) {
+                $file = $request->file('vaccination_card');
+                $filename = 'vaccination_card_' . $pet->pet_id . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $uploadPath = public_path('images/vaccination_cards');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0777, true);
+                }
+                $file->move($uploadPath, $filename);
+                $vaccinationCardPath = 'images/vaccination_cards/' . $filename;
+            }
+
+            // Create vaccination report
+            $vaccinationReport = \App\Models\VaccinationReport::create([
+                'user_id' => $user->id,
+                'pet_id' => $pet->pet_id,
+                'not_vaccinated' => $request->boolean('not_vaccinated'),
+                'vaccination_records' => $vaccinationRecords,
+                'anti_rabies_details' => $antiRabiesDetails,
+                'vaccination_card_path' => $vaccinationCardPath,
+                'status' => 'completed',
+                'scheduled_at' => now(),
+            ]);
+
+            Log::info('Vaccination report created for pet ID: ' . $pet->pet_id);
         } catch (\Exception $e) {
             Log::error('Pet Registration Error: '.$e->getMessage());
             Log::error('Stack trace: '.$e->getTraceAsString());

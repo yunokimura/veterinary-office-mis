@@ -87,6 +87,11 @@ class VaccinationReport extends Model
         'notes',
         'administered_by',
         'inventory_control_id',
+        'not_vaccinated',
+        'vaccination_records',
+        'anti_rabies_details',
+        'vaccination_card_path',
+        'user_id',
     ];
 
     protected $casts = [
@@ -97,6 +102,9 @@ class VaccinationReport extends Model
         'weight' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'vaccination_records' => 'array',
+        'anti_rabies_details' => 'array',
+        'not_vaccinated' => 'boolean',
     ];
 
     public function vaccinationAppointment(): BelongsTo
