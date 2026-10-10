@@ -1879,23 +1879,25 @@
                 </div>
 
                 <!-- Modal Body -->
-                <div class="flex-1 overflow-y-auto px-5 py-4">
-                    <!-- Quick Selections -->
-                    <div id="breedModalQuick" class="mb-5 hidden">
-                        <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Popular / Quick Selections</p>
-                        <div class="flex flex-wrap gap-2" id="breedModalQuickChips"></div>
-                    </div>
+                <div class="flex-1 overflow-y-auto">
+                    <div class="px-5 pt-4 pb-4">
+                        <!-- Quick Selections -->
+                        <div id="breedModalQuick" class="mb-5 hidden">
+                            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Popular / Quick Selections</p>
+                            <div class="flex flex-wrap gap-2" id="breedModalQuickChips"></div>
+                        </div>
 
-                    <!-- Alphabetical List -->
-                    <div id="breedModalList"></div>
+                        <!-- Alphabetical List -->
+                        <div id="breedModalList"></div>
 
-                    <!-- Empty search state -->
-                    <div id="breedModalEmpty" class="hidden text-center py-8">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <p class="text-sm text-gray-500">No breeds match your search.</p>
-                        <p class="text-xs text-gray-400 mt-1">Try "Other / Breed Not Listed" below.</p>
+                        <!-- Empty search state -->
+                        <div id="breedModalEmpty" class="hidden text-center py-8">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <p class="text-sm text-gray-500">No breeds match your search.</p>
+                            <p class="text-xs text-gray-400 mt-1">Try "Other / Breed Not Listed" below.</p>
+                        </div>
                     </div>
                 </div>
 
