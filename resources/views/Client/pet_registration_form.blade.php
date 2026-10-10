@@ -303,11 +303,6 @@
 
                                 <!-- Hidden input for breed -->
                                 <input type="hidden" id="petBreedInput" name="pet_breed" value="" required>
-
-                                <!-- Display selected breed tags -->
-                                <div id="selectedBreedDisplay" class="mt-3 hidden">
-                                    <div class="flex flex-wrap gap-2" id="selectedBreedTags"></div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1175,20 +1170,18 @@
             closeBreedModal();
         }
 
-        // Update selected breed display (text + tags)
+        // Update the breed trigger text and hidden input
         function updateSelectedBreedDisplay() {
-            const display = document.getElementById('selectedBreedDisplay');
-            const tags = document.getElementById('selectedBreedTags');
             const selectedText = document.getElementById('selectedBreedText');
             const breedDisplay = document.getElementById('breedDisplay');
+            const petBreedInput = document.getElementById('petBreedInput');
 
             if (breedDisplay) {
                 breedDisplay.classList.remove('ring-2', 'ring-red-400', 'border-red-400');
             }
 
             if (selectedBreeds.length === 0) {
-                display.classList.add('hidden');
-                document.getElementById('petBreedInput').value = '';
+                petBreedInput.value = '';
                 if (selectedText) {
                     selectedText.textContent = 'Search or select a breed';
                     selectedText.classList.remove('text-gray-900');
@@ -1197,46 +1190,12 @@
                 return;
             }
 
-            display.classList.remove('hidden');
-            tags.innerHTML = selectedBreeds.map(breed => `
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-600 text-white">
-                    ${breed}
-                    <button type="button" onclick="removeBreed('${breed.replace(/'/g, "\\'")}')" class="ml-2 hover:text-emerald-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </span>
-            `).join('');
-            
-            // Also update the display text
-            document.getElementById('selectedBreedText').textContent = selectedBreeds.join(', ');
-            document.getElementById('selectedBreedText').classList.remove('text-gray-500');
-            document.getElementById('selectedBreedText').classList.add('text-gray-900');
-            
-            // Update hidden input
-            document.getElementById('petBreedInput').value = selectedBreeds.join(', ');
-        }
+            // The trigger field shows the selected breed(s)
+            selectedText.textContent = selectedBreeds.join(', ');
+            selectedText.classList.remove('text-gray-500');
+            selectedText.classList.add('text-gray-900');
 
-        // Remove breed from selection (from the chips under the trigger)
-        function removeBreed(breed) {
-            selectedBreeds = selectedBreeds.filter(b => b !== breed);
-
-            // Uncheck the matching control inside the modal when it is open
-            document.querySelectorAll(`.pet-breed-checkbox[value="${breed.replace(/"/g, '\\"')}"]`).forEach(cb => {
-                cb.checked = false;
-            });
-            document.querySelectorAll(`.pet-breed-radio[value="${breed.replace(/"/g, '\\"')}"]`).forEach(r => {
-                r.checked = false;
-            });
-
-            updateSelectedBreedDisplay();
-
-            // Keep the modal in sync if it is currently open
-            const modal = document.getElementById('breedModal');
-            if (modal && !modal.classList.contains('hidden')) {
-                renderBreedModal(document.getElementById('breedModalSearch').value);
-            }
+            petBreedInput.value = selectedBreeds.join(', ');
         }
 
         // Preview body mark image
