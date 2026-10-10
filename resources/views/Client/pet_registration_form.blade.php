@@ -355,7 +355,6 @@
 
                             <!-- Pet's Birthdate / Pet Age (shown once an option above is chosen) -->
                             <div id="ageOrBirthdateWrap" class="hidden border-l-2 border-emerald-300 pl-4">
-                                <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Pet's Birthdate / Pet Age</p>
 
                                 <!-- Pet's Birthdate (shown if "Yes" is selected) -->
                                 <div id="birthdateSection" class="hidden">
