@@ -359,7 +359,7 @@
                                 <!-- Pet's Birthdate (shown if "Yes" is selected) -->
                                 <div id="birthdateSection" class="hidden">
                                     <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Birthdate</label>
-                                    <input type="date" id="petBirthdate" name="pet_birthdate" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                    <input type="date" id="petBirthdate" name="pet_birthdate" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                 </div>
 
                                 <!-- Pet Age (shown if "No" is selected) -->
@@ -2135,7 +2135,11 @@
                 const container = document.getElementById(containerId);
                 if (!container) return row(label, '—');
                 const selected = Array.from(container.querySelectorAll('input.pill-checkbox:checked')).map(cb => cb.dataset.value || cb.value);
-                return row(label, selected.length ? selected.join(', ') : '—');
+                return `
+                <div class="flex items-start gap-4 py-2">
+                    <span class="text-xs text-gray-500 w-32 flex-shrink-0">${label}</span>
+                    <span class="text-sm font-semibold text-gray-900 flex-1 text-right">${selected.length ? selected.join(', ') : '—'}</span>
+                </div>`;
             };
 
             const asText = (value) => {
@@ -2241,6 +2245,8 @@
             const notVaccinated = notVaccinatedCheckbox && notVaccinatedCheckbox.checked;
 
             let vaccinesHtml = '';
+            const vaccineItems = [];
+
             if (notVaccinated) {
                 vaccinesHtml = '<span class="text-gray-500 italic">Not vaccinated / records unavailable</span>';
             } else {
@@ -2248,7 +2254,6 @@
                 const optionalVaccines = Array.from(document.querySelectorAll('#optionalVaccineOptions input[type="checkbox"]:checked')).map(cb => cb.value);
                 const otherVaccine = form.querySelector('input[name="vaccination_other"]');
 
-                const vaccineItems = [];
                 coreVaccines.forEach(v => vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>${v}</span>`));
                 optionalVaccines.forEach(v => vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${v}</span>`));
                 if (optionalVaccines.includes('Other') && otherVaccine && otherVaccine.value.trim() !== '') {
@@ -2258,14 +2263,32 @@
                 vaccinesHtml = vaccineItems.length > 0 ? vaccineItems.join(' ') : '<span class="text-gray-500 italic">No vaccines selected</span>';
             }
 
-            // Anti-Rabies details
-            let antiRabiesHtml = '';
+            // Anti-Rabies is hardcoded in HTML - include it in the vaccine list if checked
             const antiRabiesChecked = document.querySelector('input[name="vaccination_core[]"][value="Anti-Rabies"]');
             if (antiRabiesChecked && antiRabiesChecked.checked) {
-                const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
-                const lotInput = document.querySelector('input[name="anti_rabies[lot_no]"]');
-                const tagInput = document.querySelector('input[name="anti_rabies[tag_no]"]');
+                vaccineItems.unshift(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Anti-Rabies Vaccination</span>`);
+                vaccinesHtml = vaccineItems.join(' ');
+            }
 
+            // Also include other core vaccines (species-specific) in the review
+            const petType = document.querySelector('input[name="pet_type"]:checked');
+            const type = petType ? petType.value : '';
+            if (type) {
+                const otherCoreVaccines = type === 'cat'
+                    ? ['4-in-1 / 3-in-1 (FVRCP - Rhinotracheitis, Calicivirus, Panleukopenia)']
+                    : ['5-in-1 / 6-in-1 / 8-in-1 (DHPPi / Leptospirosis)'];
+                otherCoreVaccines.forEach(v => vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>${v}</span>`));
+                vaccinesHtml = vaccineItems.join(' ');
+            }
+
+            const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
+            const lotInput = document.querySelector('input[name="anti_rabies[lot_no]"]');
+            const tagInput = document.querySelector('input[name="anti_rabies[tag_no]"]');
+
+            let antiRabiesHtml = '';
+            let boosterHtml = '';
+
+            if (antiRabiesChecked && antiRabiesChecked.checked) {
                 const dateVal = dateInput && dateInput.value ? new Date(dateInput.value + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
                 const lotVal = lotInput && lotInput.value.trim() !== '' ? lotInput.value.trim() : '—';
                 const tagVal = tagInput && tagInput.value.trim() !== '' ? tagInput.value.trim() : '—';
@@ -2276,9 +2299,18 @@
                         <div><span class="text-gray-500">Vaccine Lot No.:</span> <span class="font-semibold text-gray-900">${lotVal}</span></div>
                         <div><span class="text-gray-500">Tag / Sticker No.:</span> <span class="font-semibold text-gray-900">${tagVal}</span></div>
                     `;
+
+                // Check if Anti-Rabies booster is needed (more than 1 year ago)
+                if (dateInput && dateInput.value) {
+                    const adminDate = new Date(dateInput.value + 'T00:00:00');
+                    const oneYearAgo = new Date();
+                    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+                    if (adminDate < oneYearAgo) {
+                        boosterHtml = '<div class="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm"><strong>⚠ Needs an Anti-Rabies Booster Shot</strong> (more than 1 year since last vaccination)</div>';
+                    }
+                }
             }
 
-            // Vaccination card
             let vaccinationCardHtml = '';
             const vaccinationCardPreview = document.getElementById('vaccinationCardPreview');
             const hasVaccinationCard = vaccinationCardPreview && vaccinationCardPreview.src && !vaccinationCardPreview.src.includes('pet.png');
@@ -2288,10 +2320,17 @@
 
             const notVaccinatedHtml = notVaccinated ? '<span style="color: #111827; font-weight: 600;">My pet is not yet vaccinated / records unavailable</span>' : '';
 
+            // Determine vaccination status text and booster warning
+            let vaccinationStatusText = notVaccinatedHtml || 'Vaccinated';
+            let vaccinationStatusHtml = vaccinationStatusText;
+            if (!notVaccinated && boosterHtml) {
+                vaccinationStatusHtml = vaccinationStatusText + boosterHtml;
+            }
+
             document.getElementById('reviewHealth').innerHTML =
-                rowHtml('Vaccination Status', notVaccinatedHtml || 'Vaccinated') +
-                (!notVaccinated ? row('Core & Optional Vaccines', vaccinesHtml) : '') +
-                (antiRabiesHtml ? rowHtml('Anti-Rabies Details', antiRabiesHtml) : '') +
+                rowHtml('Vaccination Status', vaccinationStatusHtml) +
+                (!notVaccinated ? rowHtml('Anti-Rabies Vaccination Details', antiRabiesHtml) : '') +
+                (!notVaccinated ? rowHtml('Core & Optional Vaccines', vaccinesHtml) : '') +
                 (vaccinationCardHtml ? rowHtml('Vaccination Booklet / Certificate', vaccinationCardHtml) : '') +
                 traitRow('Training', 'trainingOptions') +
                 traitRow('Insurance', 'insuranceOptions') +
@@ -2342,7 +2381,7 @@ fieldsToToggle.forEach(id => {
                 }
             });
 
-                // Clear anti-rabies fields if not vaccinated
+            // Clear anti-rabies fields if not vaccinated
                 if (notVaccinated) {
                     const antiRabiesFields = document.getElementById('antiRabiesFields');
                     if (antiRabiesFields) {
@@ -2548,6 +2587,4 @@ fieldsToToggle.forEach(id => {
         }
     </script>
 </body>
-</html>
-/body>
 </html>
