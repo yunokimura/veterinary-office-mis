@@ -1539,6 +1539,7 @@
             document.getElementById('allergyOptions').innerHTML = allergy.map(v => createPillButton('allergy', v, 'allergy')).join('');
         }
 
+
         // Show more diet options
         function showMoreDiet() {
             const petType = document.querySelector('input[name="pet_type"]:checked');
@@ -1549,8 +1550,25 @@
             const showMoreBtn = document.getElementById('dietShowMore');
             
             if (!dietExpanded) {
+                // Save currently selected values before adding more options
+                const currentlySelected = Array.from(dietContainer.querySelectorAll('.pill-checkbox:checked')).map(cb => cb.dataset.value || cb.value);
+                
                 // Add more options
                 dietContainer.innerHTML += dietMore.map(v => createPillButton('diet', v, 'diet', 5)).join('');
+                
+                // Restore previously selected values in the new options
+                const newCheckboxes = dietContainer.querySelectorAll('.pill-checkbox');
+                newCheckboxes.forEach(cb => {
+                    if (currentlySelected.includes(cb.dataset.value)) {
+                        cb.checked = true;
+                        const label = document.getElementById(`${cb.id}_label`);
+                        if (label) {
+                            label.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+                            label.classList.remove('border-gray-300', 'text-gray-700');
+                        }
+                    }
+                });
+                
                 showMoreBtn.textContent = 'Show Less';
                 dietExpanded = true;
             } else {
@@ -2089,6 +2107,13 @@
                     <span class="text-xs text-gray-500">${label}</span>
                     <span class="text-sm font-semibold text-gray-900 text-right">${esc(value || '—')}</span>
                 </div>`;
+
+            const traitRow = (label, containerId) => {
+                const container = document.getElementById(containerId);
+                if (!container) return row(label, '—');
+                const selected = Array.from(container.querySelectorAll('input.pill-checkbox:checked')).map(cb => cb.dataset.value || cb.value);
+                return row(label, selected.length ? selected.join(', ') : '—');
+            };
 
             const asText = (value) => {
                 if (value === undefined || value === null || value === '') return '';
