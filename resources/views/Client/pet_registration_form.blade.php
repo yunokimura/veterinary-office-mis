@@ -435,7 +435,10 @@
                                             <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
                                             <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')" required>
                                             <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn" aria-label="Remove front view photo">×</button>
-                                            <button type="button" onclick="document.getElementById('frontImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                            <button type="button" onclick="document.getElementById('frontImage').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                                <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                </svg>
                                                 Click to upload
                                             </button>
                                         </div>
@@ -448,7 +451,10 @@
                                             <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
                                             <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')" required>
                                             <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn" aria-label="Remove side view photo">×</button>
-                                            <button type="button" onclick="document.getElementById('sideImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                            <button type="button" onclick="document.getElementById('sideImage').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                                <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                </svg>
                                                 Click to upload
                                             </button>
                                         </div>
@@ -461,7 +467,10 @@
                                             <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
                                             <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')" required>
                                             <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn" aria-label="Remove top-down view photo">×</button>
-                                            <button type="button" onclick="document.getElementById('topImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                            <button type="button" onclick="document.getElementById('topImage').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                                <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                </svg>
                                                 Click to upload
                                             </button>
                                         </div>
@@ -476,7 +485,10 @@
                                     <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-36 h-36 md:w-48 md:h-48 object-cover rounded-lg">
                                     <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)">
                                     <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn" aria-label="Remove body mark photo">×</button>
-                                    <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                    <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                        <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                        </svg>
                                         Click to upload
                                     </button>
                                 </div>
@@ -658,9 +670,8 @@
                                     <img id="vaccinationCardPreview" class="hidden max-w-full max-h-48 object-cover rounded-lg mx-auto">
                                     <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn" aria-label="Remove vaccination card">×</button>
                                     <button type="button" onclick="document.getElementById('vaccinationCard').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 bg-white bg-opacity-80 rounded-lg">
-                                        <svg class="w-10 h-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                         </svg>
                                         Click to upload vaccination booklet / certificate
                                     </button>
@@ -1411,18 +1422,31 @@ groups[letter].forEach((breed, breedIndex) => {
             }
         }
 
-        function createVaccineCheckbox(name, value, checked = false, onchange = '') {
+        function createVaccineCheckbox(name, value, checked = false, onchange = '', showOtherInput = false) {
+            const otherInputId = showOtherInput ? `${name}_${value.replace(/[^a-zA-Z0-9]/g, '_')}_other` : '';
+            const otherInputHtml = showOtherInput ? `
+                <input type="text" name="${name}[other][${value}]" id="${otherInputId}" class="ml-3 w-48 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all hidden" placeholder="Specify">
+            ` : '';
             return `
                 <label class="inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="${name}[]" value="${value}" class="form-checkbox h-5 w-5 text-emerald-600 rounded" ${checked ? 'checked' : ''} ${onchange ? `onchange="${onchange}"` : ''}>
                     <span class="ml-3 mr-4 text-gray-700">${value}</span>
+                    ${otherInputHtml}
                 </label>
             `;
         }
 
         // Toggle "Other" vaccine input visibility
         function toggleOtherVaccineInput(checkbox, inputId) {
-            const inputDiv = document.getElementById(inputId);
+            // Handle both old-style (separate div) and new-style (inline) inputs
+            let inputDiv = document.getElementById(inputId);
+            if (!inputDiv) {
+                // Try to find inline input next to the checkbox
+                const label = checkbox.closest('label');
+                if (label) {
+                    inputDiv = label.querySelector('input[type="text"]');
+                }
+            }
             if (!inputDiv) return;
 
             if (checkbox.checked) {
@@ -1430,8 +1454,12 @@ groups[letter].forEach((breed, breedIndex) => {
             } else {
                 inputDiv.classList.add('hidden');
                 // Clear the input value when hiding
-                const input = inputDiv.querySelector('input[name="vaccination_other"]');
-                if (input) input.value = '';
+                if (inputDiv.tagName === 'INPUT') {
+                    inputDiv.value = '';
+                } else {
+                    const input = inputDiv.querySelector('input[type="text"]');
+                    if (input) input.value = '';
+                }
             }
         }
 
@@ -1445,36 +1473,27 @@ groups[letter].forEach((breed, breedIndex) => {
 
             if (!type) {
                 document.getElementById('otherCoreVaccines').innerHTML = '';
-                document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other', false, 'onchange="toggleOtherVaccineInput(this, \'optionalOtherVaccineInput\')"') + `
-                    <div id="optionalOtherVaccineInput" class="mt-3 hidden">
-                        <input type="text" name="vaccination_other" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
-                    </div>
-                `;
+                document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other', false, '', true);
                 return;
             }
 
             // Other core vaccines (species-specific, excluding Anti-Rabies which is hardcoded)
             const otherCoreVaccines = type === 'cat'
-                ? ['4-in-1 / 3-in-1 (FVRCP - Rhinotracheitis, Calicivirus, Panleukopenia)']
-                : ['5-in-1 / 6-in-1 / 8-in-1 (DHPPi / Leptospirosis)'];
+                ? ['4-in-1 / 3-in-1 (FVRCP - Rhinotracheitis, Calicivirus, Panleukopenia)', 'Other']
+                : ['5-in-1 / 6-in-1 / 8-in-1 (DHPPi / Leptospirosis)', 'Other'];
 
             // Optional vaccines (species-specific)
             const optionalVaccines = type === 'cat'
                 ? ['Feline Leukemia (FeLV)', 'Other']
                 : ['Kennel Cough (Bordetella)', 'Canine Parvovirus (Booster)', 'Other'];
 
-            document.getElementById('otherCoreVaccines').innerHTML = otherCoreVaccines.map(vaccine => createVaccineCheckbox('vaccination_core', vaccine)).join('');
+            document.getElementById('otherCoreVaccines').innerHTML = otherCoreVaccines.map(vaccine => 
+                createVaccineCheckbox('vaccination_core', vaccine, false, '', vaccine === 'Other')
+            ).join('');
 
-            document.getElementById('optionalVaccineOptions').innerHTML = optionalVaccines.map(vaccine => {
-                if (vaccine === 'Other') {
-                    return createVaccineCheckbox('vaccination_optional', vaccine, false, 'onchange="toggleOtherVaccineInput(this, \'optionalOtherVaccineInput\')"') + `
-                        <div id="optionalOtherVaccineInput" class="mt-3 hidden">
-                            <input type="text" name="vaccination_other" value="${otherValue}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
-                        </div>
-                    `;
-                }
-                return createVaccineCheckbox('vaccination_optional', vaccine);
-            }).join('');
+            document.getElementById('optionalVaccineOptions').innerHTML = optionalVaccines.map(vaccine => 
+                createVaccineCheckbox('vaccination_optional', vaccine, false, '', vaccine === 'Other')
+            ).join('');
         }function populatePetAttributes() {
             const petType = document.querySelector('input[name="pet_type"]:checked');
             const type = petType ? petType.value : '';
@@ -2314,12 +2333,20 @@ groups[letter].forEach((breed, breedIndex) => {
             } else {
                 const coreVaccines = Array.from(document.querySelectorAll('#coreVaccinesSection input[type="checkbox"]:checked')).map(cb => cb.value);
                 const optionalVaccines = Array.from(document.querySelectorAll('#optionalVaccineOptions input[type="checkbox"]:checked')).map(cb => cb.value);
-                const otherVaccine = form.querySelector('input[name="vaccination_other"]');
+                
+                // Get inline "Other" vaccine text inputs
+                const coreOtherInput = document.querySelector('input[name="vaccination_core[other][Other]"]');
+                const optionalOtherInput = document.querySelector('input[name="vaccination_optional[other][Other]"]');
 
                 coreVaccines.forEach(v => vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>${v}</span>`));
                 optionalVaccines.forEach(v => vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${v}</span>`));
-                if (optionalVaccines.includes('Other') && otherVaccine && otherVaccine.value.trim() !== '') {
-                    vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${otherVaccine.value.trim()}</span>`);
+                
+                // Add "Other" text values if provided
+                if (coreVaccines.includes('Other') && coreOtherInput && coreOtherInput.value.trim() !== '') {
+                    vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>${coreOtherInput.value.trim()}</span>`);
+                }
+                if (optionalVaccines.includes('Other') && optionalOtherInput && optionalOtherInput.value.trim() !== '') {
+                    vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${optionalOtherInput.value.trim()}</span>`);
                 }
 
                 vaccinesHtml = vaccineItems.length > 0 ? vaccineItems.join(' ') : '<span class="text-gray-500 italic">No vaccines selected</span>';
