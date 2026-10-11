@@ -1537,8 +1537,10 @@
             
             // Allergy
             document.getElementById('allergyOptions').innerHTML = allergy.map(v => createPillButton('allergy', v, 'allergy')).join('');
-        }
+}
 
+        // Store extra diet selections (from "Show More" section) persistently
+        let savedExtraDietSelections = [];
 
         // Show more diet options
         function showMoreDiet() {
@@ -1556,10 +1558,11 @@
                 // Add more options
                 dietContainer.innerHTML += dietMore.map(v => createPillButton('diet', v, 'diet', 5)).join('');
                 
-                // Restore previously selected values in the new options
+                // Restore previously selected values in the new options (including saved extra selections)
+                const allSelected = [...currentlySelected, ...savedExtraDietSelections];
                 const newCheckboxes = dietContainer.querySelectorAll('.pill-checkbox');
                 newCheckboxes.forEach(cb => {
-                    if (currentlySelected.includes(cb.dataset.value)) {
+                    if (currentlySelected.includes(cb.dataset.value) || savedExtraDietSelections.includes(cb.dataset.value)) {
                         cb.checked = true;
                         const label = document.getElementById(`${cb.id}_label`);
                         if (label) {
@@ -1572,8 +1575,11 @@
                 showMoreBtn.textContent = 'Show Less';
                 dietExpanded = true;
             } else {
-                // Remove extra options and keep only original
+                // Save extra selections (from "more" section) before collapsing
                 const originalDiet = type === 'cat' ? catDiet : dogDiet;
+                savedExtraDietSelections = Array.from(dietContainer.querySelectorAll('.pill-checkbox:checked'))
+                    .map(cb => cb.dataset.value || cb.value)
+                    .filter(val => !originalDiet.includes(val));
                 
                 // Uncheck and remove options not in original
                 document.querySelectorAll('#dietOptions .pill-checkbox').forEach(cb => {
