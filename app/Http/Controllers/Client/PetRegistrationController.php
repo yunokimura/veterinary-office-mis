@@ -311,6 +311,19 @@ class PetRegistrationController extends Controller
             ]);
 
             Log::info('Vaccination report created for pet ID: ' . $pet->pet_id);
+
+            // Prepare pet data for success modal
+            $refId = '2026-' . str_pad($pet->pet_id, 5, '0', STR_PAD_LEFT);
+            $petData = [
+                'pet_id' => $pet->pet_id,
+                'ref_id' => $refId,
+                'pet_name' => $pet->pet_name,
+                'species' => $pet->species,
+                'breed' => $pet->breed,
+                'pet_image' => $pet->pet_image,
+            ];
+
+            return redirect()->route('owner.dashboard')->with('success_pet', $petData);
         } catch (\Exception $e) {
             Log::error('Pet Registration Error: '.$e->getMessage());
             Log::error('Stack trace: '.$e->getTraceAsString());
