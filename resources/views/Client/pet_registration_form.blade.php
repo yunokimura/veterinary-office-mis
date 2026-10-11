@@ -431,11 +431,11 @@
                                     <!-- Front View -->
                                     <div>
                                         <label class="block text-xs font-medium text-gray-500 mb-2">Front View</label>
-                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
-                                            <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
+                                            <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')" required>
                                             <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn" aria-label="Remove front view photo">×</button>
-                                            <button type="button" onclick="document.getElementById('frontImage').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                            <button type="button" onclick="document.getElementById('frontImage').click()" id="frontUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                                 </svg>
@@ -447,11 +447,11 @@
                                     <!-- Side View -->
                                     <div>
                                         <label class="block text-xs font-medium text-gray-500 mb-2">Side View</label>
-                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
-                                            <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
+                                            <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')" required>
                                             <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn" aria-label="Remove side view photo">×</button>
-                                            <button type="button" onclick="document.getElementById('sideImage').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                            <button type="button" onclick="document.getElementById('sideImage').click()" id="sideUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                                 </svg>
@@ -463,11 +463,11 @@
                                     <!-- Top-Down View -->
                                     <div>
                                         <label class="block text-xs font-medium text-gray-500 mb-2">Top-Down View</label>
-                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
-                                            <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
+                                        <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
+                                            <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')" required>
                                             <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn" aria-label="Remove top-down view photo">×</button>
-                                            <button type="button" onclick="document.getElementById('topImage').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                            <button type="button" onclick="document.getElementById('topImage').click()" id="topUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                                 </svg>
@@ -481,11 +481,11 @@
                             <!-- Unique Body Mark -->
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Unique Body Mark</label>
-                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors inline-block">
-                                    <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-36 h-36 md:w-48 md:h-48 object-cover rounded-lg">
+                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[144px] w-36 md:w-48">
+                                    <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
                                     <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)">
                                     <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn" aria-label="Remove body mark photo">×</button>
-                                    <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                    <button type="button" onclick="document.getElementById('bodyMarkImage').click()" id="bodyMarkUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                         <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                         </svg>
@@ -665,11 +665,11 @@
                             <div id="vaccinationCardUploadSection" class="pt-4 border-t border-slate-200">
                                 <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Vaccination Booklet / Certificate (Optional)</h5>
                                 <p class="text-xs text-gray-500 mb-3">Upload a photo of the pet's vaccination record card.</p>
-                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-emerald-400 transition-colors bg-white">
+                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors bg-white min-h-[144px]">
                                     <input type="file" id="vaccinationCard" name="vaccination_card" accept="image/*" class="hidden" onchange="previewVaccinationCard(event)">
-                                    <img id="vaccinationCardPreview" class="hidden max-w-full max-h-48 object-cover rounded-lg mx-auto">
+                                    <img id="vaccinationCardPreview" class="hidden w-full h-full object-cover rounded-lg mx-auto">
                                     <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn" aria-label="Remove vaccination card">×</button>
-                                    <button type="button" onclick="document.getElementById('vaccinationCard').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 bg-white bg-opacity-80 rounded-lg">
+                                    <button type="button" onclick="document.getElementById('vaccinationCard').click()" id="vaccinationCardUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 bg-white bg-opacity-80 rounded-lg">
                                         <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                         </svg>
@@ -1302,8 +1302,15 @@ groups[letter].forEach((breed, breedIndex) => {
             try {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('bodyMarkPreview').src = e.target.result;
-                    document.getElementById('bodyMarkRemoveBtn').classList.remove('hidden');
+                    const preview = document.getElementById('bodyMarkPreview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                    }
+                    const removeBtn = document.getElementById('bodyMarkRemoveBtn');
+                    if (removeBtn) removeBtn.classList.remove('hidden');
+                    const uploadBtn = document.getElementById('bodyMarkUploadBtn');
+                    if (uploadBtn) uploadBtn.classList.add('hidden');
                 };
                 reader.onerror = function() {
                     showErrorToast('Failed to read image file. Please try another file.');
@@ -1317,9 +1324,15 @@ groups[letter].forEach((breed, breedIndex) => {
         // Remove body mark image
         function removeBodyMark() {
             const preview = document.getElementById('bodyMarkPreview');
-            preview.src = "{{ asset('images/no-image.png') }}";
+            if (preview) {
+                preview.src = '';
+                preview.classList.add('hidden');
+            }
             document.getElementById('bodyMarkImage').value = '';
-            document.getElementById('bodyMarkRemoveBtn').classList.add('hidden');
+            const removeBtn = document.getElementById('bodyMarkRemoveBtn');
+            if (removeBtn) removeBtn.classList.add('hidden');
+            const uploadBtn = document.getElementById('bodyMarkUploadBtn');
+            if (uploadBtn) uploadBtn.classList.remove('hidden');
         }
 
         // Cat attributes data
@@ -1884,9 +1897,15 @@ groups[letter].forEach((breed, breedIndex) => {
             try {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById(previewId).src = e.target.result;
+                    const preview = document.getElementById(previewId);
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                    }
                     const removeBtn = document.getElementById(previewId.replace('Preview', 'RemoveBtn'));
-                    removeBtn.classList.remove('hidden');
+                    if (removeBtn) removeBtn.classList.remove('hidden');
+                    const uploadBtn = document.getElementById(previewId.replace('Preview', 'UploadBtn'));
+                    if (uploadBtn) uploadBtn.classList.add('hidden');
                 };
                 reader.onerror = function() {
                     showErrorToast('Failed to read image file. Please try another file.');
@@ -1902,10 +1921,18 @@ groups[letter].forEach((breed, breedIndex) => {
             const previewId = view + 'Preview';
             const inputId = view + 'Image';
             const removeBtnId = view + 'RemoveBtn';
-            
-            document.getElementById(previewId).src = "{{ asset('images/no-image.png') }}";
+            const uploadBtnId = view + 'UploadBtn';
+
+            const preview = document.getElementById(previewId);
+            if (preview) {
+                preview.src = '';
+                preview.classList.add('hidden');
+            }
             document.getElementById(inputId).value = '';
-            document.getElementById(removeBtnId).classList.add('hidden');
+            const removeBtn = document.getElementById(removeBtnId);
+            if (removeBtn) removeBtn.classList.add('hidden');
+            const uploadBtn = document.getElementById(uploadBtnId);
+            if (uploadBtn) uploadBtn.classList.remove('hidden');
         }
 
         // Toggle user dropdown
@@ -2530,7 +2557,8 @@ groups[letter].forEach((breed, breedIndex) => {
                         document.getElementById('vaccinationCardRemoveBtn').classList.remove('hidden');
 
                         // Hide the click-to-upload overlay
-                        event.target.nextElementSibling?.classList?.add('hidden');
+                        const uploadBtn = document.getElementById('vaccinationCardUploadBtn');
+                        if (uploadBtn) uploadBtn.classList.add('hidden');
                     };
                     reader.onerror = function() {
                         showErrorToast('Failed to read image file. Please try another file.');
@@ -2558,8 +2586,8 @@ groups[letter].forEach((breed, breedIndex) => {
                 document.getElementById('vaccinationCardRemoveBtn').classList.add('hidden');
 
                 // Show the click-to-upload overlay again
-                const overlay = document.querySelector('button[onclick="document.getElementById(\'vaccinationCard\').click()"]');
-                if (overlay) overlay.classList.remove('hidden');
+                const uploadBtn = document.getElementById('vaccinationCardUploadBtn');
+                if (uploadBtn) uploadBtn.classList.remove('hidden');
             }
 
             // Initialise the stepper on page load
