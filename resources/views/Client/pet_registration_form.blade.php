@@ -767,6 +767,7 @@
                                 <div>
                                     <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pet Basics
+                                        <a href="#" onclick="event.preventDefault(); goToStep(1);" class="text-xs text-emerald-600 hover:underline ml-2">Edit</a>
                                     </h5>
                                     <div id="reviewBasics" class="bg-slate-50 border border-slate-200 rounded-xl p-4 divide-y divide-slate-100"></div>
                                 </div>
@@ -775,6 +776,7 @@
                                 <div>
                                     <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Physical Details & Photos
+                                        <a href="#" onclick="event.preventDefault(); goToStep(2);" class="text-xs text-emerald-600 hover:underline ml-2">Edit</a>
                                     </h5>
                                     <div id="reviewPhysical" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
                                         <div id="reviewPhysicalRows" class="divide-y divide-slate-100"></div>
@@ -782,45 +784,15 @@
                                     </div>
                                 </div>
 
-                                <!-- Review: Health & Traits -->
-                                <div>
-                                    <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Health & Traits
-                                    </h5>
-                                    <div id="reviewHealth" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3"></div>
-                                </div>
-
-                                <!-- Review: Owner's Information -->
-                                <div>
-                                    <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Owner's Information
-                                    </h5>
-                                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 divide-y divide-slate-100">
-                                        <div class="flex items-start justify-between gap-4 py-2">
-                                            <span class="text-xs text-gray-500">Pet Owner Name</span>
-                                            <span class="text-sm font-semibold text-gray-900 text-right">{{ $petOwner->first_name ?? '' }} {{ $petOwner && $petOwner->middle_name ? $petOwner->middle_name . ' ' : '' }}{{ $petOwner->last_name ?? '' }}</span>
-                                        </div>
-                                        <div class="flex items-start justify-between gap-4 py-2">
-                                            <span class="text-xs text-gray-500">Email</span>
-                                            <span class="text-sm font-semibold text-gray-900 text-right break-all">{{ $petOwner->email ?? $user->email ?? '' }}</span>
-                                        </div>
-                                        <div class="flex items-start justify-between gap-4 py-2">
-                                            <span class="text-xs text-gray-500">Primary</span>
-                                            <span class="text-sm font-semibold text-gray-900 text-right">+63 {{ $petOwner->phone_number ?? '' }}</span>
-                                        </div>
-                                        <div class="flex items-start justify-between gap-4 py-2">
-                                            <span class="text-xs text-gray-500">Address</span>
-                                            <span class="text-sm font-semibold text-gray-900 text-right">
-                                                {{ $petOwner->address->block_lot_phase ?? $petOwner->blk_lot_ph ?? '' }}, {{ $petOwner->address->street ?? $petOwner->street ?? '' }}, {{ $petOwner->address->barangay->barangay_name ?? $petOwner->barangay ?? '' }}, Dasmariñas City
-                                            </span>
-                                        </div>
-                                        <div class="flex items-start justify-between gap-4 py-2">
-                                            <span class="text-xs text-gray-500">Alternate Mobile Number</span>
-                                            <span class="text-sm font-semibold text-gray-900 text-right">+63 {{ $petOwner->alternate_phone_number ?? '' }}</span>
-                                        </div>
-                                    </div>
-                                </div>
+<!-- Review: Health & Traits -->
+                            <div>
+                                <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Health & Traits
+                                    <a href="#" onclick="event.preventDefault(); goToStep(3);" class="text-xs text-emerald-600 hover:underline ml-2">Edit</a>
+                                </h5>
+                                <div id="reviewHealth" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3"></div>
                             </div>
+                        </div>
                         </div>
 
                         <!-- Step 4 Navigation -->
@@ -840,12 +812,6 @@
                                 </button>
                             </div>
                             <div class="px-6 pb-6 text-center">
-                                <a href="{{ url('/pet-registration') }}" class="inline-flex items-center gap-1 text-gray-600 hover:text-emerald-600 transition-colors text-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                                    </svg>
-                                    Back to Pet Registration
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -2239,6 +2205,9 @@
                 const hasUpload = img.id !== 'petImagePreview'
                     ? !!src && !src.endsWith('no-image.png')
                     : !!src && !src.endsWith('pet.png');
+                
+                if (!hasUpload) return '';
+                
                 return `
                 <div class="text-center">
                     <img src="${esc(src)}" alt="${img.label}" class="w-20 h-20 ${img.id === 'petImagePreview' ? 'rounded-full' : 'rounded-xl'} object-cover border-2 ${hasUpload ? 'border-emerald-400' : 'border-slate-200'} mx-auto">
@@ -2299,7 +2268,7 @@
                 vaccinationCardHtml = `<div class="mt-2"><img src="${vaccinationCardPreview.src}" alt="Vaccination Card" class="w-32 h-24 object-cover rounded-lg border border-slate-200"></div>`;
             }
 
-            const notVaccinatedHtml = notVaccinated ? '<span class="text-red-600 font-medium">My pet is not yet vaccinated / records unavailable</span>' : '';
+            const notVaccinatedHtml = notVaccinated ? '<span style="color: #111827; font-weight: 600;">My pet is not yet vaccinated / records unavailable</span>' : '';
 
             document.getElementById('reviewHealth').innerHTML =
                 rowHtml('Vaccination Status', notVaccinatedHtml || 'Vaccinated') +
