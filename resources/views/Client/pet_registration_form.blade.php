@@ -644,6 +644,7 @@
                                 <p class="text-xs text-gray-500 mb-3">Upload a photo of the pet's vaccination record card.</p>
                                 <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-emerald-400 transition-colors bg-white">
                                     <input type="file" id="vaccinationCard" name="vaccination_card" accept="image/*" class="hidden" onchange="previewVaccinationCard(event)">
+                                    <img id="vaccinationCardPreview" class="hidden max-w-full max-h-48 object-cover rounded-lg mx-auto">
                                     <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn">×</button>
                                     <button type="button" onclick="document.getElementById('vaccinationCard').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 bg-white bg-opacity-80 rounded-lg">
                                         <svg class="w-10 h-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1092,20 +1093,20 @@
                         </div>
                         <div class="space-y-1 mt-1">`;
 
-                groups[letter].forEach(breed => {
+groups[letter].forEach(breed => {
                     const selected = selectedBreeds.includes(breed);
                     if (isCrossbreed) {
                         html += `
                             <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}">
                                 <input type="checkbox" value="${breed}" class="pet-breed-checkbox h-4 w-4 text-emerald-600 rounded border-slate-300" ${selected ? 'checked' : ''} onchange="handleBreedCheckbox(this)">
-                                <span class="ml-3 text-sm ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
+                                <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
                                 ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
                             </label>`;
                     } else {
                         html += `
                             <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}">
                                 <input type="radio" name="breed_option" value="${breed}" class="pet-breed-radio h-4 w-4 text-emerald-600 border-slate-300" ${selected ? 'checked' : ''} onchange="handleSingleBreedSelect('${breed.replace(/'/g, "\\'")}')">
-                                <span class="ml-3 text-sm ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
+                                <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
                                 ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
                             </label>`;
                     }
@@ -1412,8 +1413,8 @@
         }
 
         // Toggle "Other" vaccine input visibility
-        function toggleOtherVaccineInput(checkbox) {
-            const inputDiv = document.getElementById('otherVaccineInput');
+        function toggleOtherVaccineInput(checkbox, inputId) {
+            const inputDiv = document.getElementById(inputId);
             if (!inputDiv) return;
 
             if (checkbox.checked) {
@@ -1436,8 +1437,8 @@
 
             if (!type) {
                 document.getElementById('otherCoreVaccines').innerHTML = '';
-                document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other', false, 'onchange="toggleOtherVaccineInput(this)"') + `
-                    <div id="otherVaccineInput" class="mt-3 hidden">
+                document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other', false, 'onchange="toggleOtherVaccineInput(this, \'optionalOtherVaccineInput\')"') + `
+                    <div id="optionalOtherVaccineInput" class="mt-3 hidden">
                         <input type="text" name="vaccination_other" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
                     </div>
                 `;
@@ -1458,8 +1459,8 @@
 
             document.getElementById('optionalVaccineOptions').innerHTML = optionalVaccines.map(vaccine => {
                 if (vaccine === 'Other') {
-                    return createVaccineCheckbox('vaccination_optional', vaccine, false, 'onchange="toggleOtherVaccineInput(this)"') + `
-                        <div id="otherVaccineInput" class="mt-3 hidden">
+                    return createVaccineCheckbox('vaccination_optional', vaccine, false, 'onchange="toggleOtherVaccineInput(this, \'optionalOtherVaccineInput\')"') + `
+                        <div id="optionalOtherVaccineInput" class="mt-3 hidden">
                             <input type="text" name="vaccination_other" value="${otherValue}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
                         </div>
                     `;
@@ -2250,7 +2251,7 @@
             if (notVaccinated) {
                 vaccinesHtml = '<span class="text-gray-500 italic">Not vaccinated / records unavailable</span>';
             } else {
-                const coreVaccines = Array.from(document.querySelectorAll('#coreVaccineOptions input[type="checkbox"]:checked')).map(cb => cb.value);
+                const coreVaccines = Array.from(document.querySelectorAll('#coreVaccinesSection input[type="checkbox"]:checked')).map(cb => cb.value);
                 const optionalVaccines = Array.from(document.querySelectorAll('#optionalVaccineOptions input[type="checkbox"]:checked')).map(cb => cb.value);
                 const otherVaccine = form.querySelector('input[name="vaccination_other"]');
 
@@ -2456,6 +2457,12 @@ fieldsToToggle.forEach(id => {
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    // Show preview image
+                    const preview = document.getElementById('vaccinationCardPreview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                    }
                     // Show remove button
                     document.getElementById('vaccinationCardRemoveBtn').classList.remove('hidden');
 
@@ -2471,6 +2478,13 @@ fieldsToToggle.forEach(id => {
                 const removeBtn = document.getElementById('vaccinationCardRemoveBtn');
 
                 input.value = '';
+
+                // Hide preview image
+                const preview = document.getElementById('vaccinationCardPreview');
+                if (preview) {
+                    preview.src = '';
+                    preview.classList.add('hidden');
+                }
 
                 document.getElementById('vaccinationCardRemoveBtn').classList.add('hidden');
 
