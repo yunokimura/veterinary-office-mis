@@ -928,7 +928,7 @@
     <script>
         // Cat breeds list
         const catBreeds = [
-            "Mixed Breed (Puspin)", "Abyssinian", "Aegean", "American Bobtail", "American Curl", 
+            "Puspin", "Abyssinian", "Aegean", "American Bobtail", "American Curl", 
             "American Shorthair", "American Wirehair", "Arabian Mau", "Australian Mist", "Balinese", 
             "Bambino", "Bengal", "Birman", "Bombay", "British Longhair", "British Shorthair", 
             "Burmese", "Burmilla", "California Spangled", "Chantilly-Tiffany", "Chartreux", 
@@ -946,7 +946,7 @@
 
         // Dog breeds list (full list)
         const dogBreeds = [
-            "Mixed Breed (Aspin)", "Akita", "Alaskan Klee Kai", "Alaskan Malamute", "American Eskimo", 
+            "Aspin", "Akita", "Alaskan Klee Kai", "Alaskan Malamute", "American Eskimo", 
             "Appenzeller Sennenhund", "Australian Stumpy Tail Cattle Dog", "Azawakh", "Barbado da Terciera", "Barbet", "Basenji",
             "Basset Fauve de Bretagne", "Basset Hound", "Beagle", "Belgian Laekenois", "Belgian Tervuren", 
             "Berger Picard", "Bichon Frise", "Bloodhound", "Boerboel", "Bolognese", "Borzoi", "Boxer", 
@@ -1029,8 +1029,8 @@
         }
 
         // Popular / quick-selection breeds per species
-        const quickDogBreeds = ['Mixed Breed (Aspin)', 'Shih Tzu', 'Pomeranian', 'Golden Retriever', 'Labrador Retriever', 'Chihuahua'];
-        const quickCatBreeds = ['Mixed Breed (Puspin)', 'Persian', 'Siamese', 'Maine Coon', 'British Shorthair', 'Ragdoll'];
+        const quickDogBreeds = ['Aspin', 'Shih Tzu', 'Pomeranian', 'Golden Retriever', 'Labrador Retriever', 'Chihuahua'];
+        const quickCatBreeds = ['Puspin', 'Persian', 'Siamese', 'Maine Coon', 'British Shorthair', 'Ragdoll'];
 
         // Open the breed selector modal
         function openBreedModal() {
@@ -1605,15 +1605,16 @@
             }
             months.innerHTML = monthsHtml;
 
-            years.addEventListener('change', clearAgeHint);
-            months.addEventListener('change', clearAgeHint);
+            years.addEventListener('change', validateAgeRealTime);
+            months.addEventListener('change', validateAgeRealTime);
+            
+            // Set initial months dropdown label
+            updateMonthsDropdownLabel();
         }
 
         // Hide the age hint once the user picks a value
         function clearAgeHint() {
-            if (document.getElementById('petAgeYears').value !== '' || document.getElementById('petAgeMonths').value !== '') {
-                document.getElementById('ageHint').classList.add('hidden');
-            }
+            validateAgeRealTime();
         }
 
         // Build the readable age string from the two selectors
@@ -1632,16 +1633,48 @@
             }
 
             return parts.join(' ');
-        }
+}
 
-        // True when neither age selector has a value
+// True when neither age selector has a meaningful value (both empty or both zero)
         function isAgeEmpty() {
             const years = document.getElementById('petAgeYears');
             const months = document.getElementById('petAgeMonths');
-            const emptyYears = !years || years.value === '';
-            const emptyMonths = !months || months.value === '';
+            const yearsVal = years ? years.value : '';
+            const monthsVal = months ? months.value : '';
+
+            const emptyYears = !yearsVal || yearsVal === '' || yearsVal === '0';
+            const emptyMonths = !monthsVal || monthsVal === '' || monthsVal === '0';
 
             return emptyYears && emptyMonths;
+        }
+
+        // Validate age in real-time and show/hide hint instantly
+        function validateAgeRealTime() {
+            if (isAgeEmpty()) {
+                showAgeHint();
+            } else {
+                document.getElementById('ageHint').classList.add('hidden');
+            }
+
+            // Update months dropdown label based on years selection
+            updateMonthsDropdownLabel();
+        }
+
+        // Update months dropdown label based on selected years
+        function updateMonthsDropdownLabel() {
+            const years = document.getElementById('petAgeYears');
+            const months = document.getElementById('petAgeMonths');
+            if (!years || !months) return;
+
+            const yearsVal = years.value;
+            const firstOption = months.querySelector('option[value="0"]');
+            if (firstOption) {
+                if (yearsVal === '0') {
+                    firstOption.textContent = '< 1 Month';
+                } else {
+                    firstOption.textContent = '0 months';
+                }
+            }
         }
 
         // Show the age hint (used by step validation)
