@@ -1413,9 +1413,9 @@
                 } else if (category === 'diet') {
                     selectedDiet = selectedDiet.filter(v => v !== value);
                 }
-            }
-            
-            // Gray out remaining options if max reached
+}
+
+// Gray out remaining options if max reached
             if (maxSelect) {
                 const allCheckboxes = document.querySelectorAll(`input[data-category="${category}"]`);
                 const checkedCount = document.querySelectorAll(`input[data-category="${category}"]:checked`).length;
@@ -1428,6 +1428,11 @@
                         cbLabel.classList.remove('opacity-50', 'cursor-not-allowed');
                     }
                 });
+
+                // Also update Show More button state for diet category
+                if (category === 'diet') {
+                    updateDietShowMoreButton();
+                }
             }
         }
 
@@ -1572,6 +1577,9 @@
                     }
                 });
                 
+                // Update Show More button state based on selection count
+                updateDietShowMoreButton();
+                
                 showMoreBtn.textContent = 'Show Less';
                 dietExpanded = true;
             } else {
@@ -1592,12 +1600,31 @@
                     }
                 });
                 
+                // Re-enable Show More button when collapsed (since user can change selections)
+                showMoreBtn.disabled = false;
+                showMoreBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                
                 showMoreBtn.textContent = 'Show More';
                 dietExpanded = false;
             }
-        }
+}
 
-        // Add event listener to pet type radio buttons
+        
+// Update Show More button state based on current diet selection count
+        function updateDietShowMoreButton() {
+            const showMoreBtn = document.getElementById('dietShowMore');
+            if (!showMoreBtn) return;
+            
+            const checkedCount = document.querySelectorAll('#dietOptions .pill-checkbox:checked').length;
+            
+            if (checkedCount >= 5) {
+                showMoreBtn.disabled = true;
+                showMoreBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                showMoreBtn.disabled = false;
+                showMoreBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
         document.querySelectorAll('input[name="pet_type"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 updateBreedOptions();
@@ -2114,6 +2141,12 @@
                     <span class="text-sm font-semibold text-gray-900 text-right">${esc(value || '—')}</span>
                 </div>`;
 
+            const rowHtml = (label, value) => `
+                <div class="flex items-start justify-between gap-4 py-2">
+                    <span class="text-xs text-gray-500">${label}</span>
+                    <span class="text-sm font-semibold text-gray-900 text-right">${value || '—'}</span>
+                </div>`;
+
             const traitRow = (label, containerId) => {
                 const container = document.getElementById(containerId);
                 if (!container) return row(label, '—');
@@ -2269,10 +2302,10 @@
             const notVaccinatedHtml = notVaccinated ? '<span class="text-red-600 font-medium">My pet is not yet vaccinated / records unavailable</span>' : '';
 
             document.getElementById('reviewHealth').innerHTML =
-                row('Vaccination Status', notVaccinatedHtml || 'Vaccinated') +
-                row('Core & Optional Vaccines', vaccinesHtml) +
-                (antiRabiesHtml ? row('Anti-Rabies Details', antiRabiesHtml) : '') +
-                (vaccinationCardHtml ? row('Vaccination Booklet / Certificate', vaccinationCardHtml) : '') +
+                rowHtml('Vaccination Status', notVaccinatedHtml || 'Vaccinated') +
+                (!notVaccinated ? row('Core & Optional Vaccines', vaccinesHtml) : '') +
+                (antiRabiesHtml ? rowHtml('Anti-Rabies Details', antiRabiesHtml) : '') +
+                (vaccinationCardHtml ? rowHtml('Vaccination Booklet / Certificate', vaccinationCardHtml) : '') +
                 traitRow('Training', 'trainingOptions') +
                 traitRow('Insurance', 'insuranceOptions') +
                 traitRow('Behavior', 'behaviorOptions') +
