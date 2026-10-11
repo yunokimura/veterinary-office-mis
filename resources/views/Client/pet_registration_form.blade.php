@@ -639,11 +639,10 @@
                             </div>
 
                             <!-- Vaccination Card Upload -->
-                            <div class="pt-4 border-t border-slate-200">
+                            <div id="vaccinationCardUploadSection" class="pt-4 border-t border-slate-200">
                                 <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Vaccination Booklet / Certificate (Optional)</h5>
                                 <p class="text-xs text-gray-500 mb-3">Upload a photo of the pet's vaccination record card.</p>
-                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-emerald-400 transition-colors">
-                                    <img id="vaccinationCardPreview" src="{{ asset('images/pet.png') }}" class="w-full max-h-48 object-cover rounded-lg mx-auto">
+                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-emerald-400 transition-colors bg-white">
                                     <input type="file" id="vaccinationCard" name="vaccination_card" accept="image/*" class="hidden" onchange="previewVaccinationCard(event)">
                                     <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn">×</button>
                                     <button type="button" onclick="document.getElementById('vaccinationCard').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 bg-white bg-opacity-80 rounded-lg">
@@ -2226,7 +2225,8 @@
                 'coreVaccinesSection',
                 'optionalVaccinesSection',
                 'vaccinationCardPreview',
-                'vaccinationCard'
+                'vaccinationCard',
+                'vaccinationCardUploadSection'
             ];
 
 fieldsToToggle.forEach(id => {
@@ -2299,10 +2299,6 @@ fieldsToToggle.forEach(id => {
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const preview = document.getElementById('vaccinationCardPreview');
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-
                     // Show remove button
                     document.getElementById('vaccinationCardRemoveBtn').classList.remove('hidden');
 
@@ -2315,12 +2311,9 @@ fieldsToToggle.forEach(id => {
             // Remove vaccination card
             function removeVaccinationCard() {
                 const input = document.getElementById('vaccinationCard');
-                const preview = document.getElementById('vaccinationCardPreview');
                 const removeBtn = document.getElementById('vaccinationCardRemoveBtn');
 
                 input.value = '';
-                preview.src = '{{ asset('images/pet.png') }}';
-                preview.classList.remove('hidden');
 
                 document.getElementById('vaccinationCardRemoveBtn').classList.add('hidden');
 
