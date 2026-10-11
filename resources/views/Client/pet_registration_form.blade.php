@@ -590,7 +590,7 @@
                             <!-- Not Vaccinated Checkbox (TOP) -->
                             <div>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="not_vaccinated" value="1" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleVaccinationFields(this)">
+                                    <input type="checkbox" name="not_vaccinated" value="1" id="notVaccinatedCheckbox" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleVaccinationFields(this); toggleNotVaccinated(this)">
                                     <span class="ml-3 text-gray-700 font-medium">My pet is not yet vaccinated / records unavailable</span>
                                 </label>
                             </div>
@@ -602,15 +602,15 @@
                                 <!-- Anti-Rabies (always present) with sub-fields -->
                                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleAntiRabiesFields(this)">
-                                        <span class="ml-3 text-gray-700 font-medium">Anti-Rabies</span>
+                                        <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" id="antiRabiesCheckbox" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleAntiRabiesFields(this)">
+                                        <span class="ml-3 text-gray-700 font-medium">Anti-Rabies Vaccination</span>
                                     </label>
 
                                     <!-- Anti-Rabies sub-fields (shown when checked) -->
                                     <div id="antiRabiesFields" class="hidden pl-8 grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-slate-200">
                                         <div>
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Date Administered <span class="text-red-500">*</span></label>
-                                            <input type="date" name="anti_rabies[date_administered]" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                            <input type="date" name="anti_rabies[date_administered]" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Vaccine Lot No. (Optional)</label>
@@ -1402,13 +1402,28 @@
             }
         }
 
-        function createVaccineCheckbox(name, value, checked = false) {
+        function createVaccineCheckbox(name, value, checked = false, onchange = '') {
             return `
                 <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="${name}[]" value="${value}" class="form-checkbox h-5 w-5 text-emerald-600 rounded" ${checked ? 'checked' : ''}>
+                    <input type="checkbox" name="${name}[]" value="${value}" class="form-checkbox h-5 w-5 text-emerald-600 rounded" ${checked ? 'checked' : ''} ${onchange ? `onchange="${onchange}"` : ''}>
                     <span class="ml-3 mr-4 text-gray-700">${value}</span>
                 </label>
             `;
+        }
+
+        // Toggle "Other" vaccine input visibility
+        function toggleOtherVaccineInput(checkbox) {
+            const inputDiv = document.getElementById('otherVaccineInput');
+            if (!inputDiv) return;
+
+            if (checkbox.checked) {
+                inputDiv.classList.remove('hidden');
+            } else {
+                inputDiv.classList.add('hidden');
+                // Clear the input value when hiding
+                const input = inputDiv.querySelector('input[name="vaccination_other"]');
+                if (input) input.value = '';
+            }
         }
 
         function populateVaccinationHistory() {
@@ -1421,8 +1436,8 @@
 
             if (!type) {
                 document.getElementById('otherCoreVaccines').innerHTML = '';
-                document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other') + `
-                    <div class="mt-3">
+                document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other', false, 'onchange="toggleOtherVaccineInput(this)"') + `
+                    <div id="otherVaccineInput" class="mt-3 hidden">
                         <input type="text" name="vaccination_other" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
                     </div>
                 `;
@@ -1443,8 +1458,8 @@
 
             document.getElementById('optionalVaccineOptions').innerHTML = optionalVaccines.map(vaccine => {
                 if (vaccine === 'Other') {
-                    return createVaccineCheckbox('vaccination_optional', vaccine) + `
-                        <div class="mt-3">
+                    return createVaccineCheckbox('vaccination_optional', vaccine, false, 'onchange="toggleOtherVaccineInput(this)"') + `
+                        <div id="otherVaccineInput" class="mt-3 hidden">
                             <input type="text" name="vaccination_other" value="${otherValue}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
                         </div>
                     `;
@@ -2053,11 +2068,14 @@
             }
 
             // Age requires at least one of years / months when "No" is chosen
-            if (step === 2 && isAgeEmpty()) {
-                const wrap = document.getElementById('ageOrBirthdateWrap');
-                if (wrap && !wrap.classList.contains('hidden')) {
-                    isValid = false;
-                    showAgeHint();
+            if (step === 2) {
+                const knowBirthdateNo = document.querySelector('input[name="know_birthdate"][value="no"]:checked');
+                if (knowBirthdateNo && isAgeEmpty()) {
+                    const wrap = document.getElementById('ageOrBirthdateWrap');
+                    if (wrap && !wrap.classList.contains('hidden')) {
+                        isValid = false;
+                        showAgeHint();
+                    }
                 }
             }
 
@@ -2335,11 +2353,36 @@ fieldsToToggle.forEach(id => {
                         });
                     }
                 }
+}
+
+// Toggle "Not Vaccinated" checkbox - mutual exclusion with Anti-Rabies
+            function toggleNotVaccinated(checkbox) {
+                const antiRabiesCheckbox = document.getElementById('antiRabiesCheckbox');
+                if (!antiRabiesCheckbox) return;
+
+                if (checkbox.checked) {
+                    // If "not vaccinated" is checked, disable and uncheck Anti-Rabies
+                    antiRabiesCheckbox.checked = false;
+                    antiRabiesCheckbox.disabled = true;
+                    // Also hide the sub-fields
+                    const fields = document.getElementById('antiRabiesFields');
+                    if (fields) {
+                        fields.classList.add('hidden');
+                        fields.querySelectorAll('input').forEach(input => {
+                            input.value = '';
+                            input.removeAttribute('required');
+                        });
+                    }
+                } else {
+                    // If "not vaccinated" is unchecked, enable Anti-Rabies
+                    antiRabiesCheckbox.disabled = false;
+                }
             }
 
             // Toggle Anti-Rabies sub-fields when checkbox is checked/unchecked
             function toggleAntiRabiesFields(checkbox) {
                 const fields = document.getElementById('antiRabiesFields');
+                const notVaccinatedCheckbox = document.getElementById('notVaccinatedCheckbox');
                 if (!fields) return;
 
                 if (checkbox.checked) {
@@ -2347,6 +2390,11 @@ fieldsToToggle.forEach(id => {
                     // Make date required
                     const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
                     if (dateInput) dateInput.setAttribute('required', 'required');
+                    // Disable "not vaccinated" checkbox
+                    if (notVaccinatedCheckbox) {
+                        notVaccinatedCheckbox.disabled = true;
+                        notVaccinatedCheckbox.checked = false;
+                    }
                 } else {
                     fields.classList.add('hidden');
                     // Clear and remove required
@@ -2355,6 +2403,10 @@ fieldsToToggle.forEach(id => {
                         input.removeAttribute('required');
                     });
                     fields.classList.add('hidden');
+                    // Enable "not vaccinated" checkbox
+                    if (notVaccinatedCheckbox) {
+                        notVaccinatedCheckbox.disabled = false;
+                    }
                 }
             }
 
