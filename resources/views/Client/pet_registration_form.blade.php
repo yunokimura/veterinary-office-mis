@@ -201,7 +201,7 @@
                             <!-- Pet Name -->
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Your Pet's Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="pet_name" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter your pet's name" required>
+                                <input type="text" name="pet_name" value="{{ old('pet_name') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter your pet's name" required>
                             </div>
 
                             <!-- Pet Type -->
@@ -209,11 +209,11 @@
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">What kind of pet do you have? <span class="text-red-500">*</span></label>
                                 <div class="flex space-x-6">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_type" value="dog" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required>
+                                        <input type="radio" name="pet_type" value="dog" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required {{ old('pet_type') === 'dog' ? 'checked' : '' }}>
                                         <span class="ml-3 text-gray-700 font-medium">Dog</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_type" value="cat" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required>
+                                        <input type="radio" name="pet_type" value="cat" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required {{ old('pet_type') === 'cat' ? 'checked' : '' }}>
                                         <span class="ml-3 text-gray-700 font-medium">Cat</span>
                                     </label>
                                 </div>
@@ -226,11 +226,11 @@
                                     <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Gender <span class="text-red-500">*</span></label>
                                     <div class="flex space-x-6">
                                         <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="gender" value="male" class="form-radio h-5 w-5 text-emerald-600" required>
+                                            <input type="radio" name="gender" value="male" class="form-radio h-5 w-5 text-emerald-600" required {{ old('gender') === 'male' ? 'checked' : '' }}>
                                             <span class="ml-3 text-gray-700 font-medium">Male</span>
                                         </label>
                                         <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="gender" value="female" class="form-radio h-5 w-5 text-emerald-600" required>
+                                            <input type="radio" name="gender" value="female" class="form-radio h-5 w-5 text-emerald-600" required {{ old('gender') === 'female' ? 'checked' : '' }}>
                                             <span class="ml-3 text-gray-700 font-medium">Female</span>
                                         </label>
                                     </div>
@@ -241,11 +241,11 @@
                                     <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Spayed / Neutered <span class="text-red-500">*</span></label>
                                     <div class="flex space-x-6">
                                         <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="is_neutered" value="yes" class="form-radio h-5 w-5 text-emerald-600" required>
+                                            <input type="radio" name="is_neutered" value="yes" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'yes' ? 'checked' : '' }}>
                                             <span class="ml-3 text-gray-700 font-medium">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="is_neutered" value="no" class="form-radio h-5 w-5 text-emerald-600" required>
+                                            <input type="radio" name="is_neutered" value="no" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'no' ? 'checked' : '' }}>
                                             <span class="ml-3 text-gray-700 font-medium">No</span>
                                         </label>
                                     </div>
@@ -271,11 +271,11 @@
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
                                 <div class="flex space-x-6">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required>
+                                        <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ old('is_crossbreed') === 'yes' ? 'checked' : '' }}>
                                         <span class="ml-3 text-gray-700 font-medium">Yes</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required>
+                                        <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ old('is_crossbreed') === 'no' ? 'checked' : '' }}>
                                         <span class="ml-3 text-gray-700 font-medium">No</span>
                                     </label>
                                 </div>
@@ -302,7 +302,7 @@
                                 </div>
 
                                 <!-- Hidden input for breed -->
-                                <input type="hidden" id="petBreedInput" name="pet_breed" value="" required>
+                                <input type="hidden" id="petBreedInput" name="pet_breed" value="{{ old('pet_breed') }}" required>
                             </div>
                         </div>
                     </div>
@@ -343,11 +343,11 @@
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Do you know your pet's birthdate? <span class="text-red-500">*</span></label>
                                 <div class="flex space-x-6">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="know_birthdate" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" required>
+                                        <input type="radio" name="know_birthdate" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" required {{ old('know_birthdate') === 'yes' ? 'checked' : '' }}>
                                         <span class="ml-3 text-gray-700 font-medium">Yes</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="know_birthdate" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" required>
+                                        <input type="radio" name="know_birthdate" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" required {{ old('know_birthdate') === 'no' ? 'checked' : '' }}>
                                         <span class="ml-3 text-gray-700 font-medium">No</span>
                                     </label>
                                 </div>
@@ -359,7 +359,7 @@
                                 <!-- Pet's Birthdate (shown if "Yes" is selected) -->
                                 <div id="birthdateSection" class="hidden">
                                     <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Birthdate</label>
-                                    <input type="date" id="petBirthdate" name="pet_birthdate" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                    <input type="date" id="petBirthdate" name="pet_birthdate" value="{{ old('pet_birthdate') }}" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                 </div>
 
                                 <!-- Pet Age (shown if "No" is selected) -->
@@ -387,11 +387,11 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Weight (kg) <span class="text-red-500">*</span></label>
                                 <div class="relative">
-                                    <input type="text" id="petWeight" name="pet_weight" class="w-full px-3.5 py-2.5 pr-12 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter weight in kilograms" maxlength="6" oninput="updateWeightSuffix(); validateWeight(this)" required>
+                                    <input type="text" id="petWeight" name="pet_weight" value="{{ old('pet_weight') }}" {{ old('weight_unknown') ? 'data-weight-unknown="true" readonly placeholder="Weight unknown"' : 'placeholder="Enter weight in kilograms" maxlength="6"' }} class="w-full px-3.5 py-2.5 pr-12 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all {{ old('weight_unknown') ? 'bg-slate-100 text-gray-400 cursor-not-allowed' : '' }}" oninput="updateWeightSuffix(); validateWeight(this)" required>
                                     <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none hidden">kg</span>
                                 </div>
                                 <label class="inline-flex items-center cursor-pointer mt-2">
-                                    <input type="checkbox" id="weightUnknown" name="weight_unknown" value="1" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleWeightUnknown()">
+                                    <input type="checkbox" id="weightUnknown" name="weight_unknown" value="1" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleWeightUnknown()" {{ old('weight_unknown') ? 'checked' : '' }}>
                                     <span class="ml-3 text-gray-700 font-medium">Weight unknown</span>
                                 </label>
                             </div>
@@ -475,7 +475,7 @@
                             <!-- Body Mark Details -->
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Body Mark Details</label>
-                                <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Describe any unique marks, scars, or distinguishing features..."></textarea>
+                                <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Describe any unique marks, scars, or distinguishing features...">{{ old('body_mark_details') }}</textarea>
                             </div>
 
                             <!-- Eye Color -->
@@ -483,33 +483,33 @@
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Eye Color <span class="text-red-500">*</span></label>
                                 <div class="flex flex-wrap gap-2" id="eyeColorOptions">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Brown" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <input type="radio" name="eye_color" value="Brown" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Brown' ? 'checked' : '' }}>
                                         <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Brown</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Blue" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <input type="radio" name="eye_color" value="Blue" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Blue' ? 'checked' : '' }}>
                                         <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Blue</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Amber / Yellow" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <input type="radio" name="eye_color" value="Amber / Yellow" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Amber / Yellow' ? 'checked' : '' }}>
                                         <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Amber / Yellow</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Green" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <input type="radio" name="eye_color" value="Green" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Green' ? 'checked' : '' }}>
                                         <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Green</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Heterochromia (Two different colors)" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <input type="radio" name="eye_color" value="Heterochromia (Two different colors)" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Heterochromia (Two different colors)' ? 'checked' : '' }}>
                                         <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Heterochromia (Two different colors)</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Other" class="peer sr-only" required onchange="handleEyeColorChange()">
+                                        <input type="radio" name="eye_color" value="Other" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Other' ? 'checked' : '' }}>
                                         <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Other</span>
                                     </label>
                                 </div>
                                 <div id="eyeColorOtherWrap" class="mt-3 hidden">
                                     <label class="block text-xs font-medium text-gray-500 mb-1">Please specify eye color</label>
-                                    <input type="text" id="eyeColorOther" name="eye_color_other" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
+                                    <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
                                 </div>
 
                                 <!-- Left / Right Eye Color (shown for heterochromia) -->
@@ -520,17 +520,17 @@
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Left Eye Color</label>
                                             <select id="eyeColorLeft" name="eye_color_left" onchange="handleEyeSideChange('Left')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                                 <option value="">Select left eye color</option>
-                                                <option value="Brown">Brown</option>
-                                                <option value="Blue">Blue</option>
-                                                <option value="Amber / Yellow">Amber / Yellow</option>
-                                                <option value="Green">Green</option>
-                                                <option value="Hazel">Hazel</option>
-                                                <option value="Parti-Colored / Marbled">Parti-Colored / Marbled</option>
-                                                <option value="Other">Other</option>
+                                                <option value="Brown" {{ old('eye_color_left') === 'Brown' ? 'selected' : '' }}>Brown</option>
+                                                <option value="Blue" {{ old('eye_color_left') === 'Blue' ? 'selected' : '' }}>Blue</option>
+                                                <option value="Amber / Yellow" {{ old('eye_color_left') === 'Amber / Yellow' ? 'selected' : '' }}>Amber / Yellow</option>
+                                                <option value="Green" {{ old('eye_color_left') === 'Green' ? 'selected' : '' }}>Green</option>
+                                                <option value="Hazel" {{ old('eye_color_left') === 'Hazel' ? 'selected' : '' }}>Hazel</option>
+                                                <option value="Parti-Colored / Marbled" {{ old('eye_color_left') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
+                                                <option value="Other" {{ old('eye_color_left') === 'Other' ? 'selected' : '' }}>Other</option>
                                             </select>
                                             <p class="text-xs text-gray-500 mt-1">Select the predominant color for each eye.</p>
                                             <div id="eyeColorLeftOtherWrap" class="mt-2 hidden">
-                                                <input type="text" id="eyeColorLeftOther" name="eye_color_left_other" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify left eye color">
+                                                <input type="text" id="eyeColorLeftOther" name="eye_color_left_other" value="{{ old('eye_color_left_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify left eye color">
                                             </div>
                                         </div>
 
@@ -539,16 +539,16 @@
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Right Eye Color</label>
                                             <select id="eyeColorRight" name="eye_color_right" onchange="handleEyeSideChange('Right')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                                 <option value="">Select right eye color</option>
-                                                <option value="Brown">Brown</option>
-                                                <option value="Blue">Blue</option>
-                                                <option value="Amber / Yellow">Amber / Yellow</option>
-                                                <option value="Green">Green</option>
-                                                <option value="Hazel">Hazel</option>
-                                                <option value="Parti-Colored / Marbled">Parti-Colored / Marbled</option>
-                                                <option value="Other">Other</option>
+                                                <option value="Brown" {{ old('eye_color_right') === 'Brown' ? 'selected' : '' }}>Brown</option>
+                                                <option value="Blue" {{ old('eye_color_right') === 'Blue' ? 'selected' : '' }}>Blue</option>
+                                                <option value="Amber / Yellow" {{ old('eye_color_right') === 'Amber / Yellow' ? 'selected' : '' }}>Amber / Yellow</option>
+                                                <option value="Green" {{ old('eye_color_right') === 'Green' ? 'selected' : '' }}>Green</option>
+                                                <option value="Hazel" {{ old('eye_color_right') === 'Hazel' ? 'selected' : '' }}>Hazel</option>
+                                                <option value="Parti-Colored / Marbled" {{ old('eye_color_right') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
+                                                <option value="Other" {{ old('eye_color_right') === 'Other' ? 'selected' : '' }}>Other</option>
                                             </select>
                                             <div id="eyeColorRightOtherWrap" class="mt-2 hidden">
-                                                <input type="text" id="eyeColorRightOther" name="eye_color_right_other" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify right eye color">
+                                                <input type="text" id="eyeColorRightOther" name="eye_color_right_other" value="{{ old('eye_color_right_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify right eye color">
                                             </div>
                                         </div>
                                     </div>
@@ -590,7 +590,7 @@
                             <!-- Not Vaccinated Checkbox (TOP) -->
                             <div>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="not_vaccinated" value="1" id="notVaccinatedCheckbox" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleVaccinationFields(this); toggleNotVaccinated(this)">
+                                    <input type="checkbox" name="not_vaccinated" value="1" id="notVaccinatedCheckbox" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleVaccinationFields(this); toggleNotVaccinated(this)" {{ old('not_vaccinated') ? 'checked' : '' }}>
                                     <span class="ml-3 text-gray-700 font-medium">My pet is not yet vaccinated / records unavailable</span>
                                 </label>
                             </div>
@@ -602,7 +602,7 @@
                                 <!-- Anti-Rabies (always present) with sub-fields -->
                                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" id="antiRabiesCheckbox" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleAntiRabiesFields(this)">
+                                        <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" id="antiRabiesCheckbox" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleAntiRabiesFields(this)" {{ in_array('Anti-Rabies', old('vaccination_core', [])) ? 'checked' : '' }}>
                                         <span class="ml-3 text-gray-700 font-medium">Anti-Rabies Vaccination</span>
                                     </label>
 
@@ -610,15 +610,15 @@
                                     <div id="antiRabiesFields" class="hidden pl-8 grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-slate-200">
                                         <div>
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Date Administered <span class="text-red-500">*</span></label>
-                                            <input type="date" name="anti_rabies[date_administered]" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                            <input type="date" name="anti_rabies[date_administered]" value="{{ old('anti_rabies.date_administered') }}" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Vaccine Lot No. (Optional)</label>
-                                            <input type="text" name="anti_rabies[lot_no]" placeholder="G12345" maxlength="30" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9\-\s]/g, '').slice(0, 30);">
+                                            <input type="text" name="anti_rabies[lot_no]" value="{{ old('anti_rabies.lot_no') }}" placeholder="G12345" maxlength="30" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9\-\s]/g, '').slice(0, 30);">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Tag / Sticker No.</label>
-                                            <input type="text" name="anti_rabies[tag_no]" placeholder="DAS-2026-123" maxlength="30" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9\-\s]/g, '').slice(0, 30);">
+                                            <input type="text" name="anti_rabies[tag_no]" value="{{ old('anti_rabies.tag_no') }}" placeholder="DAS-2026-123" maxlength="30" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9\-\s]/g, '').slice(0, 30);">
                                             <p class="text-xs text-gray-500 mt-1">Enter tag, sticker, or certificate number if available.</p>
                                         </div>
                                     </div>
@@ -1764,15 +1764,19 @@ groups[letter].forEach(breed => {
             if (!checkbox || !input) return;
 
             if (checkbox.checked) {
-                input.value = 'N/A';
+                input.value = '';
+                input.dataset.weightUnknown = 'true';
                 input.setAttribute('readonly', 'readonly');
                 input.removeAttribute('required');
                 input.classList.add('bg-slate-100', 'text-gray-400', 'cursor-not-allowed');
+                input.placeholder = 'Weight unknown';
             } else {
                 input.value = '';
+                delete input.dataset.weightUnknown;
                 input.removeAttribute('readonly');
                 input.setAttribute('required', 'required');
                 input.classList.remove('bg-slate-100', 'text-gray-400', 'cursor-not-allowed');
+                input.placeholder = 'Enter weight in kilograms';
             }
 
             updateWeightSuffix();
@@ -1782,10 +1786,11 @@ groups[letter].forEach(breed => {
         function updateWeightSuffix() {
             const input = document.getElementById('petWeight');
             const suffix = document.getElementById('weightSuffix');
-            const value = input.value.trim().toUpperCase();
+            const isUnknown = input.dataset.weightUnknown === 'true';
+            const value = input.value.trim();
 
-            // Show kg suffix if there's a valid number, hide if empty or N/A
-            if (value === '' || value === 'N/A') {
+            // Show kg suffix if there's a valid number, hide if empty or unknown
+            if (value === '' || isUnknown) {
                 suffix.classList.add('hidden');
             } else {
                 suffix.classList.remove('hidden');
@@ -1794,6 +1799,10 @@ groups[letter].forEach(breed => {
         
         // Validate weight input - numbers and decimals, max 6 characters
         function validateWeight(input) {
+            // Skip validation if weight is marked as unknown
+            if (input.dataset.weightUnknown === 'true') {
+                return;
+            }
             input.value = input.value.replace(/[^0-9.]/g, '');
             if (input.value.length > 6) {
                 input.value = input.value.slice(0, 6);
@@ -2203,9 +2212,7 @@ groups[letter].forEach(breed => {
             if (weightUnknown && weightUnknown.checked) {
                 weightDisplay = 'Unknown';
             } else if (weight && weight.value.trim() !== '') {
-                weightDisplay = weight.value.trim().toUpperCase() === 'N/A'
-                    ? 'Unknown'
-                    : weight.value.trim() + ' kg';
+                weightDisplay = weight.value.trim() + ' kg';
             }
 
             document.getElementById('reviewPhysicalRows').innerHTML =
