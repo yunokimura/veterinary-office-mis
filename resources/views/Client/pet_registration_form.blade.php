@@ -52,6 +52,20 @@
         input[type="checkbox"], input[type="radio"] {
             accent-color: #066D33;
         }
+
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-slide-up {
+            animation: slide-up 0.3s ease-out;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50">
@@ -180,7 +194,7 @@
                                 <div class="flex items-center space-x-6">
                                     <!-- Placeholder Image (Dog with Cat) -->
                                     <div class="shrink-0">
-                                        <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-emerald-300 relative">
+                                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-300 relative">
                                             <img id="petImagePreview" src="{{ asset('images/pet.png') }}" alt="Pet Profile" class="w-full h-full object-cover">
                                             <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all flex items-center justify-center cursor-pointer" onclick="document.getElementById('petImage').click()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white opacity-0 hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -423,7 +437,7 @@
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
                                             <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
                                             <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')" required>
-                                            <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn">×</button>
+                                            <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn" aria-label="Remove front view photo">×</button>
                                             <button type="button" onclick="document.getElementById('frontImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 Click to upload
                                             </button>
@@ -436,7 +450,7 @@
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
                                             <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
                                             <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')" required>
-                                            <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn">×</button>
+                                            <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn" aria-label="Remove side view photo">×</button>
                                             <button type="button" onclick="document.getElementById('sideImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 Click to upload
                                             </button>
@@ -449,7 +463,7 @@
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors">
                                             <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-32 object-cover rounded-lg">
                                             <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')" required>
-                                            <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn">×</button>
+                                            <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn" aria-label="Remove top-down view photo">×</button>
                                             <button type="button" onclick="document.getElementById('topImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 Click to upload
                                             </button>
@@ -462,9 +476,9 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Unique Body Mark</label>
                                 <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-2 hover:border-emerald-400 transition-colors inline-block">
-                                    <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-48 h-48 object-cover rounded-lg">
+                                    <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-36 h-36 md:w-48 md:h-48 object-cover rounded-lg">
                                     <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)">
-                                    <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn">×</button>
+                                    <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn" aria-label="Remove body mark photo">×</button>
                                     <button type="button" onclick="document.getElementById('bodyMarkImage').click()" class="absolute inset-0 flex items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                         Click to upload
                                     </button>
@@ -645,7 +659,7 @@
                                 <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-emerald-400 transition-colors bg-white">
                                     <input type="file" id="vaccinationCard" name="vaccination_card" accept="image/*" class="hidden" onchange="previewVaccinationCard(event)">
                                     <img id="vaccinationCardPreview" class="hidden max-w-full max-h-48 object-cover rounded-lg mx-auto">
-                                    <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn">×</button>
+                                    <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn" aria-label="Remove vaccination card">×</button>
                                     <button type="button" onclick="document.getElementById('vaccinationCard').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 bg-white bg-opacity-80 rounded-lg">
                                         <svg class="w-10 h-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -999,6 +1013,32 @@
         const quickDogBreeds = ['Aspin', 'Shih Tzu', 'Pomeranian', 'Golden Retriever', 'Labrador Retriever', 'Chihuahua'];
         const quickCatBreeds = ['Puspin', 'Persian', 'Siamese', 'Maine Coon', 'British Shorthair', 'Ragdoll'];
 
+        let lastFocusedElement = null;
+
+        // Focus trap utility
+        function trapFocus(element) {
+            const focusableElements = element.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            element.addEventListener('keydown', function handleTab(e) {
+                if (e.key !== 'Tab') return;
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            });
+        }
+
         // Open the breed selector modal
         function openBreedModal() {
             const petType = document.querySelector('input[name="pet_type"]:checked');
@@ -1018,18 +1058,36 @@
 
             const modal = document.getElementById('breedModal');
             modal.classList.remove('hidden');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('role', 'dialog');
             document.body.classList.add('overflow-hidden');
+
+            // Store last focused element for restoration
+            lastFocusedElement = document.activeElement;
 
             // Auto-focus the search bar once the modal is visible
             setTimeout(() => {
-                document.getElementById('breedModalSearch').focus();
+                const searchInput = document.getElementById('breedModalSearch');
+                if (searchInput) {
+                    searchInput.focus();
+                    trapFocus(modal);
+                }
             }, 50);
         }
 
         // Close the breed selector modal
         function closeBreedModal() {
-            document.getElementById('breedModal').classList.add('hidden');
+            const modal = document.getElementById('breedModal');
+            modal.classList.add('hidden');
+            modal.removeAttribute('aria-modal');
+            modal.removeAttribute('role');
             document.body.classList.remove('overflow-hidden');
+
+            // Restore focus to trigger element
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            }
+            lastFocusedElement = null;
         }
 
         // Render quick chips + alphabetical list for the current species
@@ -1143,9 +1201,14 @@ groups[letter].forEach((breed, breedIndex) => {
         // Close modal with the Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                const modal = document.getElementById('breedModal');
-                if (modal && !modal.classList.contains('hidden')) {
+                const breedModal = document.getElementById('breedModal');
+                if (breedModal && !breedModal.classList.contains('hidden')) {
                     closeBreedModal();
+                    return;
+                }
+                const confirmModal = document.getElementById('confirmModal');
+                if (confirmModal && !confirmModal.classList.contains('hidden')) {
+                    closeConfirmModal();
                 }
             }
         });
@@ -1322,13 +1385,20 @@ groups[letter].forEach((breed, breedIndex) => {
         // Preview body mark image
         function previewBodyMark(event) {
             const file = event.target.files[0];
-            if (file) {
+            if (!file) return;
+
+            try {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('bodyMarkPreview').src = e.target.result;
                     document.getElementById('bodyMarkRemoveBtn').classList.remove('hidden');
                 };
+                reader.onerror = function() {
+                    showErrorToast('Failed to read image file. Please try another file.');
+                };
                 reader.readAsDataURL(file);
+            } catch (err) {
+                showErrorToast('Failed to process image. Please try again.');
             }
         }
 
@@ -1846,29 +1916,64 @@ groups[letter].forEach((breed, breedIndex) => {
             }
         }
 
+        // Show error toast
+        function showErrorToast(message) {
+            // Remove existing toast if any
+            const existing = document.getElementById('errorToast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'errorToast';
+            toast.className = 'fixed bottom-4 right-4 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+            toast.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
         // Preview uploaded profile image
         function previewImage(event) {
             const file = event.target.files[0];
-            if (file) {
+            if (!file) return;
+
+            try {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('petImagePreview').src = e.target.result;
                 };
+                reader.onerror = function() {
+                    showErrorToast('Failed to read image file. Please try another file.');
+                };
                 reader.readAsDataURL(file);
+            } catch (err) {
+                showErrorToast('Failed to process image. Please try again.');
             }
         }
 
         // Preview uploaded additional photo
         function previewImageForAdditional(input, previewId) {
             const file = input.files[0];
-            if (file) {
+            if (!file) return;
+
+            try {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById(previewId).src = e.target.result;
                     const removeBtn = document.getElementById(previewId.replace('Preview', 'RemoveBtn'));
                     removeBtn.classList.remove('hidden');
                 };
+                reader.onerror = function() {
+                    showErrorToast('Failed to read image file. Please try another file.');
+                };
                 reader.readAsDataURL(file);
+            } catch (err) {
+                showErrorToast('Failed to process image. Please try again.');
             }
         }
 
@@ -2484,21 +2589,28 @@ groups[letter].forEach((breed, breedIndex) => {
                 const file = event.target.files[0];
                 if (!file) return;
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Show preview image
-                    const preview = document.getElementById('vaccinationCardPreview');
-                    if (preview) {
-                        preview.src = e.target.result;
-                        preview.classList.remove('hidden');
-                    }
-                    // Show remove button
-                    document.getElementById('vaccinationCardRemoveBtn').classList.remove('hidden');
+                try {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Show preview image
+                        const preview = document.getElementById('vaccinationCardPreview');
+                        if (preview) {
+                            preview.src = e.target.result;
+                            preview.classList.remove('hidden');
+                        }
+                        // Show remove button
+                        document.getElementById('vaccinationCardRemoveBtn').classList.remove('hidden');
 
-                    // Hide the click-to-upload overlay
-                    event.target.nextElementSibling?.classList?.add('hidden');
-                };
-                reader.readAsDataURL(file);
+                        // Hide the click-to-upload overlay
+                        event.target.nextElementSibling?.classList?.add('hidden');
+                    };
+                    reader.onerror = function() {
+                        showErrorToast('Failed to read image file. Please try another file.');
+                    };
+                    reader.readAsDataURL(file);
+                } catch (err) {
+                    showErrorToast('Failed to process image. Please try again.');
+                }
             }
 
             // Remove vaccination card
@@ -2527,7 +2639,7 @@ groups[letter].forEach((breed, breedIndex) => {
     </script>
     
     <!-- Breed Selector Modal -->
-    <div id="breedModal" class="fixed inset-0 z-50 hidden">
+    <div id="breedModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="breedModalTitle">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeBreedModal()"></div>
         <div class="fixed inset-0 flex items-end sm:items-center sm:justify-center p-0 sm:p-4">
             <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-md max-h-[92vh] sm:max-h-[85vh] overflow-hidden flex flex-col">
@@ -2538,10 +2650,10 @@ groups[letter].forEach((breed, breedIndex) => {
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                             </svg>
-                            <h3 class="text-lg font-semibold text-gray-900">Select Breed</h3>
+                            <h3 id="breedModalTitle" class="text-lg font-semibold text-gray-900">Select Breed</h3>
                             <span id="breedModalLimit" class="text-xs text-slate-500 font-normal">(select one)</span>
                         </div>
-                        <button type="button" onclick="closeBreedModal()" class="text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg p-1.5 transition-colors" aria-label="Close">
+                        <button type="button" onclick="closeBreedModal()" class="text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg p-1.5 transition-colors" aria-label="Close breed selector">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -2602,15 +2714,15 @@ groups[letter].forEach((breed, breedIndex) => {
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
             <div class="text-center">
-                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Confirm Registration</h3>
+                <h3 id="confirmModalTitle" class="text-xl font-bold text-gray-900 mb-2">Confirm Registration</h3>
                 <p class="text-gray-600 mb-6">Are you sure you want to register this pet? Please review all information before submitting.</p>
                 <div class="flex gap-4 justify-center">
                     <button onclick="closeConfirmModal()" class="px-6 py-2 border border-slate-300 text-gray-700 rounded-lg hover:bg-slate-50 transition-colors">
@@ -2625,12 +2737,36 @@ groups[letter].forEach((breed, breedIndex) => {
     </div>
     
     <script>
+        let confirmLastFocusedElement = null;
+
         function showConfirmModal() {
-            document.getElementById('confirmModal').classList.remove('hidden');
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('hidden');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('role', 'dialog');
+            
+            // Store last focused element
+            confirmLastFocusedElement = document.activeElement;
+            
+            // Focus first button
+            setTimeout(() => {
+                const firstBtn = modal.querySelector('button');
+                if (firstBtn) firstBtn.focus();
+                trapFocus(modal);
+            }, 50);
         }
         
         function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.add('hidden');
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('hidden');
+            modal.removeAttribute('aria-modal');
+            modal.removeAttribute('role');
+            
+            // Restore focus
+            if (confirmLastFocusedElement && typeof confirmLastFocusedElement.focus === 'function') {
+                confirmLastFocusedElement.focus();
+            }
+            confirmLastFocusedElement = null;
         }
         
         function submitPetForm() {
