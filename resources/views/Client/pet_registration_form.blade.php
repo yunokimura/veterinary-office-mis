@@ -1446,68 +1446,31 @@
             const type = petType ? petType.value : '';
             const otherValue = document.querySelector('input[name="vaccination_other"]')?.value || '';
 
+            // Anti-Rabies is hardcoded in HTML with its sub-fields
+            // We only need to populate the other core vaccines and optional vaccines
+
             if (!type) {
-                document.getElementById('coreVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_core', 'Anti-Rabies');
+                document.getElementById('otherCoreVaccines').innerHTML = '';
                 document.getElementById('optionalVaccineOptions').innerHTML = createVaccineCheckbox('vaccination_optional', 'Other') + `
                     <div class="mt-3">
                         <input type="text" name="vaccination_other" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify other vaccine">
                     </div>
                 `;
-                document.getElementById('otherCoreVaccines').innerHTML = '';
                 return;
             }
 
-            // Define core vaccines with Anti-Rabies always first, plus species-specific ones
-            const coreVaccines = type === 'cat' 
-                ? ['Anti-Rabies', '4-in-1 / 3-in-1 (FVRCP - Rhinotracheitis, Calicivirus, Panleukopenia)']
-                : ['Anti-Rabies', '5-in-1 / 6-in-1 / 8-in-1 (DHPPi / Leptospirosis)'];
-
-            const optionalVaccines = type === 'cat'
-                ? ['Feline Leukemia (FeLV)', 'Other']
-                : ['Kennel Cough (Bordetella)', 'Canine Parvovirus (Booster)', 'Other'];
-
-            // Core vaccines - Anti-Rabies with sub-fields, others as simple checkboxes
-            const coreHtml = coreVaccines.map(vaccine => {
-                if (vaccine === 'Anti-Rabies') {
-                    return `
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleAntiRabiesFields(this)">
-                                <span class="ml-3 text-gray-700 font-medium">Anti-Rabies</span>
-                            </label>
-
-                            <!-- Anti-Rabies sub-fields (shown when checked) -->
-                            <div id="antiRabiesFields" class="hidden pl-8 grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-slate-200">
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-500 mb-1">Date Administered <span class="text-red-500">*</span></label>
-                                    <input type="date" name="anti_rabies[date_administered]" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-500 mb-1">Vaccine Lot No. (Optional)</label>
-                                    <input type="text" name="anti_rabies[lot_no]" placeholder="G12345" maxlength="30" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9\\-\\s]/g, '').slice(0, 30);">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-500 mb-1">Tag / Sticker No.</label>
-                                    <input type="text" name="anti_rabies[tag_no]" placeholder="DAS-2026-123" maxlength="30" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9\\-\\s]/g, '').slice(0, 30);">
-                                    <p class="text-xs text-gray-500 mt-1">Enter tag, sticker, or certificate number if available.</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-                return createVaccineCheckbox('vaccination_core', vaccine);
-            }).join('');
-
-            document.getElementById('coreVaccineOptions').innerHTML = coreHtml;
-
-            // Other core vaccines (species-specific, excluding Anti-Rabies)
+            // Other core vaccines (species-specific, excluding Anti-Rabies which is hardcoded)
             const otherCoreVaccines = type === 'cat'
                 ? ['4-in-1 / 3-in-1 (FVRCP - Rhinotracheitis, Calicivirus, Panleukopenia)']
                 : ['5-in-1 / 6-in-1 / 8-in-1 (DHPPi / Leptospirosis)'];
 
+            // Optional vaccines (species-specific)
+            const optionalVaccines = type === 'cat'
+                ? ['Feline Leukemia (FeLV)', 'Other']
+                : ['Kennel Cough (Bordetella)', 'Canine Parvovirus (Booster)', 'Other'];
+
             document.getElementById('otherCoreVaccines').innerHTML = otherCoreVaccines.map(vaccine => createVaccineCheckbox('vaccination_core', vaccine)).join('');
 
-            // Optional vaccines
             document.getElementById('optionalVaccineOptions').innerHTML = optionalVaccines.map(vaccine => {
                 if (vaccine === 'Other') {
                     return createVaccineCheckbox('vaccination_optional', vaccine) + `
@@ -1518,10 +1481,7 @@
                 }
                 return createVaccineCheckbox('vaccination_optional', vaccine);
             }).join('');
-        }
-
-        // Populate pet attributes based on type
-        function populatePetAttributes() {
+        }function populatePetAttributes() {
             const petType = document.querySelector('input[name="pet_type"]:checked');
             const type = petType ? petType.value : '';
             
@@ -2171,10 +2131,10 @@
 
             const images = [
                 { id: 'petImagePreview', label: 'Profile', fallback: '{{ asset('images/pet.png') }}' },
-                { id: 'bodyMarkPreview', label: 'Body Mark', fallback: '{{ asset('images/no-image.png') }}' },
-                { id: 'frontPreview', label: 'Front View', fallback: '{{ asset('images/no-image.png') }}' },
-                { id: 'sidePreview', label: 'Side View', fallback: '{{ asset('images/no-image.png') }}' },
-                { id: 'topPreview', label: 'Top-Down', fallback: '{{ asset('images/no-image.png') }}' }
+                { id: 'bodyMarkPreview', label: 'Body Mark', fallback: '{{ asset('images/pet.png') }}' },
+                { id: 'frontPreview', label: 'Front View', fallback: '{{ asset('images/pet.png') }}' },
+                { id: 'sidePreview', label: 'Side View', fallback: '{{ asset('images/pet.png') }}' },
+                { id: 'topPreview', label: 'Top-Down', fallback: '{{ asset('images/pet.png') }}' }
             ];
 
             const imagesHtml = images.map(img => {
@@ -2269,7 +2229,7 @@
                 'vaccinationCard'
             ];
 
-            fieldsToToggle.forEach(id => {
+fieldsToToggle.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     if (notVaccinated) {
@@ -2295,7 +2255,8 @@
                             if (dateInput) dateInput.setAttribute('required', 'required');
                         }
                     }
-                });
+                }
+            });
 
                 // Clear anti-rabies fields if not vaccinated
                 if (notVaccinated) {
