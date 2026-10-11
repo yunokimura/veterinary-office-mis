@@ -910,6 +910,12 @@
         let selectedBreeds = [];
         let currentPetType = '';
 
+        // Returns true only when the crossbreed answer is "Yes"
+        function isCrossbreedSelected() {
+            const selected = document.querySelector('input[name="is_crossbreed"]:checked');
+            return selected ? selected.value === 'yes' : false;
+        }
+
         // Focus trap utility
         function trapFocus(element) {
             const focusableElements = element.querySelectorAll(
