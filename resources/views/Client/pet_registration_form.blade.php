@@ -1056,7 +1056,8 @@
                         <button type="button" onclick="toggleBreedFromModal('${breed.replace(/'/g, "\\'")}')"
                                 class="px-3 py-1.5 text-sm rounded-full border transition-colors ${selected
                                     ? 'bg-emerald-600 text-white border-emerald-600'
-                                    : 'border-slate-300 text-gray-700 hover:bg-emerald-50 hover:border-emerald-400'}">
+                                    : 'border-slate-300 text-gray-700 hover:bg-emerald-50 hover:border-emerald-400'}"
+                                aria-pressed="${selected}">
                             ${breed}
                             ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline ml-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
                         </button>`;
@@ -1093,19 +1094,21 @@
                         </div>
                         <div class="space-y-1 mt-1">`;
 
-groups[letter].forEach(breed => {
+groups[letter].forEach((breed, breedIndex) => {
                     const selected = selectedBreeds.includes(breed);
+                    const breedSlug = breed.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                    const inputId = `breed-opt-${breedSlug}-${breedIndex}`;
                     if (isCrossbreed) {
                         html += `
-                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}">
-                                <input type="checkbox" value="${breed}" class="pet-breed-checkbox h-4 w-4 text-emerald-600 rounded border-slate-300" ${selected ? 'checked' : ''} onchange="handleBreedCheckbox(this)">
+                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}" for="${inputId}">
+                                <input type="checkbox" id="${inputId}" value="${breed}" class="pet-breed-checkbox h-4 w-4 text-emerald-600 rounded border-slate-300" ${selected ? 'checked' : ''} onchange="handleBreedCheckbox(this)">
                                 <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
                                 ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
                             </label>`;
                     } else {
                         html += `
-                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}">
-                                <input type="radio" name="breed_option" value="${breed}" class="pet-breed-radio h-4 w-4 text-emerald-600 border-slate-300" ${selected ? 'checked' : ''} onchange="handleSingleBreedSelect('${breed.replace(/'/g, "\\'")}')">
+                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}" for="${inputId}">
+                                <input type="radio" id="${inputId}" name="breed_option" value="${breed}" class="pet-breed-radio h-4 w-4 text-emerald-600 border-slate-300" ${selected ? 'checked' : ''} onchange="handleSingleBreedSelect('${breed.replace(/'/g, "\\'")}')">
                                 <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
                                 ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
                             </label>`;
@@ -1217,22 +1220,42 @@ groups[letter].forEach(breed => {
             closeBreedModal();
         }
 
-        // "Other / Breed Not Listed" fallback
-        function selectOtherBreed() {
-            const isCrossbreed = isCrossbreedSelected();
-
-            let otherBreed = '';
-            while (otherBreed.trim() === '') {
-                otherBreed = prompt(isCrossbreed
-                    ? 'Enter the breed not listed (will be added to your selection):'
-                    : 'Enter the breed not listed:');
-
-                // User pressed cancel
-                if (otherBreed === null) return;
+        // "Other / Breed Not Listed" fallback - shows inline input instead of prompt
+        function showOtherBreedInput() {
+            const btn = document.getElementById('otherBreedBtn');
+            const wrap = document.getElementById('otherBreedInputWrap');
+            const input = document.getElementById('otherBreedInput');
+            
+            if (btn) btn.classList.add('hidden');
+            if (wrap) wrap.classList.remove('hidden');
+            if (input) {
+                input.value = '';
+                setTimeout(() => input.focus(), 50);
             }
+        }
 
-            otherBreed = otherBreed.trim();
+        function hideOtherBreedInput() {
+            const btn = document.getElementById('otherBreedBtn');
+            const wrap = document.getElementById('otherBreedInputWrap');
+            const input = document.getElementById('otherBreedInput');
+            
+            if (btn) btn.classList.remove('hidden');
+            if (wrap) wrap.classList.add('hidden');
+            if (input) input.value = '';
+        }
 
+        function submitOtherBreed() {
+            const input = document.getElementById('otherBreedInput');
+            if (!input) return;
+            
+            const otherBreed = input.value.trim();
+            if (!otherBreed) {
+                input.focus();
+                return;
+            }
+            
+            const isCrossbreed = isCrossbreedSelected();
+            
             if (isCrossbreed) {
                 if (selectedBreeds.length >= 2) {
                     alert('Maximum of 2 breeds allowed');
@@ -1242,17 +1265,31 @@ groups[letter].forEach(breed => {
             } else {
                 selectedBreeds = [otherBreed];
             }
-
+            
             document.getElementById('petBreedInput').value = selectedBreeds.join(', ');
-
+            
             const selectedText = document.getElementById('selectedBreedText');
             selectedText.textContent = selectedBreeds.join(', ');
             selectedText.classList.remove('text-gray-500');
             selectedText.classList.add('text-gray-900');
-
+            
             updateSelectedBreedDisplay();
+            hideOtherBreedInput();
             closeBreedModal();
         }
+
+        // Handle Enter/Escape in other breed input
+        document.addEventListener('keydown', function(e) {
+            const wrap = document.getElementById('otherBreedInputWrap');
+            if (!wrap || wrap.classList.contains('hidden')) return;
+            
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitOtherBreed();
+            } else if (e.key === 'Escape') {
+                hideOtherBreedInput();
+            }
+        });
 
         // Update the breed trigger text and hidden input
         function updateSelectedBreedDisplay() {
@@ -2120,6 +2157,17 @@ groups[letter].forEach(breed => {
             showStep(step);
         }
 
+        // Helper: Check if Anti-Rabies booster is needed (more than 1 year since last vaccination)
+        function getAntiRabiesBoosterStatus(dateString) {
+            if (!dateString) return null;
+            const adminDate = new Date(dateString + 'T00:00:00');
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            return adminDate < oneYearAgo
+                ? '<div class="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm"><strong>⚠ Needs an Anti-Rabies Booster Shot</strong> (more than 1 year since last vaccination)</div>'
+                : null;
+        }
+
         // Build the Step 4 review summary
         function populateReview() {
             const form = document.getElementById('petRegistrationForm');
@@ -2306,17 +2354,10 @@ groups[letter].forEach(breed => {
                         <div><span class="text-gray-500">Date Administered:</span> <span class="font-semibold text-gray-900">${dateVal}</span></div>
                         <div><span class="text-gray-500">Vaccine Lot No.:</span> <span class="font-semibold text-gray-900">${lotVal}</span></div>
                         <div><span class="text-gray-500">Tag / Sticker No.:</span> <span class="font-semibold text-gray-900">${tagVal}</span></div>
-                    `;
+                `;
 
-                // Check if Anti-Rabies booster is needed (more than 1 year ago)
-                if (dateInput && dateInput.value) {
-                    const adminDate = new Date(dateInput.value + 'T00:00:00');
-                    const oneYearAgo = new Date();
-                    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                    if (adminDate < oneYearAgo) {
-                        boosterHtml = '<div class="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm"><strong>⚠ Needs an Anti-Rabies Booster Shot</strong> (more than 1 year since last vaccination)</div>';
-                    }
-                }
+                // Check if Anti-Rabies booster is needed using helper
+                boosterHtml = getAntiRabiesBoosterStatus(dateInput?.value) || '';
             }
 
             let vaccinationCardHtml = '';
@@ -2360,7 +2401,7 @@ groups[letter].forEach(breed => {
                 'vaccinationCardUploadSection'
             ];
 
-fieldsToToggle.forEach(id => {
+            fieldsToToggle.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     if (notVaccinated) {
@@ -2379,83 +2420,64 @@ fieldsToToggle.forEach(id => {
                         });
                     } else {
                         el.classList.remove('hidden');
-                        // Restore required for Anti-Rabies date if checked
-                        const antiRabiesCheckbox = document.querySelector('input[name="vaccination_core[]"][value="Anti-Rabies"]');
-                        if (antiRabiesCheckbox && antiRabiesCheckbox.checked) {
-                            const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
-                            if (dateInput) dateInput.setAttribute('required', 'required');
-                        }
                     }
                 }
             });
 
-            // Clear anti-rabies fields if not vaccinated
-                if (notVaccinated) {
-                    const antiRabiesFields = document.getElementById('antiRabiesFields');
-                    if (antiRabiesFields) {
-                        antiRabiesFields.classList.add('hidden');
-                        antiRabiesFields.querySelectorAll('input').forEach(input => {
-                            input.value = '';
-                            input.removeAttribute('required');
-                        });
-                    }
-                }
-}
+            // Use single source of truth for mutual exclusion
+            syncVaccinationUI();
+        }
 
-// Toggle "Not Vaccinated" checkbox - mutual exclusion with Anti-Rabies
-            function toggleNotVaccinated(checkbox) {
-                const antiRabiesCheckbox = document.getElementById('antiRabiesCheckbox');
-                if (!antiRabiesCheckbox) return;
+// Single source of truth for vaccination mutual exclusion state
+        function syncVaccinationUI() {
+            const notVaccinatedCheckbox = document.getElementById('notVaccinatedCheckbox');
+            const antiRabiesCheckbox = document.getElementById('antiRabiesCheckbox');
+            const antiRabiesFields = document.getElementById('antiRabiesFields');
+            const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
+            
+            if (!notVaccinatedCheckbox || !antiRabiesCheckbox || !antiRabiesFields) return;
 
-                if (checkbox.checked) {
-                    // If "not vaccinated" is checked, disable and uncheck Anti-Rabies
-                    antiRabiesCheckbox.checked = false;
-                    antiRabiesCheckbox.disabled = true;
-                    // Also hide the sub-fields
-                    const fields = document.getElementById('antiRabiesFields');
-                    if (fields) {
-                        fields.classList.add('hidden');
-                        fields.querySelectorAll('input').forEach(input => {
-                            input.value = '';
-                            input.removeAttribute('required');
-                        });
-                    }
-                } else {
-                    // If "not vaccinated" is unchecked, enable Anti-Rabies
-                    antiRabiesCheckbox.disabled = false;
-                }
+            const notVaccinated = notVaccinatedCheckbox.checked;
+            const antiRabiesChecked = antiRabiesCheckbox.checked;
+
+            if (notVaccinated) {
+                // Not vaccinated is checked - disable Anti-Rabies
+                antiRabiesCheckbox.checked = false;
+                antiRabiesCheckbox.disabled = true;
+                antiRabiesFields.classList.add('hidden');
+                antiRabiesFields.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                    input.removeAttribute('required');
+                });
+                if (dateInput) dateInput.removeAttribute('required');
+            } else if (antiRabiesChecked) {
+                // Anti-Rabies is checked - disable Not Vaccinated
+                notVaccinatedCheckbox.disabled = true;
+                notVaccinatedCheckbox.checked = false;
+                antiRabiesFields.classList.remove('hidden');
+                if (dateInput) dateInput.setAttribute('required', 'required');
+            } else {
+                // Neither checked - enable both
+                notVaccinatedCheckbox.disabled = false;
+                antiRabiesCheckbox.disabled = false;
+                antiRabiesFields.classList.add('hidden');
+                antiRabiesFields.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                    input.removeAttribute('required');
+                });
+                if (dateInput) dateInput.removeAttribute('required');
             }
+        }
 
-            // Toggle Anti-Rabies sub-fields when checkbox is checked/unchecked
-            function toggleAntiRabiesFields(checkbox) {
-                const fields = document.getElementById('antiRabiesFields');
-                const notVaccinatedCheckbox = document.getElementById('notVaccinatedCheckbox');
-                if (!fields) return;
+        // Toggle "Not Vaccinated" checkbox - mutual exclusion with Anti-Rabies
+        function toggleNotVaccinated(checkbox) {
+            syncVaccinationUI();
+        }
 
-                if (checkbox.checked) {
-                    fields.classList.remove('hidden');
-                    // Make date required
-                    const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
-                    if (dateInput) dateInput.setAttribute('required', 'required');
-                    // Disable "not vaccinated" checkbox
-                    if (notVaccinatedCheckbox) {
-                        notVaccinatedCheckbox.disabled = true;
-                        notVaccinatedCheckbox.checked = false;
-                    }
-                } else {
-                    fields.classList.add('hidden');
-                    // Clear and remove required
-                    fields.querySelectorAll('input').forEach(input => {
-                        input.value = '';
-                        input.removeAttribute('required');
-                    });
-                    fields.classList.add('hidden');
-                    // Enable "not vaccinated" checkbox
-                    if (notVaccinatedCheckbox) {
-                        notVaccinatedCheckbox.disabled = false;
-                    }
-                }
-            }
+        // Toggle Anti-Rabies sub-fields when checkbox is checked/unchecked
+        function toggleAntiRabiesFields(checkbox) {
+            syncVaccinationUI();
+        }
 
             // Preview vaccination card
             function previewVaccinationCard(event) {
@@ -2560,12 +2582,20 @@ fieldsToToggle.forEach(id => {
 
                 <!-- Modal Footer -->
                 <div class="px-5 py-4 border-t border-slate-200 bg-slate-50">
-                    <button type="button" onclick="selectOtherBreed()" class="w-full px-4 py-2.5 border-2 border-dashed border-emerald-300 text-emerald-700 rounded-lg font-medium hover:bg-emerald-50 hover:border-emerald-400 transition-colors flex items-center justify-center gap-2 text-sm">
+                    <button type="button" onclick="showOtherBreedInput()" class="w-full px-4 py-2.5 border-2 border-dashed border-emerald-300 text-emerald-700 rounded-lg font-medium hover:bg-emerald-50 hover:border-emerald-400 transition-colors flex items-center justify-center gap-2 text-sm" id="otherBreedBtn">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
                         Other / Breed Not Listed
                     </button>
+                    <div id="otherBreedInputWrap" class="mt-3 hidden">
+                        <div class="flex gap-2">
+                            <input type="text" id="otherBreedInput" placeholder="Enter breed name" class="flex-1 px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all">
+                            <button type="button" onclick="submitOtherBreed()" class="px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors">Add</button>
+                            <button type="button" onclick="hideOtherBreedInput()" class="px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-slate-50 transition-colors">Cancel</button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Press Enter to add, Escape to cancel</p>
+                    </div>
                 </div>
             </div>
         </div>
