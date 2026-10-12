@@ -813,7 +813,7 @@
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Health & Traits
                                     <a href="#" onclick="event.preventDefault(); goToStep(3);" class="text-xs text-emerald-600 hover:underline ml-2">Edit</a>
                                 </h5>
-                                <div id="reviewHealth" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3"></div>
+                                <div id="reviewHealth" class="bg-slate-50 border border-slate-200 rounded-xl p-4 grid grid-cols-[120px_1fr] gap-x-4 gap-y-3"></div>
                             </div>
                         </div>
                         </div>
@@ -2236,20 +2236,18 @@ groups[letter].forEach((breed, breedIndex) => {
                 </div>`;
 
             const rowHtml = (label, value) => `
-                <div class="grid grid-cols-[120px_1fr] gap-4 py-2">
-                    <span class="text-xs text-gray-500">${label}</span>
-                    <span class="text-sm font-semibold text-gray-900">${value || '—'}</span>
-                </div>`;
+                <span class="text-xs text-gray-500 py-2">${label}</span>
+                <span class="text-sm font-semibold text-gray-900 py-2">${value || '—'}</span>`;
 
             const traitRow = (label, containerId) => {
                 const container = document.getElementById(containerId);
-                if (!container) return row(label, '—');
+                if (!container) return `
+                    <span class="text-xs text-gray-500 py-2">${label}</span>
+                    <span class="text-sm font-semibold text-gray-900 py-2">—</span>`;
                 const selected = Array.from(container.querySelectorAll('input.pill-checkbox:checked')).map(cb => cb.dataset.value || cb.value);
                 return `
-                <div class="grid grid-cols-[120px_1fr] gap-4 py-2">
-                    <span class="text-xs text-gray-500">${label}</span>
-                    <span class="text-sm font-semibold text-gray-900">${selected.length ? selected.join(', ') : '—'}</span>
-                </div>`;
+                <span class="text-xs text-gray-500 py-2">${label}</span>
+                <span class="text-sm font-semibold text-gray-900 py-2">${selected.length ? selected.join(', ') : '—'}</span>`;
             };
 
             const asText = (value) => {
@@ -2420,11 +2418,16 @@ groups[letter].forEach((breed, breedIndex) => {
 
             const notVaccinatedHtml = notVaccinated ? '<span style="color: #111827; font-weight: 600;">My pet is not yet vaccinated / records unavailable</span>' : '';
 
-            // Determine vaccination status text and booster warning
-            let vaccinationStatusText = notVaccinatedHtml || 'Vaccinated';
-            let vaccinationStatusHtml = vaccinationStatusText;
-            if (!notVaccinated && boosterHtml) {
-                vaccinationStatusHtml = vaccinationStatusText + boosterHtml;
+            // Determine vaccination status (date-aware) and booster warning
+            let vaccinationStatusHtml;
+            if (notVaccinated) {
+                vaccinationStatusHtml = notVaccinatedHtml;
+            } else if (boosterHtml) {
+                vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Vaccinated (Needs Booster)</span>' + boosterHtml;
+            } else if (antiRabiesChecked && antiRabiesChecked.checked && dateInput && dateInput.value) {
+                vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Vaccinated (Up to Date)</span>';
+            } else {
+                vaccinationStatusHtml = 'Vaccinated';
             }
 
             document.getElementById('reviewHealth').innerHTML =
@@ -2432,8 +2435,8 @@ groups[letter].forEach((breed, breedIndex) => {
                 (!notVaccinated ? rowHtml('Anti-Rabies Vaccination Details', antiRabiesHtml) : '') +
                 (!notVaccinated ? rowHtml('Core & Optional Vaccines', vaccinesHtml) : '') +
                 (vaccinationCardHtml ? rowHtml('Vaccination Booklet / Certificate', vaccinationCardHtml) : '') +
-                '<hr class="my-4 border-slate-200">' +
-                '<div class="text-sm font-bold text-gray-800 uppercase tracking-wider">Traits</div>' +
+                '<hr class="col-span-2 my-4 border-slate-200">' +
+                '<div class="col-span-2 text-sm font-bold text-gray-800 uppercase tracking-wider">Traits</div>' +
                 traitRow('Training', 'trainingOptions') +
                 traitRow('Insurance', 'insuranceOptions') +
                 traitRow('Behavior', 'behaviorOptions') +
