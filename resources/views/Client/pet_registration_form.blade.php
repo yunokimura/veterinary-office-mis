@@ -104,7 +104,7 @@
         <!-- Page Title -->
         <div class="text-center mb-8">
             <h2 class="text-3xl font-bold text-gray-900">Pet Registration</h2>
-            <p class="text-gray-500 text-sm mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
+            <p class="text-gray-700 text-xs mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -120,7 +120,7 @@
                             </svg>
                             <h4 class="text-sm font-semibold text-white">REGISTRATION PROGRESS</h4>
                         </div>
-                        <span id="stepIndicatorText" class="text-xs text-emerald-300 font-medium">Step 1 of 4 — Pet Basics</span>
+                        <span id="stepIndicatorText" class="text-sm text-emerald-300 font-medium">Step 1 of 4 — Pet Basics</span>
                     </div>
                     <div class="p-6">
                         <div class="flex items-start justify-between gap-2">
@@ -128,7 +128,7 @@
                                 <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors flex-shrink-0" data-step="1">1</span>
                                 <span class="hidden sm:block min-w-0">
                                     <span class="step-title block text-sm font-semibold truncate">Pet Basics</span>
-                                    <span class="step-subtitle block text-xs text-gray-500 truncate">Profile & breed</span>
+                                    <span class="step-subtitle block text-xs text-gray-700 truncate">Profile & breed</span>
                                 </span>
                             </button>
                             <div class="flex-1 hidden sm:flex items-center pt-4">
@@ -138,7 +138,7 @@
                                 <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors flex-shrink-0" data-step="2">2</span>
                                 <span class="hidden sm:block min-w-0">
                                     <span class="step-title block text-sm font-semibold truncate">Physical Details</span>
-                                    <span class="step-subtitle block text-xs text-gray-500 truncate">Age & photos</span>
+                                    <span class="step-subtitle block text-xs text-gray-700 truncate">Age & photos</span>
                                 </span>
                             </button>
                             <div class="flex-1 hidden sm:flex items-center pt-4">
@@ -148,7 +148,7 @@
                                 <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors flex-shrink-0" data-step="3">3</span>
                                 <span class="hidden sm:block min-w-0">
                                     <span class="step-title block text-sm font-semibold truncate">Health & Traits</span>
-                                    <span class="step-subtitle block text-xs text-gray-500 truncate">Vaccines & behavior</span>
+                                    <span class="step-subtitle block text-xs text-gray-700 truncate">Vaccines & behavior</span>
                                 </span>
                             </button>
                             <div class="flex-1 hidden sm:flex items-center pt-4">
@@ -158,7 +158,7 @@
                                 <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors flex-shrink-0" data-step="4">4</span>
                                 <span class="hidden sm:block min-w-0">
                                     <span class="step-title block text-sm font-semibold truncate">Review & Submit</span>
-                                    <span class="step-subtitle block text-xs text-gray-500 truncate">Confirm details</span>
+                                    <span class="step-subtitle block text-xs text-gray-700 truncate">Confirm details</span>
                                 </span>
                             </button>
                         </div>
@@ -204,7 +204,7 @@
                                     <input type="file" id="petImage" name="pet_image" accept="image/*" class="hidden" onchange="previewImage(event)">
                                     <div>
                                         <p class="text-sm text-gray-600">Upload a photo of your pet</p>
-                                        <p class="text-xs text-gray-400">Click the image to upload</p>
+                                        <p class="text-sm text-gray-400">Click the image to upload</p>
                                     </div>
                                 </div>
                             </div>
@@ -296,7 +296,7 @@
                             <div id="breedSection">
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                     Pet Breed <span class="text-red-500">*</span>
-                                    <span id="breedLimitText" class="text-xs text-gray-500 font-normal ml-1">(select one)</span>
+                                    <span id="breedLimitText" class="text-xs text-gray-700 font-normal ml-1">(select one)</span>
                                 </label>
 
                                 <!-- Modal trigger -->
@@ -305,7 +305,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
-                                        <span id="selectedBreedText" class="text-gray-500 truncate">Search or select a breed</span>
+                                        <span id="selectedBreedText" class="text-gray-700 truncate">Search or select a breed</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                         </svg>
@@ -378,19 +378,19 @@
                                     <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet Age</label>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Years</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Years</label>
                                             <select id="petAgeYears" name="pet_age_years" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                                 <option value="">Select years</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Months</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Months</label>
                                             <select id="petAgeMonths" name="pet_age_months" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                                 <option value="">Select months</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <p id="ageHint" class="text-xs text-gray-500 mt-1 hidden">Please specify your pet's age in years or months.</p>
+                                    <p id="ageHint" class="text-xs text-gray-700 mt-1 hidden">Please specify your pet's age in years or months.</p>
                                 </div>
                             </div>
 
@@ -399,7 +399,7 @@
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Weight (kg) <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <input type="text" id="petWeight" name="pet_weight" value="{{ old('pet_weight') }}" {!! old('weight_unknown') ? 'data-weight-unknown="true" readonly placeholder="Weight unknown" maxlength="6"' : 'placeholder="Enter weight in kg" maxlength="6"' !!} class="w-full px-3.5 py-2.5 pr-12 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all {{ old('weight_unknown') ? 'bg-slate-100 text-gray-400 cursor-not-allowed' : '' }}" oninput="updateWeightSuffix(); validateWeight(this)" required>
-                                    <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none hidden">kg</span>
+                                    <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium pointer-events-none hidden">kg</span>
                                 </div>
                                 <label class="inline-flex items-center cursor-pointer mt-2">
                                     <input type="checkbox" id="weightUnknown" name="weight_unknown" value="1" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleWeightUnknown()" {{ old('weight_unknown') ? 'checked' : '' }}>
@@ -452,7 +452,7 @@
                                     </label>
                                 </div>
                                 <div id="eyeColorOtherWrap" class="mt-3 hidden">
-                                    <label class="block text-xs font-medium text-gray-500 mb-1">Please specify eye color</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Please specify eye color</label>
                                     <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
                                 </div>
 
@@ -461,7 +461,7 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <!-- Left Eye -->
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Left Eye Color</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Left Eye Color</label>
                                             <select id="eyeColorLeft" name="eye_color_left" onchange="handleEyeSideChange('Left')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                                 <option value="">Select left eye color</option>
                                                 <option value="Brown" {{ old('eye_color_left') === 'Brown' ? 'selected' : '' }}>Brown</option>
@@ -472,7 +472,7 @@
                                                 <option value="Parti-Colored / Marbled" {{ old('eye_color_left') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
                                                 <option value="Other" {{ old('eye_color_left') === 'Other' ? 'selected' : '' }}>Other</option>
                                             </select>
-                                            <p class="text-xs text-gray-500 mt-1">Select the predominant color for each eye.</p>
+                                            <p class="text-xs text-gray-700 mt-1">Select the predominant color for each eye.</p>
                                             <div id="eyeColorLeftOtherWrap" class="mt-2 hidden">
                                                 <input type="text" id="eyeColorLeftOther" name="eye_color_left_other" value="{{ old('eye_color_left_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify left eye color">
                                             </div>
@@ -480,7 +480,7 @@
 
                                         <!-- Right Eye -->
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Right Eye Color</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Right Eye Color</label>
                                             <select id="eyeColorRight" name="eye_color_right" onchange="handleEyeSideChange('Right')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                                 <option value="">Select right eye color</option>
                                                 <option value="Brown" {{ old('eye_color_right') === 'Brown' ? 'selected' : '' }}>Brown</option>
@@ -502,16 +502,16 @@
                             <!-- Front, Side, Top-down View -->
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Front, Side, Top-down View <span class="text-red-500">*</span></label>
-                                <p class="text-xs text-gray-500 mb-4">Upload the front, side, and top-down views of your pet</p>
+                                <p class="text-xs text-gray-700 mb-4">Upload the front, side, and top-down views of your pet</p>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                                     <!-- Front View -->
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-500 mb-2">Front View</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Front View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
                                             <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')" required>
-                                            <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="frontRemoveBtn" aria-label="Remove front view photo">×</button>
+                                            <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="frontRemoveBtn" aria-label="Remove front view photo">×</button>
                                             <button type="button" onclick="document.getElementById('frontImage').click()" id="frontUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -523,11 +523,11 @@
 
                                     <!-- Side View -->
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-500 mb-2">Side View</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Side View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
                                             <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')" required>
-                                            <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="sideRemoveBtn" aria-label="Remove side view photo">×</button>
+                                            <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="sideRemoveBtn" aria-label="Remove side view photo">×</button>
                                             <button type="button" onclick="document.getElementById('sideImage').click()" id="sideUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -539,11 +539,11 @@
 
                                     <!-- Top-Down View -->
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-500 mb-2">Top-Down View</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Top-Down View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
                                             <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')" required>
-                                            <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="topRemoveBtn" aria-label="Remove top-down view photo">×</button>
+                                            <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="topRemoveBtn" aria-label="Remove top-down view photo">×</button>
                                             <button type="button" onclick="document.getElementById('topImage').click()" id="topUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                                 <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -561,7 +561,7 @@
                                 <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[144px] w-36 md:w-48">
                                     <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
                                     <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)">
-                                    <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn" aria-label="Remove body mark photo">×</button>
+                                    <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn" aria-label="Remove body mark photo">×</button>
                                     <button type="button" onclick="document.getElementById('bodyMarkImage').click()" id="bodyMarkUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                         <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -569,7 +569,7 @@
                                         Click to upload
                                     </button>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-2">Optional — upload a photo of a distinguishing mark if you have one.</p>
+                                <p class="text-xs text-gray-700 mt-2">Optional — upload a photo of a distinguishing mark if you have one.</p>
                             </div>
 
                             <!-- Body Mark Details -->
@@ -633,17 +633,17 @@
                                     <!-- Anti-Rabies sub-fields (shown when checked) -->
                                     <div id="antiRabiesFields" class="hidden pl-8 grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-slate-200">
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Date Administered <span class="text-red-500">*</span></label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Date Administered <span class="text-red-500">*</span></label>
                                             <input type="date" name="anti_rabies[date_administered]" value="{{ old('anti_rabies.date_administered') }}" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Vaccine Lot No. (Optional)</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Vaccine Lot No. (Optional)</label>
                                             <input type="text" name="anti_rabies[lot_no]" value="{{ old('anti_rabies.lot_no') }}" placeholder="G12345" maxlength="6" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').slice(0, 6);">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Tag / Sticker No.</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Tag / Sticker No.</label>
                                             <input type="text" name="anti_rabies[tag_no]" value="{{ old('anti_rabies.tag_no') }}" placeholder="DAS-2026-123" maxlength="30" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9\-\s]/g, '').slice(0, 30);">
-                                            <p class="text-xs text-gray-500 mt-1">Enter tag, sticker, or certificate number if available.</p>
+                                            <p class="text-xs text-gray-700 mt-1">Enter tag, sticker, or certificate number if available.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -665,11 +665,11 @@
                             <!-- Vaccination Card Upload -->
                             <div id="vaccinationCardUploadSection" class="pt-4 border-t border-slate-200">
                                 <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Vaccination Booklet / Certificate (Optional)</h5>
-                                <p class="text-xs text-gray-500 mb-3">Upload a photo of the pet's vaccination record card.</p>
+                                <p class="text-xs text-gray-700 mb-3">Upload a photo of the pet's vaccination record card.</p>
                                 <div class="relative w-full h-40 border-2 border-dashed border-slate-300 rounded-xl hover:border-emerald-400 transition-colors bg-white">
                                     <input type="file" id="vaccinationCard" name="vaccination_card" accept="image/*" class="hidden" onchange="previewVaccinationCard(event)">
                                     <img id="vaccinationCardPreview" class="hidden w-full h-full object-cover rounded-lg mx-auto">
-                                    <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn" aria-label="Remove vaccination card">×</button>
+                                    <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn" aria-label="Remove vaccination card">×</button>
                                     <button type="button" onclick="document.getElementById('vaccinationCard').click()" id="vaccinationCardUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                         <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -720,7 +720,7 @@
                             <!-- Likes (max 5) -->
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
-                                    Likes <span class="text-xs text-gray-500 font-normal">(You can pick up to 5)</span>
+                                    Likes <span class="text-xs text-gray-700 font-normal">(You can pick up to 5)</span>
                                 </label>
                                 <div class="flex flex-wrap gap-2" id="likesOptions">
                                     <!-- Populated by JS -->
@@ -738,7 +738,7 @@
                             <!-- Diet (max 5) -->
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
-                                    Diet <span class="text-xs text-gray-500 font-normal">(You can pick up to 5)</span>
+                                    Diet <span class="text-xs text-gray-700 font-normal">(You can pick up to 5)</span>
                                 </label>
                                 <div class="flex flex-wrap gap-2" id="dietOptions">
                                     <!-- Populated by JS -->
@@ -783,7 +783,7 @@
                                     </svg>
                                     <h4 class="text-sm font-semibold text-white">Review & Submit</h4>
                                 </div>
-                                <span class="text-xs text-emerald-300">Final Verification</span>
+                                <span class="text-sm text-emerald-300">Final Verification</span>
                             </div>
                             <div class="p-6 space-y-6">
 
@@ -791,7 +791,7 @@
                                 <div>
                                     <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pet Basics
-                                        <a href="#" onclick="event.preventDefault(); goToStep(1);" class="text-xs text-emerald-600 hover:underline ml-2">Edit</a>
+                                        <a href="#" onclick="event.preventDefault(); goToStep(1);" class="text-sm text-emerald-600 hover:underline ml-2">Edit</a>
                                     </h5>
                                     <div id="reviewBasics" class="bg-slate-50 border border-slate-200 rounded-xl p-4 divide-y divide-slate-100"></div>
                                 </div>
@@ -800,7 +800,7 @@
                                 <div>
                                     <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Physical Details & Photos
-                                        <a href="#" onclick="event.preventDefault(); goToStep(2);" class="text-xs text-emerald-600 hover:underline ml-2">Edit</a>
+                                        <a href="#" onclick="event.preventDefault(); goToStep(2);" class="text-sm text-emerald-600 hover:underline ml-2">Edit</a>
                                     </h5>
                                     <div id="reviewPhysical" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
                                         <div id="reviewPhysicalRows" class="divide-y divide-slate-100"></div>
@@ -812,7 +812,7 @@
                             <div>
                                 <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-2">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Health & Traits
-                                    <a href="#" onclick="event.preventDefault(); goToStep(3);" class="text-xs text-emerald-600 hover:underline ml-2">Edit</a>
+                                    <a href="#" onclick="event.preventDefault(); goToStep(3);" class="text-sm text-emerald-600 hover:underline ml-2">Edit</a>
                                 </h5>
                                 <div id="reviewHealth" class="bg-slate-50 border border-slate-200 rounded-xl p-4 grid grid-cols-[120px_1fr] gap-x-4 gap-y-3"></div>
                             </div>
@@ -854,11 +854,11 @@
                                 </svg>
                                 <h4 class="text-sm font-semibold text-white">OWNER'S INFORMATION</h4>
                             </div>
-                            <span class="text-xs text-emerald-300">Read-Only</span>
+                            <span class="text-sm text-emerald-300">Read-Only</span>
                         </div>
                         <div class="p-6 space-y-4">
                             <div>
-                                <p class="text-xs text-gray-500 mb-1">Pet Owner Name</p>
+                                <p class="text-sm text-gray-700 mb-1">Pet Owner Name</p>
                                 <p class="text-sm font-semibold text-gray-900">{{ $petOwner->first_name ?? '' }} {{ $petOwner && $petOwner->middle_name ? $petOwner->middle_name . ' ' : '' }}{{ $petOwner->last_name ?? '' }}</p>
                             </div>
 
@@ -868,7 +868,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                     <div class="min-w-0">
-                                        <p class="text-xs text-gray-500">Email</p>
+                                        <p class="text-sm text-gray-700">Email</p>
                                         <p class="text-sm text-gray-900 truncate">{{ $petOwner->email ?? $user->email ?? '' }}</p>
                                     </div>
                                 </div>
@@ -878,7 +878,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
                                     <div class="min-w-0">
-                                        <p class="text-xs text-gray-500">Primary</p>
+                                        <p class="text-sm text-gray-700">Primary</p>
                                         <p class="text-sm text-gray-900">+63 {{ $petOwner->phone_number ?? '' }}</p>
                                     </div>
                                 </div>
@@ -889,7 +889,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                     <div class="min-w-0">
-                                        <p class="text-xs text-gray-500">Address</p>
+                                        <p class="text-sm text-gray-700">Address</p>
                                         <p class="text-sm text-gray-900">
                                             {{ $petOwner->address->block_lot_phase ?? $petOwner->blk_lot_ph ?? '' }}, {{ $petOwner->address->street ?? $petOwner->street ?? '' }}, {{ $petOwner->address->barangay->barangay_name ?? $petOwner->barangay ?? '' }}, Dasmariñas City
                                         </p>
@@ -901,7 +901,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
                                     <div class="min-w-0">
-                                        <p class="text-xs text-gray-500">Alternate Mobile Number</p>
+                                        <p class="text-sm text-gray-700">Alternate Mobile Number</p>
                                         <p class="text-sm text-gray-900">+63 {{ $petOwner->alternate_phone_number ?? '' }}</p>
                                     </div>
                                 </div>
@@ -1061,7 +1061,7 @@
                 html += `
                     <div class="mb-4">
                         <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-1.5">
-                            <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 border border-emerald-200 rounded-md px-2 py-0.5">${letter}</span>
+                            <span class="text-sm font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 border border-emerald-200 rounded-md px-2 py-0.5">${letter}</span>
                         </div>
                         <div class="space-y-1 mt-1">`;
 
@@ -1187,7 +1187,7 @@ groups[letter].forEach((breed, breedIndex) => {
             // Update display text
             const selectedText = document.getElementById('selectedBreedText');
             selectedText.textContent = breed;
-            selectedText.classList.remove('text-gray-500');
+            selectedText.classList.remove('text-gray-700');
             selectedText.classList.add('text-gray-900');
 
             updateSelectedBreedDisplay();
@@ -1246,7 +1246,7 @@ groups[letter].forEach((breed, breedIndex) => {
             
             const selectedText = document.getElementById('selectedBreedText');
             selectedText.textContent = selectedBreeds.join(', ');
-            selectedText.classList.remove('text-gray-500');
+            selectedText.classList.remove('text-gray-700');
             selectedText.classList.add('text-gray-900');
             
             updateSelectedBreedDisplay();
@@ -1282,14 +1282,14 @@ groups[letter].forEach((breed, breedIndex) => {
                 if (selectedText) {
                     selectedText.textContent = 'Search or select a breed';
                     selectedText.classList.remove('text-gray-900');
-                    selectedText.classList.add('text-gray-500');
+                    selectedText.classList.add('text-gray-700');
                 }
                 return;
             }
 
             // The trigger field shows the selected breed(s)
             selectedText.textContent = selectedBreeds.join(', ');
-            selectedText.classList.remove('text-gray-500');
+            selectedText.classList.remove('text-gray-700');
             selectedText.classList.add('text-gray-900');
 
             petBreedInput.value = selectedBreeds.join(', ');
@@ -2232,22 +2232,22 @@ groups[letter].forEach((breed, breedIndex) => {
 
             const row = (label, value) => `
                 <div class="grid grid-cols-[120px_1fr] gap-4 py-2">
-                    <span class="text-xs text-gray-500">${label}</span>
+                    <span class="text-sm text-gray-700">${label}</span>
                     <span class="text-sm font-semibold text-gray-900">${esc(value || '—')}</span>
                 </div>`;
 
             const rowHtml = (label, value) => `
-                <span class="text-xs text-gray-500 py-2">${label}</span>
+                <span class="text-sm text-gray-700 py-2">${label}</span>
                 <span class="text-sm font-semibold text-gray-900 py-2">${value || '—'}</span>`;
 
             const traitRow = (label, containerId) => {
                 const container = document.getElementById(containerId);
                 if (!container) return `
-                    <span class="text-xs text-gray-500 py-2">${label}</span>
+                    <span class="text-sm text-gray-700 py-2">${label}</span>
                     <span class="text-sm font-semibold text-gray-900 py-2">—</span>`;
                 const selected = Array.from(container.querySelectorAll('input.pill-checkbox:checked')).map(cb => cb.dataset.value || cb.value);
                 return `
-                <span class="text-xs text-gray-500 py-2">${label}</span>
+                <span class="text-sm text-gray-700 py-2">${label}</span>
                 <span class="text-sm font-semibold text-gray-900 py-2">${selected.length ? selected.join(', ') : '—'}</span>`;
             };
 
@@ -2340,8 +2340,8 @@ groups[letter].forEach((breed, breedIndex) => {
                 return `
                 <div class="text-center">
                     <img src="${esc(src)}" alt="${img.label}" class="w-20 h-20 ${img.id === 'petImagePreview' ? 'rounded-full' : 'rounded-xl'} object-cover border-2 ${hasUpload ? 'border-emerald-400' : 'border-slate-200'} mx-auto">
-                    <span class="block text-[10px] text-gray-500 mt-1">${img.label}</span>
-                    <span class="block text-[10px] ${hasUpload ? 'text-emerald-600' : 'text-slate-400'}">${hasUpload ? 'Uploaded' : 'Not uploaded'}</span>
+                    <span class="block text-xs text-gray-700 mt-1">${img.label}</span>
+                    <span class="block text-xs ${hasUpload ? 'text-emerald-600' : 'text-slate-400'}">${hasUpload ? 'Uploaded' : 'Not uploaded'}</span>
                 </div>`;
             }).join('');
 
@@ -2361,7 +2361,7 @@ groups[letter].forEach((breed, breedIndex) => {
             const antiRabiesChecked = document.querySelector('input[name="vaccination_core[]"][value="Anti-Rabies"]');
 
             if (notVaccinated) {
-                vaccinesHtml = '<span class="text-gray-500 italic">Not vaccinated / records unavailable</span>';
+                vaccinesHtml = '<span class="text-gray-700 italic">Not vaccinated / records unavailable</span>';
             } else {
                 // Only the JS-rendered core options (Anti-Rabies lives outside this container)
                 const coreVaccines = Array.from(document.querySelectorAll('#otherCoreVaccines input[type="checkbox"]:checked')).map(cb => cb.value);
@@ -2384,7 +2384,7 @@ groups[letter].forEach((breed, breedIndex) => {
 
                 vaccinesHtml = vaccineItems.length > 0
                     ? `<div class="flex flex-wrap gap-2">${vaccineItems.join('')}</div>`
-                    : '<span class="text-gray-500 italic">No vaccines selected</span>';
+                    : '<span class="text-gray-700 italic">No vaccines selected</span>';
             }
 
             const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
@@ -2401,9 +2401,9 @@ groups[letter].forEach((breed, breedIndex) => {
 
                 antiRabiesHtml = `
                     <div class="mt-2 space-y-1 text-sm">
-                        <div><span class="text-gray-500">Date Administered:</span> <span class="font-semibold text-gray-900">${dateVal}</span></div>
-                        <div><span class="text-gray-500">Vaccine Lot No.:</span> <span class="font-semibold text-gray-900">${lotVal}</span></div>
-                        <div><span class="text-gray-500">Tag / Sticker No.:</span> <span class="font-semibold text-gray-900">${tagVal}</span></div>
+                        <div><span class="text-gray-700">Date Administered:</span> <span class="font-semibold text-gray-900">${dateVal}</span></div>
+                        <div><span class="text-gray-700">Vaccine Lot No.:</span> <span class="font-semibold text-gray-900">${lotVal}</span></div>
+                        <div><span class="text-gray-700">Tag / Sticker No.:</span> <span class="font-semibold text-gray-900">${tagVal}</span></div>
                     </div>
                 `;
 
@@ -2425,9 +2425,9 @@ groups[letter].forEach((breed, breedIndex) => {
             if (notVaccinated) {
                 vaccinationStatusHtml = notVaccinatedHtml;
             } else if (boosterHtml) {
-                vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Vaccinated (Needs Booster)</span>' + boosterHtml;
+                vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold bg-amber-100 text-amber-800">Vaccinated (Needs Booster)</span>' + boosterHtml;
             } else if (antiRabiesChecked && antiRabiesChecked.checked && dateInput && dateInput.value) {
-                vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Vaccinated (Up to Date)</span>';
+                vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-800">Vaccinated (Up to Date)</span>';
             } else {
                 vaccinationStatusHtml = 'Vaccinated';
             }
@@ -2605,7 +2605,7 @@ groups[letter].forEach((breed, breedIndex) => {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                             </svg>
                             <h3 id="breedModalTitle" class="text-lg font-semibold text-gray-900">Select Breed</h3>
-                            <span id="breedModalLimit" class="text-xs text-slate-500 font-normal">(select one)</span>
+                            <span id="breedModalLimit" class="text-sm text-slate-500 font-normal">(select one)</span>
                         </div>
                         <button type="button" onclick="closeBreedModal()" class="text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg p-1.5 transition-colors" aria-label="Close breed selector">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -2628,7 +2628,7 @@ groups[letter].forEach((breed, breedIndex) => {
                     <div class="px-5 pt-4 pb-4">
                         <!-- Quick Selections -->
                         <div id="breedModalQuick" class="mb-5 hidden">
-                            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Popular / Quick Selections</p>
+                            <p class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Popular / Quick Selections</p>
                             <div class="flex flex-wrap gap-2" id="breedModalQuickChips"></div>
                         </div>
 
@@ -2640,8 +2640,8 @@ groups[letter].forEach((breed, breedIndex) => {
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
-                            <p class="text-sm text-gray-500">No breeds match your search.</p>
-                            <p class="text-xs text-gray-400 mt-1">Try "Other / Breed Not Listed" below.</p>
+                            <p class="text-xs text-gray-700">No breeds match your search.</p>
+                            <p class="text-sm text-gray-400 mt-1">Try "Other / Breed Not Listed" below.</p>
                         </div>
                     </div>
                 </div>
@@ -2660,7 +2660,7 @@ groups[letter].forEach((breed, breedIndex) => {
                             <button type="button" onclick="submitOtherBreed()" class="px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors">Add</button>
                             <button type="button" onclick="hideOtherBreedInput()" class="px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-slate-50 transition-colors">Cancel</button>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">Press Enter to add, Escape to cancel</p>
+                        <p class="text-xs text-gray-700 mt-1">Press Enter to add, Escape to cancel</p>
                     </div>
                 </div>
             </div>
@@ -2729,3 +2729,4 @@ groups[letter].forEach((breed, breedIndex) => {
     </script>
 </body>
 </html>
+
