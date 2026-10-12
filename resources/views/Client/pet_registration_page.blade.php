@@ -70,23 +70,6 @@
                          Register your beloved pets with Dasmariñas City Veterinary Services for official identification and access to our services.
                       </p>
 
-                      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-                          <h2 class="text-xl font-semibold text-white mb-4">Why Register Your Pet?</h2>
-                          <div class="space-y-3">
-                              <div class="flex items-start space-x-3">
-                                  <span class="bg-white text-primary rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
-                                  <p class="text-white">Official identification and documentation</p>
-                              </div>
-                              <div class="flex items-start space-x-3">
-                                  <span class="bg-white text-primary rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
-                                  <p class="text-white">Access to veterinary services and programs</p>
-                              </div>
-                              <div class="flex items-start space-x-3">
-                                  <span class="bg-white text-primary rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
-                                  <p class="text-white">Lost pet recovery assistance</p>
-                              </div>
-                          </div>
-                      </div>
                       <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
                           @auth
                               <a href="{{ url('/pet-registration/form') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
@@ -131,7 +114,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
                 <span class="text-primary font-extrabold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full mb-2">Benefits</span>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Why Register Your Pet?</h2>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3">Why Register Your Pet?</h2>
                 <p class="text-slate-600 mt-3 text-base">Official registration provides essential benefits for you, your pet, and our community. Join thousands of responsible pet owners in Dasmariñas City.</p>
             </div>
 
@@ -227,74 +210,74 @@
     <section id="requirements" class="py-16 sm:py-20 bg-slate-50 border-y border-slate-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-14">
-                <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">Process</span>
+                <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full mb-2">Process</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3">The Registration Process</h2>
                 <p class="text-slate-600 mt-2">Simple, streamlined steps to get your pet officially registered with the city veterinary services.</p>
             </div>
 
             <div class="flex flex-wrap justify-center gap-6">
                 <!-- Step 1 -->
-                <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group relative">
-                    <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg z-10">1</div>
-                    <div class="pt-4">
-                        <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">1</span>
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-xl group-hover:bg-primary group-hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Complete Online Form</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed">
-                            Fill out comprehensive pet information including breed, age, characteristics, and health details. Takes 10-15 minutes.
-                        </p>
                     </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Complete Online Form</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed flex-1">
+                        Fill out comprehensive pet information including breed, age, characteristics, and health details. Takes 10-15 minutes.
+                    </p>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group relative">
-                    <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-lg z-10">2</div>
-                    <div class="pt-4">
-                        <div class="w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-green-600 group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm flex-shrink-0">2</span>
+                        <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl group-hover:bg-green-600 group-hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Verification Review</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed">
-                            Our veterinary team verifies submitted information. May request additional documentation if needed.
-                        </p>
                     </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Verification Review</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed flex-1">
+                        Our veterinary team verifies submitted information. May request additional documentation if needed.
+                    </p>
                 </div>
 
                 <!-- Step 3 -->
-                <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group relative">
-                    <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-lg z-10">3</div>
-                    <div class="pt-4">
-                        <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Certificate Issuance</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed">
-                            Receive your official registration certificate. Digital copy available immediately, physical copy mailed within 7 days.
-                        </p>
                     </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Certificate Issuance</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed flex-1">
+                        Receive your official registration certificate. Digital copy available immediately, physical copy mailed within 7 days.
+                    </p>
                 </div>
 
                 <!-- Step 4 -->
-                <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group relative">
-                    <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-lg z-10">4</div>
-                    <div class="pt-4">
-                        <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm flex-shrink-0">4</span>
+                        <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Access Services</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed">
-                            Book appointments, update records, access vaccination history, and participate in community programs.
-                        </p>
                     </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Access Services</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed flex-1">
+                        Book appointments, update records, access vaccination history, and participate in community programs.
+                    </p>
                 </div>
             </div>
         </div>
@@ -304,7 +287,7 @@
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-14">
-                <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">Information</span>
+                <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full mb-2">Information</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3">What Information We Collect</h2>
                 <p class="text-slate-600 mt-2">Comprehensive profiling ensures better care and accurate record-keeping for your pet.</p>
             </div>
@@ -376,7 +359,7 @@
 
                 <!-- Behavioral Profile -->
                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
-                    <div class="h-16 bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center">
+                    <div class="h-16 bg-gradient-to-r from-secondary to-primary p-4 flex items-center">
                         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -387,19 +370,19 @@
                     <div class="p-6">
                         <ul class="space-y-3 text-gray-600 text-sm">
                             <li class="flex items-start">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 mr-3 flex-shrink-0"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-800 mt-2 mr-3 flex-shrink-0"></span>
                                 Training status (obedience, potty-training)
                             </li>
                             <li class="flex items-start">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 mr-3 flex-shrink-0"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-800 mt-2 mr-3 flex-shrink-0"></span>
                                 Behavior traits and temperament
                             </li>
                             <li class="flex items-start">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 mr-3 flex-shrink-0"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-800 mt-2 mr-3 flex-shrink-0"></span>
                                 Likes, dislikes, and preferences
                             </li>
                             <li class="flex items-start">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 mr-3 flex-shrink-0"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-800 mt-2 mr-3 flex-shrink-0"></span>
                                 Dietary needs and allergies
                             </li>
                         </ul>
@@ -410,82 +393,59 @@
     </section>
 
     <!-- Privacy & Security -->
-    <section class="py-16 sm:py-24 bg-white border-t border-slate-100">
+    <section class="pt-10 pb-16 sm:pt-16 sm:pb-24 bg-white border-t border-slate-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-12">
-                <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">Privacy & Security</span>
+                <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full mb-2">Privacy & Security</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Your Data is Protected</h2>
                 <p class="text-slate-600 mt-3">Your data is protected with industry-leading security measures and strict privacy controls.</p>
             </div>
 
-            <div class="relative px-2 md:px-8 overflow-hidden">
-                <!-- Carousel Container -->
-                <div id="privacyCarousel">
-                    <div id="privacyCarouselTrack" class="flex transition-transform duration-500 ease-in-out">
-                        <!-- Card 1: Encrypted Storage -->
-                        <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                            <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                <div class="aspect-[4/3] relative bg-primary/5 flex items-center justify-center">
-                                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="p-4 text-center">
-                                    <h3 class="text-base font-bold text-slate-900">Encrypted Storage</h3>
-                                    <p class="text-slate-600 text-xs mt-1">All pet and owner data is encrypted and securely stored in our protected database.</p>
-                                </div>
-                            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Card 1: Encrypted Storage -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
+                    <div class="h-16 bg-gradient-to-r from-primary to-secondary p-4 flex items-center">
+                        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
                         </div>
-
-                        <!-- Card 2: Access Control -->
-                        <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                            <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                <div class="aspect-[4/3] relative bg-green-50 flex items-center justify-center">
-                                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="p-4 text-center">
-                                    <h3 class="text-base font-bold text-slate-900">Access Control</h3>
-                                    <p class="text-slate-600 text-xs mt-1">Information accessible only to authorized veterinary staff and pet owners via secure login.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 3: Purpose Limited -->
-                        <div class="w-full md:w-1/3 flex-shrink-0 px-3">
-                            <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                <div class="aspect-[4/3] relative bg-blue-50 flex items-center justify-center">
-                                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="p-4 text-center">
-                                    <h3 class="text-base font-bold text-slate-900">Purpose Limited</h3>
-                                    <p class="text-slate-600 text-xs mt-1">Data collected solely for pet health management, public safety, and veterinary service delivery.</p>
-                                </div>
-                            </div>
-                        </div>
+                        <h3 class="text-xl font-bold text-white ml-4">Encrypted Storage</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-600 text-sm">All pet and owner data is encrypted and securely stored in our protected database.</p>
                     </div>
                 </div>
 
-                <!-- Navigation Buttons -->
-                <button onclick="prevPrivacySlide()" class="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-10" aria-label="Previous slide">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <button onclick="nextPrivacySlide()" class="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-10" aria-label="Next slide">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+                <!-- Card 2: Access Control -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
+                    <div class="h-16 bg-gradient-to-r from-green-500 to-green-600 p-4 flex items-center">
+                        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white ml-4">Access Control</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-600 text-sm">Information accessible only to authorized veterinary staff and pet owners via secure login.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Purpose Limited -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden card-hover">
+                    <div class="h-16 bg-gradient-to-r from-secondary to-primary p-4 flex items-center">
+                        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white ml-4">Purpose Limited</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-600 text-sm">Data collected solely for pet health management, public safety, and veterinary service delivery.</p>
+                    </div>
+                </div>
             </div>
 
             <div class="mt-12 text-center">
@@ -556,65 +516,6 @@
                 loginPrompt.classList.add('hidden');
             }
         }
-
-        // Privacy Carousel
-        let privacyCurrentIndex = 0;
-        const privacyTotalSlides = 3;
-        const privacyTrack = document.getElementById('privacyCarouselTrack');
-        let privacyInterval;
-
-        function resetPrivacyTimer() {
-            clearInterval(privacyInterval);
-            privacyInterval = setInterval(nextPrivacySlide, 5000);
-        }
-
-        function updatePrivacyCarousel() {
-            if (!privacyTrack) return;
-            
-            const isMobile = window.innerWidth < 768;
-            const cardWidth = privacyTrack.children[0].getBoundingClientRect().width;
-            const visibleCards = isMobile ? 1 : 3;
-            const offset = -privacyCurrentIndex * cardWidth + (visibleCards === 3 ? cardWidth : 0);
-            
-            privacyTrack.style.transform = `translateX(${offset}px)`;
-            
-            // Style cards
-            Array.from(privacyTrack.children).forEach((card, i) => {
-                const isActive = i === privacyCurrentIndex;
-                
-                if (isActive) {
-                    card.classList.add('scale-105', 'opacity-100');
-                    card.classList.remove('scale-95', 'opacity-60');
-                } else {
-                    card.classList.add('scale-95', 'opacity-60');
-                    card.classList.remove('scale-105', 'opacity-100');
-                }
-            });
-        }
-
-        function nextPrivacySlide() {
-            privacyCurrentIndex = (privacyCurrentIndex + 1) % privacyTotalSlides;
-            updatePrivacyCarousel();
-        }
-
-        function prevPrivacySlide() {
-            privacyCurrentIndex = (privacyCurrentIndex - 1 + privacyTotalSlides) % privacyTotalSlides;
-            updatePrivacyCarousel();
-        }
-
-        // Auto-advance every 5 seconds
-        privacyInterval = setInterval(nextPrivacySlide, 5000);
-
-        // Reset timer on navigation
-        document.querySelectorAll('button[onclick="prevPrivacySlide()"], button[onclick="nextPrivacySlide()"]').forEach(button => {
-            button.addEventListener('click', resetPrivacyTimer);
-        });
-
-        // Initialize
-        updatePrivacyCarousel();
-
-        // Update on resize
-        window.addEventListener('resize', updatePrivacyCarousel);
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
