@@ -1435,14 +1435,15 @@ groups[letter].forEach((breed, breedIndex) => {
             }
         }
 
-        function createVaccineCheckbox(name, value, checked = false, onchange = '', showOtherInput = false) {
+        function createVaccineCheckbox(name, value, checked = false, onchange = '', showOtherInput = false, labelClass = 'inline-flex items-center cursor-pointer') {
             const otherInputId = showOtherInput ? `${name}_${value.replace(/[^a-zA-Z0-9]/g, '_')}_other` : '';
+            const changeHandler = onchange || (showOtherInput ? `toggleOtherVaccineInput(this, '${otherInputId}')` : '');
             const otherInputHtml = showOtherInput ? `
-                <input type="text" name="${name}[other][${value}]" id="${otherInputId}" class="ml-3 w-48 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all hidden" placeholder="Specify">
+                <input type="text" name="${name}_other" id="${otherInputId}" class="ml-3 w-48 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all hidden" placeholder="Specify">
             ` : '';
             return `
-                <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="${name}[]" value="${value}" class="form-checkbox h-5 w-5 text-emerald-600 rounded" ${checked ? 'checked' : ''} ${onchange ? `onchange="${onchange}"` : ''}>
+                <label class="${labelClass}">
+                    <input type="checkbox" name="${name}[]" value="${value}" class="form-checkbox h-5 w-5 text-emerald-600 rounded" ${checked ? 'checked' : ''} ${changeHandler ? `onchange="${changeHandler}"` : ''}>
                     <span class="ml-3 mr-4 text-gray-700">${value}</span>
                     ${otherInputHtml}
                 </label>
@@ -1479,7 +1480,6 @@ groups[letter].forEach((breed, breedIndex) => {
         function populateVaccinationHistory() {
             const petType = document.querySelector('input[name="pet_type"]:checked');
             const type = petType ? petType.value : '';
-            const otherValue = document.querySelector('input[name="vaccination_other"]')?.value || '';
 
             // Anti-Rabies is hardcoded in HTML with its sub-fields
             // We only need to populate the other core vaccines and optional vaccines
@@ -1500,8 +1500,8 @@ groups[letter].forEach((breed, breedIndex) => {
                 ? ['Feline Leukemia (FeLV)', 'Other']
                 : ['Kennel Cough (Bordetella)', 'Canine Parvovirus (Booster)', 'Other'];
 
-            document.getElementById('otherCoreVaccines').innerHTML = otherCoreVaccines.map(vaccine => 
-                createVaccineCheckbox('vaccination_core', vaccine, false, '', vaccine === 'Other')
+            document.getElementById('otherCoreVaccines').innerHTML = otherCoreVaccines.map(vaccine =>
+                createVaccineCheckbox('vaccination_core', vaccine, false, '', vaccine === 'Other', 'flex items-center cursor-pointer')
             ).join('');
 
             document.getElementById('optionalVaccineOptions').innerHTML = optionalVaccines.map(vaccine => 
