@@ -422,6 +422,83 @@
                         </div>
                         <div class="p-6 space-y-6">
 
+                            <!-- Eye Color -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Eye Color <span class="text-red-500">*</span></label>
+                                <div class="flex flex-wrap gap-2" id="eyeColorOptions">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Brown" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Brown' ? 'checked' : '' }}>
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Brown</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Blue" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Blue' ? 'checked' : '' }}>
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Blue</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Amber / Yellow" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Amber / Yellow' ? 'checked' : '' }}>
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Amber / Yellow</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Green" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Green' ? 'checked' : '' }}>
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Green</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Heterochromia (Two different colors)" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Heterochromia (Two different colors)' ? 'checked' : '' }}>
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Heterochromia (Two different colors)</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="eye_color" value="Other" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Other' ? 'checked' : '' }}>
+                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Other</span>
+                                    </label>
+                                </div>
+                                <div id="eyeColorOtherWrap" class="mt-3 hidden">
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Please specify eye color</label>
+                                    <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
+                                </div>
+
+                                <!-- Left / Right Eye Color (shown for heterochromia) -->
+                                <div id="eyeColorHeterochromiaWrap" class="mt-2 p-4 bg-emerald-50/60 border border-emerald-200 rounded-xl rounded-tl-none hidden">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <!-- Left Eye -->
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Left Eye Color</label>
+                                            <select id="eyeColorLeft" name="eye_color_left" onchange="handleEyeSideChange('Left')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                                <option value="">Select left eye color</option>
+                                                <option value="Brown" {{ old('eye_color_left') === 'Brown' ? 'selected' : '' }}>Brown</option>
+                                                <option value="Blue" {{ old('eye_color_left') === 'Blue' ? 'selected' : '' }}>Blue</option>
+                                                <option value="Amber / Yellow" {{ old('eye_color_left') === 'Amber / Yellow' ? 'selected' : '' }}>Amber / Yellow</option>
+                                                <option value="Green" {{ old('eye_color_left') === 'Green' ? 'selected' : '' }}>Green</option>
+                                                <option value="Hazel" {{ old('eye_color_left') === 'Hazel' ? 'selected' : '' }}>Hazel</option>
+                                                <option value="Parti-Colored / Marbled" {{ old('eye_color_left') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
+                                                <option value="Other" {{ old('eye_color_left') === 'Other' ? 'selected' : '' }}>Other</option>
+                                            </select>
+                                            <p class="text-xs text-gray-500 mt-1">Select the predominant color for each eye.</p>
+                                            <div id="eyeColorLeftOtherWrap" class="mt-2 hidden">
+                                                <input type="text" id="eyeColorLeftOther" name="eye_color_left_other" value="{{ old('eye_color_left_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify left eye color">
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Eye -->
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Right Eye Color</label>
+                                            <select id="eyeColorRight" name="eye_color_right" onchange="handleEyeSideChange('Right')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                                <option value="">Select right eye color</option>
+                                                <option value="Brown" {{ old('eye_color_right') === 'Brown' ? 'selected' : '' }}>Brown</option>
+                                                <option value="Blue" {{ old('eye_color_right') === 'Blue' ? 'selected' : '' }}>Blue</option>
+                                                <option value="Amber / Yellow" {{ old('eye_color_right') === 'Amber / Yellow' ? 'selected' : '' }}>Amber / Yellow</option>
+                                                <option value="Green" {{ old('eye_color_right') === 'Green' ? 'selected' : '' }}>Green</option>
+                                                <option value="Hazel" {{ old('eye_color_right') === 'Hazel' ? 'selected' : '' }}>Hazel</option>
+                                                <option value="Parti-Colored / Marbled" {{ old('eye_color_right') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
+                                                <option value="Other" {{ old('eye_color_right') === 'Other' ? 'selected' : '' }}>Other</option>
+                                            </select>
+                                            <div id="eyeColorRightOtherWrap" class="mt-2 hidden">
+                                                <input type="text" id="eyeColorRightOther" name="eye_color_right_other" value="{{ old('eye_color_right_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify right eye color">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Front, Side, Top-down View -->
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Front, Side, Top-down View <span class="text-red-500">*</span></label>
@@ -501,82 +578,6 @@
                                 <textarea id="bodyMarkDetails" name="body_mark_details" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Describe any unique marks, scars, or distinguishing features...">{{ old('body_mark_details') }}</textarea>
                             </div>
 
-                            <!-- Eye Color -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Eye Color <span class="text-red-500">*</span></label>
-                                <div class="flex flex-wrap gap-2" id="eyeColorOptions">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Brown" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Brown' ? 'checked' : '' }}>
-                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Brown</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Blue" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Blue' ? 'checked' : '' }}>
-                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Blue</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Amber / Yellow" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Amber / Yellow' ? 'checked' : '' }}>
-                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Amber / Yellow</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Green" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Green' ? 'checked' : '' }}>
-                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Green</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Heterochromia (Two different colors)" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Heterochromia (Two different colors)' ? 'checked' : '' }}>
-                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Heterochromia (Two different colors)</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="eye_color" value="Other" class="peer sr-only" required onchange="handleEyeColorChange()" {{ old('eye_color') === 'Other' ? 'checked' : '' }}>
-                                        <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Other</span>
-                                    </label>
-                                </div>
-                                <div id="eyeColorOtherWrap" class="mt-3 hidden">
-                                    <label class="block text-xs font-medium text-gray-500 mb-1">Please specify eye color</label>
-                                    <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
-                                </div>
-
-                                <!-- Left / Right Eye Color (shown for heterochromia) -->
-                                <div id="eyeColorHeterochromiaWrap" class="mt-2 p-4 bg-emerald-50/60 border border-emerald-200 rounded-xl rounded-tl-none hidden">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <!-- Left Eye -->
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Left Eye Color</label>
-                                            <select id="eyeColorLeft" name="eye_color_left" onchange="handleEyeSideChange('Left')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                                                <option value="">Select left eye color</option>
-                                                <option value="Brown" {{ old('eye_color_left') === 'Brown' ? 'selected' : '' }}>Brown</option>
-                                                <option value="Blue" {{ old('eye_color_left') === 'Blue' ? 'selected' : '' }}>Blue</option>
-                                                <option value="Amber / Yellow" {{ old('eye_color_left') === 'Amber / Yellow' ? 'selected' : '' }}>Amber / Yellow</option>
-                                                <option value="Green" {{ old('eye_color_left') === 'Green' ? 'selected' : '' }}>Green</option>
-                                                <option value="Hazel" {{ old('eye_color_left') === 'Hazel' ? 'selected' : '' }}>Hazel</option>
-                                                <option value="Parti-Colored / Marbled" {{ old('eye_color_left') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
-                                                <option value="Other" {{ old('eye_color_left') === 'Other' ? 'selected' : '' }}>Other</option>
-                                            </select>
-                                            <p class="text-xs text-gray-500 mt-1">Select the predominant color for each eye.</p>
-                                            <div id="eyeColorLeftOtherWrap" class="mt-2 hidden">
-                                                <input type="text" id="eyeColorLeftOther" name="eye_color_left_other" value="{{ old('eye_color_left_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify left eye color">
-                                            </div>
-                                        </div>
-
-                                        <!-- Right Eye -->
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-500 mb-1">Right Eye Color</label>
-                                            <select id="eyeColorRight" name="eye_color_right" onchange="handleEyeSideChange('Right')" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                                                <option value="">Select right eye color</option>
-                                                <option value="Brown" {{ old('eye_color_right') === 'Brown' ? 'selected' : '' }}>Brown</option>
-                                                <option value="Blue" {{ old('eye_color_right') === 'Blue' ? 'selected' : '' }}>Blue</option>
-                                                <option value="Amber / Yellow" {{ old('eye_color_right') === 'Amber / Yellow' ? 'selected' : '' }}>Amber / Yellow</option>
-                                                <option value="Green" {{ old('eye_color_right') === 'Green' ? 'selected' : '' }}>Green</option>
-                                                <option value="Hazel" {{ old('eye_color_right') === 'Hazel' ? 'selected' : '' }}>Hazel</option>
-                                                <option value="Parti-Colored / Marbled" {{ old('eye_color_right') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
-                                                <option value="Other" {{ old('eye_color_right') === 'Other' ? 'selected' : '' }}>Other</option>
-                                            </select>
-                                            <div id="eyeColorRightOtherWrap" class="mt-2 hidden">
-                                                <input type="text" id="eyeColorRightOther" name="eye_color_right_other" value="{{ old('eye_color_right_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify right eye color">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -637,7 +638,7 @@
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Vaccine Lot No. (Optional)</label>
-                                            <input type="text" name="anti_rabies[lot_no]" value="{{ old('anti_rabies.lot_no') }}" placeholder="G12345" maxlength="30" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9\-\s]/g, '').slice(0, 30);">
+                                            <input type="text" name="anti_rabies[lot_no]" value="{{ old('anti_rabies.lot_no') }}" placeholder="G12345" maxlength="6" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').slice(0, 6);">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-500 mb-1">Tag / Sticker No.</label>

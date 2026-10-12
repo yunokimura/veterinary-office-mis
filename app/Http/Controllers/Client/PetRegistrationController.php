@@ -53,7 +53,7 @@ class PetRegistrationController extends Controller
                 'vaccination_optional_other' => 'nullable|string|max:255',
                 'anti_rabies' => 'nullable|array',
                 'anti_rabies.date_administered' => 'required_if:vaccination_core.*,Anti-Rabies|nullable|date_format:d/m/Y',
-                'anti_rabies.lot_no' => 'nullable|string|max:30',
+                'anti_rabies.lot_no' => 'nullable|string|max:6|regex:/^[A-Za-z0-9]+$/',
                 'anti_rabies.tag_no' => 'nullable|string|max:30|regex:/^[A-Za-z0-9\-\s]+$/',
                 'vaccination_card' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
