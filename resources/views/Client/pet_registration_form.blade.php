@@ -2458,7 +2458,6 @@ groups[letter].forEach((breed, breedIndex) => {
                 'coreVaccinesSection',
                 'optionalVaccinesSection',
                 'vaccinationCardPreview',
-                'vaccinationCard',
                 'vaccinationCardUploadSection'
             ];
 
