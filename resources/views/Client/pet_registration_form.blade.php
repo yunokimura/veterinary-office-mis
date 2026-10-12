@@ -615,7 +615,7 @@
                             <div>
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input type="checkbox" name="not_vaccinated" value="1" id="notVaccinatedCheckbox" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleVaccinationFields(this); toggleNotVaccinated(this)" {{ old('not_vaccinated') ? 'checked' : '' }}>
-                                    <span class="ml-3 text-gray-700 font-medium">My pet is not yet vaccinated / records unavailable</span>
+                                    <span class="ml-3 text-gray-700 font-medium" id="notVaccinatedLabel">My pet is not yet vaccinated / records unavailable</span>
                                 </label>
                             </div>
 
@@ -627,7 +627,7 @@
                                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="vaccination_core[]" value="Anti-Rabies" id="antiRabiesCheckbox" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleAntiRabiesFields(this)" {{ in_array('Anti-Rabies', old('vaccination_core', [])) ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">Anti-Rabies Vaccination</span>
+                                        <span class="ml-3 text-gray-700 font-medium" id="antiRabiesLabel">Anti-Rabies Vaccination</span>
                                     </label>
 
                                     <!-- Anti-Rabies sub-fields (shown when checked) -->
@@ -1658,6 +1658,9 @@ groups[letter].forEach((breed, breedIndex) => {
 
         populateVaccinationHistory();
 
+        // Sync vaccination mutual-exclusion state (also restores old() state on load)
+        syncVaccinationUI();
+
         // Initialise the structured age selectors (years / months)
         initAgeSelectors();
 
@@ -2498,6 +2501,14 @@ groups[letter].forEach((breed, breedIndex) => {
             const notVaccinated = notVaccinatedCheckbox.checked;
             const antiRabiesChecked = antiRabiesCheckbox.checked;
 
+            // Gray out the label text of whichever option is mutually excluded
+            const setDisabledLabel = (labelId, disabled) => {
+                const label = document.getElementById(labelId);
+                if (!label) return;
+                label.classList.toggle('text-gray-400', disabled);
+                label.classList.toggle('text-gray-700', !disabled);
+            };
+
             if (notVaccinated) {
                 // Not vaccinated is checked - disable Anti-Rabies
                 antiRabiesCheckbox.checked = false;
@@ -2508,12 +2519,16 @@ groups[letter].forEach((breed, breedIndex) => {
                     input.removeAttribute('required');
                 });
                 if (dateInput) dateInput.removeAttribute('required');
+                setDisabledLabel('antiRabiesLabel', true);
+                setDisabledLabel('notVaccinatedLabel', false);
             } else if (antiRabiesChecked) {
                 // Anti-Rabies is checked - disable Not Vaccinated
                 notVaccinatedCheckbox.disabled = true;
                 notVaccinatedCheckbox.checked = false;
                 antiRabiesFields.classList.remove('hidden');
                 if (dateInput) dateInput.setAttribute('required', 'required');
+                setDisabledLabel('notVaccinatedLabel', true);
+                setDisabledLabel('antiRabiesLabel', false);
             } else {
                 // Neither checked - enable both
                 notVaccinatedCheckbox.disabled = false;
@@ -2524,6 +2539,8 @@ groups[letter].forEach((breed, breedIndex) => {
                     input.removeAttribute('required');
                 });
                 if (dateInput) dateInput.removeAttribute('required');
+                setDisabledLabel('notVaccinatedLabel', false);
+                setDisabledLabel('antiRabiesLabel', false);
             }
         }
 
