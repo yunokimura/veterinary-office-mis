@@ -170,6 +170,7 @@
 
                 <form id="petRegistrationForm" method="POST" action="{{ url('/pet-registration/form') }}" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" name="book_booster" id="bookBoosterInput" value="0">
 
                     <!-- STEP 1: Pet Basics -->
                     <div id="step-1" class="step-pane space-y-6">
@@ -1114,6 +1115,11 @@ groups[letter].forEach((breed, breedIndex) => {
         // Close modal with the Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
+                // Vaccination recommendation modal requires an explicit choice
+                const vaccinationModal = document.getElementById('vaccinationModal');
+                if (vaccinationModal && !vaccinationModal.classList.contains('hidden')) {
+                    return;
+                }
                 const breedModal = document.getElementById('breedModal');
                 if (breedModal && !breedModal.classList.contains('hidden')) {
                     closeBreedModal();
@@ -2428,7 +2434,7 @@ groups[letter].forEach((breed, breedIndex) => {
             if (notVaccinated) {
                 vaccinationStatusHtml = notVaccinatedHtml;
             } else if (boosterHtml) {
-                vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold bg-amber-100 text-amber-800">Vaccinated (Needs Booster)</span>' + boosterHtml;
+                vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold bg-amber-100 text-amber-800">Vaccinated (Needs a Booster Shot)</span>' + boosterHtml;
             } else if (antiRabiesChecked && antiRabiesChecked.checked && dateInput && dateInput.value) {
                 vaccinationStatusHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-800">Vaccinated (Up to Date)</span>';
             } else {
@@ -2705,9 +2711,33 @@ groups[letter].forEach((breed, breedIndex) => {
             </div>
         </div>
     </div>
-    
+
+    <!-- Anti-Rabies Vaccination Recommendation Modal (booster shot or first dose) -->
+    <div id="vaccinationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="vaccinationModalTitle">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                </div>
+                <h3 id="vaccinationModalTitle" class="text-xl font-bold text-gray-900 mb-2">Anti-Rabies Booster Shot Recommended</h3>
+                <p id="vaccinationModalMessage" class="text-gray-600 mb-6"></p>
+                <div class="flex flex-col gap-3">
+                    <button type="button" id="vaccinationModalPrimaryBtn" onclick="bookVaccinationAppointment()" class="w-full px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors">
+                        Yes, Book Booster Appointment
+                    </button>
+                    <button type="button" onclick="submitPetForm(true)" class="w-full px-6 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-semibold hover:bg-slate-50 transition-colors">
+                        No, Just Submit Registration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let confirmLastFocusedElement = null;
+        let vaccinationLastFocusedElement = null;
 
         function showConfirmModal() {
             const modal = document.getElementById('confirmModal');
@@ -2739,7 +2769,87 @@ groups[letter].forEach((breed, breedIndex) => {
             confirmLastFocusedElement = null;
         }
         
-        function submitPetForm() {
+        // Copy for both recommendation modes: overdue booster vs no vaccination on record
+        const VACCINATION_MODAL_COPY = {
+            booster: {
+                title: 'Anti-Rabies Booster Shot Recommended',
+                message: (petName) => `We noticed ${petName}'s Anti-Rabies vaccination is over 1 year old and due for a booster shot. Would you like to schedule a booster shot appointment with Veterinary Services now?`,
+                primary: 'Yes, Book Booster Appointment'
+            },
+            firstDose: {
+                title: 'Anti-Rabies Vaccination Recommended',
+                message: (petName) => `We noticed ${petName} has no Anti-Rabies vaccination on record yet. Would you like to schedule a first Anti-Rabies vaccination appointment with Veterinary Services now?`,
+                primary: 'Yes, Book Vaccination Appointment'
+            }
+        };
+
+        // 'booster' (Anti-Rabies over 1 year), 'firstDose' (not yet vaccinated), or null
+        function getVaccinationRecommendation() {
+            const notVaccinated = document.querySelector('input[name="not_vaccinated"]');
+            if (notVaccinated && notVaccinated.checked) return 'firstDose';
+
+            const antiRabies = document.getElementById('antiRabiesCheckbox');
+            if (antiRabies && antiRabies.checked) {
+                const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
+                // Same source of truth as the Step 4 review badge
+                if (getAntiRabiesBoosterStatus(dateInput ? dateInput.value : null) !== null) return 'booster';
+            }
+            return null;
+        }
+
+        function submitPetForm(skipVaccinationPrompt = false) {
+            const recommendation = skipVaccinationPrompt ? null : getVaccinationRecommendation();
+            if (recommendation) {
+                closeConfirmModal();
+                openVaccinationModal(recommendation);
+                return;
+            }
+            document.getElementById('petRegistrationForm').submit();
+        }
+
+        function openVaccinationModal(mode) {
+            const modal = document.getElementById('vaccinationModal');
+            if (!modal) return;
+
+            const copy = VACCINATION_MODAL_COPY[mode] || VACCINATION_MODAL_COPY.booster;
+            const petNameInput = document.getElementById('petRegistrationForm').pet_name;
+            const petName = `<span class="font-semibold text-gray-900">${(petNameInput && petNameInput.value.trim()) || 'your pet'}</span>`;
+
+            const titleEl = document.getElementById('vaccinationModalTitle');
+            const messageEl = document.getElementById('vaccinationModalMessage');
+            const primaryBtn = document.getElementById('vaccinationModalPrimaryBtn');
+            if (titleEl) titleEl.textContent = copy.title;
+            if (messageEl) messageEl.innerHTML = copy.message(petName);
+            if (primaryBtn) primaryBtn.textContent = copy.primary;
+
+            modal.classList.remove('hidden');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('role', 'dialog');
+
+            vaccinationLastFocusedElement = document.activeElement;
+            setTimeout(() => {
+                const firstBtn = modal.querySelector('button');
+                if (firstBtn) firstBtn.focus();
+                trapFocus(modal);
+            }, 50);
+        }
+
+        function closeVaccinationModal() {
+            const modal = document.getElementById('vaccinationModal');
+            if (!modal) return;
+
+            modal.classList.add('hidden');
+            modal.removeAttribute('aria-modal');
+            modal.removeAttribute('role');
+
+            if (vaccinationLastFocusedElement && typeof vaccinationLastFocusedElement.focus === 'function') {
+                vaccinationLastFocusedElement.focus();
+            }
+            vaccinationLastFocusedElement = null;
+        }
+
+        function bookVaccinationAppointment() {
+            document.getElementById('bookBoosterInput').value = '1';
             document.getElementById('petRegistrationForm').submit();
         }
     </script>

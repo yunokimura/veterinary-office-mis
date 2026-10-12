@@ -1833,6 +1833,29 @@
         });
         @endif
 
+        // Auto-select a pet passed via ?select_pet={id} (Anti-Rabies booster booking flow)
+        (function autoSelectPetFromUrl() {
+            const petId = new URLSearchParams(window.location.search).get('select_pet');
+            if (!petId || !petsData.some(p => String(p.id) === String(petId))) return;
+
+            const checkbox = document.querySelector(`#petSelectionList input[type="checkbox"][value="${petId}"]`);
+            if (!checkbox || checkbox.checked) return;
+
+            checkbox.checked = true;
+            togglePetSelection(checkbox);
+
+            // checkPetBooking() is async (adds to selectedPets after fetch) —
+            // poll briefly, then confirm once the pet lands in the selection
+            let tries = 0;
+            const timer = setInterval(() => {
+                const isSelected = selectedPets.some(id => String(id) === String(petId));
+                if (isSelected || ++tries > 20) {
+                    clearInterval(timer);
+                    if (isSelected) confirmPetSelection();
+                }
+            }, 100);
+        })();
+
         // Form submission handler
         const vaccinationForm = document.getElementById('vaccinationForm');
         if (vaccinationForm) {

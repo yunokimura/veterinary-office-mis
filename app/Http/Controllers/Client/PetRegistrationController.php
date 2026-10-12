@@ -56,6 +56,7 @@ class PetRegistrationController extends Controller
                 'anti_rabies.lot_no' => 'nullable|string|max:6|regex:/^[A-Za-z0-9]+$/',
                 'anti_rabies.tag_no' => 'nullable|string|max:30|regex:/^[A-Za-z0-9\-\s]+$/',
                 'vaccination_card' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'book_booster' => 'nullable|boolean',
             ]);
 
             // A pet's age must be known one way or the other
@@ -320,6 +321,11 @@ class PetRegistrationController extends Controller
                 'breed' => $pet->breed,
                 'pet_image' => $pet->pet_image,
             ];
+
+            // Booster booking flow: send the owner straight to the vaccination form with this pet pre-selected
+            if ($request->boolean('book_booster')) {
+                return redirect()->to('/vaccination/form?select_pet=' . $pet->pet_id);
+            }
 
             return redirect()->route('owner.dashboard')->with('success_pet', $petData);
         } catch (\Exception $e) {
