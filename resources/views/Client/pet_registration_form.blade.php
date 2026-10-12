@@ -665,11 +665,11 @@
                             <div id="vaccinationCardUploadSection" class="pt-4 border-t border-slate-200">
                                 <h5 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Vaccination Booklet / Certificate (Optional)</h5>
                                 <p class="text-xs text-gray-500 mb-3">Upload a photo of the pet's vaccination record card.</p>
-                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors bg-white min-h-[144px]">
+                                <div class="relative w-full h-40 border-2 border-dashed border-slate-300 rounded-xl hover:border-emerald-400 transition-colors bg-white">
                                     <input type="file" id="vaccinationCard" name="vaccination_card" accept="image/*" class="hidden" onchange="previewVaccinationCard(event)">
                                     <img id="vaccinationCardPreview" class="hidden w-full h-full object-cover rounded-lg mx-auto">
                                     <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn" aria-label="Remove vaccination card">×</button>
-                                    <button type="button" onclick="document.getElementById('vaccinationCard').click()" id="vaccinationCardUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 bg-white bg-opacity-80 rounded-lg">
+                                    <button type="button" onclick="document.getElementById('vaccinationCard').click()" id="vaccinationCardUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
                                         <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                         </svg>

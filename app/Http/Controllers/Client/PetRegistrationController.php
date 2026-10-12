@@ -49,15 +49,13 @@ class PetRegistrationController extends Controller
                 'vaccination_core.*' => 'string',
                 'vaccination_optional' => 'array',
                 'vaccination_optional.*' => 'string',
-                'vaccination_other' => 'nullable|string|max:255',
+                'vaccination_core_other' => 'nullable|string|max:255',
+                'vaccination_optional_other' => 'nullable|string|max:255',
                 'anti_rabies' => 'nullable|array',
                 'anti_rabies.date_administered' => 'required_if:vaccination_core.*,Anti-Rabies|nullable|date_format:d/m/Y',
                 'anti_rabies.lot_no' => 'nullable|string|max:30',
                 'anti_rabies.tag_no' => 'nullable|string|max:30|regex:/^[A-Za-z0-9\-\s]+$/',
                 'vaccination_card' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'vaccination_optional' => 'array',
-                'vaccination_optional.*' => 'string',
-                'vaccination_other' => 'nullable|string|max:255',
             ]);
 
             // A pet's age must be known one way or the other
@@ -245,11 +243,12 @@ class PetRegistrationController extends Controller
 
             if (!$request->boolean('not_vaccinated')) {
                 $coreVaccines = $request->input('vaccination_core', []);
-                $optionalVaccines = $request->input('vaccination_optional', []);
-                $otherVaccine = $request->input('vaccination_other');
+                $coreOther = $request->input('vaccination_core_other');
+                $optionalOther = $request->input('vaccination_optional_other');
 
                 foreach ($coreVaccines as $vaccine) {
-                    $record = ['name' => $vaccine, 'type' => 'core'];
+                    $name = ($vaccine === 'Other' && trim((string) $coreOther) !== '') ? trim($coreOther) : $vaccine;
+                    $record = ['name' => $name, 'type' => 'core'];
                     if ($vaccine === 'Anti-Rabies') {
                         $antiRabiesDate = $request->input('anti_rabies.date_administered');
                         $antiRabiesLot = $request->input('anti_rabies.lot_no');
@@ -269,11 +268,10 @@ class PetRegistrationController extends Controller
                 }
 
                 $optionalVaccines = $request->input('vaccination_optional', []);
-                $otherVaccine = $request->input('vaccination_other');
                 foreach ($optionalVaccines as $vaccine) {
-                    if ($vaccine === 'Other' && $request->input('vaccination_other')) {
+                    if ($vaccine === 'Other' && trim((string) $optionalOther) !== '') {
                         $vaccinationRecords[] = [
-                            'name' => $request->input('vaccination_other'),
+                            'name' => trim($optionalOther),
                             'type' => 'optional',
                         ];
                     } else {
