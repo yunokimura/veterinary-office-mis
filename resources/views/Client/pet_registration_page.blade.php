@@ -130,7 +130,7 @@
     <section class="py-16 sm:py-24 bg-teal-50/50 border-b border-slate-200/60 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-                <span class="text-primary font-extrabold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full block mb-2">Benefits</span>
+                <span class="text-primary font-extrabold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full mb-2">Benefits</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Why Register Your Pet?</h2>
                 <p class="text-slate-600 mt-3 text-base">Official registration provides essential benefits for you, your pet, and our community. Join thousands of responsible pet owners in Dasmariñas City.</p>
             </div>
@@ -238,7 +238,7 @@
                     <div class="absolute -left-4 top-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg z-10">1</div>
                     <div class="pt-4">
                         <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
@@ -296,10 +296,6 @@
                         </p>
                     </div>
                 </div>
-            </div>
-
-            <div class="text-center mt-8">
-                <p class="text-slate-500 text-sm">Processing time: 3-5 business days after complete submission</p>
             </div>
         </div>
     </section>
@@ -417,7 +413,7 @@
     <section class="py-16 sm:py-24 bg-white border-t border-slate-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-12">
-                <span class="text-primary font-bold text-xs uppercase tracking-widest">Privacy & Security</span>
+                <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">Privacy & Security</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Your Data is Protected</h2>
                 <p class="text-slate-600 mt-3">Your data is protected with industry-leading security measures and strict privacy controls.</p>
             </div>
@@ -429,16 +425,16 @@
                         <!-- Card 1: Encrypted Storage -->
                         <div class="w-full md:w-1/3 flex-shrink-0 px-3">
                             <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                <div class="aspect-square relative bg-primary/5 flex items-center justify-center">
-                                    <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <div class="aspect-[4/3] relative bg-primary/5 flex items-center justify-center">
+                                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="p-5 text-center">
-                                    <h3 class="text-lg font-bold text-slate-900 mt-1">Encrypted Storage</h3>
-                                    <p class="text-slate-600 text-sm mt-2">All pet and owner data is encrypted and securely stored in our protected database.</p>
+                                <div class="p-4 text-center">
+                                    <h3 class="text-base font-bold text-slate-900">Encrypted Storage</h3>
+                                    <p class="text-slate-600 text-xs mt-1">All pet and owner data is encrypted and securely stored in our protected database.</p>
                                 </div>
                             </div>
                         </div>
@@ -446,16 +442,16 @@
                         <!-- Card 2: Access Control -->
                         <div class="w-full md:w-1/3 flex-shrink-0 px-3">
                             <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                <div class="aspect-square relative bg-green-50 flex items-center justify-center">
-                                    <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <div class="aspect-[4/3] relative bg-green-50 flex items-center justify-center">
+                                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="p-5 text-center">
-                                    <h3 class="text-lg font-bold text-slate-900 mt-1">Access Control</h3>
-                                    <p class="text-slate-600 text-sm mt-2">Information accessible only to authorized veterinary staff and pet owners via secure login.</p>
+                                <div class="p-4 text-center">
+                                    <h3 class="text-base font-bold text-slate-900">Access Control</h3>
+                                    <p class="text-slate-600 text-xs mt-1">Information accessible only to authorized veterinary staff and pet owners via secure login.</p>
                                 </div>
                             </div>
                         </div>
@@ -463,16 +459,16 @@
                         <!-- Card 3: Purpose Limited -->
                         <div class="w-full md:w-1/3 flex-shrink-0 px-3">
                             <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden h-full">
-                                <div class="aspect-square relative bg-blue-50 flex items-center justify-center">
-                                    <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <div class="aspect-[4/3] relative bg-blue-50 flex items-center justify-center">
+                                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="p-5 text-center">
-                                    <h3 class="text-lg font-bold text-slate-900 mt-1">Purpose Limited</h3>
-                                    <p class="text-slate-600 text-sm mt-2">Data collected solely for pet health management, public safety, and veterinary service delivery.</p>
+                                <div class="p-4 text-center">
+                                    <h3 class="text-base font-bold text-slate-900">Purpose Limited</h3>
+                                    <p class="text-slate-600 text-xs mt-1">Data collected solely for pet health management, public safety, and veterinary service delivery.</p>
                                 </div>
                             </div>
                         </div>
