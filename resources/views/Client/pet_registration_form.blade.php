@@ -2355,48 +2355,37 @@ groups[letter].forEach((breed, breedIndex) => {
             let vaccinesHtml = '';
             const vaccineItems = [];
 
+            const bullet = (text, color = 'emerald') =>
+                `<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-${color}-600"></span>${text}</span>`;
+
+            // Anti-Rabies is hardcoded in HTML (outside #otherCoreVaccines)
+            const antiRabiesChecked = document.querySelector('input[name="vaccination_core[]"][value="Anti-Rabies"]');
+
             if (notVaccinated) {
                 vaccinesHtml = '<span class="text-gray-500 italic">Not vaccinated / records unavailable</span>';
             } else {
-                const coreVaccines = Array.from(document.querySelectorAll('#coreVaccinesSection input[type="checkbox"]:checked')).map(cb => cb.value);
+                // Only the JS-rendered core options (Anti-Rabies lives outside this container)
+                const coreVaccines = Array.from(document.querySelectorAll('#otherCoreVaccines input[type="checkbox"]:checked')).map(cb => cb.value);
                 const optionalVaccines = Array.from(document.querySelectorAll('#optionalVaccineOptions input[type="checkbox"]:checked')).map(cb => cb.value);
-                
-                // Get inline "Other" vaccine text inputs
-                const coreOtherInput = document.querySelector('input[name="vaccination_core[other][Other]"]');
-                const optionalOtherInput = document.querySelector('input[name="vaccination_optional[other][Other]"]');
 
-                coreVaccines.forEach(v => vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>${v}</span>`));
-                optionalVaccines.forEach(v => vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${v}</span>`));
-                
-                // Add "Other" text values if provided
-                if (coreVaccines.includes('Other') && coreOtherInput && coreOtherInput.value.trim() !== '') {
-                    vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>${coreOtherInput.value.trim()}</span>`);
+                // Flat "Other" text inputs wired to the vaccination checkboxes
+                const coreOtherInput = document.querySelector('input[name="vaccination_core_other"]');
+                const optionalOtherInput = document.querySelector('input[name="vaccination_optional_other"]');
+
+                const otherText = (input) => {
+                    const typed = input && input.value.trim() !== '' ? input.value.trim() : 'Other';
+                    return esc(typed);
+                };
+
+                if (antiRabiesChecked && antiRabiesChecked.checked) {
+                    vaccineItems.push(bullet('Anti-Rabies Vaccination'));
                 }
-                if (optionalVaccines.includes('Other') && optionalOtherInput && optionalOtherInput.value.trim() !== '') {
-                    vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${optionalOtherInput.value.trim()}</span>`);
-                }
+                coreVaccines.forEach(v => vaccineItems.push(bullet(v === 'Other' ? otherText(coreOtherInput) : v)));
+                optionalVaccines.forEach(v => vaccineItems.push(bullet(v === 'Other' ? otherText(optionalOtherInput) : v, 'amber')));
 
                 vaccinesHtml = vaccineItems.length > 0
                     ? `<div class="flex flex-wrap gap-2">${vaccineItems.join('')}</div>`
                     : '<span class="text-gray-500 italic">No vaccines selected</span>';
-            }
-
-            // Anti-Rabies is hardcoded in HTML - include it in the vaccine list if checked
-            const antiRabiesChecked = document.querySelector('input[name="vaccination_core[]"][value="Anti-Rabies"]');
-            if (antiRabiesChecked && antiRabiesChecked.checked) {
-                vaccineItems.unshift(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Anti-Rabies Vaccination</span>`);
-                vaccinesHtml = vaccineItems.join(' ');
-            }
-
-            // Also include other core vaccines (species-specific) in the review
-            const petType = document.querySelector('input[name="pet_type"]:checked');
-            const type = petType ? petType.value : '';
-            if (type) {
-                const otherCoreVaccines = type === 'cat'
-                    ? ['4-in-1 / 3-in-1 (FVRCP - Rhinotracheitis, Calicivirus, Panleukopenia)']
-                    : ['5-in-1 / 6-in-1 / 8-in-1 (DHPPi / Leptospirosis)'];
-                otherCoreVaccines.forEach(v => vaccineItems.push(`<span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>${v}</span>`));
-                vaccinesHtml = vaccineItems.join(' ');
             }
 
             const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
@@ -2443,6 +2432,8 @@ groups[letter].forEach((breed, breedIndex) => {
                 (!notVaccinated ? rowHtml('Anti-Rabies Vaccination Details', antiRabiesHtml) : '') +
                 (!notVaccinated ? rowHtml('Core & Optional Vaccines', vaccinesHtml) : '') +
                 (vaccinationCardHtml ? rowHtml('Vaccination Booklet / Certificate', vaccinationCardHtml) : '') +
+                '<hr class="my-4 border-slate-200">' +
+                '<div class="text-sm font-bold text-gray-800 uppercase tracking-wider">Traits</div>' +
                 traitRow('Training', 'trainingOptions') +
                 traitRow('Insurance', 'insuranceOptions') +
                 traitRow('Behavior', 'behaviorOptions') +
