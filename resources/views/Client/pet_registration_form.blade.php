@@ -2404,6 +2404,7 @@ groups[letter].forEach((breed, breedIndex) => {
                         <div><span class="text-gray-500">Date Administered:</span> <span class="font-semibold text-gray-900">${dateVal}</span></div>
                         <div><span class="text-gray-500">Vaccine Lot No.:</span> <span class="font-semibold text-gray-900">${lotVal}</span></div>
                         <div><span class="text-gray-500">Tag / Sticker No.:</span> <span class="font-semibold text-gray-900">${tagVal}</span></div>
+                    </div>
                 `;
 
                 // Check if Anti-Rabies booster is needed using helper
