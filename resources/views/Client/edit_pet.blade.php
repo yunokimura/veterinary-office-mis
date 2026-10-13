@@ -122,10 +122,15 @@
 
     <script>
         function toggleDropdown() {
-            document.getElementById('userDropdown').classList.toggle('hidden');
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
         }
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('userDropdown');
+            if (!dropdown) return;
+
             const button = e.target.closest('button');
             if (!button && !dropdown.contains(e.target)) {
                 dropdown.classList.add('hidden');

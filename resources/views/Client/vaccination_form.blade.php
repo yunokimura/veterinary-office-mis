@@ -498,21 +498,6 @@
     </div>
 
     <script>
-        // Dropdown toggle for user menu
-        function toggleDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('hidden');
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('userDropdown');
-            const button = document.querySelector('button[onclick="toggleDropdown()"]');
-            if (dropdown && button && !dropdown.contains(e.target) && !button.contains(e.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
-
         // Pet data from server
         const petsData = @json($petsArray);
         const currentUserId = @json($userId ?? null);

@@ -1334,21 +1334,6 @@
     </div>
 
     <script>
-        function toggleDropdown() {
-            document.getElementById('userDropdown').classList.toggle('hidden');
-        }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('userDropdown');
-            if (!dropdown) return;
-            
-            const button = event.target.closest('button');
-            if (!button && !dropdown.contains(event.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
-
         // FAQ Toggle Function
         function toggleFaq(button) {
             const answer = button.nextElementSibling;

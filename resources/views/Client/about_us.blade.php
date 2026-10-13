@@ -443,19 +443,6 @@
       @include('Client.partials.footer')
 
       <script>
-          function toggleDropdown() {
-              document.getElementById('userDropdown').classList.toggle('hidden');
-          }
-
-          // Close dropdown when clicking outside
-          document.addEventListener('click', function(event) {
-              const dropdown = document.getElementById('userDropdown');
-              const button = event.target.closest('button');
-              if (!button && !dropdown.contains(event.target)) {
-                  dropdown.classList.add('hidden');
-              }
-          });
-
            // Carousel functionality
            let currentSlide = 0;
            const slides = document.querySelectorAll('.carousel-slide');

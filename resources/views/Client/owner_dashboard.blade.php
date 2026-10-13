@@ -105,22 +105,6 @@
 
      @include('Client.partials.navbar')
 
-     <script>
-        function toggleDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('hidden');
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('userDropdown');
-            const button = event.target.closest('button');
-            if (!button && !dropdown.contains(event.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
-    </script>
-
     <!-- Welcome Banner -->
     <section class="hero-bg py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

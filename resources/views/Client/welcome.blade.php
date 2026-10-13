@@ -896,21 +896,6 @@
                 hideLoginModal();
             }
         });
-
-        function toggleDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('hidden');
-            }
-        }
-
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('userDropdown');
-            const button = event.target.closest('button');
-            if (dropdown && !button && !dropdown.contains(event.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
     </script>
 
     <!-- Missing Pet Detail Modal -->

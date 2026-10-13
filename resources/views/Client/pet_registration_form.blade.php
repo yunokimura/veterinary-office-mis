@@ -1945,23 +1945,6 @@ groups[letter].forEach((breed, breedIndex) => {
             if (uploadBtn) uploadBtn.classList.remove('hidden');
         }
 
-        // Toggle user dropdown
-        function toggleDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('hidden');
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('userDropdown');
-            const button = e.target.closest('button');
-            if (!button || !button.onclick?.toString().includes('toggleDropdown')) {
-                if (!dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            }
-        });
-
         // ============================================
         // MULTI-STEP FORM LOGIC
         // ============================================
