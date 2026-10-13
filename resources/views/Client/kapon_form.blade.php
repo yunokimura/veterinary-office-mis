@@ -294,7 +294,6 @@
                         <!-- Disclaimer -->
                         <div class="mt-6 bg-red-50 border-l-4 border-red-500 p-4">
                             <p class="text-sm text-red-700">*** Dasmariñas City Veterinary Office (CVO) and its licensed veterinarians will not be held liable in the event of complications, including injury or death, during surgery. These may result due to undiagnosed illnesses that may be detected and treated if a blood test is performed.</p>
-                            <p class="text-sm text-red-700 mt-2">*** Pure and half-breed pets or brachycephalic (short-nosed) breeds are required to submit the results of blood tests prior to surgery. It is highly recommended that aspins and puspins with preexisting conditions be tested as well.</p>
                         </div>
 
                         <!-- Submit Button (vaccination-style, centered) -->
@@ -1147,104 +1146,10 @@
         selectedPets.forEach(petId => {
             const pet = petsData.find(p => String(p.id) === String(petId));
             if (pet) {
-                // Determine if pet is over 4 years old
-                let isOver4Years = false;
-                const ageStr = String(pet.age).toLowerCase();
-                
-                const yearMatch = ageStr.match(/(\d+)\s*year/);
-                if (yearMatch) {
-                    const years = parseInt(yearMatch[1]);
-                    isOver4Years = years > 4;
-                } else if (ageStr.includes('over')) {
-                    isOver4Years = true;
-                }
-                
-                // Determine pet type for blood test logic
-                const species = String(pet.species || '').toLowerCase();
-                const breed = String(pet.breed || '').toLowerCase();
-                
-                // Check if it's a cat
-                const isCat = species === 'cat';
-                
-                // Check if it's an Aspin (local dog)
-                const isAspin = species === 'dog' && (breed.includes('aspin') || breed === 'mixed breed (aspin)');
-                
-                // Check if it's a purebred or mixed dog (not Aspin)
-                const isOtherDog = species === 'dog' && !isAspin;
-                
                 const petCard = document.createElement('div');
                 petCard.className = 'bg-white border border-gray-200 rounded-lg p-6 mb-6';
                 petCard.id = 'pet-agreement-' + petId;
-                
-                let bloodTestSection = '';
-                
-                if (isOver4Years) {
-                    // Over 4 years old - single checkbox option
-                    bloodTestSection = `
-                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                            <p class="font-medium text-gray-700 mb-2">Blood Test Agreement <span class="text-red-500">*</span></p>
-                            <p class="text-sm text-gray-600 mb-3">For those with mixed or purebred dogs and/or over 4 years old:</p>
-                            <p class="text-sm text-gray-600 mb-3">For the safety of your pet, the Dasmariñas City Veterinary Office (CVO) highly recommends a blood test (CBC, SGPT, and CREA) prior to surgery. Since the CVO is a public service facility with limited laboratory resources, please have these tests performed at a private veterinary clinic of your choice. You must upload the results here at least 48 hours before your appointment.</p>
-                            
-                            <div class="space-y-3">
-                                <label class="inline-flex items-start">
-                                    <input type="checkbox" name="pet_agreement[${pet.id}][blood_test]" value="submit_results" class="mt-1 text-primary" required>
-                                    <span class="ml-2 text-sm text-gray-700">Yes, I will upload the blood test results. I will provide a clear photo or PDF of the results (CBC, SGPT, & CREA) via this portal at least 48 hours before my schedule.</span>
-                                </label>
-                            </div>
-                        </div>
-                    `;
-                } else if (isCat || isAspin) {
-                    // Under 4 years old, Cat or Aspin - two radio button options
-                    bloodTestSection = `
-                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                            <p class="font-medium text-gray-700 mb-2">Blood Test Agreement <span class="text-red-500">*</span></p>
-                            <p class="text-sm text-gray-600 mb-3">For the safety of your pet, the Dasmariñas City Veterinary Office (CVO) highly recommends a blood test (CBC, SGPT, and CREA) prior to surgery. Since the CVO is a public service facility with limited laboratory resources, please have these tests performed at a private veterinary clinic of your choice.</p>
-                            
-                            <div class="space-y-3">
-                                <label class="inline-flex items-start">
-                                    <input type="radio" name="pet_agreement[${pet.id}][blood_test]" value="submit_results" class="mt-1 text-primary" required>
-                                    <span class="ml-2 text-sm text-gray-700">Yes, I will upload the blood test results. I will provide a clear photo or PDF of the results (CBC, SGPT, & CREA) via this portal at least 48 hours before my schedule.</span>
-                                </label>
-                                <label class="inline-flex items-start">
-                                    <input type="radio" name="pet_agreement[${pet.id}][blood_test]" value="waive" class="mt-1 text-primary">
-                                    <span class="ml-2 text-sm text-gray-700">I understand the risk of not getting the blood test for my pet so I am waiving the option as I am sure that my pet is/are healthy ASPIN or CAT under 4 years old. <strong class="text-red-600 font-medium">The Dasmariñas City Veterinary Office (CVO) will not be held liable in the event of complications, injury, or death that may result from the surgery due to undiagnosed illnesses that could have been treated if a blood test was performed.</strong></span>
-                                </label>
-                            </div>
-                        </div>
-                    `;
-                } else if (isOtherDog) {
-                    // Under 4 years old, Purebred or Mixed Dog (not Aspin) - single checkbox option
-                    bloodTestSection = `
-                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                            <p class="font-medium text-gray-700 mb-2">Blood Test Agreement <span class="text-red-500">*</span></p>
-                            <p class="text-sm text-gray-600 mb-3">For the safety of your pet, the Dasmariñas City Veterinary Office (CVO) highly recommends a blood test (CBC, SGPT, and CREA) prior to surgery. Since the CVO is a public service facility with limited laboratory resources, please have these tests performed at a private veterinary clinic of your choice. You must upload the results here at least 48 hours before your appointment.</p>
-                            
-                            <div class="space-y-3">
-                                <label class="inline-flex items-start">
-                                    <input type="checkbox" name="pet_agreement[${pet.id}][blood_test]" value="submit_results" class="mt-1 text-primary" required>
-                                    <span class="ml-2 text-sm text-gray-700">Yes, I will upload the blood test results. I will provide a clear photo or PDF of the results (CBC, SGPT, & CREA) via this portal at least 48 hours before my schedule.</span>
-                                </label>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    // Fallback - default to requiring blood test
-                    bloodTestSection = `
-                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                            <p class="font-medium text-gray-700 mb-2">Blood Test Agreement <span class="text-red-500">*</span></p>
-                            <p class="text-sm text-gray-600 mb-3">For the safety of your pet, the Dasmariñas City Veterinary Office (CVO) highly recommends a blood test (CBC, SGPT, and CREA) prior to surgery. Since the CVO is a public service facility with limited laboratory resources, please have these tests performed at a private veterinary clinic of your choice. You must upload the results here at least 48 hours before your appointment.</p>
-                            
-                            <div class="space-y-3">
-                                <label class="inline-flex items-start">
-                                    <input type="checkbox" name="pet_agreement[${pet.id}][blood_test]" value="submit_results" class="mt-1 text-primary" required>
-                                    <span class="ml-2 text-sm text-gray-700">Yes, I will upload the blood test results. I will provide a clear photo or PDF of the results (CBC, SGPT, & CREA) via this portal at least 48 hours before my schedule.</span>
-                                </label>
-                            </div>
-                        </div>
-                    `;
-                }
-                
+
                 petCard.innerHTML = `
                     <div class="flex items-center mb-4 pb-3 border-b">
                         ${pet.image ? (function() {
@@ -1264,10 +1169,7 @@
                             <h4 class="font-semibold text-gray-900">${pet.name}</h4>
                             <p class="text-xs text-gray-500">${pet.species || 'Unknown'} • ${pet.breed || 'Unknown'} • Age: ${formatAge(pet.age)}</p>
                         </div>
-                        ${isOver4Years ? '<span class="ml-auto text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded">Over 4 years - Blood test required</span>' : ''}
                     </div>
-                    
-                    ${bloodTestSection}
                     
                     <!-- Previous Surgery -->
                     <div class="mb-4">
