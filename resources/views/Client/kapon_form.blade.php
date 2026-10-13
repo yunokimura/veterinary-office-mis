@@ -148,7 +148,7 @@
                             </ul>
                         </div>
 
-                        <!-- Selected Pets List with Empty State -->
+<!-- Selected Pets List with Empty State -->
                         <div id="selectedPetsContainer" class="mb-6">
                             <div id="selectedPetsList" class="grid md:grid-cols-2 gap-4">
                                 <!-- Empty state -->
@@ -157,6 +157,52 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     <p class="text-gray-500">No pets selected yet. Click "Select Pet" to choose from your registered pets.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Per-Pet Photo Upload Blocks (dynamically populated) -->
+                        <div id="petPhotosContainer" class="mb-6">
+                            <p class="text-xs text-gray-500 italic">Required views: Head, Face, Body – top and side view (while standing on all four legs) and Genitals. Max. file size: 8MB per pet</p>
+                            <div id="petPhotoFields" class="space-y-4 mt-3">
+                                <div id="noPhotosMessage" class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                    <p class="text-gray-500 text-sm">Select a pet first to upload photos</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: APPOINTMENT SCHEDULING -->
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                    <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h4 class="text-sm font-semibold text-white">APPOINTMENT SCHEDULING</h4>
+                        </div>
+                        <span id="slotPetCountBadge" class="text-xs bg-emerald-800 text-emerald-200 font-medium px-2.5 py-1 rounded-full border border-emerald-700">
+                            0 Pets Selected
+                        </span>
+                    </div>
+                    <div class="p-6">
+                        <div id="kaponSchedulingContainer" class="space-y-6">
+                            <!-- Per-pet scheduling blocks will be dynamically added here -->
+                            <div id="noSchedulingMessage" class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
+                                <p class="text-gray-500">Select pets first to schedule appointments</p>
+                            </div>
+                        </div>
+
+                        <!-- Already Scheduled Warning (inline) -->
+                        <div id="alreadyScheduledWarning" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-red-700">Already Scheduled</h4>
+                                    <p id="alreadyScheduledText" class="text-sm text-red-600 mt-1"></p>
                                 </div>
                             </div>
                         </div>
