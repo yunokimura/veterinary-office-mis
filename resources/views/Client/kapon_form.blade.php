@@ -156,22 +156,66 @@
                         </span>
                     </div>
                     <div class="p-6">
-                        <div id="kaponSchedulingContainer" class="space-y-6">
-                            <!-- Per-pet scheduling blocks will be dynamically added here -->
-                            <div id="noSchedulingMessage" class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
-                                <p class="text-gray-500">Select pets first to schedule appointments</p>
+                        <div id="globalSchedulerContainer">
+                            <!-- Date Picker -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
+                                    Select Appointment Date <span class="text-red-500">*</span>
+                                </label>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <input type="date"
+                                           id="globalAppointmentDate"
+                                           min="{{ date('Y-m-d') }}"
+                                           onchange="loadKaponGlobalSlots()"
+                                           class="w-full sm:w-64 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                    <span id="globalDailyCapacity" class="hidden inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium"></span>
+                                </div>
+                                <p id="selectedDateText" class="text-xs text-emerald-700 mt-1.5 font-medium flex items-center gap-1 hidden">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Selected Date: <span id="globalSelectedDate">-</span>
+                                </p>
                             </div>
-                        </div>
 
-                        <!-- Already Scheduled Warning (inline) -->
-                        <div id="alreadyScheduledWarning" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            <!-- Group Booking Banner -->
+                            <div id="groupBookingBanner" class="mb-4 bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-2.5 text-xs text-emerald-900 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <div>
-                                    <h4 class="font-semibold text-red-700">Already Scheduled</h4>
-                                    <p id="alreadyScheduledText" class="text-sm text-red-600 mt-1"></p>
+                                    <span class="font-bold">Group Booking Policy:</span> Selecting <span id="bannerSelectedTime" class="font-bold">-</span> will reserve slot capacity for all <span id="bannerPetCount" class="font-bold">-</span> selected pets (<span id="bannerPetNames" class="font-bold">-</span>) during this same 1-hour clinic block.
+                                </div>
+                            </div>
+
+                            <!-- Time Slots -->
+                            <div id="globalTimeSlots" class="mb-3 hidden">
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
+                                    Select Preferred Time Slot <span class="text-red-500">*</span>
+                                </label>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="globalSlotsGrid">
+                                    <!-- Slots will be loaded dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Selected Summary -->
+                            <div id="globalSelectedSummary" class="hidden bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                                <p class="text-sm text-emerald-700 font-medium">
+                                    Selected: <span id="globalSelectedDateSummary">-</span>
+                                </p>
+                                <div id="selectedSlotsList" class="mt-1 space-y-1"></div>
+                            </div>
+
+                            <!-- Schedule Required Warning (inline) -->
+                            <div id="alreadyScheduledWarning" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                                <div class="flex items-start">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                    <div>
+                                        <h4 class="font-semibold text-red-700">Schedule Required</h4>
+                                        <p id="alreadyScheduledText" class="text-sm text-red-600 mt-1"></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -384,161 +428,205 @@
                     
                     let selectedPets = [];
                     
-                    // Per-pet kapon appointment scheduling
-                    const kaponAppointments = {};
-                    const kaponSlotsData = {};
+                    // Global kapon appointment scheduling (shared by all selected pets)
+                    let globalKaponSlotsData = [];
+                    let selectedKaponSlotTime = null;
 
-                    function toggleKaponScheduleAccordion(petId) {
-                        const content = document.getElementById('kaponScheduleContent_' + petId);
-                        const arrow = document.getElementById('kaponScheduleArrow_' + petId);
-                        if (content.classList.contains('hidden')) {
-                            content.classList.remove('hidden');
-                            arrow.classList.add('rotate-180');
-                        } else {
-                            content.classList.add('hidden');
-                            arrow.classList.remove('rotate-180');
-                        }
+                    function getKaponPetNamesString() {
+                        if (!selectedPets.length) return 'no pets';
+                        return selectedPets.map(pid => {
+                            const pet = petsData.find(p => String(p.id) === String(pid));
+                            return pet ? pet.name : 'Pet ' + pid;
+                        }).join(', ');
                     }
 
-                    async function loadKaponPetSlots(petId) {
-                        const dateInput = document.getElementById('kaponAppointmentDate_' + petId);
+                    function updateGroupBookingBanner(timeText) {
+                        const banner = document.getElementById('groupBookingBanner');
+                        const bannerTime = document.getElementById('bannerSelectedTime');
+                        const bannerCount = document.getElementById('bannerPetCount');
+                        const bannerNames = document.getElementById('bannerPetNames');
+                        
+                        if (!banner || !bannerTime || !bannerCount || !bannerNames) return;
+                        
+                        if (!timeText) {
+                            banner.classList.add('hidden');
+                            return;
+                        }
+                        
+                        banner.classList.remove('hidden');
+                        bannerTime.textContent = timeText;
+                        bannerCount.textContent = selectedPets.length;
+                        bannerNames.textContent = getKaponPetNamesString();
+                    }
+
+                    async function loadKaponGlobalSlots() {
+                        const dateInput = document.getElementById('globalAppointmentDate');
                         const selectedDate = dateInput.value;
                         if (!selectedDate) return;
 
-                        // Clear previous selection when date changes
-                        if (kaponAppointments[petId] && kaponAppointments[petId].date !== selectedDate) {
-                            delete kaponAppointments[petId];
-                            document.getElementById('kaponHiddenDate_' + petId).value = '';
-                            document.getElementById('kaponHiddenTime_' + petId).value = '';
-                            document.getElementById('kaponSelectedSummary_' + petId).classList.add('hidden');
-                            document.getElementById('kaponScheduleStatus_' + petId).textContent = 'Not scheduled';
-                            document.getElementById('kaponScheduleStatus_' + petId).className = 'text-xs text-gray-500 mr-2';
-                            // 9.1: Sync global appointment when date changes
-                            syncGlobalAppointment();
+                        const slotStatus = document.getElementById('globalDailyCapacity');
+                        const slotsGrid = document.getElementById('globalSlotsGrid');
+                        const selectedDateText = document.getElementById('selectedDateText');
+                        const globalSelectedDate = document.getElementById('globalSelectedDate');
+                        const globalTimeSlots = document.getElementById('globalTimeSlots');
+                        
+                        slotsGrid.innerHTML = '';
+                        slotsGrid.classList.add('hidden');
+                        globalTimeSlots.classList.add('hidden');
+                        
+                        if (slotStatus) {
+                            slotStatus.classList.remove('hidden');
+                            slotStatus.textContent = 'Loading...';
+                            slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium';
                         }
-
-                        const slotStatus = document.getElementById('kaponSlotStatus_' + petId);
-                        const timeSlots = document.getElementById('kaponTimeSlots_' + petId);
                         
-                        slotStatus.classList.remove('hidden');
-                        timeSlots.classList.add('hidden');
-                        
-                        const capacityBadge = document.getElementById('kaponDailyCapacity_' + petId);
-                        capacityBadge.textContent = 'Loading...';
-                        capacityBadge.className = 'inline-flex items-center px-2 py-1 rounded-full bg-gray-100 text-gray-700';
+                        if (selectedDateText && globalSelectedDate) {
+                            selectedDateText.classList.remove('hidden');
+                            const dateObj = new Date(selectedDate + 'T00:00:00');
+                            globalSelectedDate.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                        }
 
                         try {
                             const response = await fetch(`/api/appointments/slots?date=${selectedDate}&service_type=kapon`);
                             const data = await response.json();
                             
                             if (data.success) {
-                                kaponSlotsData[petId] = data.slots;
+                                globalKaponSlotsData = data.slots;
                                 const dailyRemaining = data.daily_remaining || 0;
                                 
-                                if (dailyRemaining <= 0) {
-                                    capacityBadge.textContent = 'Fully Booked';
-                                    capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700';
-                                } else if (dailyRemaining === 1) {
-                                    capacityBadge.textContent = '1 slot left';
-                                    capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700';
-                                } else {
-                                    capacityBadge.textContent = 'Available';
-                                    capacityBadge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700';
+                                if (slotStatus) {
+                                    if (dailyRemaining <= 0) {
+                                        slotStatus.textContent = 'Fully Booked';
+                                        slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-medium';
+                                    } else if (dailyRemaining === 1) {
+                                        slotStatus.textContent = '1 slot left';
+                                        slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-medium';
+                                    } else {
+                                        slotStatus.textContent = 'Available';
+                                        slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium';
+                                    }
                                 }
                                 
                                 if (data.slots && data.slots.length > 0) {
-                                    renderKaponTimeSlots(petId, data.slots);
+                                    const currentTime = new Date();
+                                    const todayStr = currentTime.toISOString().split('T')[0];
+                                    const isToday = selectedDate === todayStr;
+                                    const currentHour = currentTime.getHours();
+                                    const currentMinute = currentTime.getMinutes();
+                                    
+                                    const sortedSlots = [...data.slots].sort((a, b) => a.time.localeCompare(b.time));
+                                    
+                                    sortedSlots.forEach(slot => {
+                                        const [slotHour, slotMinute] = slot.time.split(':').map(Number);
+                                        const slotTimeInMinutes = slotHour * 60 + slotMinute;
+                                        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+                                        const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
+                                        
+                                        const isDisabled = slot.status === 'blocked' || slot.status === 'full' || isPast || slot.is_past;
+                                        const isSelected = selectedKaponSlotTime === slot.time;
+                                        
+                                        const slotBtn = document.createElement('button');
+                                        slotBtn.type = 'button';
+                                        slotBtn.className = 'p-3 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center relative ';
+                                        
+                                        if (isDisabled) {
+                                            slotBtn.className += 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed opacity-60';
+                                        } else if (isSelected) {
+                                            slotBtn.className += 'bg-emerald-700 border-emerald-800 text-white font-bold ring-2 ring-emerald-600 shadow-sm';
+                                        } else {
+                                            slotBtn.className += 'bg-white border-slate-200 text-slate-800 hover:border-emerald-400 hover:bg-emerald-50/50';
+                                        }
+                                        
+                                        slotBtn.disabled = isDisabled;
+                                        
+                                        const timeLabel = document.createElement('span');
+                                        timeLabel.className = 'text-sm font-bold';
+                                        timeLabel.textContent = slot.display_time || slot.time;
+                                        slotBtn.appendChild(timeLabel);
+                                        
+                                        const statusLabel = document.createElement('span');
+                                        statusLabel.className = 'text-[10px] mt-1 ';
+                                        if (isSelected) {
+                                            statusLabel.className += 'text-emerald-100';
+                                        } else if (isDisabled) {
+                                            statusLabel.className += 'text-slate-400';
+                                        } else {
+                                            statusLabel.className += 'text-slate-500';
+                                        }
+                                        
+                                        if (slot.status === 'full' || dailyRemaining <= 0) {
+                                            statusLabel.textContent = 'Fully Booked';
+                                        } else if (slot.status === 'limited') {
+                                            statusLabel.textContent = 'Limited';
+                                        } else {
+                                            const remaining = slot.capacity - slot.booked;
+                                            statusLabel.textContent = Number.isNaN(remaining) ? 'Available' : remaining + ' slots left';
+                                        }
+                                        slotBtn.appendChild(statusLabel);
+                                        
+                                        if (isSelected) {
+                                            const checkBadge = document.createElement('span');
+                                            checkBadge.className = 'absolute -top-2 -right-1 bg-emerald-500 text-white p-0.5 rounded-full shadow-xs';
+                                            checkBadge.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
+                                            slotBtn.appendChild(checkBadge);
+                                        }
+                                        
+                                        if (!isDisabled) {
+                                            slotBtn.onclick = () => selectGlobalKaponSlot(slot);
+                                        }
+                                        
+                                        slotsGrid.appendChild(slotBtn);
+                                    });
+                                    
+                                    slotsGrid.classList.remove('hidden');
+                                    globalTimeSlots.classList.remove('hidden');
                                 }
                             }
                         } catch (error) {
                             console.error('Failed to load kapon slots:', error);
-                            capacityBadge.textContent = 'Error loading slots';
-                            capacityBadge.className = 'inline-flex items-center px-2 py-1 rounded-full bg-red-100 text-red-700';
+                            if (slotStatus) {
+                                slotStatus.textContent = 'Error loading slots';
+                                slotStatus.className = 'inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-medium';
+                            }
                         }
                     }
 
-                    function renderKaponTimeSlots(petId, slots) {
-                        const timeSlots = document.getElementById('kaponTimeSlots_' + petId);
-                        const slotsGrid = document.getElementById('kaponSlotsGrid_' + petId);
+                    function selectGlobalKaponSlot(slot) {
+                        const date = document.getElementById('globalAppointmentDate').value;
+                        selectedKaponSlotTime = slot.time;
                         
-                        const sortedSlots = [...slots].sort((a, b) => a.time.localeCompare(b.time));
-                        
-                        slotsGrid.innerHTML = '';
-                        
-                        const currentTime = new Date();
-                        const selectedDateInput = document.getElementById('kaponAppointmentDate_' + petId).value;
-                        const todayStr = currentTime.toISOString().split('T')[0];
-                        const isToday = selectedDateInput === todayStr;
-                        const currentHour = currentTime.getHours();
-                        const currentMinute = currentTime.getMinutes();
-                        
-                        sortedSlots.forEach(slot => {
-                            const [slotHour, slotMinute] = slot.time.split(':').map(Number);
-                            const slotTimeInMinutes = slotHour * 60 + slotMinute;
-                            const currentTimeInMinutes = currentHour * 60 + currentMinute;
-                            const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
-                            
-                            const isDisabled = slot.status === 'blocked' || slot.status === 'full' || isPast || slot.is_past;
-                            const isSelected = kaponAppointments[petId]?.time === slot.time;
-                            
-                            let btnClass = 'py-3 px-2 rounded-lg border-2 text-sm font-medium transition-all ';
-                            if (isDisabled) {
-                                btnClass += 'border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50';
-                            } else if (isSelected) {
-                                btnClass += 'bg-primary border-primary text-white';
-                            } else if (slot.status === 'limited') {
-                                btnClass += 'border-yellow-300 text-yellow-700 bg-yellow-50 hover:border-yellow-500';
-                            } else if (slot.status === 'full') {
-                                btnClass += 'border-red-200 text-red-400 cursor-not-allowed bg-red-50';
-                            } else {
-                                btnClass += 'border-green-300 text-green-700 bg-green-50 hover:border-green-500';
-                            }
-                            
-                            const slotBtn = document.createElement('button');
-                            slotBtn.type = 'button';
-                            slotBtn.className = btnClass;
-                            slotBtn.disabled = isDisabled;
-                            slotBtn.textContent = slot.display_time || slot.time;
-                            slotBtn.onclick = () => selectKaponPetTime(petId, slot);
-                            
-                            slotsGrid.appendChild(slotBtn);
-                        });
-                        
-                        timeSlots.classList.remove('hidden');
-                    }
-
-                    function selectKaponPetTime(petId, slot) {
-                        const date = document.getElementById('kaponAppointmentDate_' + petId).value;
-                        
-                        kaponAppointments[petId] = {
-                            date: date,
-                            time: slot.time,
-                            display_time: slot.display_time
-                        };
-                        
-                        document.getElementById('kaponHiddenDate_' + petId).value = date;
-                        document.getElementById('kaponHiddenTime_' + petId).value = slot.time;
-                        
-                        const summary = document.getElementById('kaponSelectedSummary_' + petId);
-                        const selectedDateSpan = document.getElementById('kaponSelectedDate_' + petId);
-                        const selectedTimeSpan = document.getElementById('kaponSelectedTime_' + petId);
+                        document.getElementById('appointment_date').value = date;
+                        document.getElementById('appointment_time').value = slot.time;
                         
                         const dateObj = new Date(date + 'T00:00:00');
-                        selectedDateSpan.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-                        selectedTimeSpan.textContent = slot.display_time || slot.time;
+                        const dateText = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                        const timeText = slot.display_time || slot.time;
                         
-                        summary.classList.remove('hidden');
+                        const summary = document.getElementById('globalSelectedSummary');
+                        const globalSelectedDateSummary = document.getElementById('globalSelectedDateSummary');
+                        const selectedSlotsList = document.getElementById('selectedSlotsList');
                         
-                        const statusBadge = document.getElementById('kaponScheduleStatus_' + petId);
-                        statusBadge.textContent = 'Scheduled';
-                        statusBadge.className = 'text-xs text-green-600 font-medium mr-2';
+                        if (summary) summary.classList.remove('hidden');
+                        if (globalSelectedDateSummary) globalSelectedDateSummary.textContent = dateText + ' at ' + timeText;
                         
-                        if (kaponSlotsData[petId]) {
-                            renderKaponTimeSlots(petId, kaponSlotsData[petId]);
+                        if (selectedSlotsList) {
+                            selectedSlotsList.innerHTML = '';
+                            selectedPets.forEach(pid => {
+                                const pet = petsData.find(p => String(p.id) === String(pid));
+                                const petName = pet ? pet.name : 'Pet ' + pid;
+                                const item = document.createElement('div');
+                                item.className = 'text-xs text-emerald-700';
+                                item.textContent = petName + ': ' + timeText;
+                                selectedSlotsList.appendChild(item);
+                            });
                         }
                         
-                        // 9.1: Sync global appointment after selection
-                        syncGlobalAppointment();
+                        // Hide schedule-required warning once valid
+                        const warning = document.getElementById('alreadyScheduledWarning');
+                        if (warning) warning.classList.add('hidden');
+                        
+                        updateGroupBookingBanner(timeText);
+                        loadKaponGlobalSlots();
                     }
 
                     function openPetModal() {
@@ -706,17 +794,15 @@
                         document.body.style.overflow = 'auto';
                     }
 
-                    // 9.4: Submit guard - check if any pet has a schedule
+                    // 9.4: Submit guard - ensure a global appointment date/time is chosen
                     function validateKaponForm(event) {
-                        const hasSchedule = selectedPets.some(petId => {
-                            const date = document.getElementById(`kaponHiddenDate_${petId}`)?.value;
-                            const time = document.getElementById(`kaponHiddenTime_${petId}`)?.value;
-                            return date && time;
-                        });
+                        const dateValue = document.getElementById('appointment_date')?.value;
+                        const timeValue = document.getElementById('appointment_time')?.value;
+                        const hasSchedule = !!(dateValue && timeValue);
                         
                         if (!hasSchedule && selectedPets.length > 0) {
                             event.preventDefault();
-                            const schedulingCard = document.getElementById('kaponSchedulingContainer');
+                            const schedulingCard = document.getElementById('globalSchedulerContainer');
                             if (schedulingCard) {
                                 schedulingCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             }
@@ -724,7 +810,7 @@
                             const warning = document.getElementById('alreadyScheduledWarning');
                             if (warning) {
                                 warning.classList.remove('hidden');
-                                document.getElementById('alreadyScheduledText').textContent = 'Please schedule an appointment for at least one pet before submitting.';
+                                document.getElementById('alreadyScheduledText').textContent = 'Please select an appointment date and time slot before submitting.';
                             }
                             return false;
                         }
@@ -740,23 +826,22 @@
                         updateModalSelectedCount();
                         updateHeaderCountBadges();
                         updateSidebarSelectedPets();
-                        syncGlobalAppointment();
-                    }
-
-                    // 9.1: Sync first selected pet's schedule to global hidden fields
-                    function syncGlobalAppointment() {
-                        for (const petId of selectedPets) {
-                            const date = document.getElementById(`kaponHiddenDate_${petId}`)?.value;
-                            const time = document.getElementById(`kaponHiddenTime_${petId}`)?.value;
-                            if (date && time) {
-                                document.getElementById('appointment_date').value = date;
-                                document.getElementById('appointment_time').value = time;
-                                return;
+                        // Keep the selected-slot summary and group banner in sync with the pet list
+                        if (selectedKaponSlotTime) {
+                            updateGroupBookingBanner(selectedKaponSlotTime);
+                            const selectedSlotsList = document.getElementById('selectedSlotsList');
+                            if (selectedSlotsList) {
+                                selectedSlotsList.innerHTML = '';
+                                selectedPets.forEach(pid => {
+                                    const pet = petsData.find(p => String(p.id) === String(pid));
+                                    const petName = pet ? pet.name : 'Pet ' + pid;
+                                    const item = document.createElement('div');
+                                    item.className = 'text-xs text-emerald-700';
+                                    item.textContent = petName + ': ' + selectedKaponSlotTime;
+                                    selectedSlotsList.appendChild(item);
+                                });
                             }
                         }
-                        // No scheduled pet found - clear globals
-                        document.getElementById('appointment_date').value = '';
-                        document.getElementById('appointment_time').value = '';
                     }
 
                     // 9.2: Update sidebar selected pets list with remove buttons
@@ -912,67 +997,12 @@
                                 `;
                                 container.appendChild(petCard);
 
-                                // Add photo upload field for this pet with scheduling
+                                // Add photo upload field for this pet
                                 const photoField = document.createElement('div');
                                 photoField.className = 'bg-gray-50 border border-gray-200 rounded-lg p-4';
                                 photoField.innerHTML = `
                                     <div class="flex items-center mb-2">
                                         <span class="font-medium text-sm text-gray-700">${pet.name}</span>
-                                    </div>
-                                    
-                                    <!-- Scheduling Accordion -->
-                                    <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                                        <button type="button" onclick="toggleKaponScheduleAccordion(${pet.id})" class="w-full flex items-center justify-between px-3 py-2 bg-gray-100 hover:bg-gray-200 transition-colors text-left">
-                                            <div class="flex items-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
-                                                <span class="text-sm font-medium text-gray-700">Schedule Surgery</span>
-                                            </div>
-                                            <div class="flex items-center">
-                                                <span id="kaponScheduleStatus_${pet.id}" class="text-xs text-gray-500 mr-2">Not scheduled</span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" id="kaponScheduleArrow_${pet.id}" class="w-4 h-4 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </div>
-                                        </button>
-                                        <div id="kaponScheduleContent_${pet.id}" class="hidden px-3 py-3 border-t border-gray-200">
-                                            <!-- Date Picker -->
-                                            <div class="mb-3">
-                                                <label class="block text-xs font-medium text-gray-700 mb-1">Select Date <span class="text-red-500">*</span></label>
-                                                <input type="date" 
-                                                       id="kaponAppointmentDate_${pet.id}" 
-                                                       min="${new Date().toISOString().split('T')[0]}"
-                                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                                       onchange="loadKaponPetSlots(${pet.id})">
-                                            </div>
-                                            
-                                            <!-- Availability Status -->
-                                            <div id="kaponSlotStatus_${pet.id}" class="mb-3 hidden">
-                                                <div class="flex items-center gap-2 text-xs">
-                                                    <span id="kaponDailyCapacity_${pet.id}" class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700">
-                                                        Loading...
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Time Slots -->
-                                            <div id="kaponTimeSlots_${pet.id}" class="mb-3 hidden">
-                                                <label class="block text-xs font-medium text-gray-700 mb-2">Select Time <span class="text-red-500">*</span></label>
-                                                <div class="grid grid-cols-3 gap-1" id="kaponSlotsGrid_${pet.id}"></div>
-                                            </div>
-                                            
-                                            <!-- Selected Summary -->
-                                            <div id="kaponSelectedSummary_${pet.id}" class="hidden bg-green-50 border border-green-200 rounded-lg p-2">
-                                                <p class="text-xs text-green-700 font-medium">
-                                                    Selected: <span id="kaponSelectedDate_${pet.id}">-</span> at <span id="kaponSelectedTime_${pet.id}">-</span>
-                                                </p>
-                                            </div>
-                                            
-                                            <!-- Hidden inputs -->
-                                            <input type="hidden" name="pet_appointments[${pet.id}][date]" id="kaponHiddenDate_${pet.id}" value="">
-                                            <input type="hidden" name="pet_appointments[${pet.id}][time]" id="kaponHiddenTime_${pet.id}" value="">
-                                        </div>
                                     </div>
                                     
                                     <!-- Photo Upload -->
@@ -993,7 +1023,7 @@
 
                         // Update hidden pets_data field with current pet selection
                         updatePetsData();
-                        // Render sidebar list, header badges, and sync global appointment
+                        // Render sidebar list, header badges, and refresh slot summary
                         updateSelectedCount();
                         // Generate agreement cards immediately so browser required validation works
                         generatePetAgreementCards();
