@@ -1366,7 +1366,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </main>
 
     @include('Client.partials.footer')
