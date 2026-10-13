@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $user_id
  * @property int|null $pet_id
+ * @property int|null $spay_neuter_appointment_id
  * @property int|null $owner_id
  * @property int|null $barangay_id
  * @property string $procedure_type
@@ -27,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @property-read Pet|null $pet
  * @property-read PetOwner|null $owner
  * @property-read Barangay|null $barangay
+ * @property-read SpayNeuterAppointment|null $spayNeuterAppointment
  * @property-read string $pet_name
  * @property-read string|null $pet_breed
  * @property-read string|null $pet_age
@@ -84,6 +86,7 @@ class SpayNeuterReport extends Model
     protected $fillable = [
         'user_id',
         'pet_id',
+        'spay_neuter_appointment_id',
         'owner_id',
         'barangay_id',
         'procedure_type',
@@ -141,6 +144,14 @@ class SpayNeuterReport extends Model
     public function barangay(): BelongsTo
     {
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
+    }
+
+    /**
+     * Get the appointment this report was generated from.
+     */
+    public function spayNeuterAppointment(): BelongsTo
+    {
+        return $this->belongsTo(SpayNeuterAppointment::class, 'spay_neuter_appointment_id');
     }
 
     /**

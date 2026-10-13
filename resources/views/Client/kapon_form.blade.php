@@ -251,22 +251,6 @@
                             </label>
                         </div>
 
-                        <!-- Keep indoors -->
-                        <div>
-                            <label class="inline-flex items-start cursor-pointer">
-                                <input type="checkbox" name="general_agreement[keep_indoors]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
-                                <span class="ml-3 text-sm text-gray-700">I will keep my pet/s indoors until they are fully healed. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Keep incision dry -->
-                        <div>
-                            <label class="inline-flex items-start cursor-pointer">
-                                <input type="checkbox" name="general_agreement[keep_dry]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
-                                <span class="ml-3 text-sm text-gray-700">I will keep their incision dry and refrain from bathing this animal for the next 2 weeks. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
                         <!-- Full authority -->
                         <div>
                             <label class="inline-flex items-start cursor-pointer">
@@ -298,7 +282,8 @@
 
                         <!-- Submit Button (vaccination-style, centered) -->
                         <div class="flex justify-center mt-8">
-                            <button type="submit" class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center gap-2">
+                            <button type="submit" id="kaponSubmitButton" disabled
+                                    class="bg-gray-300 text-gray-500 px-12 py-3 rounded-lg font-semibold flex items-center gap-2 cursor-not-allowed">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
@@ -1126,6 +1111,33 @@
 </main>
 
 <script>
+    // Enable the submit button only when every general agreement checkbox is checked
+    function updateSubmitButtonState() {
+        const submitBtn = document.getElementById('kaponSubmitButton');
+        if (!submitBtn) return;
+
+        const checkboxes = document.querySelectorAll('#kaponForm input[name^="general_agreement"]');
+        const allChecked = Array.from(checkboxes).length > 0 &&
+            Array.from(checkboxes).every(cb => cb.checked);
+
+        submitBtn.disabled = !allChecked;
+
+        if (allChecked) {
+            submitBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+            submitBtn.classList.add('bg-primary', 'text-white', 'hover:bg-primary-light', 'transition-colors');
+        } else {
+            submitBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+            submitBtn.classList.remove('bg-primary', 'text-white', 'hover:bg-primary-light', 'transition-colors');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('#kaponForm input[name^="general_agreement"]').forEach(function (cb) {
+            cb.addEventListener('change', updateSubmitButtonState);
+        });
+        updateSubmitButtonState();
+    });
+
     // Generate per-pet agreement cards for Part 3
     function generatePetAgreementCards() {
         const container = document.getElementById('petAgreementsContainer');

@@ -150,54 +150,49 @@ Route::get('/appointments/slots', function (Request $request) {
     
     // Time slots: 8 AM to 4 PM (removed 12:00 and 16:00)
     $timeSlots = ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00'];
-    
-    // Get existing appointments from appointments table
-    $existingByHour = \App\Models\Appointment::where('appointment_date', $date)
-        ->where('service_type', $serviceType)
-        ->get()
-        ->groupBy('appointment_time')
-        ->map(fn($group) => $group->count())
-        ->toArray();
-    
-    // Get existing requests from service-specific table
-    $reportsByHour = [];
-    if ($serviceType === 'kapon') {
-        $existingRequests = \App\Models\SpayNeuterReport::whereDate('scheduled_at', $date)
-            ->whereIn('status', ['pending', 'scheduled'])
-            ->whereNotNull('scheduled_at')
-            ->get();
-        
-        foreach ($existingRequests as $report) {
-            $time = date('H:00', strtotime($report->scheduled_at));
-            if (!isset($reportsByHour[$time])) {
-                $reportsByHour[$time] = 0;
-            }
-            $reportsByHour[$time]++;
+
+    // Get existing bookings, per hour, from the table that owns this service
+    $bookedByHour = [];
+
+    if ($serviceType === 'adoption_interview') {
+        $existingByHour = \App\Models\Appointment::where('appointment_date', $date)
+            ->where('service_type', $serviceType)
+            ->get()
+            ->groupBy('appointment_time')
+            ->map(fn($group) => $group->count())
+            ->toArray();
+
+        foreach ($timeSlots as $time) {
+            $bookedByHour[$time] = $existingByHour[$time] ?? 0;
         }
-    } elseif ($serviceType === 'vaccination') {
-        $existingRequests = \App\Models\VaccinationAppointment::whereDate('scheduled_at', $date)
-            ->whereIn('status', ['pending', 'scheduled'])
-            ->whereNotNull('scheduled_at')
-            ->get();
-        
-        foreach ($existingRequests as $report) {
-            $time = date('H:00', strtotime($report->scheduled_at));
-            if (!isset($reportsByHour[$time])) {
-                $reportsByHour[$time] = 0;
+    } else {
+        // kapon -> spay_neuter_appointments, vaccination -> vaccination_appointments
+        if ($serviceType === 'kapon') {
+            $existingRequests = \App\Models\SpayNeuterAppointment::whereDate('scheduled_at', $date)
+                ->whereIn('status', ['pending', 'scheduled'])
+                ->whereNotNull('scheduled_at')
+                ->get();
+        } elseif ($serviceType === 'vaccination') {
+            $existingRequests = \App\Models\VaccinationAppointment::whereDate('scheduled_at', $date)
+                ->whereIn('status', ['pending', 'scheduled'])
+                ->whereNotNull('scheduled_at')
+                ->get();
+        } else {
+            $existingRequests = collect();
+        }
+
+        foreach ($existingRequests as $appointment) {
+            $time = date('H:00', strtotime($appointment->scheduled_at));
+            if (!isset($bookedByHour[$time])) {
+                $bookedByHour[$time] = 0;
             }
-            $reportsByHour[$time]++;
+            $bookedByHour[$time]++;
         }
     }
-    
-    // Merge counts from both tables
-    $combinedByHour = [];
-    foreach ($timeSlots as $time) {
-        $combinedByHour[$time] = ($existingByHour[$time] ?? 0) + ($reportsByHour[$time] ?? 0);
-    }
-    
+
     // Build slot data
-    $slots = collect($timeSlots)->map(function ($time) use ($combinedByHour, $hourlyCapacity) {
-        $count = $combinedByHour[$time] ?? 0;
+    $slots = collect($timeSlots)->map(function ($time) use ($bookedByHour, $hourlyCapacity) {
+        $count = $bookedByHour[$time] ?? 0;
         
         $status = 'available';
         if ($count >= $hourlyCapacity) {
@@ -215,12 +210,12 @@ Route::get('/appointments/slots', function (Request $request) {
         ];
     })->toArray();
     
-    $dailyRemaining = max(0, $dailyCapacity - array_sum($combinedByHour));
+    $dailyRemaining = max(0, $dailyCapacity - array_sum($bookedByHour));
     
     return response()->json([
         'success' => true,
         'slots' => $slots,
-        'daily_weight_used' => array_sum($combinedByHour),
+        'daily_weight_used' => array_sum($bookedByHour),
         'daily_remaining' => $dailyRemaining,
         'capacity_limit' => $dailyCapacity,
         'hourly_capacity' => $hourlyCapacity,
@@ -230,7 +225,7 @@ Route::get('/appointments/slots', function (Request $request) {
 
 // Check if a specific pet already has a kapon appointment
 Route::get('/appointments/check-pet/{petId}/{userId}', function ($petId, $userId) {
-    $existingAppointment = \App\Models\SpayNeuterReport::where('user_id', $userId)
+    $existingAppointment = \App\Models\SpayNeuterAppointment::where('user_id', $userId)
         ->where('pet_id', $petId)
         ->whereIn('status', ['pending', 'scheduled'])
         ->whereNotNull('scheduled_at')

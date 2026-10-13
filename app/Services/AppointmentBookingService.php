@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\AppointmentSlotTakenException;
 use App\Models\Appointment;
-use App\Models\SpayNeuterReport;
+use App\Models\SpayNeuterAppointment;
 use App\Models\VaccinationAppointment;
 use App\Models\VaccinationReport;
 use Carbon\Carbon;
@@ -18,7 +18,7 @@ class AppointmentBookingService
             $scheduledAt = Carbon::parse("{$date} {$time}");
 
             foreach ($selectedPetIds as $petId) {
-                $existingKapon = SpayNeuterReport::where('pet_id', $petId)
+                $existingKapon = SpayNeuterAppointment::where('pet_id', $petId)
                     ->whereDate('scheduled_at', $date)
                     ->whereIn('status', ['pending', 'scheduled'])
                     ->whereNotNull('scheduled_at')
@@ -35,7 +35,7 @@ class AppointmentBookingService
             $hourStart = Carbon::parse($time);
             $hourEnd = $hourStart->copy()->addHour();
 
-            $kaponsInHour = SpayNeuterReport::whereDate('scheduled_at', $date)
+            $kaponsInHour = SpayNeuterAppointment::whereDate('scheduled_at', $date)
                 ->whereTime('scheduled_at', '>=', $hourStart)
                 ->whereTime('scheduled_at', '<', $hourEnd)
                 ->whereIn('status', ['pending', 'scheduled'])

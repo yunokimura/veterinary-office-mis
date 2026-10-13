@@ -78,6 +78,7 @@ use App\Models\Barangay;
 use App\Models\MissingPetsReport;
 use App\Models\Pet;
 use App\Models\PetOwner;
+use App\Models\SpayNeuterAppointment;
 use App\Models\SpayNeuterReport;
 use App\Models\VaccinationAppointment;
 use App\Models\VaccinationReport;
@@ -813,8 +814,8 @@ Route::post('/kapon/form', function (Request $request) {
         'general_agreement' => 'nullable|array',
     ]);
 
-    // Get authenticated user's PetOwner
-    $petOwner = auth()->user()->petOwner;
+    // Get authenticated user's PetOwner, with address + barangay prefetched
+    $petOwner = auth()->user()->petOwner()->with(['address.barangay'])->first();
 
     if (! $petOwner) {
         return redirect()->back()->with('error', 'Please complete your profile first.');
@@ -828,7 +829,7 @@ Route::post('/kapon/form', function (Request $request) {
         $pet = collect($petsData)->firstWhere('id', (string) $petId);
 
         if ($pet && isset($pet['name'])) {
-            $existingBooking = SpayNeuterReport::where('user_id', auth()->id())
+            $existingBooking = SpayNeuterAppointment::where('user_id', auth()->id())
                 ->where('pet_id', $petId)
                 ->whereDate('scheduled_at', $validated['appointment_date'])
                 ->whereIn('status', ['pending', 'scheduled'])
@@ -853,33 +854,22 @@ Route::post('/kapon/form', function (Request $request) {
         return redirect()->back()->with('error', $e->getMessage())->withInput();
     }
 
-    // Resolve barangay_id from PetOwner's barangay string
-    $barangay = Barangay::firstOrCreate(
-        ['barangay_name' => $petOwner->barangay],
-        ['city' => 'Dasmariñas City', 'province' => 'Cavite', 'status' => 'active']
-    );
+    // Resolve barangay_id from the owner's primary address (falls back to null)
+    $barangayId = $petOwner->address?->barangay_id
+        ?? $petOwner->address?->barangay?->barangay_id
+        ?? null;
 
-    // Handle photo uploads
-    $photoPaths = [];
-    if ($request->hasFile('pet_photos')) {
-        foreach ($request->file('pet_photos') as $petId => $files) {
-            foreach ($files as $file) {
-                if ($file->isValid()) {
-                    $path = $file->store('kapon_photos', 'public');
-                    $photoPaths[$petId][] = $path;
-                }
-            }
-        }
+    // Resolve the owner's existing address (same fallback used by the vaccination form)
+    $addressId = $petOwner->address_id ?? null;
+    if (! $addressId && $petOwner->address) {
+        $addressId = $petOwner->address->id ?? null;
     }
-
-    // Get pet details from form's pets_data JSON
-    $petsData = json_decode($request->input('pets_data'), true);
 
     // Initialize veterinarian rotation service
     $rotationService = new VeterinarianRotationService;
     $assignedVeterinarian = $rotationService->assignVeterinarian();
 
-    // Create one SpayNeuterReport per selected pet
+    // Create one appointment per selected pet (reports are generated on completion)
     foreach ($validated['selected_pets'] as $petId) {
         $pet = collect($petsData)->firstWhere('id', (string) $petId);
 
@@ -889,32 +879,26 @@ Route::post('/kapon/form', function (Request $request) {
         // Determine procedure type based on pet sex
         $procedureType = ($petSex === 'male') ? 'neuter' : 'spay';
 
-        // Format pet_age (kept for historical display but stored via accessor from pet relation)
-        // We'll store formatted string still in pet_age column for historical record
-        $petAgeDisplay = null;
-        if (isset($pet['age'])) {
-            $ageStr = $pet['age'];
-            $petAgeDisplay = ucfirst(str_replace('_', ' ', $ageStr));
+        // Extract the numeric part of the weight (stored as e.g. "17 kg")
+        $weight = $pet['weight'] ?? null;
+        if (is_string($weight)) {
+            preg_match('/\d+(\.\d+)?/', $weight, $weightMatches);
+            $weight = $weightMatches[0] ?? null;
         }
 
-        // Build remarks metadata
-        $remarks = [
-            'email' => $petOwner->email,
-            'photo_paths' => $photoPaths[$petId] ?? [],
-            'general_agreement' => $request->input('general_agreement', []),
-        ];
-
-        SpayNeuterReport::create([
+        SpayNeuterAppointment::create([
             'user_id' => auth()->id(),
             'pet_id' => $petId,
             'owner_id' => $petOwner->owner_id,
-            'barangay_id' => $barangay->barangay_id,
+            'address_id' => $addressId,
+            'barangay_id' => $barangayId,
             'procedure_type' => $procedureType,
             'scheduled_at' => $validated['appointment_date'].' '.$validated['appointment_time'].':00',
-            'weight' => $pet['weight'] ?? null,
+            'weight' => $weight,
             'status' => 'pending',
-            'remarks' => json_encode($remarks),
+            'general_agreement' => $request->input('general_agreement', []),
             'veterinarian' => $assignedVeterinarian,
+            'assigned_vet' => null,
         ]);
     }
 
