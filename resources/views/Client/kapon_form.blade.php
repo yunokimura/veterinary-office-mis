@@ -229,6 +229,83 @@
                     </div>
                 </div>
 
+                <!-- Card 4: GENERAL AGREEMENT -->
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                    <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <h4 class="text-sm font-semibold text-white">GENERAL AGREEMENT</h4>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <!-- Secure cage/leash -->
+                        <div>
+                            <label class="inline-flex items-start cursor-pointer">
+                                <input type="checkbox" name="general_agreement[secure_cage]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
+                                <span class="ml-3 text-sm text-gray-700">I understand that I must place my pet/s inside a secure cage or leash. <span class="text-red-500">*</span></span>
+                            </label>
+                        </div>
+
+                        <!-- Keep indoors -->
+                        <div>
+                            <label class="inline-flex items-start cursor-pointer">
+                                <input type="checkbox" name="general_agreement[keep_indoors]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
+                                <span class="ml-3 text-sm text-gray-700">I will keep my pet/s indoors until they are fully healed. <span class="text-red-500">*</span></span>
+                            </label>
+                        </div>
+
+                        <!-- Keep incision dry -->
+                        <div>
+                            <label class="inline-flex items-start cursor-pointer">
+                                <input type="checkbox" name="general_agreement[keep_dry]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
+                                <span class="ml-3 text-sm text-gray-700">I will keep their incision dry and refrain from bathing this animal for the next 2 weeks. <span class="text-red-500">*</span></span>
+                            </label>
+                        </div>
+
+                        <!-- Full authority -->
+                        <div>
+                            <label class="inline-flex items-start cursor-pointer">
+                                <input type="checkbox" name="general_agreement[full_authority]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
+                                <span class="ml-3 text-sm text-gray-700">I hereby give the Dasmariñas City Veterinary Office (CVO) and its attending veterinarians and staff full authority to perform the procedure. <span class="text-red-500">*</span></span>
+                            </label>
+                        </div>
+
+                        <!-- Valid ID -->
+                        <div>
+                            <label class="inline-flex items-start cursor-pointer">
+                                <input type="checkbox" name="general_agreement[valid_id]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
+                                <span class="ml-3 text-sm text-gray-700">I will bring and present a valid primary ID before entering the premises of the CVO for security purposes. <span class="text-red-500">*</span></span>
+                            </label>
+                        </div>
+
+                        <!-- Confirmation of Location -->
+                        <div>
+                            <label class="inline-flex items-start cursor-pointer">
+                                <input type="checkbox" name="general_agreement[location]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
+                                <span class="ml-3 text-sm text-gray-700">Confirmation of location: I am aware that the spay/neuter surgery will be performed at the veterinary office located in Dasmariñas City. <span class="text-red-500">*</span></span>
+                            </label>
+                        </div>
+
+                        <!-- Disclaimer -->
+                        <div class="mt-6 bg-red-50 border-l-4 border-red-500 p-4">
+                            <p class="text-sm text-red-700">*** Dasmariñas City Veterinary Office (CVO) and its licensed veterinarians will not be held liable in the event of complications, including injury or death, during surgery. These may result due to undiagnosed illnesses that may be detected and treated if a blood test is performed.</p>
+                            <p class="text-sm text-red-700 mt-2">*** Pure and half-breed pets or brachycephalic (short-nosed) breeds are required to submit the results of blood tests prior to surgery. It is highly recommended that aspins and puspins with preexisting conditions be tested as well.</p>
+                        </div>
+
+                        <!-- Submit Button (vaccination-style, centered) -->
+                        <div class="flex justify-center mt-8">
+                            <button type="submit" class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Submit Application
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- PART 1: OWNER'S INFO -->
                 <div id="part1" class="form-part">
                     <div class="mb-8">
