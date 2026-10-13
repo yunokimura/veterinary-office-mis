@@ -104,6 +104,8 @@
             <form method="POST" action="{{ url('/kapon/form') }}" enctype="multipart/form-data" id="kaponForm">
                 @csrf
                 <input type="hidden" name="pets_data" id="petsDataJson" value="">
+                <input type="hidden" name="appointment_date" id="appointment_date" value="">
+                <input type="hidden" name="appointment_time" id="appointment_time" value="">
 
                 <!-- PART 1: OWNER'S INFO -->
                 <div id="part1" class="form-part">
