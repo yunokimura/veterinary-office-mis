@@ -70,38 +70,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Main Content -->
             <div class="lg:col-span-8">
-                <!-- Form Card with Progress Steps -->
-                <div class="bg-white border border-gray-200 rounded-lg p-8">
-            <!-- Progress Bar -->
-            <div class="mb-8">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700" id="stepLabel">Step 1 of 4</span>
-                    <span class="text-sm font-medium text-primary" id="stepTitle">Part 1: Owner's Information</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div id="progressBar" class="bg-primary h-2.5 rounded-full transition-all duration-300" style="width: 25%"></div>
-                </div>
-                <div class="flex justify-between mt-2">
-                    <div class="text-xs text-center flex-1">
-                        <div id="step1Indicator" class="font-semibold text-primary">1</div>
-                        <div class="text-gray-500">Owner</div>
-                    </div>
-                    <div class="text-xs text-center flex-1">
-                        <div id="step2Indicator" class="font-semibold text-gray-400">2</div>
-                        <div class="text-gray-400">Pet</div>
-                    </div>
-                    <div class="text-xs text-center flex-1">
-                        <div id="step3Indicator" class="font-semibold text-gray-400">3</div>
-                        <div class="text-gray-400">Agreement</div>
-                    </div>
-                    <div class="text-xs text-center flex-1">
-                        <div id="step4Indicator" class="font-semibold text-gray-400">4</div>
-                        <div class="text-gray-400">General</div>
-                    </div>
-                </div>
-            </div>
-
-            <form method="POST" action="{{ url('/kapon/form') }}" enctype="multipart/form-data" id="kaponForm">
+                <form method="POST" action="{{ url('/kapon/form') }}" enctype="multipart/form-data" id="kaponForm" onsubmit="return validateKaponForm(event)">
                 @csrf
                 <input type="hidden" name="pets_data" id="petsDataJson" value="">
                 <input type="hidden" name="appointment_date" id="appointment_date" value="">
@@ -303,193 +272,7 @@
                                 Submit Application
                             </button>
                         </div>
-                    </div>
-                </div>
-
-                <!-- PART 1: OWNER'S INFO -->
-                <div id="part1" class="form-part">
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 1: Owner's Information</h3>
-
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <!-- Name -->
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Pet Owner's Name <span class="text-red-500">*</span>
-                                    <span class="text-gray-500 text-xs ml-2">(First name and Last name)</span>
-                                </label>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <input type="text" name="first_name" placeholder="First Name" value="{{ $petOwner->first_name ?? '' }}" readonly
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
-                                    <input type="text" name="last_name" placeholder="Last Name" value="{{ $petOwner->last_name ?? '' }}" readonly
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
-                                </div>
-                            </div>
-
-                            <!-- Email -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Email <span class="text-red-500">*</span>
-                                </label>
-                                <input type="email" name="email" placeholder="Enter Email" value="{{ $user->email ?? '' }}" readonly
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
-                            </div>
-
-                            <!-- Mobile Number -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Mobile Number <span class="text-red-500">*</span>
-                                </label>
-                                <div class="flex">
-                                    <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                                        +63
-                                    </span>
-                                    <input type="tel" name="mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ $petOwner->phone_number ?? '' }}" readonly
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-200 bg-gray-50 text-gray-700 outline-none">
-                                </div>
-                            </div>
-
-                            <!-- Alternate Mobile Number -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Alternate Mobile Number
-                                </label>
-                                <div class="flex">
-                                    <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                                        +63
-                                    </span>
-                                    <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('alt_mobile_number', $petOwner->alternate_phone_number ?? '') }}" class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                </div>
-                            </div>
-
-                             <!-- House No. / Unit No. -->
-                             <div>
-                                 <label class="block text-sm font-medium mb-1.5">
-                                     House No. / Unit No. <span class="text-red-500">*</span>
-                                 </label>
-                                 <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ $petOwner->address->block_lot_phase ?? '' }}" readonly
-                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
-                             </div>
-
-                             <!-- Street -->
-                             <div>
-                                 <label class="block text-sm font-medium mb-1.5">
-                                     Street <span class="text-red-500">*</span>
-                                 </label>
-                                 <input type="text" name="street" placeholder="Street" value="{{ $petOwner->address->street ?? '' }}" readonly
-                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
-                             </div>
-
-                             <!-- Barangay -->
-                             <div>
-                                 <label class="block text-sm font-medium mb-1.5">
-                                     Barangay <span class="text-red-500">*</span>
-                                 </label>
-                                 <input type="text" name="barangay" placeholder="Barangay" value="{{ $petOwner->address->barangay->barangay_name ?? '' }}" readonly
-                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700">
-                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Navigation Buttons for Part 1 -->
-                    <div class="flex justify-between items-center mt-8">
-                        <a href="{{ url('/kapon') }}" class="text-gray-600 hover:text-primary transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Back to Kapon Page
-                        </a>
-                        <button type="button" onclick="goToStep(2)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
-                            Next: Pet's Information
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- PART 2: PET'S INFO -->
-                <div id="part2" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 2: Pet's Information</h3>
-
-                    <!-- Important Notes -->
-                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
-                        <p class="font-semibold text-yellow-700 mb-2">IMPORTANT NOTES:</p>
-                        <ul class="list-disc list-inside text-sm text-yellow-700 space-y-1">
-                            <li><strong>Post-Cesarean/Major Surgery Cases:</strong> If your pet has undergone cesarean or major surgery related to reproductive organs, please book at another veterinary clinic.</li>
-                            <li><strong>Vaccinations and Kapon Surgery:</strong> If your pet has been recently vaccinated or is scheduled for vaccination, we recommend scheduling 2 weeks before or after.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Selected Pets Display Area -->
-                    <div id="selectedPetsContainer" class="mb-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <label class="block text-sm font-medium">
-                                Selected Pets <span class="text-red-500">*</span>
-                            </label>
-                            <button type="button" onclick="openPetModal()" 
-                                    class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                </svg>
-                                Select Pet
-                            </button>
-                        </div>
-                        
-                        <!-- Display selected pet cards here -->
-                        <div id="selectedPetsList" class="grid md:grid-cols-2 gap-4">
-                            <!-- Empty state -->
-                            <div id="noPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <p class="text-gray-500">No pets selected yet. Click "Select Pet" to choose from your registered pets.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Per-pet appointment scheduling will be added dynamically -->
-                    <div id="alreadyScheduledWarning" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div class="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <div>
-                                <h4 class="font-semibold text-red-700">Already Scheduled</h4>
-                                <p id="alreadyScheduledText" class="text-sm text-red-600 mt-1"></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Photo Uploads for Each Selected Pet -->
-                    <div id="petPhotosContainer" class="mb-6">
-                        <label class="block text-sm font-medium pt-4 mb-3">
-                            Appointment Date & Upload Photo <span class="text-red-500">*</span>
-                        </label>
-                        <div id="petPhotoFields" class="space-y-4">
-                            <!-- Photo upload fields will be dynamically added here -->
-                            <div id="noPhotosMessage" class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
-                                <p class="text-gray-500 text-sm">Select a pet first to set appointment and upload photos</p>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-500 italic mt-2">Required views: Head, Face, Body – top and side view (while standing on all four legs) and Genitals. Max. file size: 8MB per pet</p>
-                    </div>
-                    
-                    <!-- Navigation Buttons for Part 2 -->
-                    <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(1)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Previous
-                        </button>
-                        <button type="button" onclick="goToStep(3)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
-                            Next: Agreement
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </div>
+</div>
                 </div>
 
                 <!-- Pet Selection Modal -->
@@ -916,6 +699,31 @@
                         document.body.style.overflow = 'auto';
                     }
 
+                    // 9.4: Submit guard - check if any pet has a schedule
+                    function validateKaponForm(event) {
+                        const hasSchedule = selectedPets.some(petId => {
+                            const date = document.getElementById(`kaponHiddenDate_${petId}`)?.value;
+                            const time = document.getElementById(`kaponHiddenTime_${petId}`)?.value;
+                            return date && time;
+                        });
+                        
+                        if (!hasSchedule && selectedPets.length > 0) {
+                            event.preventDefault();
+                            const schedulingCard = document.getElementById('kaponSchedulingContainer');
+                            if (schedulingCard) {
+                                schedulingCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                            // Show a brief warning
+                            const warning = document.getElementById('alreadyScheduledWarning');
+                            if (warning) {
+                                warning.classList.remove('hidden');
+                                document.getElementById('alreadyScheduledText').textContent = 'Please schedule an appointment for at least one pet before submitting.';
+                            }
+                            return false;
+                        }
+                        return true;
+                    }
+
                     function updateSelectedCount() {
                         document.getElementById('selectedCount').textContent = selectedPets.length;
                         updateHeaderCountBadges();
@@ -1162,6 +970,8 @@
 
                         // Update hidden pets_data field with current pet selection
                         updatePetsData();
+                        // 9.5: Generate agreement cards immediately so browser required validation works
+                        generatePetAgreementCards();
                         closePetModal();
                     }
 
@@ -1234,125 +1044,7 @@
                     }
                 </script>
 
-                <!-- PART 3: PER-PET AGREEMENT -->
-                <div id="part3" class="form-part hidden">
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 3: Agreement</h3>
-                    </div>
-
-                    <!-- Dynamic Per-Pet Agreement Cards -->
-                    <div id="petAgreementsContainer" class="space-y-6">
-                        <!-- Pet agreement cards will be dynamically generated here -->
-                        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
-                            <p class="text-sm text-yellow-700">Please select pets in Part 2 first to see the agreement forms.</p>
-                        </div>
-                    </div>
-
-                    <!-- Navigation Buttons for Part 3 -->
-                    <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(2)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Previous
-                        </button>
-                        <button type="button" onclick="goToStep(4)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
-                            Next: General Agreement
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- PART 4: GENERAL AGREEMENT -->
-                <div id="part4" class="form-part hidden">
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 4: General Agreement</h3>
-                    </div>
-
-                    <div class="space-y-6">
-                        <!-- Secure cage/leash -->
-                        <div>
-                            <label class="inline-flex items-start">
-                                <input type="checkbox" name="general_agreement[secure_cage]" value="yes" class="mt-1 text-primary">
-                                <span class="ml-2 text-sm text-gray-700">I understand that I must place my pet/s inside a secure cage or leash. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Keep indoors -->
-                        <div>
-                            <label class="inline-flex items-start">
-                                <input type="checkbox" name="general_agreement[keep_indoors]" value="yes" class="mt-1 text-primary">
-                                <span class="ml-2 text-sm text-gray-700">I will keep my pet/s indoors until they are fully healed. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Keep incision dry -->
-                        <div>
-                            <label class="inline-flex items-start">
-                                <input type="checkbox" name="general_agreement[keep_dry]" value="yes" class="mt-1 text-primary">
-                                <span class="ml-2 text-sm text-gray-700">I will keep their incision dry and refrain from bathing this animal for the next 2 weeks. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Full authority -->
-                        <div>
-                            <label class="inline-flex items-start">
-                                <input type="checkbox" name="general_agreement[full_authority]" value="yes" class="mt-1 text-primary">
-                                <span class="ml-2 text-sm text-gray-700">I hereby give the Dasmariñas City Veterinary Office (CVO) and its attending veterinarians and staff full authority to perform the procedure. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Valid ID -->
-                        <div>
-                            <label class="inline-flex items-start">
-                                <input type="checkbox" name="general_agreement[valid_id]" value="yes" class="mt-1 text-primary">
-                                <span class="ml-2 text-sm text-gray-700">I will bring and present a valid primary ID before entering the premises of the CVO for security purposes. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Confirmation of Location -->
-                        <div>
-                            <label class="inline-flex items-start">
-                                <input type="checkbox" name="general_agreement[location]" value="yes" class="mt-1 text-primary">
-                                <span class="ml-2 text-sm text-gray-700">Confirmation of location: I am aware that the spay/neuter surgery will be performed at the veterinary office located in Dasmariñas City. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Disclaimer -->
-                    <div class="mt-6 bg-red-50 border-l-4 border-red-500 p-4">
-                        <p class="text-sm text-red-700">*** Dasmariñas City Veterinary Office (CVO) and its licensed veterinarians will not be held liable in the event of complications, including injury or death, during surgery. These may result due to undiagnosed illnesses that may be detected and treated if a blood test is performed.</p>
-                        <p class="text-sm text-red-700 mt-2">*** Pure and half-breed pets or brachycephalic (short-nosed) breeds are required to submit the results of blood tests prior to surgery. It is highly recommended that aspins and puspins with preexisting conditions be tested as well.</p>
-                    </div>
-
-                    <!-- Submit Button with Navigation -->
-                    <div class="mt-12 pt-8 border-t">
-                        <!-- Row 1: Previous and Submit buttons -->
-                        <div class="flex justify-between items-center mb-6">
-                            <button type="button" onclick="goToStep(3)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center w-40 justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                                </svg>
-                                Previous
-                            </button>
-                            
-                            <button type="submit" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors w-40">
-                                Submit
-                            </button>
-                        </div>
-                        
-                        <!-- Row 2: Back to Kapon link (centered) -->
-                        <div class="text-center">
-                            <a href="{{ url('/kapon') }}" class="inline-block text-gray-600 hover:text-primary transition-colors">
-                                ← Back to Kapon Page
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </form>
-            </div>
 
             <!-- Right Sidebar -->
             <div class="lg:col-span-4 space-y-6">
@@ -1452,62 +1144,6 @@
     @include('Client.partials.footer')
 
 <script>
-    // Multi-step form navigation
-    function goToStep(step) {
-        // Hide all parts
-        document.querySelectorAll('.form-part').forEach(part => {
-            part.classList.add('hidden');
-        });
-        
-        // Show the selected part
-        document.getElementById('part' + step).classList.remove('hidden');
-        
-        // Update progress bar
-        const progressBar = document.getElementById('progressBar');
-        const stepLabel = document.getElementById('stepLabel');
-        const stepTitle = document.getElementById('stepTitle');
-        const step1Indicator = document.getElementById('step1Indicator');
-        const step2Indicator = document.getElementById('step2Indicator');
-        const step3Indicator = document.getElementById('step3Indicator');
-        const step4Indicator = document.getElementById('step4Indicator');
-        
-        // Update progress percentage
-        progressBar.style.width = (step * 25) + '%';
-        stepLabel.textContent = 'Step ' + step + ' of 4';
-        
-        // Update step titles
-        if (step === 1) {
-            stepTitle.textContent = 'Part 1: Owner\'s Information';
-            step1Indicator.className = 'font-semibold text-primary';
-            step2Indicator.className = 'font-semibold text-gray-400';
-            step3Indicator.className = 'font-semibold text-gray-400';
-            step4Indicator.className = 'font-semibold text-gray-400';
-        } else if (step === 2) {
-            stepTitle.textContent = 'Part 2: Pet\'s Information';
-            step1Indicator.className = 'font-semibold text-green-600';
-            step2Indicator.className = 'font-semibold text-primary';
-            step3Indicator.className = 'font-semibold text-gray-400';
-            step4Indicator.className = 'font-semibold text-gray-400';
-        } else if (step === 3) {
-            stepTitle.textContent = 'Part 3: Agreement';
-            step1Indicator.className = 'font-semibold text-green-600';
-            step2Indicator.className = 'font-semibold text-green-600';
-            step3Indicator.className = 'font-semibold text-primary';
-            step4Indicator.className = 'font-semibold text-gray-400';
-            // Generate pet agreement cards when entering Part 3
-            generatePetAgreementCards();
-        } else if (step === 4) {
-            stepTitle.textContent = 'Part 4: General Agreement';
-            step1Indicator.className = 'font-semibold text-green-600';
-            step2Indicator.className = 'font-semibold text-green-600';
-            step3Indicator.className = 'font-semibold text-green-600';
-            step4Indicator.className = 'font-semibold text-primary';
-        }
-        
-        // Scroll to top of form
-        document.getElementById('part' + step).scrollIntoView({ behavior: 'smooth' });
-    }
-
     // Generate per-pet agreement cards for Part 3
     function generatePetAgreementCards() {
         const container = document.getElementById('petAgreementsContainer');
