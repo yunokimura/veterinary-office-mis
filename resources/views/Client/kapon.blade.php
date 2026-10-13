@@ -427,65 +427,52 @@
                 <!-- FAQ 1 -->
                 <div class="bg-slate-50 rounded-2xl border border-slate-100 card-hover overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-slate-900">Why should I spay/neuter my pet?</span>
+                        <span class="font-semibold text-slate-900">Why should I spay/neuter (kapon) my pet?</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="hidden px-6 pb-4 text-slate-600">
-                        <p>In addition to avoiding unwanted litters, they will also avoid a number of illnesses and infections if they are neutered, therefore helping them live longer and happier lives.</p>
+                        <p>Spaying or neutering prevents unexpected puppies or kittens and protects your pet from dangerous infections and cancers—helping them live a longer, healthier life.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 2 -->
                 <div class="bg-slate-50 rounded-2xl border border-slate-100 card-hover overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-slate-900">Can my pet die from the surgery?</span>
+                        <span class="font-semibold text-slate-900">Is spay/neuter surgery safe for my pet?</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="hidden px-6 pb-4 text-slate-600">
-                        <p>Spay and neuter surgeries are safe procedures. The risks are not related to the surgery itself, but to pre-existing conditions that your pet may have. This is why we require a blood test to ensure that your pet is healthy before the surgery. Complications may arise during the procedure, but that is also the case with any other type of surgery, and it is relatively rare.</p>
+                        <p>Yes, spay and neuter procedures are routine, safe, and regularly performed by our veterinary team. As with any surgery under anesthesia, minor risks exist, but serious complications are extremely rare. Every pet is evaluated prior to surgery to ensure they are healthy for the procedure.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 3 -->
                 <div class="bg-slate-50 rounded-2xl border border-slate-100 card-hover overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-slate-900">Is it true that I should wait until they have their first litter before spaying/neutering?</span>
+                        <span class="font-semibold text-slate-900">Should I wait for my pet to have puppies/kittens before kapon?</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="hidden px-6 pb-4 text-slate-600">
-                        <p>There is no scientific basis for this. In fact, science tells us that it's better to spay/neuter your pet before their first heat. Waiting for a first litter is completely unnecessary — even risky, since complications may arise while giving birth and it could be fatal.</p>
+                        <p>No. Medical evidence shows that spaying or neutering before your pet's first heat cycle provides the greatest health benefits, including a significantly lower risk of mammary tumors and infections.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 4 -->
                 <div class="bg-slate-50 rounded-2xl border border-slate-100 card-hover overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-slate-900">Do you offer free spay/neuter surgery?</span>
+                        <span class="font-semibold text-slate-900">Do you offer free spay/neuter (kapon) services?</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="hidden px-6 pb-4 text-slate-600">
-                        <p>We offer free kapon at the shelter every February. Please follow our Facebook or Instagram for updates on when the next one is scheduled and how to register. You may also coordinate with your LGU and request to organize a kapon outreach in your area.</p>
-                    </div>
-                </div>
-
-                <!-- FAQ 5 -->
-                <div class="bg-slate-50 rounded-2xl border border-slate-100 card-hover overflow-hidden">
-                    <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-slate-900">Can you spay/neuter the stray cats in our neighborhood?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="hidden px-6 pb-4 text-slate-600">
-                        <p>Yes, but it has to be under an organized TNVR (Trap-Neuter-Vaccinate-Return) program with your community. Proper TNVR is the ONLY sustainable solution to our stray population problems. Learn more about TNVR here.</p>
+                        <p>City Veterinary Services periodically conducts free or subsidized Kapon drives across Dasmariñas barangays. Check our homepage announcement banner or 'Services' schedule to view upcoming community drive dates.</p>
                     </div>
                 </div>
 
@@ -498,20 +485,20 @@
                         </svg>
                     </button>
                     <div class="hidden px-6 pb-4 text-slate-600">
-                        <p>Physiological and hormonal changes may affect your pet's metabolism and appetite, making them prone to weight gain.</p>
+                        <p>Metabolism slightly slows post-surgery, but weight gain is easily managed with a balanced diet and regular everyday activity.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 7 -->
                 <div class="bg-slate-50 rounded-2xl border border-slate-100 card-hover overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-slate-900">Can spaying/neutering fix my pet's behavioral problems?</span>
+                        <span class="font-semibold text-slate-900">Will spaying/neutering fix behavioral problems?</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="hidden px-6 pb-4 text-slate-600">
-                        <p>It can only reduce undesirable behavior that is caused by the heat cycle, such as aggressiveness, marking or spraying, or the tendency to run away to search for a mate. Proper training is still the best way to have a well-mannered pet.</p>
+                        <p>Kapon reduces hormone-driven behaviors like roaming, marking, and aggression towards other animals, though general training and exercise are still essential for pet behavior.</p>
                     </div>
                 </div>
             </div>
@@ -582,6 +569,10 @@
 
             content.classList.toggle('hidden');
             icon.classList.toggle('rotate-180');
+        }
+    </script>
+</body>
+</html>
         }
     </script>
 </body>
