@@ -67,8 +67,11 @@
             </div>
         @endif
 
-        <!-- Form Card with Progress Steps -->
-        <div class="bg-white border border-gray-200 rounded-lg p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Main Content -->
+            <div class="lg:col-span-8">
+                <!-- Form Card with Progress Steps -->
+                <div class="bg-white border border-gray-200 rounded-lg p-8">
             <!-- Progress Bar -->
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-2">
@@ -1067,6 +1070,14 @@
                     </div>
                 </div>
             </form>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="lg:col-span-4">
+                <div class="lg:sticky lg:top-20 space-y-6">
+                    <!-- Sidebar content will go here (Task 7) -->
+                </div>
+            </div>
         </div>
     </div>
 </main>
