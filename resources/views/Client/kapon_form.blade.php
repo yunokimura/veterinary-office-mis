@@ -1125,8 +1125,6 @@
         </div>
 </main>
 
-    @include('Client.partials.footer')
-
 <script>
     // Generate per-pet agreement cards for Part 3
     function generatePetAgreementCards() {
