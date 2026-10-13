@@ -119,7 +119,7 @@
 
 <!-- Selected Pets List with Empty State -->
                         <div id="selectedPetsContainer" class="mb-6">
-                            <div id="selectedPetsList" class="grid md:grid-cols-2 gap-4">
+                            <div id="selectedPetsList" class="grid md:grid-cols-1 gap-4">
                                 <!-- Empty state -->
                                 <div id="noPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -367,8 +367,9 @@
                     
                     // Format age - remove underscores and format naturally
                     function formatAge(age) {
-                        if (!age) return 'Unknown';
-                        return age.replace(/_/g, ' ').replace(/\b(\d)\b/g, '$1 ').trim();
+                        if (!age && age !== 0) return 'Unknown';
+                        const ageStr = String(age);
+                        return ageStr.replace(/_/g, ' ').replace(/\b(\d)\b/g, '$1 ').trim();
                     }
                     
                     // Format weight - append kg if not included
@@ -564,6 +565,15 @@
                         // Show normal modal with pets
                         document.getElementById('petModal').classList.remove('hidden');
                         document.body.style.overflow = 'hidden';
+
+                        // Re-check already selected pets and refresh the modal count
+                        selectedPets.forEach(petId => {
+                            const checkbox = document.querySelector(`#petSelectionList input[value="${petId}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                        updateModalSelectedCount();
                     }
 
                     function closePetModal() {
@@ -577,8 +587,7 @@
                             return;
                         }
                         const petId = String(checkbox.value);
-                        const petName = checkbox.closest('.pet-selection-card')?.querySelector('.pet-name')?.textContent || 'this pet';
-                        
+
                         if (checkbox.checked) {
                             // Check if max limit reached
                             if (selectedPets.length >= 2) {
@@ -588,18 +597,18 @@
                             }
                             
                             // Check if pet already has a kapon appointment
-                            checkPetBooking(petName, checkbox);
+                            checkPetBooking(petId, checkbox);
                         } else {
                             selectedPets = selectedPets.filter(id => String(id) !== petId);
-                            updateSelectedCount();
+                            updateModalSelectedCount();
                         }
                     }
                     
-                    async function checkPetBooking(petName, checkbox) {
+                    async function checkPetBooking(petId, checkbox) {
                         try {
                             const url = currentUserId 
-                                ? `/api/appointments/check-pet/${encodeURIComponent(petName)}/${currentUserId}`
-                                : `/api/appointments/check-pet/${encodeURIComponent(petName)}`;
+                                ? `/api/appointments/check-pet/${encodeURIComponent(petId)}/${currentUserId}`
+                                : `/api/appointments/check-pet/${encodeURIComponent(petId)}`;
                             const response = await fetch(url);
                             const data = await response.json();
                             
@@ -612,20 +621,18 @@
                                 return;
                             }
                             
-                            // If not booked, add to selection
-                            const petId = String(checkbox.value);
+                            // If not booked, add to selection (rendering happens on Confirm)
                             if (!selectedPets.includes(petId)) {
                                 selectedPets.push(petId);
                             }
-                            updateSelectedCount();
+                            updateModalSelectedCount();
                         } catch (error) {
                             console.error('Failed to check pet booking:', error);
                             // On error, allow selection but log for debugging
-                            const petId = String(checkbox.value);
                             if (!selectedPets.includes(petId)) {
                                 selectedPets.push(petId);
                             }
-                            updateSelectedCount();
+                            updateModalSelectedCount();
                         }
                     }
                     
@@ -724,8 +731,13 @@
                         return true;
                     }
 
+                    function updateModalSelectedCount() {
+                        const modalCountEl = document.getElementById('selectedCount');
+                        if (modalCountEl) modalCountEl.textContent = selectedPets.length;
+                    }
+
                     function updateSelectedCount() {
-                        document.getElementById('selectedCount').textContent = selectedPets.length;
+                        updateModalSelectedCount();
                         updateHeaderCountBadges();
                         updateSidebarSelectedPets();
                         syncGlobalAppointment();
@@ -859,33 +871,44 @@
                                         imgPath = 'images/pets/' + pet.image.split('/').pop();
                                     }
                                     const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
-                                    imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-12 h-12 rounded-full object-cover">`;
+                                    imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-20 h-20 rounded-full object-cover">`;
                                 } else {
-                                    imageHtml = `<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    imageHtml = `<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>`;
                                 }
-                                
-                                // Add pet card
-                                const petCard = document.createElement('div');
-                                petCard.className = 'bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between';
+
+                                // Add pet info card (read-only display, matching missing-pets form)
                                 const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
+                                const genderValue = pet.sex ?? pet.gender;
+                                const genderDisplay = genderValue ? genderValue.charAt(0).toUpperCase() + genderValue.slice(1) : 'Unknown';
+                                const neuteredDisplay = pet.is_neutered ? 'Yes' : 'No';
+
+                                const petCard = document.createElement('div');
+                                petCard.className = 'bg-white border border-gray-200 rounded-lg p-6';
                                 petCard.innerHTML = `
-                                    <div class="flex items-center">
+                                    <div class="flex items-start">
                                         ${imageHtml}
-                                        <div class="ml-3">
-                                            <p class="font-semibold text-gray-900">${pet.name || 'Unknown'}</p>
-                                            <p class="text-xs text-gray-500">${speciesDisplay} • ${pet.breed || 'Unknown'}</p>
-                                            <p class="text-xs text-gray-600 mt-1">Age: ${formatAge(pet.age)} • Weight: ${formatWeight(pet.weight)}</p>
+                                        <div class="ml-4 flex-1">
+                                            <h4 class="font-bold text-lg text-gray-900">${pet.name || 'Unknown'}</h4>
+                                            <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                                                <div><span class="text-gray-500">Species:</span> <span class="text-gray-900">${speciesDisplay}</span></div>
+                                                <div><span class="text-gray-500">Breed:</span> <span class="text-gray-900">${pet.breed || 'Unknown'}</span></div>
+                                                <div><span class="text-gray-500">Gender:</span> <span class="text-gray-900">${genderDisplay}</span></div>
+                                                <div><span class="text-gray-500">Neutered:</span> <span class="text-gray-900">${neuteredDisplay}</span></div>
+                                                <div><span class="text-gray-500">Weight:</span> <span class="text-gray-900">${formatWeight(pet.weight)}</span></div>
+                                                <div><span class="text-gray-500">Age:</span> <span class="text-gray-900">${formatAge(pet.age)}</span></div>
+                                            </div>
                                         </div>
+                                        <button type="button" onclick="removePet(${pet.id})" class="text-red-500 hover:text-red-700 text-sm font-medium flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Remove
+                                        </button>
                                     </div>
-                                    <button type="button" onclick="removePet(${pet.id})" class="text-red-500 hover:text-red-700 p-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
                                 `;
                                 container.appendChild(petCard);
 
@@ -970,8 +993,12 @@
 
                         // Update hidden pets_data field with current pet selection
                         updatePetsData();
-                        // 9.5: Generate agreement cards immediately so browser required validation works
+                        // Render sidebar list, header badges, and sync global appointment
+                        updateSelectedCount();
+                        // Generate agreement cards immediately so browser required validation works
                         generatePetAgreementCards();
+                        // Reset modal checkboxes so reopening the modal starts fresh
+                        document.querySelectorAll('#petSelectionList input[type="checkbox"]').forEach(cb => cb.checked = false);
                         closePetModal();
                     }
 

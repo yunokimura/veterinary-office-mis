@@ -229,30 +229,30 @@ Route::get('/appointments/slots', function (Request $request) {
 })->name('api.appointments.slots');
 
 // Check if a specific pet already has a kapon appointment
-Route::get('/appointments/check-pet/{petName}/{userId}', function ($petName, $userId) {
+Route::get('/appointments/check-pet/{petId}/{userId}', function ($petId, $userId) {
     $existingAppointment = \App\Models\SpayNeuterReport::where('user_id', $userId)
-        ->where('pet_name', $petName)
+        ->where('pet_id', $petId)
         ->whereIn('status', ['pending', 'scheduled'])
         ->whereNotNull('scheduled_at')
         ->orderBy('scheduled_at', 'asc')
         ->first();
-    
+
     if ($existingAppointment) {
         return response()->json([
             'success' => true,
             'already_booked' => true,
-            'pet_name' => $petName,
+            'pet_name' => $existingAppointment->pet_name,
             'scheduled_at' => $existingAppointment->scheduled_at,
             'scheduled_date' => \Carbon\Carbon::parse($existingAppointment->scheduled_at)->format('F j, Y'),
             'scheduled_time' => \Carbon\Carbon::parse($existingAppointment->scheduled_at)->format('h:i A'),
             'status' => $existingAppointment->status,
         ]);
     }
-    
+
     return response()->json([
         'success' => true,
         'already_booked' => false,
-        'pet_name' => $petName,
+        'pet_name' => null,
     ]);
 });
 
