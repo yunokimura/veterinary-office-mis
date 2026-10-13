@@ -808,7 +808,7 @@ Route::get('/kapon/form', function () {
 // Kapon Form POST Route
 Route::post('/kapon/form', function (Request $request) {
     $validated = $request->validate([
-        'selected_pets' => 'required|array|min:1|max:3',
+        'selected_pets' => 'required|array|min:1|max:2',
         'appointment_date' => 'required|date|after_or_equal:today',
         'appointment_time' => 'required',
         'general_agreement' => 'nullable|array',

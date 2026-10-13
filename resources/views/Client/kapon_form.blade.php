@@ -277,7 +277,7 @@
 
                         <!-- Disclaimer -->
                         <div class="mt-6 bg-red-50 border-l-4 border-red-500 p-4">
-                            <p class="text-sm text-red-700">*** Dasmariñas City Veterinary Office (CVO) and its licensed veterinarians will not be held liable in the event of complications, including injury or death, during surgery. These may result due to undiagnosed illnesses that may be detected and treated if a blood test is performed.</p>
+                            <p class="text-sm text-red-700">*** Dasmariñas City Veterinary Office (CVO) and its licensed veterinarians will not be held liable in the event of complications, including injury or death, during surgery.</p>
                         </div>
 
                         <!-- Submit Button (vaccination-style, centered) -->
@@ -315,7 +315,7 @@
                                         </a>
                                     </div>
                                 @else
-                                    <p class="text-sm text-gray-600 mb-4">Select one or more pets for Kapon (Spay/Neuter) surgery:</p>
+                                    <p class="text-sm text-gray-600 mb-4">Select one or two pets for Spay/Neuter (<i>Kapon</i>)</p>
                                     <div class="space-y-3" id="petSelectionList">
                                         @foreach($petsArray as $pet)
                                             @php
