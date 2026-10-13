@@ -106,6 +106,15 @@
                 <input type="hidden" name="pets_data" id="petsDataJson" value="">
                 <input type="hidden" name="appointment_date" id="appointment_date" value="">
                 <input type="hidden" name="appointment_time" id="appointment_time" value="">
+                <div id="selectedPetsArrayContainer"></div>
+                <input type="hidden" name="first_name" value="{{ $petOwner->first_name ?? '' }}">
+                <input type="hidden" name="last_name" value="{{ $petOwner->last_name ?? '' }}">
+                <input type="hidden" name="email" value="{{ $user->email ?? '' }}">
+                <input type="hidden" name="mobile_number" value="{{ $petOwner->phone_number ?? '' }}">
+                <input type="hidden" name="alt_mobile_number" value="{{ $petOwner->alternate_phone_number ?? '' }}">
+                <input type="hidden" name="blk_lot_ph" value="{{ $petOwner->address->block_lot_phase ?? '' }}">
+                <input type="hidden" name="street" value="{{ $petOwner->address->street ?? '' }}">
+                <input type="hidden" name="barangay" value="{{ $petOwner->address->barangay->barangay_name ?? '' }}">
 
                 <!-- PART 1: OWNER'S INFO -->
                 <div id="part1" class="form-part">
