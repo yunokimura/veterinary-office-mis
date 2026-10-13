@@ -4,29 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kapon Application - Dasmariñas City Veterinary Services</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-        .dropdown-option {
-            transition: all 0.2s ease;
-        }
-        .dropdown-option:hover {
-            background-color: #f3f4f6;
-        }
-        .dropdown-option.selected {
-            background-color: #e8f5e9;
-        }
-        .pet-breed-checkbox:checked + .pet-breed-label {
-            background-color: #066D33;
-            color: white;
-        }
-    </style>
-
     <script>
         tailwind.config = {
             theme: {
@@ -39,32 +20,32 @@
                             DEFAULT: '#066D33',
                             light: '#077a40',
                             dark: '#055a29',
+                        },
+                        secondary: {
+                            DEFAULT: '#07A13F',
+                            light: '#08b148',
+                            dark: '#068c35',
                         }
                     }
                 }
             }
         }
     </script>
+    <style>
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: #066D33;
+        }
+    </style>
 </head>
+<body class="font-sans antialiased bg-gray-50">
+    @include('Client.partials.navbar')
 
-<body class="font-sans bg-gray-50 min-h-screen">
-
-<!-- Emergency Alert Bar -->
-@include('Client.partials.emergency_alert')
-
-<!-- Header -->
-@include('Client.partials.navbar')
-
-<!-- Main -->
-<main class="py-10">
-    <div class="max-w-4xl mx-auto px-6">
-
-        <!-- Title -->
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Title and Required Fields Notice -->
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold">SPAY/NEUTER (KAPON)</h2>
-            <p class="mt-2 text-gray-600 text-sm text-center">
-                Fields marked with <span class="text-red-500">*</span> are required
-            </p>
+            <h2 class="text-3xl font-bold text-gray-900">SPAY/NEUTER (KAPON)</h2>
+            <p class="text-gray-500 text-sm mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
         </div>
 
         <!-- Session Status -->
@@ -1090,12 +1071,7 @@
     </div>
 </main>
 
-<!-- Footer -->
-<footer class="bg-white border-t border-gray-200 mt-12">
-    <div class="max-w-6xl mx-auto px-6 py-6 text-center text-gray-600 text-sm">
-        <p>© 2025 Dasmariñas City Veterinary Services. All rights reserved.</p>
-    </div>
-</footer>
+    @include('Client.partials.footer')
 
 <script>
     // Multi-step form navigation
