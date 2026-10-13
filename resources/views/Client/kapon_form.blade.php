@@ -346,7 +346,9 @@
                                         @foreach($petsArray as $pet)
                                             @php
                                                 $speciesDisplay = isset($pet['species']) ? ucfirst($pet['species']) : 'Unknown';
-                                                $isNeutered = isset($pet['is_neutered']) && $pet['is_neutered'] === 'yes';
+                                                $isNeutered = isset($pet['is_neutered']) && strtolower((string) $pet['is_neutered']) === 'yes';
+                                                $petGender = strtolower((string) ($pet['sex'] ?? $pet['gender'] ?? ''));
+                                                $surgeryLabel = ($petGender === 'female') ? 'Spayed' : 'Neutered';
                                                 $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card';
                                                 if ($isNeutered) {
                                                     $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100 border-gray-200';
@@ -372,7 +374,7 @@
                                                 </div>
                                                 @if($isNeutered)
                                                 <div class="ml-2 flex-shrink-0">
-                                                    <span class="text-xs px-2 py-1 bg-gray-200 text-gray-600 rounded font-medium">Neutered</span>
+                                                    <span class="text-xs px-2 py-1 bg-gray-200 text-gray-600 rounded font-medium">{{ $surgeryLabel }}</span>
                                                 </div>
                                                 @endif
                                                 @if(!empty($pet['image']) && !$isNeutered)
@@ -968,8 +970,10 @@
                                 // Add pet info card (read-only display, matching missing-pets form)
                                 const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
                                 const genderValue = pet.sex ?? pet.gender;
-                                const genderDisplay = genderValue ? genderValue.charAt(0).toUpperCase() + genderValue.slice(1) : 'Unknown';
-                                const neuteredDisplay = pet.is_neutered ? 'Yes' : 'No';
+                                const genderDisplay = genderValue ? String(genderValue).charAt(0).toUpperCase() + String(genderValue).slice(1) : 'Unknown';
+                                const isNeutered = String(pet.is_neutered ?? '').toLowerCase() === 'yes';
+                                const neuteredDisplay = isNeutered ? 'Yes' : 'No';
+                                const surgeryLabel = String(genderValue ?? '').toLowerCase() === 'female' ? 'Spayed' : 'Neutered';
 
                                 const petCard = document.createElement('div');
                                 petCard.className = 'bg-white border border-gray-200 rounded-lg p-6';
@@ -982,7 +986,7 @@
                                                 <div><span class="text-gray-500">Species:</span> <span class="text-gray-900">${speciesDisplay}</span></div>
                                                 <div><span class="text-gray-500">Breed:</span> <span class="text-gray-900">${pet.breed || 'Unknown'}</span></div>
                                                 <div><span class="text-gray-500">Gender:</span> <span class="text-gray-900">${genderDisplay}</span></div>
-                                                <div><span class="text-gray-500">Neutered:</span> <span class="text-gray-900">${neuteredDisplay}</span></div>
+                                                <div><span class="text-gray-500">${surgeryLabel}:</span> <span class="text-gray-900">${neuteredDisplay}</span></div>
                                                 <div><span class="text-gray-500">Weight:</span> <span class="text-gray-900">${formatWeight(pet.weight)}</span></div>
                                                 <div><span class="text-gray-500">Age:</span> <span class="text-gray-900">${formatAge(pet.age)}</span></div>
                                             </div>

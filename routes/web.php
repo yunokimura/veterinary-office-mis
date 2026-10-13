@@ -798,7 +798,7 @@ Route::get('/kapon/form', function () {
 
     // Sort: non-neutered pets first, then neutered pets
     $petsArray = collect($petsArray)->sortBy(function ($pet) {
-        return $pet['is_neutered'] === 'yes' ? 1 : 0;
+        return strtolower((string) ($pet['is_neutered'] ?? '')) === 'yes' ? 1 : 0;
     })->values()->toArray();
 
     return view('Client.kapon_form', compact('user', 'petOwner', 'petsArray', 'userId'));
