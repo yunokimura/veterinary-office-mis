@@ -522,7 +522,7 @@
                                                 $isNeutered = isset($pet['is_neutered']) && $pet['is_neutered'] === 'yes';
                                                 $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card';
                                                 if ($isNeutered) {
-                                                    $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100';
+                                                    $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100 border-gray-200';
                                                 } else {
                                                     $cardClasses .= ' border-gray-200 hover:bg-green-50 hover:border-primary transition-colors';
                                                 }
@@ -846,19 +846,21 @@
                             <div id="alreadyBookedModal" class="fixed inset-0 z-50">
                                 <div class="fixed inset-0 bg-black bg-opacity-50"></div>
                                 <div class="fixed inset-0 flex items-center justify-center p-4">
-                                    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-                                        <div class="text-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                            </svg>
-                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Already Booked</h3>
-                                            <p class="text-gray-600 mb-2">${data.pet_name} already has a kapon appointment scheduled.</p>
-                                            <p class="text-gray-800 font-medium mb-4">Date: ${data.scheduled_date}<br>Time: ${data.scheduled_time}</p>
-                                            <p class="text-gray-500 text-sm mb-6">Please complete this appointment first before booking a new one.</p>
-                                            <button type="button" onclick="closeAlreadyBookedModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
-                                                I understand
-                                            </button>
+                                    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+                                        <div class="mb-4">
+                                            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                </svg>
+                                            </div>
                                         </div>
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Already Booked</h3>
+                                        <p class="text-gray-600 mb-2">${data.pet_name} already has a kapon appointment scheduled.</p>
+                                        <p class="text-gray-800 font-medium mb-4">Date: ${data.scheduled_date}<br>Time: ${data.scheduled_time}</p>
+                                        <p class="text-gray-500 text-sm mb-6">Please complete this appointment first before booking a new one.</p>
+                                        <button type="button" onclick="closeAlreadyBookedModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors w-full">
+                                            I understand
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -880,17 +882,19 @@
                             <div id="petLimitModal" class="fixed inset-0 z-50">
                                 <div class="fixed inset-0 bg-black bg-opacity-50"></div>
                                 <div class="fixed inset-0 flex items-center justify-center p-4">
-                                    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-                                        <div class="text-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-yellow-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                            </svg>
-                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Pet Limit Reached</h3>
-                                            <p class="text-gray-600 mb-6">To ensure fair slot distribution and smooth form submission, a maximum of 2 pets is allowed per transaction. Please complete this form first and submit a new application for additional pets.</p>
-                                            <button type="button" onclick="closePetLimitModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
-                                                I understand
-                                            </button>
+                                    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+                                        <div class="mb-4">
+                                            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                </svg>
+                                            </div>
                                         </div>
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Pet Limit Reached</h3>
+                                        <p class="text-gray-600 mb-6">To ensure fair slot distribution and smooth form submission, a maximum of 2 pets is allowed per transaction. Please complete this form first and submit a new application for additional pets.</p>
+                                        <button type="button" onclick="closePetLimitModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors w-full">
+                                            I understand
+                                        </button>
                                     </div>
                                 </div>
                             </div>
