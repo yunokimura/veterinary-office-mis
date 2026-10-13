@@ -1281,6 +1281,13 @@
             </div>
         </div>
     </div>
+
+    <!-- Back Link -->
+    <div class="text-center mt-6">
+        <a href="{{ url('/kapon') }}" class="inline-block text-gray-600 hover:text-primary transition-colors">
+            ← Back to Kapon Page
+        </a>
+    </div>
 </main>
 
     @include('Client.partials.footer')
