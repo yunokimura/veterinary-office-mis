@@ -85,19 +85,6 @@
                     <h3 class="text-lg font-semibold mb-4 pb-2 border-b">Personal Information</h3>
 
                     <div class="grid md:grid-cols-4 gap-4">
-                        <!-- Last Name -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Last Name <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="last_name" value="{{ old('last_name') }}"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300
-                                   focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('last_name') border-red-500 @enderror">
-                            @error('last_name')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <!-- First Name -->
                         <div>
                             <label class="block text-sm font-medium mb-1.5">
@@ -107,6 +94,19 @@
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300
                                    focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('first_name') border-red-500 @enderror">
                             @error('first_name')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Last Name -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">
+                                Last Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="last_name" value="{{ old('last_name') }}"
+                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300
+                                   focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('last_name') border-red-500 @enderror">
+                            @error('last_name')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
