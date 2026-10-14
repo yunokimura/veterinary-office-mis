@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -32,27 +33,46 @@
         }
     </script>
     <style>
-        .pet-card {
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.92) 0%, rgba(76, 29, 149, 0.95) 100%);
+        }
+        .card-hover {
             transition: all 0.3s ease;
         }
-        .pet-card:hover {
+        .card-hover:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(6, 109, 51, 0.15);
         }
+        .service-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(6, 109, 51, 0.25);
+        }
+        .missing-pet-card {
+            cursor: pointer;
+        }
+        .missing-pet-card:hover .pet-image {
+            transform: scale(1.05);
+        }
+        .pet-image {
+            transition: transform 0.3s ease;
+        }
     </style>
 </head>
-<body class="font-sans antialiased bg-gray-50">
+<body class="font-sans antialiased bg-gray-50 text-slate-800">
     @include('Client.partials.emergency_alert')
     @include('Client.partials.navbar')
 
      <!-- Hero Section -->
-    <section class="bg-[#066D33] min-h-[600px] flex items-center justify-center py-16">
+    <section class="hero-gradient min-h-[600px] flex items-center justify-center py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <!-- Left Side: Title, Subtitle, and Instructions -->
                 <div>
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">Adopt a Companion Animal</h1>
-                    <p class="text-lg md:text-xl text-gray-200 max-w-xl mb-8">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">Adopt a Companion Animal</h1>
+                    <p class="text-lg md:text-xl text-slate-200 max-w-xl mb-8">
                         You can help Dasmariñas City Veterinary Services by giving a permanent loving home to one of our shelter animals. Adopt, don't shop!
                     </p>
                     <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
@@ -74,15 +94,17 @@
                     </div>
                     <div class="flex flex-wrap gap-4 mt-8">
                         @auth
-                            <a href="{{ url('/adoption/form') }}" class="bg-white text-[#066D33] px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors">
-                                Apply Now
+                            <a href="{{ url('/adoption/form') }}" class="bg-white hover:bg-slate-100 text-[#066D33] font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                <span>Apply Now</span>
+                                <i class="fa-solid fa-arrow-right text-sm"></i>
                             </a>
                         @else
-                            <button onclick="showLoginPrompt()" class="bg-white text-[#066D33] px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors">
-                                Apply Now
+                            <button onclick="showLoginPrompt()" class="bg-white hover:bg-slate-100 text-[#066D33] font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                <span>Apply Now</span>
+                                <i class="fa-solid fa-arrow-right text-sm"></i>
                             </button>
                         @endauth
-                        <a href="#" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-colors">
+                        <a href="#" class="bg-white/10 border-2 border-white/70 text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all transform hover:-translate-y-0.5">
                             Adoption FAQ
                         </a>
                     </div>
@@ -103,14 +125,14 @@
     </section>
 
     <!-- Section Title -->
-    <section class="py-8 bg-white border-b border-gray-200">
+    <section class="py-8 bg-white border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Available Pets</h2>
-                    <p class="text-sm text-gray-500 mt-1">Find your perfect companion</p>
+                    <h2 class="text-2xl font-bold text-slate-900">Available Pets</h2>
+                    <p class="text-sm text-slate-500 mt-1">Find your perfect companion</p>
                 </div>
-                <button onclick="toggleFilterPanel()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                <button onclick="toggleFilterPanel()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                     </svg>
@@ -124,9 +146,9 @@
     <div id="filterPanel" class="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
         <div class="h-full flex flex-col">
             <!-- Panel Header -->
-            <div class="flex items-center justify-between p-4 border-b border-gray-200">
-                <h2 class="text-lg font-bold text-gray-900">Filter Pets</h2>
-                <button onclick="toggleFilterPanel()" class="text-gray-400 hover:text-gray-600">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200">
+                <h2 class="text-lg font-bold text-slate-900">Filter Pets</h2>
+                <button onclick="toggleFilterPanel()" class="text-slate-400 hover:text-slate-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -136,7 +158,7 @@
             <!-- Panel Content -->
             <div class="flex-1 overflow-y-auto p-4">
                 <div class="space-y-4">
-                    <p class="text-sm text-gray-500 mb-3">Filter by:</p>
+                    <p class="text-sm text-slate-500 mb-3">Filter by:</p>
                     
                      <button onclick="clearFilters()" class="filter-btn w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-primary text-white text-left" data-filter="all" data-filter-type="filter">
                          All Pets
@@ -154,7 +176,7 @@
                     
                         <!-- Gender filters side by side -->
                         <div class="mt-4">
-                            <p class="text-sm text-gray-500 mb-3">Gender:</p>
+                            <p class="text-sm text-slate-500 mb-3">Gender:</p>
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="filterPets('gender', 'male')" class="filter-btn gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="male" data-filter-type="gender">
                                     ♂ Male
@@ -167,7 +189,7 @@
                     
                     <!-- Age filters -->
                     <div class="mt-4">
-                        <p class="text-sm text-gray-500 mb-3">Age:</p>
+                        <p class="text-sm text-slate-500 mb-3">Age:</p>
                         <div class="space-y-2">
                             <div class="grid grid-cols-2 gap-2">
                                 <button onclick="filterPets('age', '0-6')" class="filter-btn age-btn px-3 py-2 rounded-lg text-xs font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="0-6" data-filter-type="age">
@@ -190,24 +212,24 @@
                     
                     <!-- Breed filter -->
                     <div class="mt-4">
-                        <p class="text-sm text-gray-500 mb-2">Breed:</p>
+                        <p class="text-sm text-slate-500 mb-2">Breed:</p>
                         <div class="relative">
-                            <button onclick="toggleBreedDropdown()" type="button" class="w-full px-3 py-2 text-left text-sm bg-gray-100 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between" id="breed-dropdown-button">
+                            <button onclick="toggleBreedDropdown()" type="button" class="w-full px-3 py-2 text-left text-sm bg-slate-100 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between" id="breed-dropdown-button">
                                 <span id="selected-breeds-display">Select breeds</span>
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <div id="breed-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-48 overflow-y-auto">
+                            <div id="breed-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-slate-200 max-h-48 overflow-y-auto">
                                 @if(isset($availableBreeds) && count($availableBreeds) > 0)
                                     @foreach($availableBreeds as $breed)
-                                    <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer">
+                                    <label class="flex items-center px-3 py-2 hover:bg-slate-50 cursor-pointer">
                                         <input type="checkbox" value="{{ $breed }}" class="breed-checkbox rounded text-primary focus:ring-primary" onchange="updateBreedSelection()">
-                                        <span class="ml-2 text-sm text-gray-700">{{ $breed }}</span>
+                                        <span class="ml-2 text-sm text-slate-700">{{ $breed }}</span>
                                     </label>
                                     @endforeach
                                 @else
-                                    <div class="px-3 py-2 text-sm text-gray-500">No breeds available</div>
+                                    <div class="px-3 py-2 text-sm text-slate-500">No breeds available</div>
                                 @endif
                             </div>
                         </div>
@@ -215,24 +237,24 @@
                     
                     <!-- Traits filter -->
                     <div class="mt-4">
-                        <p class="text-sm text-gray-500 mb-2">Traits:</p>
+                        <p class="text-sm text-slate-500 mb-2">Traits:</p>
                         <div class="relative">
-                            <button onclick="toggleTraitsDropdown()" type="button" class="w-full px-3 py-2 text-left text-sm bg-gray-100 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between" id="traits-dropdown-button">
+                            <button onclick="toggleTraitsDropdown()" type="button" class="w-full px-3 py-2 text-left text-sm bg-slate-100 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between" id="traits-dropdown-button">
                                 <span id="selected-traits-display">Select traits</span>
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <div id="traits-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-48 overflow-y-auto">
+                            <div id="traits-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-slate-200 max-h-48 overflow-y-auto">
                                 @if(isset($availableTraits) && count($availableTraits) > 0)
                                     @foreach($availableTraits as $trait)
-                                    <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer">
+                                    <label class="flex items-center px-3 py-2 hover:bg-slate-50 cursor-pointer">
                                         <input type="checkbox" value="{{ $trait }}" class="trait-checkbox rounded text-primary focus:ring-primary" onchange="updateTraitsSelection()">
-                                        <span class="ml-2 text-sm text-gray-700">{{ $trait }}</span>
+                                        <span class="ml-2 text-sm text-slate-700">{{ $trait }}</span>
                                     </label>
                                     @endforeach
                                 @else
-                                    <div class="px-3 py-2 text-sm text-gray-500">No traits available</div>
+                                    <div class="px-3 py-2 text-sm text-slate-500">No traits available</div>
                                 @endif
                             </div>
                         </div>
@@ -248,21 +270,21 @@
                 </div>
                 
                 <!-- Current Filter Display -->
-                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-600">
-                        <span class="font-medium">Current filter:</span> 
+                <div class="mt-6 p-4 bg-slate-50 rounded-lg">
+                    <p class="text-sm text-slate-600">
+                        <span class="font-medium">Current filter:</span>
                         <span id="currentFilterDisplay" class="text-primary font-bold">All Pets</span>
                     </p>
-                    <p class="text-xs text-gray-400 mt-1">
+                    <p class="text-xs text-slate-400 mt-1">
                         Showing <span id="pet-count">{{ $adoptionPets->total() }}</span> pets
                     </p>
                 </div>
             </div>
             
             <!-- Panel Footer -->
-            <div class="p-4 border-t border-gray-200">
+            <div class="p-4 border-t border-slate-200">
                 <div class="flex gap-3">
-                    <button onclick="clearFilters()" class="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                    <button onclick="clearFilters()" class="flex-1 bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium hover:bg-slate-300 transition-colors">
                         Clear Filter
                     </button>
                     <button onclick="applyFilters()" class="flex-1 bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
@@ -277,51 +299,67 @@
     <div id="filterOverlay" onclick="toggleFilterPanel()" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity"></div>
 
     <!-- Pets Grid -->
-    <section id="pets-section" class="py-16 bg-gray-50">
+    <section id="pets-section" class="py-16 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div id="pets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @forelse($adoptionPets as $pet)
-                <button type="button" onclick="openPetModal({{ $pet->pet_id }})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
-                    <div class="aspect-square bg-gradient-to-br from-pink-400/20 to-pink-500/30 relative">
+                <button type="button" onclick="openPetModal({{ $pet->pet_id }})" class="bg-white rounded-xl shadow-lg overflow-hidden border-2 {{ $pet->gender === 'female' ? 'border-pink-200' : 'border-blue-200' }} card-hover missing-pet-card block text-left w-full">
+                    <div class="aspect-square bg-slate-100 relative overflow-hidden">
                         @if($pet->image)
-                            <img src="{{ asset(str_replace(' ', '%20', $pet->image)) }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover">
+                            <img src="{{ asset(str_replace(' ', '%20', $pet->image)) }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
                         @else
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-pink-500/40 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-slate-300 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                         @endif
-                        <span class="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-[#E6F4EA] text-gray-800">{{ $pet->species }}</span>
                     </div>
                     <div class="p-4">
-                        <h3 class="font-bold text-gray-900">{{ $pet->pet_name }}</h3>
-                        <p class="text-sm text-gray-500">{{ $pet->breed }}</p>
-                        <div class="flex items-center space-x-3 mt-2 text-xs">
-                            <span class="@if($pet->gender === 'female') text-pink-500 @else text-blue-500 @endif">{{ $pet->gender === 'female' ? '♀' : '♂' }} {{ ucfirst($pet->gender) }}</span>
-                            <span class="text-gray-400">•</span>
-                            <span class="text-gray-600">
-                                @php
-                                    $age = $pet->age;
-                                    if ($age === null):
-                                @endphp
-                                    Age not available
-                                @elseif ($age == 0)
-                                    < 1 year
-                                @elseif ($age == 1)
-                                    1 year
-                                @else
-                                    {{ $age }} years
-                                @endif
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">{{ $pet->pet_name }}</h3>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ $pet->species }}</span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pet->gender === 'female' ? 'bg-pink-100 text-pink-800' : 'bg-purple-100 text-purple-800' }}">
+                                {{ $pet->gender === 'female' ? '♀ Female' : '♂ Male' }}
                             </span>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Breed:</span>
+                                <span class="text-slate-700 font-medium">{{ $pet->breed ?? 'N/A' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Age:</span>
+                                <span class="text-slate-700 font-medium">
+                                    @php
+                                        $age = $pet->age;
+                                        if ($age === null):
+                                            $ageLabel = 'Age not available';
+                                        elseif ((int) $age === 0):
+                                            $ageLabel = '< 1 year';
+                                            if ($pet->birthdate):
+                                                $months = (int) $pet->birthdate->diffInMonths(now());
+                                                $ageLabel = $months >= 1
+                                                    ? $months . ' month' . ($months === 1 ? '' : 's') . ' old'
+                                                    : 'Less than a month old';
+                                            endif;
+                                        elseif ((int) $age === 1):
+                                            $ageLabel = '1 year';
+                                        else:
+                                            $ageLabel = (int) $age . ' years';
+                                        endif;
+                                    @endphp
+                                    {{ $ageLabel }}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </button>
                 @empty
                 <div class="col-span-full text-center py-12">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
-                    <p class="text-gray-500 text-lg">No pets found.</p>
-                    <p class="text-gray-400 text-sm mt-1">Try adjusting your filters or check back later.</p>
+                    <p class="text-slate-500 text-lg">No pets found.</p>
+                    <p class="text-slate-400 text-sm mt-1">Try adjusting your filters or check back later.</p>
                 </div>
                 @endforelse
             </div>
@@ -340,7 +378,7 @@
         <!-- Modal Content -->
         <div class="flex items-stretch justify-center min-h-screen p-4">
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl relative z-10 overflow-hidden flex flex-col md:flex-row">
-                <button onclick="closePetModal()" class="absolute top-4 right-4 text-white hover:text-gray-200 z-20 bg-black/30 rounded-full p-1">
+                <button onclick="closePetModal()" class="absolute top-4 right-4 text-white hover:text-slate-200 z-20 bg-black/30 rounded-full p-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -357,30 +395,30 @@
                 <!-- Right Side - Details -->
                 <div class="flex-1 p-6 md:p-8 flex flex-col justify-center">
                     <div class="flex items-center justify-between mb-2">
-                        <h2 id="modalPetName" class="text-2xl md:text-3xl font-bold text-gray-900"></h2>
-                        <span id="modalPetSpecies" class="text-base text-gray-500"></span>
+                        <h2 id="modalPetName" class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900"></h2>
+                        <span id="modalPetSpecies" class="text-base text-slate-500"></span>
                     </div>
                     <p id="modalPetBreed" class="text-lg text-primary font-semibold mb-4"></p>
                     <div class="space-y-3 mb-4">
-                        <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                            <span class="text-gray-600">Age</span>
-                            <span id="modalPetAge" class="font-medium text-gray-900"></span>
+                        <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">Age</span>
+                            <span id="modalPetAge" class="font-medium text-slate-900"></span>
                         </div>
-                        <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                            <span class="text-gray-600">Gender</span>
-                            <span id="modalPetGender" class="font-medium text-gray-900"></span>
+                        <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">Gender</span>
+                            <span id="modalPetGender" class="font-medium text-slate-900"></span>
                         </div>
-                        <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                            <span class="text-gray-600">Weight</span>
-                            <span id="modalPetWeight" class="font-medium text-gray-900"></span>
+                        <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">Weight</span>
+                            <span id="modalPetWeight" class="font-medium text-slate-900"></span>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <h3 class="font-semibold text-gray-900 mb-1">Description</h3>
-                        <p id="modalPetDescription" class="text-gray-600 text-sm"></p>
+                        <h3 class="font-semibold text-slate-900 mb-1">Description</h3>
+                        <p id="modalPetDescription" class="text-slate-600 text-sm"></p>
                     </div>
                     <div class="mb-4">
-                        <h3 class="font-semibold text-gray-900 mb-2">Traits</h3>
+                        <h3 class="font-semibold text-slate-900 mb-2">Traits</h3>
                         <span id="modalPetTraits" class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium"></span>
                     </div>
                     <button id="modalPetAdoptBtn" onclick="proceedToAdoption()" class="w-full bg-primary text-white text-center px-6 py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors mt-auto">
@@ -693,7 +731,7 @@
 
             // Show loading state
             const grid = document.getElementById('pets-grid');
-            grid.innerHTML = '<div class="col-span-full text-center py-12"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-primary"></div><p class="text-gray-500 mt-2">Loading pets...</p></div>';
+            grid.innerHTML = '<div class="col-span-full text-center py-12"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-slate-300 border-t-primary"></div><p class="text-slate-500 mt-2">Loading pets...</p></div>';
 
             fetch(url)
                 .then(response => {
@@ -737,7 +775,7 @@
                     }
                     console.error('Error loading page:', error);
                     // Show error message in grid
-                    grid.innerHTML = '<div class="col-span-full text-center py-12"><svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-red-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><p class="text-gray-500 text-lg">Unable to load pets.</p><p class="text-gray-400 text-sm mt-1">Please check your connection and try again.</p><button onclick="loadPage(' + page + ')" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-light">Retry</button></div>';
+                    grid.innerHTML = '<div class="col-span-full text-center py-12"><svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-red-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><p class="text-slate-500 text-lg">Unable to load pets.</p><p class="text-slate-400 text-sm mt-1">Please check your connection and try again.</p><button onclick="loadPage(' + page + ')" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-light">Retry</button></div>';
                 });
         }
         
@@ -822,11 +860,11 @@
                 }
 
                 html = `<div class="col-span-full text-center py-12">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
-                    <p class="text-gray-500 text-lg">${filterMessage}</p>
-                    <p class="text-gray-400 text-sm mt-1">${suggestion}</p>
+                    <p class="text-slate-500 text-lg">${filterMessage}</p>
+                    <p class="text-slate-400 text-sm mt-1">${suggestion}</p>
                     <button onclick="clearFilters()" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
                         Clear All Filters
                     </button>
@@ -844,6 +882,15 @@
                         const ageNum = Number(pet.age);
                         if (ageNum === 0) {
                             ageDisplay = '< 1 year';
+                            if (pet.date_of_birth) {
+                                const birthDate = new Date(pet.date_of_birth);
+                                const today = new Date();
+                                let months = (today.getFullYear() - birthDate.getFullYear()) * 12 + (today.getMonth() - birthDate.getMonth());
+                                if (today.getDate() < birthDate.getDate()) months--;
+                                ageDisplay = months >= 1
+                                    ? months + ' month' + (months === 1 ? '' : 's') + ' old'
+                                    : 'Less than a month old';
+                            }
                         } else if (ageNum === 1) {
                             ageDisplay = ageNum + ' year';
                         } else if (!isNaN(ageNum) && ageNum > 1) {
@@ -854,23 +901,30 @@
                     }
 
                     const imageHtml = pet.image
-                        ? `<img src="${pet.image}" alt="${pet.pet_name}" class="w-full h-full object-cover">`
-                        : `<svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-pink-500/40 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        ? `<img src="${pet.image}" alt="${pet.pet_name}" class="w-full h-full object-cover pet-image">`
+                        : `<svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-slate-300 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>`;
 
-                    html += `<button type="button" onclick="openPetModal(${pet.id})" class="bg-white rounded-xl shadow-lg overflow-hidden pet-card block text-left w-full">
-                        <div class="aspect-square bg-gradient-to-br from-pink-400/20 to-pink-500/30 relative">
+                    html += `<button type="button" onclick="openPetModal(${pet.id})" class="bg-white rounded-xl shadow-lg overflow-hidden border-2 ${isFemale ? 'border-pink-200' : 'border-blue-200'} card-hover missing-pet-card block text-left w-full">
+                        <div class="aspect-square bg-slate-100 relative overflow-hidden">
                             ${imageHtml}
-                            <span class="absolute top-2 right-2 text-xs px-2 py-1 rounded-full bg-[#E6F4EA] text-gray-800">${pet.species}</span>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-gray-900">${pet.pet_name}</h3>
-                            <p class="text-sm text-gray-500">${pet.breed}</p>
-                            <div class="flex items-center space-x-3 mt-2 text-xs">
-                                <span class="${genderClass}">${genderIcon} ${genderDisplay}</span>
-                                <span class="text-gray-400">•</span>
-                                <span class="text-gray-600">${ageDisplay}</span>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">${pet.pet_name}</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${pet.species}</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isFemale ? 'bg-pink-100 text-pink-800' : 'bg-purple-100 text-purple-800'}">${genderIcon} ${genderDisplay}</span>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Breed:</span>
+                                    <span class="text-slate-700 font-medium">${pet.breed || 'N/A'}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Age:</span>
+                                    <span class="text-slate-700 font-medium">${ageDisplay}</span>
+                                </div>
                             </div>
                         </div>
                     </button>`;
@@ -886,7 +940,7 @@
 
             // Previous button
             if (currentPage === 1) {
-                html += `<span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                html += `<span class="px-4 py-2 text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -904,7 +958,7 @@
                 if (i === currentPage) {
                     html += `<span class="px-4 py-2 text-white bg-primary font-medium rounded-lg">${i}</span>`;
                 } else {
-                    html += `<button onclick="loadPage(${i})" class="px-4 py-2 text-gray-600 bg-white hover:bg-primary hover:text-white rounded-lg transition-colors">${i}</button>`;
+                    html += `<button onclick="loadPage(${i})" class="px-4 py-2 text-slate-600 bg-white hover:bg-primary hover:text-white rounded-lg transition-colors">${i}</button>`;
                 }
             }
 
@@ -916,7 +970,7 @@
                 </svg>
             </button>`;
             } else {
-                html += `<span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                html += `<span class="px-4 py-2 text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
@@ -1096,6 +1150,10 @@
     <!-- Adoption Info -->
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-primary font-bold text-xs uppercase tracking-widest">Why Adopt With Us</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3">Adoption Info</h2>
+            </div>
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="text-center">
                     <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -1104,7 +1162,7 @@
                         </svg>
                     </div>
                     <h3 class="font-semibold text-lg mb-2">Health Checked</h3>
-                    <p class="text-gray-600 text-sm">All pets are vaccinated, dewormed, and medically cleared before adoption.</p>
+                    <p class="text-slate-600 text-sm">All pets are vaccinated, dewormed, and medically cleared before adoption.</p>
                 </div>
                 <div class="text-center">
                     <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -1113,7 +1171,7 @@
                         </svg>
                     </div>
                     <h3 class="font-semibold text-lg mb-2">Adoption Guidance</h3>
-                    <p class="text-gray-600 text-sm">We provide post-adoption support and guidance for new pet parents.</p>
+                    <p class="text-slate-600 text-sm">We provide post-adoption support and guidance for new pet parents.</p>
                 </div>
                 <div class="text-center">
                     <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -1122,7 +1180,7 @@
                         </svg>
                     </div>
                     <h3 class="font-semibold text-lg mb-2">Behavior Assessed</h3>
-                    <p class="text-gray-600 text-sm">Each pet is observed for temperament to help match them with the right family.</p>
+                    <p class="text-slate-600 text-sm">Each pet is observed for temperament to help match them with the right family.</p>
                 </div>
             </div>
         </div>
@@ -1131,125 +1189,126 @@
     <!-- Adoption FAQ -->
     <section class="py-16 bg-white" id="faq">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Pet Adoption FAQ</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Common questions about adopting a pet</p>
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-primary font-bold text-xs uppercase tracking-widest">Common Questions</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3 mb-4">Pet Adoption FAQ</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Common questions about adopting a pet</p>
             </div>
             
             <div class="space-y-4">
                 <!-- FAQ 1 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">How can I adopt from PAWS?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">How can I adopt from PAWS?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>Applicants go through a screening process to ensure that our rescued animals go to loving homes. The process includes an online interview via Zoom and at least two (2) separate shelter visits to meet and get to know your chosen pet. Apply here.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 2 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">Can you adopt my pet?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">Can you adopt my pet?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>PAWS does NOT adopt owned pets. We already have 300+ shelter animals rescued from cruelty and neglect that are waiting to be adopted. If you need to give up your pet for some reason, please consider other options or apply for rehoming assistance.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 3 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">Why is there an adoption fee?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">Why is there an adoption fee?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>The adoption fee is a token of your commitment and a demonstration of your financial capacity to care for a pet. P500 for cats / P1000 for dogs is a small price which already covers your pet's spay/neuter surgery, vaccinations and tick+flea treatment.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 4 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">Can my adoption application get denied?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">Can my adoption application get denied?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>Yes. Some reasons for denied applications include: Not being able to keep their pet indoors, incompatibility with the household, plus other circumstances that may be damaging to the health, safety, and happiness of our shelter animals.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 5 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">I live in the province/abroad. Can I still adopt?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">I live in the province/abroad. Can I still adopt?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>Yes, but special arrangements need to be made for the meet-and-greet, depending on your location. Please contact us to discuss your options. You may also opt to adopt from your local pound instead.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 6 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">Do you have purebred cats or dogs?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">Do you have purebred cats or dogs?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>It is very rare that purebred cats or dogs are admitted to the shelter. Sadly, they are valued more than aspins and puspins who are equally deserving of a home. Please consider adopting a local breed instead.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 7 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">Do you have puppies or kittens for adoption?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">Do you have puppies or kittens for adoption?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>Puppies and kittens are only available for fostering for up to 6 months, or until they are vaccinated and neutered. Fostered puppies and kittens may be permanently adopted after this period if the fosterer passes the adoption application.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 8 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">Can I adopt more than one pet?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">Can I adopt more than one pet?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>Some applicants may be approved to adopt more than one pet on a case to case basis, but especially if the animal you wish to adopt belongs to a bonded pair.</p>
                     </div>
                 </div>
 
                 <!-- FAQ 9 -->
-                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
-                        <span class="font-semibold text-gray-900">Can I return my adopted pet if I change my mind?</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <span class="font-semibold text-slate-900">Can I return my adopted pet if I change my mind?</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="hidden px-6 pb-4 text-gray-600">
+                    <div class="hidden px-6 pb-4 text-slate-600">
                         <p>A pet is a lifetime commitment. However, if you truly can't keep your adopted pet, please don't abandon them on the streets or with strangers. Please return them to us so we can find another home for them.</p>
                     </div>
                 </div>
@@ -1262,7 +1321,7 @@
     <!-- Login Prompt Modal -->
     <div id="loginPromptModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeLoginPrompt()"></div>
+            <div class="fixed inset-0 bg-slate-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeLoginPrompt()"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -1273,25 +1332,25 @@
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">
                                 Login Required
                             </h3>
                             <div class="mt-2">
-                                <p class="text-sm text-gray-500">
+                                <p class="text-sm text-slate-500">
                                     You need to be logged in to apply for adoption. Please login or register an account to continue.
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <a href="{{ route('login') }}" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-primary-light focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
                         Login
                     </a>
-                    <a href="{{ route('register') }}" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <a href="{{ route('register') }}" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                         Register
                     </a>
-                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" onclick="closeLoginPrompt()">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" onclick="closeLoginPrompt()">
                         Cancel
                     </button>
                 </div>
@@ -1302,7 +1361,7 @@
     <!-- Success Modal -->
     <div id="successModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeSuccessModal()"></div>
+            <div class="fixed inset-0 bg-slate-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeSuccessModal()"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -1313,18 +1372,18 @@
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">
                                 Application Submitted
                             </h3>
                             <div class="mt-2">
-                                <p class="text-sm text-gray-500">
+                                <p class="text-sm text-slate-500">
                                     {{ session('success') }}
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button type="button" onclick="closeSuccessModal()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-primary-light focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
                         Okay
                     </button>
