@@ -811,7 +811,7 @@ Route::post('/kapon/form', function (Request $request) {
         'selected_pets' => 'required|array|min:1|max:2',
         'appointment_date' => 'required|date|after_or_equal:today',
         'appointment_time' => 'required',
-        'general_agreement' => 'nullable|array',
+        'general_agreement.combined' => 'required',
     ]);
 
     // Get authenticated user's PetOwner, with address + barangay prefetched

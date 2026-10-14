@@ -243,35 +243,17 @@
                         </div>
                     </div>
                     <div class="p-6 space-y-6">
-                        <!-- Secure cage/leash -->
+                        <!-- Combined General Agreement -->
                         <div>
                             <label class="inline-flex items-start cursor-pointer">
-                                <input type="checkbox" name="general_agreement[secure_cage]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
-                                <span class="ml-3 text-sm text-gray-700">I understand that I must place my pet/s inside a secure cage or leash. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Full authority -->
-                        <div>
-                            <label class="inline-flex items-start cursor-pointer">
-                                <input type="checkbox" name="general_agreement[full_authority]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
-                                <span class="ml-3 text-sm text-gray-700">I hereby give the Dasmariñas City Veterinary Office (CVO) and its attending veterinarians and staff full authority to perform the procedure. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Valid ID -->
-                        <div>
-                            <label class="inline-flex items-start cursor-pointer">
-                                <input type="checkbox" name="general_agreement[valid_id]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
-                                <span class="ml-3 text-sm text-gray-700">I will bring and present a valid primary ID before entering the premises of the CVO for security purposes. <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-
-                        <!-- Confirmation of Location -->
-                        <div>
-                            <label class="inline-flex items-start cursor-pointer">
-                                <input type="checkbox" name="general_agreement[location]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
-                                <span class="ml-3 text-sm text-gray-700">Confirmation of location: I am aware that the spay/neuter surgery will be performed at the veterinary office located in Dasmariñas City. <span class="text-red-500">*</span></span>
+                                <input type="checkbox" name="general_agreement[combined]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
+                                <span class="ml-3 text-sm text-gray-700">
+                                    I have read, understood, and agree to the following surgical terms: <span class="text-red-500">*</span><br>
+                                    <span class="text-gray-600">Fasting: Keep pet fasted (no food or water) for 10&ndash;12 hours before surgery.</span><br>
+                                    <span class="text-gray-600">Transport: Keep pet secured in a leash or sturdy carrier.</span><br>
+                                    <span class="text-gray-600">Authorization: Grant CVO veterinarians permission to perform the procedure.</span><br>
+                                    <span class="text-gray-600">Requirements: Present a valid primary ID at the Dasmariñas CVO location upon arrival.</span>
+                                </span>
                             </label>
                         </div>
 
@@ -280,10 +262,10 @@
                             <p class="text-sm text-red-700">*** Dasmariñas City Veterinary Office (CVO) and its licensed veterinarians will not be held liable in the event of complications, including injury or death, during surgery.</p>
                         </div>
 
-                        <!-- Submit Button (vaccination-style, centered) -->
+<!-- Submit Button (vaccination-style, centered) -->
                         <div class="flex justify-center mt-8">
-                            <button type="submit" id="kaponSubmitButton" disabled
-                                    class="bg-gray-300 text-gray-500 px-12 py-3 rounded-lg font-semibold flex items-center gap-2 cursor-not-allowed">
+                            <button type="button" id="kaponSubmitButton" onclick="openConfirmModal()" 
+                                    class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
@@ -1101,28 +1083,20 @@
                 </div>
             </div>
         </div>
-
-        <!-- Back Link -->
-        <div class="text-center mt-6">
-            <a href="{{ url('/kapon') }}" class="inline-block text-gray-600 hover:text-primary transition-colors">
-                ← Back to Kapon Page
-            </a>
-        </div>
 </main>
 
 <script>
-    // Enable the submit button only when every general agreement checkbox is checked
+    // Enable the submit button only when the combined general agreement checkbox is checked
     function updateSubmitButtonState() {
         const submitBtn = document.getElementById('kaponSubmitButton');
         if (!submitBtn) return;
 
-        const checkboxes = document.querySelectorAll('#kaponForm input[name^="general_agreement"]');
-        const allChecked = Array.from(checkboxes).length > 0 &&
-            Array.from(checkboxes).every(cb => cb.checked);
+        const checkbox = document.querySelector('#kaponForm input[name="general_agreement[combined]"]');
+        const isChecked = checkbox ? checkbox.checked : false;
 
-        submitBtn.disabled = !allChecked;
+        submitBtn.disabled = !isChecked;
 
-        if (allChecked) {
+        if (isChecked) {
             submitBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
             submitBtn.classList.add('bg-primary', 'text-white', 'hover:bg-primary-light', 'transition-colors');
         } else {
@@ -1132,9 +1106,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('#kaponForm input[name^="general_agreement"]').forEach(function (cb) {
-            cb.addEventListener('change', updateSubmitButtonState);
-        });
+        const checkbox = document.querySelector('#kaponForm input[name="general_agreement[combined]"]');
+        if (checkbox) {
+            checkbox.addEventListener('change', updateSubmitButtonState);
+        }
         updateSubmitButtonState();
     });
 
@@ -1268,22 +1243,6 @@
                         </div>
                     </div>
                     
-                    <!-- Food Restriction -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">
-                            Food Restriction (Has the pet not eaten any food or liquids for the past 12 hours prior to surgery?) <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex gap-4">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="pet_agreement[${pet.id}][food_restriction]" value="yes" class="text-primary">
-                                <span class="ml-2 text-gray-900 font-medium">Yes</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="pet_agreement[${pet.id}][food_restriction]" value="no" class="text-primary">
-                                <span class="ml-2 text-gray-900 font-medium">No</span>
-                            </label>
-                        </div>
-                    </div>
                 `;
                 
                 container.appendChild(petCard);
@@ -1294,6 +1253,219 @@
 
     @include('Client.partials.footer')
 
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closeConfirmModal()"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Confirm Your Kapon Application</h3>
+                    <button type="button" onclick="closeConfirmModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="px-6 py-4 overflow-y-auto max-h-[70vh]">
+                    <p class="text-sm text-gray-600 mb-4">Please review your details before submitting:</p>
+                    <div class="space-y-3">
+                        <div id="confirmPetDetails" class="bg-gray-50 p-4 rounded-lg border border-gray-200"></div>
+                        <div id="confirmAppointmentDetails" class="bg-gray-50 p-4 rounded-lg border border-gray-200"></div>
+                        <div id="confirmLocationDetails" class="bg-gray-50 p-4 rounded-lg border border-gray-200"></div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3">Important Reminders</h4>
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                            <ul class="space-y-2 text-sm text-amber-800">
+                                <li class="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Fasting: No food or water 12 hours before surgery.</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Transport: Bring a secure carrier or leash.</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Health Check: Pet must be healthy and not in heat.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                    <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        Edit Booking
+                    </button>
+                    <button type="button" onclick="confirmAndSubmit()" class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-light transition-colors">
+                        Confirm & Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+                <div class="px-6 py-6 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Success!</h3>
+                    <p class="text-gray-600 mb-4">Application Submitted Successfully</p>
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-4 text-left">
+                        <p class="text-sm text-green-700 mb-1">Application Reference Number: <span id="appRefNumber" class="font-semibold">KAPON-2026-0892</span></p>
+                        <p class="text-sm text-green-700">We have received your Kapon appointment request for <span id="successPetName" class="font-semibold">Oreo</span>!</p>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 mb-4">
+                        <p><span class="font-medium">📅 Date & Time:</span> <span id="successDateTime">Oct 15, 2026 at 08:00 AM</span></p>
+                        <p><span class="font-medium">📍 Location:</span> <span id="successLocation">Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite</span></p>
+                    </div>
+                    <button type="button" onclick="goToDashboard()" class="w-full px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-light transition-colors">
+                        Go to My Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Confirmation Modal Functions
+        let pendingFormSubmission = false;
+
+        function openConfirmModal() {
+            // Populate pet details
+            const petDetailsEl = document.getElementById('confirmPetDetails');
+            const appointmentDetailsEl = document.getElementById('confirmAppointmentDetails');
+            const locationDetailsEl = document.getElementById('confirmLocationDetails');
+            
+            // Get selected pets
+            const selectedPetsInfo = selectedPets.map(petId => {
+                const pet = petsData.find(p => String(p.id) === String(petId));
+                return pet;
+            }).filter(p => p);
+            
+            if (selectedPetsInfo.length === 1) {
+                const pet = selectedPetsInfo[0];
+                const surgeryLabel = pet.gender === 'female' ? 'Spay' : 'Neuter';
+                petDetailsEl.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-900">${pet.name}</p>
+                            <p class="text-sm text-gray-500">${surgeryLabel} (${pet.gender === 'female' ? 'Female' : 'Male'} ${pet.species})</p>
+                        </div>
+                    </div>
+                `;
+            } else if (selectedPetsInfo.length > 1) {
+                petDetailsEl.innerHTML = `
+                    <div class="space-y-2">
+                        <p class="font-semibold text-gray-900">${selectedPetsInfo.length} Pets Selected</p>
+                        <ul class="space-y-1 text-sm">
+                            ${selectedPetsInfo.map(pet => `
+                                <li class="flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs">
+                                        ${selectedPetsInfo.indexOf(pet) + 1}
+                                    </span>
+                                    <span class="font-medium text-gray-900">${pet.name}</span>
+                                    <span class="text-gray-500">(${pet.gender === 'female' ? 'Spay' : 'Neuter'})</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Appointment details
+            const dateInput = document.getElementById('globalAppointmentDate');
+            const timeInput = document.getElementById('appointment_time');
+            const appointmentDate = dateInput ? dateInput.value : '';
+            const appointmentTime = timeInput ? timeInput.value : '';
+            
+            let appointmentText = 'Not scheduled';
+            if (appointmentDate && appointmentTime) {
+                const dateObj = new Date(appointmentDate + 'T00:00:00');
+                const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const timeStr = appointmentTime;
+                appointmentText = `${dateStr} @ ${timeStr}`;
+            }
+            
+            appointmentDetailsEl.innerHTML = `
+                <p class="font-semibold text-gray-900">Appointment</p>
+                <p class="text-sm text-gray-500">${appointmentText}</p>
+            `;
+
+            // Location
+            const petOwner = @json($petOwner);
+            locationDetailsEl.innerHTML = `
+                <p class="font-semibold text-gray-900">Location</p>
+                <p class="text-sm text-gray-500">Dasmariñas City Veterinary Office</p>
+                <p class="text-sm text-gray-500">Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite</p>
+            `;
+
+            document.getElementById('confirmModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function confirmAndSubmit() {
+            pendingFormSubmission = true;
+            closeConfirmModal();
+            document.getElementById('kaponForm').submit();
+        }
+
+        // Success Modal Functions
+        function showSuccessModal(data) {
+            document.getElementById('appRefNumber').textContent = data.refNumber || 'KAPON-2026-0892';
+            document.getElementById('successPetName').textContent = data.petName || 'Oreo';
+            document.getElementById('successDateTime').textContent = data.dateTime || 'Oct 15, 2026 at 08:00 AM';
+            document.getElementById('successLocation').textContent = data.location || 'Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite';
+            
+            document.getElementById('successModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function goToDashboard() {
+            closeSuccessModal();
+            window.location.href = '/kapon';
+        }
+
+        // Override form submission to show success modal instead of redirect
+        document.getElementById('kaponForm').addEventListener('submit', function(e) {
+            if (!pendingFormSubmission) {
+                e.preventDefault();
+                openConfirmModal();
+                return;
+            }
+            
+            // Allow actual submission
+        });
+    </script>
 </body>
 </html>
 
