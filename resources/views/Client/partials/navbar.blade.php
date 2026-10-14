@@ -1,5 +1,13 @@
     <!-- Main Header / Navigation -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    @php
+        $servicesActive = request()->is('services*')
+            || request()->is('pet-registration*')
+            || request()->is('kapon*')
+            || request()->is('vaccination*');
+    @endphp
+
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
@@ -19,7 +27,7 @@
                     <a href="{{ route('public.home') }}" class="{{ request()->routeIs('public.home') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors">Home</a>
                     <a href="{{ url('/about-us') }}" class="{{ request()->is('about-us') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors">About Us</a>
                     <div class="relative">
-                        <button id="servicesDropdownBtn" class="{{ request()->is('services*') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors inline-flex items-center space-x-1">
+                        <button id="servicesDropdownBtn" class="{{ $servicesActive ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors inline-flex items-center space-x-1">
                             <span>Services</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -40,17 +48,17 @@
                             </a>
                         </div>
                     </div>
-                    <a href="{{ url('/missing-pets') }}" class="{{ request()->is('missing-pets*') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors">Lost and Found Pets</a>
+                    <a href="{{ url('/missing-pets') }}" class="{{ request()->is('missing-pets*') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors">Lost &amp; Found Pets</a>
                     <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors">Adoption</a>
                 </nav>
 
                 <!-- Action Buttons -->
                 <div class="hidden sm:flex items-center space-x-3">
                     @auth
-                    <a href="{{ url('/pet-registration') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-emerald-600/20 hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center space-x-2">
+                    <button type="button" onclick="openAppointmentModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-emerald-600/20 hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center space-x-2">
                         <i class="fa-solid fa-calendar-check"></i>
                         <span>Book Appointment</span>
-                    </a>
+                    </button>
                     @endauth
                     @auth
                         <div class="relative">
@@ -60,7 +68,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                     </svg>
                                 </div>
-                                <span class="text-emerald-600 font-medium hidden lg:block">{{ Auth::user()->name }}</span>
+                                <span class="text-emerald-600 font-medium hidden lg:block">{{ Auth::user()->first_name }}@if (Auth::user()->middle_name) {{ mb_substr(Auth::user()->middle_name, 0, 1) }}.@endif {{ Auth::user()->last_name }}</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 hidden lg:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                 </svg>
@@ -110,7 +118,7 @@
             <a href="{{ route('public.home') }}" class="{{ request()->routeIs('public.home') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Home</a>
             <a href="{{ url('/about-us') }}" class="{{ request()->is('about-us') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">About Us</a>
             <div>
-                <button id="mobileServicesBtn" class="w-full text-left py-2 px-3 rounded-lg {{ request()->is('services*') ? 'text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base inline-flex items-center justify-between">
+                <button id="mobileServicesBtn" class="w-full text-left py-2 px-3 rounded-lg {{ $servicesActive ? 'text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base inline-flex items-center justify-between">
                     <span>Services</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -131,7 +139,7 @@
                     </a>
                 </div>
             </div>
-            <a href="{{ url('/missing-pets') }}" class="{{ request()->is('missing-pets*') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Lost and Found Pets</a>
+            <a href="{{ url('/missing-pets') }}" class="{{ request()->is('missing-pets*') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Lost &amp; Found Pets</a>
             <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Adoption</a>
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 @auth
@@ -139,13 +147,83 @@
                         @csrf
                         <button type="submit" class="w-full bg-red-50 text-red-700 py-3 rounded-xl font-semibold text-center border border-red-100">Logout</button>
                     </form>
-                @else
-                    <a href="{{ route('login') }}" class="block w-full text-center text-primary font-semibold py-3 rounded-xl border border-primary/20 hover:bg-primary/5">Login</a>
-                    <a href="{{ route('register') }}" class="block w-full text-center bg-primary text-white py-3 rounded-xl font-semibold shadow-md">Register</a>
-                @endauth
+                    @else
+                        <a href="{{ route('login') }}" class="block w-full text-center text-primary font-semibold py-3 rounded-xl border border-primary/20 hover:bg-primary/5">Login</a>
+                        <a href="{{ route('register') }}" class="block w-full text-center bg-primary text-white py-3 rounded-xl font-semibold shadow-md">Register</a>
+                    @endauth
             </div>
         </div>
+
     </header>
+
+    @auth
+    <!-- Appointment Type Selection Modal -->
+    <div id="appointmentTypeModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/60 flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 sm:p-8 transform transition-all relative">
+            <button type="button" onclick="closeAppointmentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900">Select Appointment Type</h3>
+                <p class="text-base text-gray-500 mt-1 max-w-lg mx-auto">
+                    Please choose the service you would like to book an appointment for.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 my-6">
+                <div onclick="selectAppointmentFlow('vaccination')" class="border-2 border-gray-200 hover:border-purple-500 hover:bg-purple-50/40 rounded-xl p-6 cursor-pointer transition flex flex-col justify-between group">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-purple-500 text-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-syringe"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-lg mb-1">Anti-Rabies Vaccination</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            Book a rabies vaccination appointment for your pet.
+                        </p>
+                    </div>
+                    <button type="button" class="mt-4 w-full bg-purple-500 group-hover:bg-purple-600 text-white text-sm font-bold py-2.5 px-4 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                        <span>Book Vaccination</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div onclick="selectAppointmentFlow('kapon')" class="border-2 border-gray-200 hover:border-pink-500 hover:bg-pink-50/40 rounded-xl p-6 cursor-pointer transition flex flex-col justify-between group">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-pink-500 text-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-scissors"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-lg mb-1">Spay/Neuter (Kapon)</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            Book a spay or neuter (kapon) appointment for your pet.
+                        </p>
+                    </div>
+                    <button type="button" class="mt-4 w-full bg-pink-500 group-hover:bg-pink-600 text-white text-sm font-bold py-2.5 px-4 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                        <span>Book Kapon</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button type="button" onclick="closeAppointmentModal()" class="text-sm font-semibold text-gray-400 hover:text-gray-600">
+                    Cancel and go back
+                </button>
+            </div>
+        </div>
+    </div>
+    @endauth
 
     <script>
         // Services dropdown toggles
@@ -191,4 +269,42 @@
                 }
             });
         }
+
+        // Appointment type modal
+        function openAppointmentModal() {
+            const modal = document.getElementById('appointmentTypeModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeAppointmentModal() {
+            const modal = document.getElementById('appointmentTypeModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function selectAppointmentFlow(appointmentType) {
+            const targetUrl = appointmentType === 'kapon' ? '/kapon' : '/vaccination';
+            closeAppointmentModal();
+            window.location.href = targetUrl;
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('appointmentTypeModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeAppointmentModal();
+                }
+            }
+        });
+
+        document.getElementById('appointmentTypeModal')?.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeAppointmentModal();
+            }
+        });
     </script>

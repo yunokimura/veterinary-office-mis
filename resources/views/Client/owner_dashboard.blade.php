@@ -109,7 +109,7 @@
     <section class="hero-bg py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center text-white">
-                <h1 class="text-3xl font-bold mb-2">Welcome back, {{ auth()->user()->name }}!</h1>
+                <h1 class="text-3xl font-bold mb-2">Welcome back, {{ auth()->user()->first_name }}!</h1>
                 <p class="text-lg text-gray-200">You're now logged in to your pet owner dashboard</p>
             </div>
         </div>
