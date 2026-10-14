@@ -248,11 +248,13 @@
                             <label class="inline-flex items-start cursor-pointer">
                                 <input type="checkbox" name="general_agreement[combined]" value="yes" class="mt-1 h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-primary/20" required>
                                 <span class="ml-3 text-sm text-gray-700">
-                                    I have read, understood, and agree to the following surgical terms: <span class="text-red-500">*</span><br>
-                                    <span class="text-gray-600">Fasting: Keep pet fasted (no food or water) for 10&ndash;12 hours before surgery.</span><br>
-                                    <span class="text-gray-600">Transport: Keep pet secured in a leash or sturdy carrier.</span><br>
-                                    <span class="text-gray-600">Authorization: Grant CVO veterinarians permission to perform the procedure.</span><br>
-                                    <span class="text-gray-600">Requirements: Present a valid primary ID at the Dasmariñas CVO location upon arrival.</span>
+                                    I have read, understood, and agree to the following surgical terms: <span class="text-red-500">*</span>
+                                    <ul class="mt-2 ml-4 space-y-2 list-disc list-inside text-sm text-gray-600">
+                                        <li>Fasting: Keep pet fasted (no food or water) for 10&ndash;12 hours before surgery.</li>
+                                        <li>Transport: Keep pet secured in a leash or sturdy carrier.</li>
+                                        <li>Authorization: Grant CVO veterinarians permission to perform the procedure.</li>
+                                        <li>Requirements: Present a valid primary ID at the Dasmariñas CVO location upon arrival.</li>
+                                    </ul>
                                 </span>
                             </label>
                         </div>
@@ -319,7 +321,10 @@
                                                        @if($isNeutered) disabled @endif>
                                                 <div class="ml-3 flex-1">
                                                     <div class="flex items-center justify-between">
-                                                        <span class="font-semibold text-gray-900 pet-name">{{ $pet['name'] }}</span>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="font-semibold text-gray-900 pet-name">{{ $pet['name'] }}</span>
+                                                            <span id="gender-icon-{{ $pet['id'] }}" class="flex-shrink-0"></span>
+                                                        </div>
                                                         <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{{ $speciesDisplay }}</span>
                                                     </div>
                                                     <div class="mt-1 text-xs text-gray-500">
@@ -382,6 +387,26 @@
                             return weight;
                         }
                         return weight + ' kg';
+                    }
+
+                    // Render gender icons in the pet selection modal
+                    function renderModalGenderIcons() {
+                        petsData.forEach(pet => {
+                            const genderValue = pet.sex ?? pet.gender;
+                            if (!genderValue) return;
+                            
+                            const iconContainer = document.getElementById(`gender-icon-${pet.id}`);
+                            if (!iconContainer) return;
+                            
+                            const g = String(genderValue).toLowerCase();
+                            let iconHtml = '';
+                            if (g === 'female') {
+                                iconHtml = '<span class="text-pink-500">♀</span>';
+                            } else if (g === 'male') {
+                                iconHtml = '<span class="text-blue-500">♂</span>';
+                            }
+                            iconContainer.innerHTML = iconHtml;
+                        });
                     }
                     
                     let selectedPets = [];
@@ -612,6 +637,9 @@
                         document.getElementById('petModal').classList.remove('hidden');
                         document.body.style.overflow = 'hidden';
 
+                        // Render gender icons in modal
+                        renderModalGenderIcons();
+
                         // Re-check already selected pets and refresh the modal count
                         selectedPets.forEach(petId => {
                             const checkbox = document.querySelector(`#petSelectionList input[value="${petId}"]`);
@@ -817,18 +845,43 @@
                             const pet = petsData.find(p => String(p.id) === String(petId));
                             if (!pet) return;
 
-                            const petEl = document.createElement('div');
-                            petEl.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
-                            petEl.innerHTML = `
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2-2v12a2 2 0 002 2z" />
-                                        </svg>
+const petEl = document.createElement('div');
+                            petEl.className = 'flex items-center justify-between p-2.5 bg-gray-50 rounded-lg';
+                            
+                            let imageHtml = '';
+                            if (pet.image) {
+                                let imgPath = pet.image;
+                                if (!imgPath.includes('images/pets') && !imgPath.includes('http')) {
+                                    imgPath = 'images/pets/' + pet.image.split('/').pop();
+                                }
+                                const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                                imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-7 h-7 rounded-full object-cover">`;
+                            } else {
+                                imageHtml = '<div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z"/></svg></div>';
+                            }
+                            
+petEl.innerHTML = `
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                                        ${imageHtml}
                                     </div>
-                                    <div class="ml-2">
-                                        <p class="text-sm font-medium text-gray-900">${pet.name}</p>
-                                        <p class="text-xs text-gray-500">${pet.species || 'Unknown'} • ${pet.breed || 'Unknown'}</p>
+                                    <div class="ml-2.5 min-w-0">
+                                        <div class="flex items-center gap-1.5">
+                                            <p class="text-sm font-medium text-gray-900 truncate">${pet.name}</p>
+                                            ${(() => {
+                                                const g = pet.sex || pet.gender;
+                                                if (g) {
+                                                    const genderLower = g.toLowerCase();
+                                                    if (genderLower === 'female') {
+                                                        return '<span class="text-pink-500">♀</span>';
+                                                    } else if (genderLower === 'male') {
+                                                        return '<span class="text-blue-500">♂</span>';
+                                                    }
+                                                }
+                                                return '';
+                                            })()}
+                                        </div>
+                                        <p class="text-xs text-gray-500 truncate">${pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown'} &bull; ${pet.breed || 'Unknown'}</p>
                                     </div>
                                 </div>
                                 <button type="button" onclick="removePet(${pet.id})" class="text-red-500 hover:text-red-700 p-1" aria-label="Remove ${pet.name}">
@@ -919,6 +972,18 @@
                                 // Add pet info card (read-only display, matching missing-pets form)
                                 const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
                                 const genderValue = pet.sex ?? pet.gender;
+                                
+                                // Generate gender icon
+                                let genderIconHtml = '';
+                                if (genderValue) {
+                                    const g = String(genderValue).toLowerCase();
+                                    if (g === 'female') {
+                                        genderIconHtml = '<span class="text-pink-500 text-lg">♀</span>';
+                                    } else if (g === 'male') {
+                                        genderIconHtml = '<span class="text-blue-500 text-lg">♂</span>';
+                                    }
+                                }
+
                                 const genderDisplay = genderValue ? String(genderValue).charAt(0).toUpperCase() + String(genderValue).slice(1) : 'Unknown';
                                 const isNeutered = String(pet.is_neutered ?? '').toLowerCase() === 'yes';
                                 const neuteredDisplay = isNeutered ? 'Yes' : 'No';
@@ -930,11 +995,13 @@
                                     <div class="flex items-start">
                                         ${imageHtml}
                                         <div class="ml-4 flex-1">
-                                            <h4 class="font-bold text-lg text-gray-900">${pet.name || 'Unknown'}</h4>
+                                            <div class="flex items-center gap-2">
+                                                <h4 class="font-bold text-lg text-gray-900">${pet.name || 'Unknown'}</h4>
+                                                ${genderIconHtml}
+                                            </div>
                                             <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                                                 <div><span class="text-gray-500">Species:</span> <span class="text-gray-900">${speciesDisplay}</span></div>
                                                 <div><span class="text-gray-500">Breed:</span> <span class="text-gray-900">${pet.breed || 'Unknown'}</span></div>
-                                                <div><span class="text-gray-500">Gender:</span> <span class="text-gray-900">${genderDisplay}</span></div>
                                                 <div><span class="text-gray-500">${surgeryLabel}:</span> <span class="text-gray-900">${neuteredDisplay}</span></div>
                                                 <div><span class="text-gray-500">Weight:</span> <span class="text-gray-900">${formatWeight(pet.weight)}</span></div>
                                                 <div><span class="text-gray-500">Age:</span> <span class="text-gray-900">${formatAge(pet.age)}</span></div>
@@ -1266,18 +1333,18 @@
                         </svg>
                     </button>
                 </div>
-                <div class="px-6 py-4 overflow-y-auto max-h-[70vh]">
-                    <p class="text-sm text-gray-600 mb-4">Please review your details before submitting:</p>
-                    <div class="space-y-3">
-                        <div id="confirmPetDetails" class="bg-gray-50 p-4 rounded-lg border border-gray-200"></div>
-                        <div id="confirmAppointmentDetails" class="bg-gray-50 p-4 rounded-lg border border-gray-200"></div>
-                        <div id="confirmLocationDetails" class="bg-gray-50 p-4 rounded-lg border border-gray-200"></div>
+                <div class="px-4 py-3 overflow-y-auto max-h-[70vh]">
+                    <p class="text-sm text-gray-600 mb-3">Please review your details before submitting:</p>
+                    <div class="space-y-2">
+                        <div id="confirmPetDetails" class="bg-gray-50 p-3 rounded-lg border border-gray-200"></div>
+                        <div id="confirmAppointmentDetails" class="bg-gray-50 p-3 rounded-lg border border-gray-200"></div>
+                        <div id="confirmLocationDetails" class="bg-gray-50 p-3 rounded-lg border border-gray-200"></div>
                     </div>
                     
-                    <div class="mt-6 pt-4 border-t border-gray-200">
-                        <h4 class="font-semibold text-gray-900 mb-3">Important Reminders</h4>
-                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
-                            <ul class="space-y-2 text-sm text-amber-800">
+                    <div class="mt-4 pt-3 border-t border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Important Reminders</h4>
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-lg">
+                            <ul class="space-y-1.5 text-sm text-amber-800">
                                 <li class="flex items-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -1300,7 +1367,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                <div class="px-4 py-3 border-t border-gray-200 flex justify-end gap-2.5">
                     <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                         Edit Booking
                     </button>
@@ -1357,34 +1424,42 @@
                 return pet;
             }).filter(p => p);
             
-            if (selectedPetsInfo.length === 1) {
+if (selectedPetsInfo.length === 1) {
                 const pet = selectedPetsInfo[0];
                 const surgeryLabel = pet.gender === 'female' ? 'Spay' : 'Neuter';
+                const genderIcon = pet.gender === 'female' 
+                    ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-pink-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 9.75c2.48 0 4.5 2.02 4.5 4.5S15.48 18.75 12 18.75 7.5 16.73 7.5 14.25 9.52 9.75 12 9.75zM3.75 3.75v3.5c0 .97.78 1.75 1.75 1.75h11c.97 0 1.75-.78 1.75-1.75v-3.5c0-.97-.78-1.75-1.75-1.75h-11A1.75 1.75 0 003 6v3.5zM12 3.75a9 9 0 000 18 9 9 0 000-18zM7.5 9.75a.75.75 0 011.5 0h6a.75.75 0 010 1.5h-6a.75.75 0 010-1.5zM12 12.75a.75.75 0 00-.75.75v3a.75.75 0 001.5 0v-3a.75.75 0 00-.75-.75z"/></svg>'
+                    : '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M15.75 14.25a3.75 3.75 0 00-3.75-3.75 3.75 3.75 0 000 7.5h7.5a.75.75 0 000-1.5H15a3 3 0 000-6 .75.75 0 011.5 0h4.5a.75.75 0 010 1.5H15a1.5 1.5 0 010 3H6.75a.75.75 0 010-1.5H15a1.5 1.5 0 000-3H6.75a.75.75 0 010-1.5H15a1.5 1.5 0 000-3H6.75a.75.75 0 010-1.5H12a.75.75 0 011.5 0h.75c1.24 0 2.25 1.01 2.25 2.25v6.75a.75.75 0 01-1.5 0v-6.75a.75.75 0 011.5 0z"/></svg>';
                 petDetailsEl.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+                        <div class="relative w-14 h-14 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                            ${pet.image 
+                                ? `<img src="${pet.image.startsWith('http') ? pet.image : (pet.image.startsWith('images/pets') ? pet.image : 'images/pets/' + pet.image)}" alt="${pet.name}" class="w-full h-full object-cover">`
+                                : '<div class="w-full h-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>'}
                         </div>
-                        <div>
-                            <p class="font-semibold text-gray-900">${pet.name}</p>
-                            <p class="text-sm text-gray-500">${surgeryLabel} (${pet.gender === 'female' ? 'Female' : 'Male'} ${pet.species})</p>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-gray-900 truncate">${pet.name}</p>
+                            <p class="text-xs text-gray-500">${pet.species || 'Unknown'} &bull; ${pet.breed || 'Unknown'}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Age: ${pet.age || 'Unknown'}</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            ${genderIcon}
                         </div>
                     </div>
                 `;
-            } else if (selectedPetsInfo.length > 1) {
+} else if (selectedPetsInfo.length > 1) {
                 petDetailsEl.innerHTML = `
                     <div class="space-y-2">
                         <p class="font-semibold text-gray-900">${selectedPetsInfo.length} Pets Selected</p>
-                        <ul class="space-y-1 text-sm">
-                            ${selectedPetsInfo.map(pet => `
-                                <li class="flex items-center gap-2">
-                                    <span class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs">
-                                        ${selectedPetsInfo.indexOf(pet) + 1}
+                        <ul class="space-y-1.5 text-sm">
+                            ${selectedPetsInfo.map((pet, index) => `
+                                <li class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                                    <span class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs flex-shrink-0">
+                                        ${index + 1}
                                     </span>
-                                    <span class="font-medium text-gray-900">${pet.name}</span>
-                                    <span class="text-gray-500">(${pet.gender === 'female' ? 'Spay' : 'Neuter'})</span>
+                                    <span class="font-medium text-gray-900 truncate">${pet.name}</span>
+                                    <span class="text-gray-500 text-xs">${pet.gender === 'female' ? 'Spay' : 'Neuter'}</span>
+                                    <span class="text-gray-500 text-xs">${pet.species || 'Unknown'} &bull; ${pet.breed || 'Unknown'}</span>
                                 </li>
                             `).join('')}
                         </ul>
@@ -1402,8 +1477,16 @@
             if (appointmentDate && appointmentTime) {
                 const dateObj = new Date(appointmentDate + 'T00:00:00');
                 const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                const timeStr = appointmentTime;
-                appointmentText = `${dateStr} @ ${timeStr}`;
+                // Format time as 9:00AM instead of 9:00
+                let timeStr = appointmentTime;
+                if (timeStr.includes(':')) {
+                    const [hours, minutes] = timeStr.split(':');
+                    const hour = parseInt(hours);
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    const displayHour = hour === 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+                    timeStr = `${displayHour}:${minutes} ${ampm}`;
+                }
+                appointmentText = `${dateStr} at ${timeStr}`;
             }
             
             appointmentDetailsEl.innerHTML = `
