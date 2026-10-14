@@ -87,18 +87,13 @@
                       </div>
                  </div>
 
-                 <div class="md:col-span-5 lg:col-span-6">
-                     <div class="relative">
-                         <div class="rounded-2xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm flex items-center justify-center" style="min-height: 24rem;">
-                             <div class="text-center">
-                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-32 h-32 text-white/50 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                 </svg>
-                                 <p class="text-white/70 text-lg">Missing Pets</p>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
+                  <div class="md:col-span-5 lg:col-span-6">
+                      <div class="relative">
+                          <div class="rounded-2xl overflow-hidden shadow-xl h-96">
+                              <img src="{{ asset('images/herosection/missing.jpg') }}" alt="Missing Pets" class="w-full h-full object-cover">
+                          </div>
+                      </div>
+                  </div>
              </div>
          </div>
      </section>

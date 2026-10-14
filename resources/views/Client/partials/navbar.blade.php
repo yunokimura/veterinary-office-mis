@@ -288,7 +288,7 @@
         }
 
         function selectAppointmentFlow(appointmentType) {
-            const targetUrl = appointmentType === 'kapon' ? '/kapon' : '/vaccination';
+            const targetUrl = appointmentType === 'kapon' ? '/kapon/form' : '/vaccination/form';
             closeAppointmentModal();
             window.location.href = targetUrl;
         }

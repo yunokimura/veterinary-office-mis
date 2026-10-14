@@ -87,15 +87,10 @@
                         </a>
                     </div>
                 </div>
-                <!-- Right Side: Placeholder Image -->
+                <!-- Right Side: Hero Image -->
                 <div class="flex justify-center">
-                    <div class="w-full max-w-lg aspect-square bg-white/10 rounded-2xl flex items-center justify-center border border-white/20">
-                        <div class="text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-32 h-32 text-white/50 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p class="text-white/70 text-lg">Anti-Rabies Vaccination Services</p>
-                        </div>
+                    <div class="w-full max-w-lg aspect-square rounded-2xl overflow-hidden shadow-xl border border-white/20">
+                        <img src="{{ asset('images/herosection/vaccine.jpg') }}" alt="Anti-Rabies Vaccination Services" class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
