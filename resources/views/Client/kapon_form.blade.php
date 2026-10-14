@@ -212,21 +212,21 @@
                     </div>
                 </div>
 
-                <!-- Card 3: AGREEMENT -->
+                <!-- Card 3: MEDICAL INFORMATION -->
                 <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
                     <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <h4 class="text-sm font-semibold text-white">AGREEMENT</h4>
+                            <h4 class="text-sm font-semibold text-white">MEDICAL INFORMATION</h4>
                         </div>
                     </div>
                     <div class="p-6">
                         <div id="petAgreementsContainer" class="space-y-6">
                             <!-- Per-pet agreement cards will be dynamically generated here -->
                             <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
-                                <p class="text-sm text-yellow-700">Please select pets first to see the agreement forms.</p>
+                                <p class="text-sm text-yellow-700">Please select pets in Part 2 first to see the medical information forms.</p>
                             </div>
                         </div>
                     </div>
@@ -389,7 +389,7 @@
                         return weight + ' kg';
                     }
 
-                    // Render gender icons in the pet selection modal
+// Render gender icons in the pet selection modal
                     function renderModalGenderIcons() {
                         petsData.forEach(pet => {
                             const genderValue = pet.sex ?? pet.gender;
@@ -401,9 +401,9 @@
                             const g = String(genderValue).toLowerCase();
                             let iconHtml = '';
                             if (g === 'female') {
-                                iconHtml = '<span class="text-pink-500">♀</span>';
+                                iconHtml = '<span class="text-pink-500 font-bold">♀</span>';
                             } else if (g === 'male') {
-                                iconHtml = '<span class="text-blue-500">♂</span>';
+                                iconHtml = '<span class="text-blue-500 font-bold">♂</span>';
                             }
                             iconContainer.innerHTML = iconHtml;
                         });
@@ -873,9 +873,9 @@ petEl.innerHTML = `
                                                 if (g) {
                                                     const genderLower = g.toLowerCase();
                                                     if (genderLower === 'female') {
-                                                        return '<span class="text-pink-500">♀</span>';
+                                                        return '<span class="text-pink-500 font-bold">♀</span>';
                                                     } else if (genderLower === 'male') {
-                                                        return '<span class="text-blue-500">♂</span>';
+                                                        return '<span class="text-blue-500 font-bold">♂</span>';
                                                     }
                                                 }
                                                 return '';
@@ -1202,7 +1202,7 @@ petEl.innerHTML = `
                 petCard.className = 'bg-white border border-gray-200 rounded-lg p-6 mb-6';
                 petCard.id = 'pet-agreement-' + petId;
 
-                petCard.innerHTML = `
+petCard.innerHTML = `
                     <div class="flex items-center mb-4 pb-3 border-b">
                         ${pet.image ? (function() {
                             let imgPath = pet.image;
@@ -1214,13 +1214,28 @@ petEl.innerHTML = `
                         })() : `
                         <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>`}
                         <div class="ml-3">
-                            <h4 class="font-semibold text-gray-900">${pet.name}</h4>
+                            <div class="flex items-center gap-1.5">
+                                <h4 class="font-semibold text-gray-900">${pet.name}</h4>
+                                ${(() => {
+                                    const g = pet.sex ?? pet.gender;
+                                    if (g) {
+                                        const genderLower = g.toLowerCase();
+                                        if (genderLower === 'female') {
+                                            return '<span class="text-pink-500 font-bold text-lg">♀</span>';
+                                        } else if (genderLower === 'male') {
+                                            return '<span class="text-blue-500 font-bold text-lg">♂</span>';
+                                        }
+                                    }
+                                    return '';
+                                })()}
+                            </div>
                             <p class="text-xs text-gray-500">${pet.species || 'Unknown'} • ${pet.breed || 'Unknown'} • Age: ${formatAge(pet.age)}</p>
                         </div>
+                    </div>
                     </div>
                     
                     <!-- Previous Surgery -->
@@ -1427,23 +1442,43 @@ petEl.innerHTML = `
 if (selectedPetsInfo.length === 1) {
                 const pet = selectedPetsInfo[0];
                 const surgeryLabel = pet.gender === 'female' ? 'Spay' : 'Neuter';
-                const genderIcon = pet.gender === 'female' 
-                    ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-pink-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 9.75c2.48 0 4.5 2.02 4.5 4.5S15.48 18.75 12 18.75 7.5 16.73 7.5 14.25 9.52 9.75 12 9.75zM3.75 3.75v3.5c0 .97.78 1.75 1.75 1.75h11c.97 0 1.75-.78 1.75-1.75v-3.5c0-.97-.78-1.75-1.75-1.75h-11A1.75 1.75 0 003 6v3.5zM12 3.75a9 9 0 000 18 9 9 0 000-18zM7.5 9.75a.75.75 0 011.5 0h6a.75.75 0 010 1.5h-6a.75.75 0 010-1.5zM12 12.75a.75.75 0 00-.75.75v3a.75.75 0 001.5 0v-3a.75.75 0 00-.75-.75z"/></svg>'
-                    : '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M15.75 14.25a3.75 3.75 0 00-3.75-3.75 3.75 3.75 0 000 7.5h7.5a.75.75 0 000-1.5H15a3 3 0 000-6 .75.75 0 011.5 0h4.5a.75.75 0 010 1.5H15a1.5 1.5 0 010 3H6.75a.75.75 0 010-1.5H15a1.5 1.5 0 000-3H6.75a.75.75 0 010-1.5H15a1.5 1.5 0 000-3H6.75a.75.75 0 010-1.5H12a.75.75 0 011.5 0h.75c1.24 0 2.25 1.01 2.25 2.25v6.75a.75.75 0 01-1.5 0v-6.75a.75.75 0 011.5 0z"/></svg>';
+                
+                // Generate gender icon
+                const genderValue = pet.sex ?? pet.gender;
+                let genderIconHtml = '';
+                if (genderValue) {
+                    const g = String(genderValue).toLowerCase();
+                    if (g === 'female') {
+                        genderIconHtml = '<span class="text-pink-500 font-bold text-lg">♀</span>';
+                    } else if (g === 'male') {
+                        genderIconHtml = '<span class="text-blue-500 font-bold text-lg">♂</span>';
+                    }
+                }
+                
+                // Fix image path
+                let imageSrc = '';
+                if (pet.image) {
+                    let imgPath = pet.image;
+                    if (!imgPath.includes('images/pets') && !imgPath.includes('http')) {
+                        imgPath = 'images/pets/' + imgPath.split('/').pop();
+                    }
+                    imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                }
+                
                 petDetailsEl.innerHTML = `
                     <div class="flex items-center gap-3">
                         <div class="relative w-14 h-14 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                            ${pet.image 
-                                ? `<img src="${pet.image.startsWith('http') ? pet.image : (pet.image.startsWith('images/pets') ? pet.image : 'images/pets/' + pet.image)}" alt="${pet.name}" class="w-full h-full object-cover">`
-                                : '<div class="w-full h-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>'}
+                            ${imageSrc 
+                                ? `<img src="${imageSrc}" alt="${pet.name}" class="w-full h-full object-cover">`
+                                : '<div class="w-full h-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z"/></svg></div>'}
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="font-semibold text-gray-900 truncate">${pet.name}</p>
-                            <p class="text-xs text-gray-500">${pet.species || 'Unknown'} &bull; ${pet.breed || 'Unknown'}</p>
+                            <p class="text-xs text-gray-500">${pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown'} &bull; ${pet.breed || 'Unknown'}</p>
                             <p class="text-xs text-gray-500 mt-0.5">Age: ${pet.age || 'Unknown'}</p>
                         </div>
                         <div class="flex-shrink-0">
-                            ${genderIcon}
+                            ${genderIconHtml}
                         </div>
                     </div>
                 `;
@@ -1452,16 +1487,31 @@ if (selectedPetsInfo.length === 1) {
                     <div class="space-y-2">
                         <p class="font-semibold text-gray-900">${selectedPetsInfo.length} Pets Selected</p>
                         <ul class="space-y-1.5 text-sm">
-                            ${selectedPetsInfo.map((pet, index) => `
-                                <li class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                                    <span class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs flex-shrink-0">
-                                        ${index + 1}
-                                    </span>
-                                    <span class="font-medium text-gray-900 truncate">${pet.name}</span>
-                                    <span class="text-gray-500 text-xs">${pet.gender === 'female' ? 'Spay' : 'Neuter'}</span>
-                                    <span class="text-gray-500 text-xs">${pet.species || 'Unknown'} &bull; ${pet.breed || 'Unknown'}</span>
-                                </li>
-                            `).join('')}
+                            ${selectedPetsInfo.map((pet, index) => {
+                                // Generate gender icon for each pet
+                                const genderValue = pet.sex ?? pet.gender;
+                                let genderIconHtml = '';
+                                if (genderValue) {
+                                    const g = String(genderValue).toLowerCase();
+                                    if (g === 'female') {
+                                        genderIconHtml = '<span class="text-pink-500 font-bold text-xs">♀</span>';
+                                    } else if (g === 'male') {
+                                        genderIconHtml = '<span class="text-blue-500 font-bold text-xs">♂</span>';
+                                    }
+                                }
+                                const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
+                                return `
+                                    <li class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                                        <span class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs flex-shrink-0">
+                                            ${index + 1}
+                                        </span>
+                                        <span class="font-medium text-gray-900 truncate">${pet.name}</span>
+                                        ${genderIconHtml}
+                                        <span class="text-gray-500 text-xs">${pet.gender === 'female' ? 'Spay' : 'Neuter'}</span>
+                                        <span class="text-gray-500 text-xs">${speciesDisplay} &bull; ${pet.breed || 'Unknown'}</span>
+                                    </li>
+                                `;
+                            }).join('')}
                         </ul>
                     </div>
                 `;
