@@ -523,10 +523,10 @@
                 </div>
 
                 <!-- Report Missing Pet CTA -->
-                <button onclick="openModal('reportPetModal')" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center justify-center space-x-2 tab-cta" data-tab="missing">
+                <a href="{{ url('/missing-pets/form') }}" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center justify-center space-x-2 tab-cta" data-tab="missing">
                     <i class="fa-solid fa-bullhorn"></i>
                     <span>Report Missing Pet</span>
-                </button>
+                </a>
                 <a href="{{ url('/adoption') ?? '#' }}" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2 tab-cta hidden" data-tab="adoption">
                     <i class="fa-solid fa-heart"></i>
                     <span>Adopt a Pet</span>
@@ -540,7 +540,7 @@
                     @forelse($missingPets as $pet)
                     <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="{{ strtolower($pet->pet_status) }}" onclick="showPetModal({{ $pet->pet_id }})">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
-                            <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
+                            <img src="{{ $pet->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
                             <span class="absolute top-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">{{ strtoupper($pet->pet_status) }}</span>
                         </div>
                         <div class="p-4">
@@ -578,7 +578,7 @@
                     @forelse($adoptionPets as $pet)
                     <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" onclick="showPetModal({{ $pet->pet_id }})">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
-                            <img src="{{ $pet->pet_image ? asset('storage/'.$pet->pet_image) : 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
+                            <img src="{{ $pet->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
                             <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">For Adoption</span>
                         </div>
                         <div class="p-4">
@@ -1003,7 +1003,7 @@
                 'location_barangay' => $report && $report->barangay ? $report->barangay->barangay_name : null,
                 'location_description' => $report ? $report->location_description : null,
                 'last_seen_at' => $report ? $report->last_seen_at : null,
-                'pet_image' => $pet->pet_image,
+                'pet_image' => $pet->image_url,
                 'pet_status' => $pet->pet_status,
             ];
         })->toArray()) !!};
@@ -1022,7 +1022,7 @@
                 'location_barangay' => $pet->barangay ? $pet->barangay->barangay_name : null,
                 'location_description' => null,
                 'last_seen_at' => $pet->created_at,
-                'pet_image' => $pet->pet_image,
+                'pet_image' => $pet->image_url,
                 'pet_status' => $pet->pet_status,
             ];
         })->toArray()) !!};
@@ -1034,7 +1034,7 @@
             if (!pet) return;
 
             const imageUrl = pet.pet_image
-                ? "{{ asset('storage') }}/" + pet.pet_image
+                ? pet.pet_image
                 : "https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image";
 
             document.getElementById('modalPetImage').src = imageUrl;

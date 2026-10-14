@@ -1186,7 +1186,7 @@
         </div>
     </section>
 
-    <!-- Adoption FAQ -->
+    {{-- Adoption FAQ (temporarily disabled, kept for later use - remove the Blade comment wrappers to restore)
     <section class="py-16 bg-white" id="faq">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-12">
@@ -1315,6 +1315,7 @@
             </div>
         </div>
     </section>
+    --}}
 
     @include('Client.partials.footer')
 

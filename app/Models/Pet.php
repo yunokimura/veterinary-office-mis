@@ -72,12 +72,13 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereVaccinationDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereVaccinationStatus($value)
- * *
+ *                                                                                                 *
  * @mixin \Eloquent
  */
 class Pet extends Model
 {
     use SoftDeletes;
+
     protected $table = 'pets';
 
     protected $primaryKey = 'pet_id';
@@ -176,6 +177,55 @@ class Pet extends Model
     public function getImageAttribute($value)
     {
         return $this->pet_image;
+    }
+
+    /**
+     * Resolve the pet image to a usable public URL.
+     *
+     * pet_image values follow several storage conventions across modules:
+     * - Full relative public path (e.g. "images/adoption pets/acacia.jpg")
+     * - Storage disk path (e.g. "pets/abc.jpg", "missing-pets/abc.jpg")
+     * - Legacy bare filename stored under public/images/missing pets
+     */
+    public function getImageUrlAttribute()
+    {
+        $raw = $this->pet_image;
+
+        if (! $raw) {
+            return null;
+        }
+
+        if (str_starts_with($raw, 'http://') || str_starts_with($raw, 'https://')) {
+            return $raw;
+        }
+
+        $path = ltrim($raw, '/');
+
+        if (file_exists(public_path($path))) {
+            return str_replace(' ', '%20', asset($path));
+        }
+
+        if (file_exists(storage_path('app/public/'.$path))) {
+            return asset('storage/'.$path);
+        }
+
+        foreach (['images/missing pets', 'images/adoption pets', 'images/pets', 'images'] as $directory) {
+            $candidate = public_path($directory.'/'.$path);
+            if (file_exists($candidate)) {
+                return str_replace(' ', '%20', asset($directory.'/'.$path));
+            }
+
+            // Legacy records may store the wrong file extension.
+            $baseName = pathinfo($path, PATHINFO_FILENAME);
+            foreach (['jpeg', 'jpg', 'png', 'webp'] as $extension) {
+                $alternative = $directory.'/'.$baseName.'.'.$extension;
+                if (file_exists(public_path($alternative))) {
+                    return str_replace(' ', '%20', asset($alternative));
+                }
+            }
+        }
+
+        return null;
     }
 
     public function getAgeAttribute()
