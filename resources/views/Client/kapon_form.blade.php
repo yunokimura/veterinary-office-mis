@@ -915,6 +915,19 @@ petEl.innerHTML = `
                         }).filter(p => p !== undefined);
                         
                         document.getElementById('petsDataJson').value = JSON.stringify(selectedPetsData);
+                        
+                        // Also update the selected_pets hidden inputs for validation
+                        const container = document.getElementById('selectedPetsArrayContainer');
+                        if (container) {
+                            container.innerHTML = '';
+                            selectedPets.forEach(petId => {
+                                const input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = 'selected_pets[]';
+                                input.value = petId;
+                                container.appendChild(input);
+                            });
+                        }
                     }
 
                     function confirmPetSelection() {
