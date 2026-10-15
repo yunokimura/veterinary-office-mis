@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ asset('js/breeds.js') }}" defer></script>
     <script>
@@ -514,13 +515,11 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Front View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
-                                            <img id="frontPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
+                                            <img id="frontPreview" src="" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="frontImage" name="additional_photos[front]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'frontPreview')" required>
                                             <button type="button" onclick="removePhoto('front')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="frontRemoveBtn" aria-label="Remove front view photo">×</button>
                                             <button type="button" onclick="document.getElementById('frontImage').click()" id="frontUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                                <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                                </svg>
+                                                <i class="fi fi-br-picture text-4xl mb-2"></i>
                                                 Click to upload
                                             </button>
                                         </div>
@@ -530,13 +529,11 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Side View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
-                                            <img id="sidePreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
+                                            <img id="sidePreview" src="" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="sideImage" name="additional_photos[side]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'sidePreview')" required>
                                             <button type="button" onclick="removePhoto('side')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="sideRemoveBtn" aria-label="Remove side view photo">×</button>
                                             <button type="button" onclick="document.getElementById('sideImage').click()" id="sideUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                                <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                                </svg>
+                                                <i class="fi fi-br-picture text-4xl mb-2"></i>
                                                 Click to upload
                                             </button>
                                         </div>
@@ -546,13 +543,11 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Top-Down View</label>
                                         <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[120px]">
-                                            <img id="topPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
+                                            <img id="topPreview" src="" class="w-full h-full object-cover rounded-lg hidden">
                                             <input type="file" id="topImage" name="additional_photos[top]" accept="image/*" class="hidden" onchange="previewImageForAdditional(this, 'topPreview')" required>
                                             <button type="button" onclick="removePhoto('top')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="topRemoveBtn" aria-label="Remove top-down view photo">×</button>
                                             <button type="button" onclick="document.getElementById('topImage').click()" id="topUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                                <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                                </svg>
+                                                <i class="fi fi-br-picture text-4xl mb-2"></i>
                                                 Click to upload
                                             </button>
                                         </div>
@@ -564,13 +559,11 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Unique Body Mark</label>
                                 <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[144px] w-36 md:w-48">
-                                    <img id="bodyMarkPreview" src="{{ asset('images/no-image.png') }}" class="w-full h-full object-cover rounded-lg hidden">
+                                    <img id="bodyMarkPreview" src="" class="w-full h-full object-cover rounded-lg hidden">
                                     <input type="file" id="bodyMarkImage" name="body_mark_image" accept="image/*" class="hidden" onchange="previewBodyMark(event)">
                                     <button type="button" onclick="removeBodyMark()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="bodyMarkRemoveBtn" aria-label="Remove body mark photo">×</button>
                                     <button type="button" onclick="document.getElementById('bodyMarkImage').click()" id="bodyMarkUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                        <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                        </svg>
+                                        <i class="fi fi-br-picture text-4xl mb-2"></i>
                                         Click to upload
                                     </button>
                                 </div>
@@ -676,9 +669,7 @@
                                     <img id="vaccinationCardPreview" class="hidden w-full h-full object-cover rounded-lg mx-auto">
                                     <button type="button" onclick="removeVaccinationCard()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="vaccinationCardRemoveBtn" aria-label="Remove vaccination card">×</button>
                                     <button type="button" onclick="document.getElementById('vaccinationCard').click()" id="vaccinationCardUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                        <svg class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                        </svg>
+                                        <i class="fi fi-br-picture text-4xl mb-2"></i>
                                         Click to upload vaccination booklet / certificate
                                     </button>
                                 </div>
@@ -2330,27 +2321,25 @@ groups[letter].forEach((breed, breedIndex) => {
                 row('Body Mark Details', bodyMarkDetails ? bodyMarkDetails.value : '');
 
             const images = [
-                { id: 'petImagePreview', label: 'Profile', fallback: '{{ asset('images/pet.png') }}' },
-                { id: 'bodyMarkPreview', label: 'Body Mark', fallback: '{{ asset('images/pet.png') }}' },
-                { id: 'frontPreview', label: 'Front View', fallback: '{{ asset('images/pet.png') }}' },
-                { id: 'sidePreview', label: 'Side View', fallback: '{{ asset('images/pet.png') }}' },
-                { id: 'topPreview', label: 'Top-Down', fallback: '{{ asset('images/pet.png') }}' }
+                { id: 'petImagePreview', label: 'Profile' },
+                { id: 'bodyMarkPreview', label: 'Body Mark' },
+                { id: 'frontPreview', label: 'Front View' },
+                { id: 'sidePreview', label: 'Side View' },
+                { id: 'topPreview', label: 'Top-Down' }
             ];
 
             const imagesHtml = images.map(img => {
                 const el = document.getElementById(img.id);
-                const src = el ? el.getAttribute('src') : img.fallback;
-                const hasUpload = img.id !== 'petImagePreview'
-                    ? !!src && !src.endsWith('no-image.png')
-                    : !!src && !src.endsWith('pet.png');
-                
+                const src = el ? (el.getAttribute('src') || '') : '';
+                const hasUpload = !!src;
+
                 if (!hasUpload) return '';
-                
+
                 return `
                 <div class="text-center">
-                    <img src="${esc(src)}" alt="${img.label}" class="w-20 h-20 ${img.id === 'petImagePreview' ? 'rounded-full' : 'rounded-xl'} object-cover border-2 ${hasUpload ? 'border-emerald-400' : 'border-slate-200'} mx-auto">
+                    <img src="${esc(src)}" alt="${img.label}" class="w-20 h-20 ${img.id === 'petImagePreview' ? 'rounded-full' : 'rounded-xl'} object-cover border-2 border-emerald-400 mx-auto">
                     <span class="block text-xs text-gray-700 mt-1">${img.label}</span>
-                    <span class="block text-xs ${hasUpload ? 'text-emerald-600' : 'text-slate-400'}">${hasUpload ? 'Uploaded' : 'Not uploaded'}</span>
+                    <span class="block text-xs text-emerald-600">Uploaded</span>
                 </div>`;
             }).join('');
 
@@ -2422,7 +2411,7 @@ groups[letter].forEach((breed, breedIndex) => {
 
             let vaccinationCardHtml = '';
             const vaccinationCardPreview = document.getElementById('vaccinationCardPreview');
-            const hasVaccinationCard = vaccinationCardPreview && vaccinationCardPreview.src && !vaccinationCardPreview.src.includes('pet.png');
+            const hasVaccinationCard = !!(vaccinationCardPreview && vaccinationCardPreview.getAttribute('src'));
             if (hasVaccinationCard) {
                 vaccinationCardHtml = `<div class="mt-2"><img src="${vaccinationCardPreview.src}" alt="Vaccination Card" class="w-32 h-24 object-cover rounded-lg border border-slate-200"></div>`;
             }
