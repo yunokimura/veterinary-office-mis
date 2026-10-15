@@ -339,12 +339,12 @@
 
                     <!-- Step 1 Navigation -->
                     <div class="flex items-center justify-between">
-                        <a href="{{ url('/pet-registration') }}" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                        <button type="button" onclick="handleCancelNavigation()" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
                             Cancel
-                        </a>
+                        </button>
                         <button type="button" onclick="changeStep(1)" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
                             Next Step
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -2710,10 +2710,132 @@ groups[letter].forEach((breed, breedIndex) => {
                     showStep(restoredPetStep);
                 }
             }
-        }) : null;
+}) : null;
     </script>
-    
+
+    <script>
+        // --- Form dirty tracking & Cancel navigation handlers ---
+
+        // Track if form has been modified by user
+        let formDirty = false;
+
+        // Mark form as dirty on any user input
+        const formEl = document.getElementById('petRegistrationForm');
+        if (formEl) {
+            formEl.addEventListener('input', function() {
+                formDirty = true;
+            });
+            formEl.addEventListener('change', function() {
+                formDirty = true;
+            });
+        }
+
+        // Reset dirty flag when draft is explicitly cleared
+        if (petRegistrationDraft) {
+            const originalClear = petRegistrationDraft.clear;
+            petRegistrationDraft.clear = function() {
+                formDirty = false;
+                return originalClear.call(this);
+            };
+        }
+
+// Reset dirty flag on successful form submission
+        if (formEl) {
+            formEl.addEventListener('submit', function() {
+                formDirty = false;
+            });
+        }
+    </script>
+
+    <script>
+        // --- Cancel navigation handlers & modal ---
+
+        function handleCancelNavigation() {
+            if (!formDirty) {
+                // No changes, navigate directly to dashboard
+                window.location.href = '/pet-registration';
+                return;
+            }
+            // Show modal
+            document.getElementById('cancelModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cancelSaveDraft() {
+            // Show toast, keep draft, navigate to dashboard
+            showSuccessToast('Progress saved! You can resume anytime on this device.');
+            formDirty = false;
+            closeCancelModal();
+            setTimeout(function() {
+                window.location.href = '/pet-registration';
+            }, 1500);
+        }
+
+        function cancelDiscard() {
+            // Clear draft and navigate
+            if (petRegistrationDraft) {
+                petRegistrationDraft.clear();
+            }
+            formDirty = false;
+            closeCancelModal();
+            window.location.href = '/pet-registration';
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCancelModal();
+            }
+        });
+
+        // Toast helper for "Progress saved!"
+        function showSuccessToast(message) {
+            const existing = document.getElementById('successToast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'successToast';
+            toast.className = 'fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+            toast.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+    </script>
+
     <!-- Breed Selector Modal -->
+
+        // Toast helper for "Progress saved!"
+        function showSuccessToast(message) {
+            const existing = document.getElementById('successToast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'successToast';
+            toast.className = 'fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+            toast.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+    </script>
     <div id="breedModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="breedModalTitle">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeBreedModal()"></div>
         <div class="fixed inset-0 flex items-end sm:items-center sm:justify-center p-0 sm:p-4">
@@ -2874,6 +2996,26 @@ groups[letter].forEach((breed, breedIndex) => {
                     <button type="button" onclick="closeRegistrationStatusModal()" class="w-full px-6 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-semibold hover:bg-slate-50 transition-colors">
                         Back to Form
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="cancelModalTitle">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 id="cancelModalTitle" class="text-xl font-bold text-gray-900 mb-2">Leave this form?</h3>
+                <p class="text-gray-600 mb-6" id="cancelModalMessage">You have unsaved changes. Do you want to save this as a draft before leaving?</p>
+                <div class="flex gap-3 justify-center flex-wrap">
+                    <button onclick="cancelDiscard()" class="px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors">Discard Changes</button>
+                    <button onclick="cancelSaveDraft()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Save as Draft</button>
+                    <button onclick="closeCancelModal()" class="px-4 py-2 border border-slate-300 text-gray-700 rounded-lg hover:bg-slate-50 transition-colors">Stay on Page</button>
                 </div>
             </div>
         </div>
