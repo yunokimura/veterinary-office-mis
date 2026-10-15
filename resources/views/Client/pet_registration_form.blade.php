@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ asset('js/breeds.js') }}" defer></script>
     <script>
@@ -190,11 +191,14 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Profile Picture</label>
                                 <div class="flex items-center space-x-6">
-                                    <!-- Placeholder Image (Dog with Cat) -->
+                                    <!-- Camera icon placeholder until a photo is uploaded -->
                                     <div class="shrink-0">
-                                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-300 relative">
-                                            <img id="petImagePreview" src="{{ asset('images/pet.png') }}" alt="Pet Profile" class="w-full h-full object-cover">
-                                            <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all flex items-center justify-center cursor-pointer" onclick="document.getElementById('petImage').click()">
+                                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-300 relative bg-emerald-50 cursor-pointer" onclick="document.getElementById('petImage').click()">
+                                            <div id="petImagePlaceholder" class="absolute inset-0 flex items-center justify-center">
+                                                <i class="fi fi-rr-camera text-3xl sm:text-4xl text-emerald-500"></i>
+                                            </div>
+                                            <img id="petImagePreview" src="" alt="Pet Profile" class="w-full h-full object-cover hidden">
+                                            <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all flex items-center justify-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white opacity-0 hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -922,6 +926,7 @@
 
         let selectedBreeds = [];
         let currentPetType = '';
+        let lastFocusedElement = null;
 
         // Returns true only when the crossbreed answer is "Yes"
         function isCrossbreedSelected() {
@@ -1787,7 +1792,10 @@ groups[letter].forEach((breed, breedIndex) => {
                 wrap.classList.add('hidden');
                 birthdateSection.classList.add('hidden');
                 ageSection.classList.add('hidden');
-                if (birthdateInput) birthdateInput.value = '';
+                if (birthdateInput) {
+                    birthdateInput.value = '';
+                    birthdateInput.removeAttribute('required');
+                }
                 resetAgeSelectors();
                 return;
             }
@@ -1799,11 +1807,15 @@ groups[letter].forEach((breed, breedIndex) => {
                 // Birthdate mode
                 birthdateSection.classList.remove('hidden');
                 ageSection.classList.add('hidden');
+                if (birthdateInput) birthdateInput.setAttribute('required', 'required');
             } else {
                 // Age mode
                 birthdateSection.classList.add('hidden');
                 ageSection.classList.remove('hidden');
-                if (birthdateInput) birthdateInput.value = '';
+                if (birthdateInput) {
+                    birthdateInput.value = '';
+                    birthdateInput.removeAttribute('required');
+                }
             }
         }
 
@@ -1888,7 +1900,12 @@ groups[letter].forEach((breed, breedIndex) => {
             try {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('petImagePreview').src = e.target.result;
+                    const preview = document.getElementById('petImagePreview');
+                    const placeholder = document.getElementById('petImagePlaceholder');
+
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    if (placeholder) placeholder.classList.add('hidden');
                 };
                 reader.onerror = function() {
                     showErrorToast('Failed to read image file. Please try another file.');
@@ -2595,6 +2612,27 @@ groups[letter].forEach((breed, breedIndex) => {
 
             // Initialise the stepper on page load
         updateStepIndicator();
+
+        // Restore conditional UI state after a validation error round-trip (old() data)
+        (function restoreOldInputState() {
+            // Breed trigger text + internal selection state
+            const breedInput = document.getElementById('petBreedInput');
+            if (breedInput && breedInput.value.trim() !== '') {
+                selectedBreeds = breedInput.value.split(',').map(b => b.trim()).filter(Boolean);
+                updateSelectedBreedDisplay();
+            }
+
+            // Birthdate / age block
+            toggleBirthdate();
+
+            // Eye colour "Other" field + heterochromia sub-fields
+            handleEyeColorChange();
+            handleEyeSideChange('Left');
+            handleEyeSideChange('Right');
+
+            // Weight suffix
+            updateWeightSuffix();
+        })();
     </script>
     
     <!-- Breed Selector Modal -->

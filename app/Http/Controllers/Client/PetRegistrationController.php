@@ -9,6 +9,7 @@ use App\Models\VaccinationReport;
 use App\Support\PetAge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PetRegistrationController extends Controller
@@ -39,6 +40,7 @@ class PetRegistrationController extends Controller
                 'pet_age_years' => 'nullable|integer|min:0|max:40',
                 'pet_age_months' => 'nullable|integer|min:0|max:11',
                 'pet_weight' => 'nullable|string|max:50',
+                'weight_unknown' => 'nullable|boolean',
                 'additional_photos.front' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'additional_photos.side' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'additional_photos.top' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -52,7 +54,8 @@ class PetRegistrationController extends Controller
                 'vaccination_core_other' => 'nullable|string|max:255',
                 'vaccination_optional_other' => 'nullable|string|max:255',
                 'anti_rabies' => 'nullable|array',
-                'anti_rabies.date_administered' => 'required_if:vaccination_core.*,Anti-Rabies|nullable|date_format:d/m/Y',
+                // The browser date picker always submits YYYY-MM-DD
+                'anti_rabies.date_administered' => 'required_if:vaccination_core.*,Anti-Rabies|nullable|date_format:Y-m-d',
                 'anti_rabies.lot_no' => 'nullable|string|max:6|regex:/^[A-Za-z0-9]+$/',
                 'anti_rabies.tag_no' => 'nullable|string|max:30|regex:/^[A-Za-z0-9\-\s]+$/',
                 'vaccination_card' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -66,6 +69,13 @@ class PetRegistrationController extends Controller
             if ($request->input('know_birthdate') !== 'yes' && $yearsInput === 0 && $monthsInput === 0) {
                 return back()->withErrors([
                     'pet_age_years' => "Please specify your pet's age in years or months.",
+                ])->withInput();
+            }
+
+            // Knowing the birthdate means the birthdate itself must be supplied
+            if ($request->input('know_birthdate') === 'yes' && ! $request->filled('pet_birthdate')) {
+                return back()->withErrors([
+                    'pet_birthdate' => "Please provide your pet's birthdate.",
                 ])->withInput();
             }
 
@@ -85,21 +95,20 @@ class PetRegistrationController extends Controller
                 $lastName = array_pop($nameParts); // Last part is last name (e.g., "Cruz")
                 $middleName = count($nameParts) > 1 ? implode(' ', array_slice($nameParts, 1)) : null; // Middle parts (e.g., "Kun Dela")
 
-                // Get phone from user contact_number, require if registered user should have one
+                // Get phone from user contact_number, fall back to a placeholder
+                // (pet_owners.phone_number is NOT NULL)
                 $phoneNumber = $user->contact_number ?? 'N/A';
 
                 try {
+                    // Only fillable / existing columns: the legacy blk_lot_ph,
+                    // street, subdivision, barangay and email pet owner columns
+                    // were dropped in the 2026-04-24 restructure.
                     $petOwner = PetOwner::create([
                         'user_id' => $user->id,
                         'first_name' => $firstName,
                         'middle_name' => $middleName,
                         'last_name' => $lastName,
-                        'email' => $user->email,
                         'phone_number' => $phoneNumber,
-                        'blk_lot_ph' => '',
-                        'street' => '',
-                        'subdivision' => '',
-                        'barangay' => '',
                     ]);
                     Log::info('Created new pet owner with ID: '.$petOwner->owner_id);
                 } catch (\Exception $e) {
@@ -113,12 +122,6 @@ class PetRegistrationController extends Controller
             if (! $petOwner) {
                 return back()->with('error', 'Unable to create pet owner record. Please contact support.')->withInput();
             }
-
-            // Handle file uploads
-            $petImagePath = null;
-            $bodyMarkImagePath = null;
-
-            Log::info('Form all inputs: ', $request->all());
 
             // Handle file uploads - save to public/images folder
             $petImagePath = null;
@@ -176,140 +179,133 @@ class PetRegistrationController extends Controller
                 }
             }
 
-            $pet = Pet::create([
-                'owner_id' => $petOwner ? $petOwner->owner_id : null,
-                'pet_name' => $validated['pet_name'],
-                'species' => $validated['pet_type'],
-                'breed' => $validated['pet_breed'],
-                'gender' => $validated['gender'],
-                'birthdate' => $birthdate,
-                'body_mark_details' => $validated['body_mark_details'] ?? null,
-                'pet_image' => $petImagePath,
-                'body_mark_image' => $bodyMarkImagePath,
-            ]);
-
             $petAge = PetAge::compute($birthdate) ?? $ageInput;
 
-            $pet->petInfo()->create([
-                'is_neutered' => $request->input('is_neutered'),
-                'is_crossbreed' => $request->input('is_crossbreed'),
-                'pet_age' => $petAge,
-                'pet_weight' => $validated['pet_weight'] ?? null,
-                'training' => json_encode($request->input('training', [])),
-                'insurance' => json_encode($request->input('insurance', [])),
-                'behavior' => json_encode($request->input('behavior', [])),
-                'likes' => json_encode($request->input('likes', [])),
-                'dislikes' => json_encode($request->input('dislikes', [])),
-                'diet' => json_encode($request->input('diet', [])),
-                'allergy' => json_encode($request->input('allergy', [])),
-            ]);
+            // Persist everything in one transaction so a failure never leaves
+            // a half-registered pet (pet row without its info / report).
+            $pet = DB::transaction(function () use ($request, $petOwner, $validated, $birthdate, $petAge, $petImagePath, $bodyMarkImagePath, &$vaccinationCardPath) {
+                $pet = Pet::create([
+                    'owner_id' => $petOwner ? $petOwner->owner_id : null,
+                    'pet_name' => $validated['pet_name'],
+                    'species' => $validated['pet_type'],
+                    'breed' => $validated['pet_breed'],
+                    'gender' => $validated['gender'],
+                    'birthdate' => $birthdate,
+                    'body_mark_details' => $validated['body_mark_details'] ?? null,
+                    'pet_image' => $petImagePath,
+                    'body_mark_image' => $bodyMarkImagePath,
+                ]);
 
-            // Handle additional view photos
-            $additionalPhotos = [];
-            if ($request->hasFile('additional_photos')) {
-                $uploadPath = public_path('images/pets/'.$pet->pet_id);
-                if (! file_exists($uploadPath)) {
-                    mkdir($uploadPath, 0777, true);
-                }
-                foreach ($request->file('additional_photos') as $view => $file) {
-                    if ($file->isValid()) {
-                        $filename = $view.'_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
-                        $file->move($uploadPath, $filename);
-                        $additionalPhotos[$view] = 'images/pets/'.$pet->pet_id.'/'.$filename;
+                $pet->petInfo()->create([
+                    'is_neutered' => $request->input('is_neutered'),
+                    'is_crossbreed' => $request->input('is_crossbreed'),
+                    'pet_age' => $petAge,
+                    'pet_weight' => $request->boolean('weight_unknown') ? null : ($validated['pet_weight'] ?? null),
+                    'training' => json_encode($request->input('training', [])),
+                    'insurance' => json_encode($request->input('insurance', [])),
+                    'behavior' => json_encode($request->input('behavior', [])),
+                    'likes' => json_encode($request->input('likes', [])),
+                    'dislikes' => json_encode($request->input('dislikes', [])),
+                    'diet' => json_encode($request->input('diet', [])),
+                    'allergy' => json_encode($request->input('allergy', [])),
+                ]);
+
+                // Handle additional view photos
+                $additionalPhotos = [];
+                if ($request->hasFile('additional_photos')) {
+                    $uploadPath = public_path('images/pets/'.$pet->pet_id);
+                    if (! file_exists($uploadPath)) {
+                        mkdir($uploadPath, 0777, true);
+                    }
+                    foreach ($request->file('additional_photos') as $view => $file) {
+                        if ($file->isValid()) {
+                            $filename = $view.'_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+                            $file->move($uploadPath, $filename);
+                            $additionalPhotos[$view] = 'images/pets/'.$pet->pet_id.'/'.$filename;
+                        }
                     }
                 }
-            }
 
-            $pet->update([
-                'additional_photos' => json_encode($additionalPhotos),
-            ]);
+                // additional_photos is cast to array - let the cast encode it
+                $pet->update([
+                    'additional_photos' => $additionalPhotos,
+                ]);
 
-            // Handle vaccination card upload
-            $vaccinationCardPath = null;
-            if ($request->hasFile('vaccination_card')) {
-                $file = $request->file('vaccination_card');
-                $filename = 'vaccination_card_' . $pet->pet_id . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $uploadPath = public_path('images/vaccination_cards');
-                if (!file_exists($uploadPath)) {
-                    mkdir($uploadPath, 0777, true);
-                }
-                $file->move($uploadPath, $filename);
-                $vaccinationCardPath = 'images/vaccination_cards/' . $filename;
-            }
-
-            // Build vaccination records
-            $notVaccinated = $request->boolean('not_vaccinated');
-            $vaccinationRecords = [];
-            $antiRabiesDetails = null;
-
-            if (!$request->boolean('not_vaccinated')) {
-                $coreVaccines = $request->input('vaccination_core', []);
-                $coreOther = $request->input('vaccination_core_other');
-                $optionalOther = $request->input('vaccination_optional_other');
-
-                foreach ($coreVaccines as $vaccine) {
-                    $name = ($vaccine === 'Other' && trim((string) $coreOther) !== '') ? trim($coreOther) : $vaccine;
-                    $record = ['name' => $name, 'type' => 'core'];
-                    if ($vaccine === 'Anti-Rabies') {
-                        $antiRabiesDate = $request->input('anti_rabies.date_administered');
-                        $antiRabiesLot = $request->input('anti_rabies.lot_no');
-                        $antiRabiesTag = $request->input('anti_rabies.tag_no');
-                        
-                        $record['date_administered'] = $antiRabiesDate;
-                        $record['lot_no'] = $antiRabiesLot;
-                        $record['tag_no'] = $antiRabiesTag;
-
-                        $antiRabiesDetails = [
-                            'date_administered' => $antiRabiesDate,
-                            'lot_no' => $antiRabiesLot,
-                            'tag_no' => $antiRabiesTag,
-                        ];
+                // Handle vaccination card upload
+                if ($request->hasFile('vaccination_card')) {
+                    $file = $request->file('vaccination_card');
+                    $filename = 'vaccination_card_' . $pet->pet_id . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $uploadPath = public_path('images/vaccination_cards');
+                    if (! file_exists($uploadPath)) {
+                        mkdir($uploadPath, 0777, true);
                     }
-                    $vaccinationRecords[] = $record;
+                    $file->move($uploadPath, $filename);
+                    $vaccinationCardPath = 'images/vaccination_cards/'.$filename;
                 }
 
-                $optionalVaccines = $request->input('vaccination_optional', []);
-                foreach ($optionalVaccines as $vaccine) {
-                    if ($vaccine === 'Other' && trim((string) $optionalOther) !== '') {
-                        $vaccinationRecords[] = [
-                            'name' => trim($optionalOther),
-                            'type' => 'optional',
-                        ];
-                    } else {
-                        $vaccinationRecords[] = [
-                            'name' => $vaccine,
-                            'type' => 'optional',
-                        ];
+                // Build vaccination records
+                $vaccinationRecords = [];
+                $antiRabiesDetails = null;
+
+                if (! $request->boolean('not_vaccinated')) {
+                    $coreVaccines = $request->input('vaccination_core', []);
+                    $coreOther = $request->input('vaccination_core_other');
+                    $optionalOther = $request->input('vaccination_optional_other');
+
+                    foreach ($coreVaccines as $vaccine) {
+                        $name = ($vaccine === 'Other' && trim((string) $coreOther) !== '') ? trim($coreOther) : $vaccine;
+                        $record = ['name' => $name, 'type' => 'core'];
+                        if ($vaccine === 'Anti-Rabies') {
+                            $antiRabiesDate = $request->input('anti_rabies.date_administered');
+                            $antiRabiesLot = $request->input('anti_rabies.lot_no');
+                            $antiRabiesTag = $request->input('anti_rabies.tag_no');
+
+                            $record['date_administered'] = $antiRabiesDate;
+                            $record['lot_no'] = $antiRabiesLot;
+                            $record['tag_no'] = $antiRabiesTag;
+
+                            $antiRabiesDetails = [
+                                'date_administered' => $antiRabiesDate,
+                                'lot_no' => $antiRabiesLot,
+                                'tag_no' => $antiRabiesTag,
+                            ];
+                        }
+                        $vaccinationRecords[] = $record;
+                    }
+
+                    $optionalVaccines = $request->input('vaccination_optional', []);
+                    foreach ($optionalVaccines as $vaccine) {
+                        if ($vaccine === 'Other' && trim((string) $optionalOther) !== '') {
+                            $vaccinationRecords[] = [
+                                'name' => trim($optionalOther),
+                                'type' => 'optional',
+                            ];
+                        } else {
+                            $vaccinationRecords[] = [
+                                'name' => $vaccine,
+                                'type' => 'optional',
+                            ];
+                        }
                     }
                 }
-            }
 
-            // Handle vaccination card upload
-            $vaccinationCardPath = null;
-            if ($request->hasFile('vaccination_card')) {
-                $file = $request->file('vaccination_card');
-                $filename = 'vaccination_card_' . $pet->pet_id . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $uploadPath = public_path('images/vaccination_cards');
-                if (!file_exists($uploadPath)) {
-                    mkdir($uploadPath, 0777, true);
-                }
-                $file->move($uploadPath, $filename);
-                $vaccinationCardPath = 'images/vaccination_cards/' . $filename;
-            }
+                // Create the vaccination report for this registration.
+                // NOTE: vaccination_reports has no user_id / scheduled_at columns
+                // (they were dropped in the 2026-09-22 restructure) - the
+                // reporter is reachable through the pet -> owner -> user chain.
+                VaccinationReport::create([
+                    'pet_id' => $pet->pet_id,
+                    'not_vaccinated' => $request->boolean('not_vaccinated'),
+                    'vaccination_records' => $vaccinationRecords,
+                    'anti_rabies_details' => $antiRabiesDetails,
+                    'vaccination_card_path' => $vaccinationCardPath,
+                    'status' => 'completed',
+                ]);
 
-            // Create vaccination report
-            $vaccinationReport = \App\Models\VaccinationReport::create([
-                'user_id' => $user->id,
-                'pet_id' => $pet->pet_id,
-                'not_vaccinated' => $request->boolean('not_vaccinated'),
-                'vaccination_records' => $vaccinationRecords,
-                'anti_rabies_details' => $antiRabiesDetails,
-                'vaccination_card_path' => $vaccinationCardPath,
-                'status' => 'completed',
-                'scheduled_at' => now(),
-            ]);
+                Log::info('Vaccination report created for pet ID: ' . $pet->pet_id);
 
-            Log::info('Vaccination report created for pet ID: ' . $pet->pet_id);
+                return $pet;
+            });
 
             // Prepare pet data for success modal
             $refId = '2026-' . str_pad($pet->pet_id, 5, '0', STR_PAD_LEFT);
