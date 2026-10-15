@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/formPersistence.js') }}"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -1883,6 +1884,104 @@
                 setSubmitLoading(true);
             });
         }
+
+        // ------------------------------------------------------------------
+        // Draft persistence (sessionStorage, key: draft_vaccination_form)
+        // Saves selected pets + appointment slot + per-pet medical history on
+        // any input/change, restores them (re-rendering all cards) on load.
+        // ------------------------------------------------------------------
+        const vaccinationFormDraft = window.FormPersistence ? window.FormPersistence.init('vaccination_form', {
+            form: '#vaccinationForm',
+            userId: @json($userId ?? null),
+            skipRestore: {{ $errors->any() ? 'true' : 'false' }},
+            exclude: ['selected_pets[]'],
+            custom: {
+                save: function () {
+                    // Remember which medical-history accordions the user collapsed
+                    const collapsedCards = selectedPets.filter(function (petId) {
+                        const content = document.getElementById('medicalContent_' + petId);
+                        return content && content.classList.contains('hidden');
+                    });
+                    return {
+                        selectedPets: selectedPets.slice(),
+                        appointmentDate: document.getElementById('globalAppointmentDate').value,
+                        selectedSlotTime: selectedSlotTime,
+                        collapsedCards: collapsedCards
+                    };
+                },
+                restore: function (state) {
+                    if (!state) return;
+
+                    // Re-select pets (skip pets deleted since the draft was saved)
+                    if (Array.isArray(state.selectedPets)) {
+                        selectedPets = state.selectedPets
+                            .filter(function (id) {
+                                return petsData.some(function (p) { return String(p.id) === String(id); });
+                            })
+                            .map(function (id) { return String(id); });
+                        if (selectedPets.length > 0) {
+                            confirmPetSelection(); // rebuilds medical-history cards + hidden fields
+                        }
+                    }
+
+                    // Re-hydrate the appointment date and slot selection
+                    const dateInput = document.getElementById('globalAppointmentDate');
+                    if (state.appointmentDate && dateInput) {
+                        dateInput.value = state.appointmentDate;
+                        // Only re-apply the slot if the date is not in the past
+                        // and the slot is still available; otherwise the user re-picks
+                        const todayStr = new Date().toISOString().split('T')[0];
+                        const slotStillPickable = state.selectedSlotTime && state.appointmentDate >= todayStr;
+
+                        loadGlobalSlots().then(function () {
+                            if (!slotStillPickable) return;
+                            const slot = globalSlotsData.find(function (sl) {
+                                return sl.time === state.selectedSlotTime
+                                    && sl.status !== 'blocked'
+                                    && sl.status !== 'full'
+                                    && !sl.is_past;
+                            });
+                            if (slot) selectGlobalSlot(slot);
+                        });
+                    }
+
+                    // Restore collapsed accordion state
+                    if (Array.isArray(state.collapsedCards)) {
+                        state.collapsedCards.forEach(function (petId) {
+                            const content = document.getElementById('medicalContent_' + petId);
+                            if (content && !content.classList.contains('hidden')) {
+                                toggleMedicalAccordion(petId);
+                            }
+                        });
+                    }
+                }
+            },
+            afterFieldRestore: function () {
+                // Sync the conditional medical-history fields for every card
+                selectedPets.forEach(function (petId) {
+                    const previousRadio = document.querySelector('input[name="pet_medical_history[' + petId + '][has_previous_vaccine]"]:checked');
+                    if (previousRadio) togglePreviousVaccineFields(previousRadio, petId);
+
+                    const certificateSelect = document.querySelector('select[name="pet_medical_history[' + petId + '][vaccination_certificate]"]');
+                    if (certificateSelect) toggleVaccineLotUpload(certificateSelect, petId);
+
+                    const rabiesDateInput = document.querySelector('input[name="pet_medical_history[' + petId + '][last_anti_rabies_date]"]');
+                    if (rabiesDateInput && rabiesDateInput.value) {
+                        formatDateDisplay(rabiesDateInput, 'antiRabiesDateDisplay_' + petId);
+                    }
+
+                    // Re-apply eligibility (e.g. surgery in the last 2 weeks)
+                    // without re-showing the surgery warning modal
+                    updatePetEligibilityState(petId);
+                });
+
+                // Re-enable the submit button if the terms checkbox was restored checked
+                const termsCheckbox = document.getElementById('termsCheckbox');
+                if (termsCheckbox && termsCheckbox.checked) {
+                    termsCheckbox.dispatchEvent(new Event('change'));
+                }
+            }
+        }) : null;
     </script>
     @include('Client.partials.footer')
 </body>

@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/formPersistence.js') }}"></script>
 
     <style>
         .dropdown-option {
@@ -78,7 +79,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Main Content -->
         <div class="lg:col-span-8">
-            <form method="POST" action="{{ route('missing-pets.report.store') }}" enctype="multipart/form-data" onsubmit="syncReporterFields()">
+            <form method="POST" action="{{ route('missing-pets.report.store') }}" enctype="multipart/form-data" id="missingPetForm" onsubmit="syncReporterFields()">
                 @csrf
                 <input type="hidden" name="selected_pets" id="selectedPetsData" value="">
                 <div id="selectedPetsArrayContainer"></div>
@@ -758,6 +759,39 @@
             closePetModal();
         }
     });
+
+    // ------------------------------------------------------------------
+    // Draft persistence (sessionStorage, key: draft_missing_pets_form)
+    // Saves the selected pets + all report fields on any input/change,
+    // restores them on load.
+    // ------------------------------------------------------------------
+    const missingPetFormDraft = window.FormPersistence ? window.FormPersistence.init('missing_pets_form', {
+        form: '#missingPetForm',
+        userId: {{ auth()->id() ?? 'null' }},
+        skipRestore: {{ $errors->any() ? 'true' : 'false' }},
+        exclude: ['selected_pets[]'],
+        custom: {
+            save: function () {
+                return {
+                    selectedPets: selectedPets.slice()
+                };
+            },
+            restore: function (state) {
+                if (!state || !Array.isArray(state.selectedPets)) return;
+
+                // Re-select pets (skip pets deleted since the draft was saved)
+                selectedPets = state.selectedPets
+                    .filter(function (id) {
+                        return petsData.some(function (p) { return String(p.id) === String(id); });
+                    })
+                    .map(function (id) { return String(id); });
+
+                if (selectedPets.length > 0) {
+                    confirmPetSelection(); // rebuilds hidden fields + displays
+                }
+            }
+        }
+    }) : null;
 </script>
 
 <script>

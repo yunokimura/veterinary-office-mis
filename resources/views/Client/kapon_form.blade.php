@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/formPersistence.js') }}"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -1065,6 +1066,67 @@ petEl.innerHTML = `
                             closePetModal();
                         }
                     });
+
+                    // ------------------------------------------------------------------
+                    // Draft persistence (sessionStorage, key: draft_kapon_form)
+                    // Saves selected pets + appointment slot + agreement choices on any
+                    // input/change, restores them (re-rendering all dynamic sections) on load.
+                    // ------------------------------------------------------------------
+                    const kaponFormDraft = window.FormPersistence ? window.FormPersistence.init('kapon_form', {
+                        form: '#kaponForm',
+                        userId: {{ auth()->id() ?? 'null' }},
+                        skipRestore: {{ $errors->any() ? 'true' : 'false' }},
+                        exclude: ['selected_pets[]'],
+                        custom: {
+                            save: function () {
+                                return {
+                                    selectedPets: selectedPets.slice(),
+                                    appointmentDate: document.getElementById('appointment_date').value,
+                                    selectedSlotTime: selectedKaponSlotTime
+                                };
+                            },
+                            restore: function (state) {
+                                if (!state) return;
+
+                                // Re-select pets (skip pets deleted since the draft was saved)
+                                if (Array.isArray(state.selectedPets)) {
+                                    selectedPets = state.selectedPets
+                                        .filter(function (id) {
+                                            return petsData.some(function (p) { return String(p.id) === String(id); });
+                                        })
+                                        .map(function (id) { return String(id); });
+                                    if (selectedPets.length > 0) {
+                                        confirmPetSelection(); // rebuilds cards, hidden fields, sidebar
+                                    }
+                                }
+
+                                // Re-hydrate the appointment date and slot selection
+                                const dateInput = document.getElementById('globalAppointmentDate');
+                                if (state.appointmentDate && dateInput) {
+                                    dateInput.value = state.appointmentDate;
+                                    // Only re-apply the slot if the date is not in the past
+                                    // and the slot is still available; otherwise the user re-picks
+                                    const todayStr = new Date().toISOString().split('T')[0];
+                                    const slotStillPickable = state.selectedSlotTime && state.appointmentDate >= todayStr;
+
+                                    loadKaponGlobalSlots().then(function () {
+                                        if (!slotStillPickable) return;
+                                        const slot = globalKaponSlotsData.find(function (sl) {
+                                            return sl.time === state.selectedSlotTime
+                                                && sl.status !== 'blocked'
+                                                && sl.status !== 'full'
+                                                && !sl.is_past;
+                                        });
+                                        if (slot) selectGlobalKaponSlot(slot);
+                                    });
+                                }
+                            }
+                        },
+                        afterFieldRestore: function () {
+                            // Re-evaluate the agreement checkbox -> submit button state
+                            updateSubmitButtonState();
+                        }
+                    }) : null;
                 </script>
 
             </form>
@@ -1577,6 +1639,8 @@ if (selectedPetsInfo.length === 1) {
         function confirmAndSubmit() {
             pendingFormSubmission = true;
             closeConfirmModal();
+            // Submission is going out - drop the saved draft
+            if (kaponFormDraft) kaponFormDraft.clear();
             document.getElementById('kaponForm').submit();
         }
 

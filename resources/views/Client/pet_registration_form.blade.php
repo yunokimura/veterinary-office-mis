@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ asset('js/breeds.js') }}" defer></script>
+    <script src="{{ asset('js/formPersistence.js') }}"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -99,6 +100,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <p class="text-blue-800">{{ session('info') }}</p>
+                </div>
+            </div>
+        @endif
+
+        <!-- General Errors -->
+        @if(session('error'))
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                    <p class="text-red-800">{{ session('error') }}</p>
                 </div>
             </div>
         @endif
@@ -1469,14 +1482,8 @@ groups[letter].forEach((breed, breedIndex) => {
             if (checkbox.checked) {
                 inputDiv.classList.remove('hidden');
             } else {
+                // Visibility only - keep the typed value so it survives toggling back
                 inputDiv.classList.add('hidden');
-                // Clear the input value when hiding
-                if (inputDiv.tagName === 'INPUT') {
-                    inputDiv.value = '';
-                } else {
-                    const input = inputDiv.querySelector('input[type="text"]');
-                    if (input) input.value = '';
-                }
             }
         }
 
@@ -1792,21 +1799,17 @@ groups[letter].forEach((breed, breedIndex) => {
             }
 
             wrap.classList.remove('hidden');
-            resetAgeSelectors();
 
             if (selected.value === 'yes') {
-                // Birthdate mode
+                // Birthdate mode (hidden values are kept so toggling back restores them)
                 birthdateSection.classList.remove('hidden');
                 ageSection.classList.add('hidden');
                 if (birthdateInput) birthdateInput.setAttribute('required', 'required');
             } else {
-                // Age mode
+                // Age mode (hidden values are kept so toggling back restores them)
                 birthdateSection.classList.add('hidden');
                 ageSection.classList.remove('hidden');
-                if (birthdateInput) {
-                    birthdateInput.value = '';
-                    birthdateInput.removeAttribute('required');
-                }
+                if (birthdateInput) birthdateInput.removeAttribute('required');
             }
         }
 
@@ -1978,7 +1981,7 @@ groups[letter].forEach((breed, breedIndex) => {
             } else {
                 wrap.classList.add('hidden');
                 input.removeAttribute('required');
-                input.value = '';
+                // Visibility only - keep the typed value so it survives toggling back
             }
 
             // "Heterochromia" -> left / right eye color dropdowns
@@ -2008,7 +2011,7 @@ groups[letter].forEach((breed, breedIndex) => {
             } else {
                 wrap.classList.add('hidden');
                 input.removeAttribute('required');
-                input.value = '';
+                // Visibility only - keep the typed value so it survives toggling back
             }
         }
 
@@ -2032,13 +2035,12 @@ groups[letter].forEach((breed, breedIndex) => {
             const input = document.getElementById('eyeColor' + side + 'Other');
 
             if (select) {
-                select.value = '';
                 select.removeAttribute('required');
             }
             if (wrap) wrap.classList.add('hidden');
             if (input) {
                 input.removeAttribute('required');
-                input.value = '';
+                // Visibility only - keep the typed value so it survives toggling back
             }
         }
 
@@ -2121,6 +2123,9 @@ groups[letter].forEach((breed, breedIndex) => {
             if (step === totalSteps) {
                 populateReview();
             }
+
+            // Persist the step position so a refresh resumes here
+            if (petRegistrationDraft) petRegistrationDraft.save();
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -2524,12 +2529,11 @@ groups[letter].forEach((breed, breedIndex) => {
                 setDisabledLabel('notVaccinatedLabel', true);
                 setDisabledLabel('antiRabiesLabel', false);
             } else {
-                // Neither checked - enable both
+                // Neither checked - enable both (values are kept so toggling Anti-Rabies back restores them)
                 notVaccinatedCheckbox.disabled = false;
                 antiRabiesCheckbox.disabled = false;
                 antiRabiesFields.classList.add('hidden');
                 antiRabiesFields.querySelectorAll('input').forEach(input => {
-                    input.value = '';
                     input.removeAttribute('required');
                 });
                 if (dateInput) dateInput.removeAttribute('required');
@@ -2622,6 +2626,89 @@ groups[letter].forEach((breed, breedIndex) => {
             // Weight suffix
             updateWeightSuffix();
         })();
+
+        // ------------------------------------------------------------------
+        // Draft persistence (sessionStorage, key: draft_pet_registration)
+        // Saves fields + step on any input/change/step move, restores on load.
+        // ------------------------------------------------------------------
+        let restoredPetStep = 1;
+
+        const petRegistrationDraft = window.FormPersistence ? window.FormPersistence.init('pet_registration', {
+            form: '#petRegistrationForm',
+            userId: {{ auth()->id() ?? 'null' }},
+            skipRestore: {{ $errors->any() ? 'true' : 'false' }},
+            custom: {
+                save: function () {
+                    const petTypeEl = document.querySelector('input[name="pet_type"]:checked');
+                    return {
+                        step: currentStep,
+                        petType: petTypeEl ? petTypeEl.value : '',
+                        breeds: selectedBreeds.slice(),
+                        extraDietSelections: savedExtraDietSelections.slice(),
+                        dietExpanded: dietExpanded
+                    };
+                },
+                restore: function (state) {
+                    if (!state) return;
+                    restoredPetStep = state.step || 1;
+
+                    // Species first - the sections below are rebuilt from it
+                    if (state.petType) {
+                        const petTypeRadio = document.querySelector('input[name="pet_type"][value="' + state.petType + '"]');
+                        if (petTypeRadio) petTypeRadio.checked = true;
+                        updateBreedOptions();        // sets currentPetType (resets selectedBreeds)
+                        populatePetAttributes();     // rebuilds trait pills for the species
+                        populateVaccinationHistory(); // rebuilds vaccine checkboxes for the species
+                    }
+
+                    if (Array.isArray(state.breeds)) {
+                        selectedBreeds = state.breeds.slice();
+                    }
+
+                    // The diet "Show More" extras must exist before field values are restored
+                    savedExtraDietSelections = Array.isArray(state.extraDietSelections) ? state.extraDietSelections.slice() : [];
+                    if (state.dietExpanded) {
+                        showMoreDiet();
+                    }
+                }
+            },
+            afterFieldRestore: function () {
+                // Re-sync visibility + button styling (these no longer clear values)
+                updateSelectedBreedDisplay();
+                renderBreedModal('');
+                syncVaccinationUI();
+                toggleBirthdate();
+                handleEyeColorChange();
+                handleEyeSideChange('Left');
+                handleEyeSideChange('Right');
+                updateWeightSuffix();
+
+                // Re-apply the pill / vaccine checkbox styling and state arrays.
+                // A change event reuses the page's own handlers without re-toggling.
+                document.querySelectorAll(
+                    '#otherCoreVaccines input[type="checkbox"],' +
+                    '#optionalVaccineOptions input[type="checkbox"],' +
+                    '#trainingOptions input[type="checkbox"],' +
+                    '#insuranceOptions input[type="checkbox"],' +
+                    '#behaviorOptions input[type="checkbox"],' +
+                    '#likesOptions input[type="checkbox"],' +
+                    '#dislikesOptions input[type="checkbox"],' +
+                    '#dietOptions input[type="checkbox"],' +
+                    '#allergyOptions input[type="checkbox"],' +
+                    '#antiRabiesCheckbox,' +
+                    '#notVaccinatedCheckbox'
+                ).forEach(function (cb) {
+                    if (cb.checked) cb.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                updateDietShowMoreButton();
+
+                // Resume the step the user left off on
+                if (restoredPetStep > 1) {
+                    showStep(restoredPetStep);
+                }
+            }
+        }) : null;
     </script>
     
     <!-- Breed Selector Modal -->
@@ -2745,6 +2832,51 @@ groups[letter].forEach((breed, breedIndex) => {
         </div>
     </div>
 
+    <!-- Registration Status Modal (booster booking flow: register first, then continue) -->
+    <div id="registrationStatusModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="registrationStatusTitle">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div class="text-center">
+                <!-- Loading state -->
+                <div id="registrationStatusLoading">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+                        <svg class="w-8 h-8 text-emerald-600 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                    <h3 id="registrationStatusTitle" class="text-xl font-bold text-gray-900 mb-2">Registering your pet...</h3>
+                    <p class="text-gray-600 mb-6">Please wait while we complete the registration.</p>
+                </div>
+                <!-- Success state -->
+                <div id="registrationStatusSuccess" class="hidden">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Registration Successful!</h3>
+                    <p id="registrationStatusMessage" class="text-gray-600 mb-6"></p>
+                    <button type="button" id="registrationStatusContinueBtn" class="w-full px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors">
+                        Continue to Vaccination Form
+                    </button>
+                </div>
+                <!-- Error state -->
+                <div id="registrationStatusError" class="hidden">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Registration Failed</h3>
+                    <p id="registrationStatusErrorMessage" class="text-gray-600 mb-6"></p>
+                    <button type="button" onclick="closeRegistrationStatusModal()" class="w-full px-6 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-semibold hover:bg-slate-50 transition-colors">
+                        Back to Form
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let confirmLastFocusedElement = null;
         let vaccinationLastFocusedElement = null;
@@ -2814,6 +2946,8 @@ groups[letter].forEach((breed, breedIndex) => {
                 openVaccinationModal(recommendation);
                 return;
             }
+            // Registration is going out - drop the saved draft
+            if (petRegistrationDraft) petRegistrationDraft.clear();
             document.getElementById('petRegistrationForm').submit();
         }
 
@@ -2858,9 +2992,130 @@ groups[letter].forEach((breed, breedIndex) => {
             vaccinationLastFocusedElement = null;
         }
 
+        let registrationInFlight = false;
+
+        // Booster / first-dose booking: register the pet in the background via AJAX,
+        // show the "pet registered" alert, then redirect to the vaccination form
         function bookVaccinationAppointment() {
+            if (registrationInFlight) return;
+
+            const form = document.getElementById('petRegistrationForm');
             document.getElementById('bookBoosterInput').value = '1';
-            document.getElementById('petRegistrationForm').submit();
+
+            closeVaccinationModal();
+            registerPetViaAjax(form);
+        }
+
+        function registerPetViaAjax(form) {
+            registrationInFlight = true;
+
+            const petName = (form.pet_name && form.pet_name.value.trim()) || 'Your pet';
+
+            openRegistrationStatusModal('loading');
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin'
+            })
+                .then(async (response) => {
+                    const contentType = response.headers.get('content-type') || '';
+                    const isJson = contentType.includes('application/json');
+
+                    if (response.ok && isJson) {
+                        const data = await response.json();
+                        showRegistrationSuccess(data);
+                        return;
+                    }
+
+                    if (response.status === 422 && isJson) {
+                        const data = await response.json();
+                        showRegistrationErrors(data);
+                        return;
+                    }
+
+                    if (response.redirected) {
+                        // Server handled it as a normal redirect - just follow it
+                        window.location.href = response.url;
+                        return;
+                    }
+
+                    throw new Error('Unexpected response');
+                })
+                .catch(() => {
+                    showRegistrationErrors({
+                        message: 'Something went wrong while registering your pet. Your details are still intact - please try again.'
+                    });
+                })
+                .finally(() => {
+                    registrationInFlight = false;
+                });
+        }
+
+        function openRegistrationStatusModal(state) {
+            const modal = document.getElementById('registrationStatusModal');
+            if (!modal) return;
+
+            document.getElementById('registrationStatusLoading').classList.toggle('hidden', state !== 'loading');
+            document.getElementById('registrationStatusSuccess').classList.toggle('hidden', state !== 'success');
+            document.getElementById('registrationStatusError').classList.toggle('hidden', state !== 'error');
+
+            modal.classList.remove('hidden');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('role', 'dialog');
+        }
+
+        function showRegistrationSuccess(data) {
+            openRegistrationStatusModal('success');
+
+            // The pet was registered via AJAX - the draft is no longer needed
+            if (petRegistrationDraft) petRegistrationDraft.clear();
+
+            const messageEl = document.getElementById('registrationStatusMessage');
+            if (messageEl) {
+                messageEl.innerHTML = (data && data.message)
+                    ? `<span class="font-semibold text-gray-900">${data.message}</span> You can now book their vaccination appointment.`
+                    : 'Your pet has been registered. You can now book their vaccination appointment.';
+            }
+
+            const continueBtn = document.getElementById('registrationStatusContinueBtn');
+            if (continueBtn) {
+                continueBtn.onclick = function () {
+                    if (data && data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        window.location.href = '/pet-registration';
+                    }
+                };
+                setTimeout(() => continueBtn.focus(), 50);
+            }
+        }
+
+        function showRegistrationErrors(data) {
+            openRegistrationStatusModal('error');
+
+            const errorEl = document.getElementById('registrationStatusErrorMessage');
+            if (!errorEl) return;
+
+            const errors = (data && data.errors) ? Object.values(data.errors).flat() : [];
+            if (errors.length > 0) {
+                errorEl.innerHTML = '<span class="block text-left">Please fix the following:</span>'
+                    + '<ul class="mt-2 list-disc text-left ml-5 space-y-1">'
+                    + errors.map(message => `<li>${message}</li>`).join('')
+                    + '</ul>';
+            } else {
+                errorEl.textContent = (data && data.message) ? data.message : 'Something went wrong while registering your pet.';
+            }
+        }
+
+        function closeRegistrationStatusModal() {
+            const modal = document.getElementById('registrationStatusModal');
+            if (!modal) return;
+
+            modal.classList.add('hidden');
+            modal.removeAttribute('aria-modal');
+            modal.removeAttribute('role');
         }
     </script>
 </body>

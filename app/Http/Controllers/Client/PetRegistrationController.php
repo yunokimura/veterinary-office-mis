@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class PetRegistrationController extends Controller
 {
@@ -318,15 +319,35 @@ class PetRegistrationController extends Controller
                 'pet_image' => $pet->pet_image,
             ];
 
+            // AJAX flow (booster booking): the page shows a "pet registered" alert first,
+            // then redirects to the vaccination form with this pet pre-selected
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $petData['pet_name'].' has been registered successfully!',
+                    'redirect' => url('/vaccination/form?select_pet=' . $pet->pet_id),
+                ]);
+            }
+
             // Booster booking flow: send the owner straight to the vaccination form with this pet pre-selected
             if ($request->boolean('book_booster')) {
                 return redirect()->to('/vaccination/form?select_pet=' . $pet->pet_id);
             }
 
             return redirect()->route('owner.dashboard')->with('success_pet', $petData);
+        } catch (ValidationException $e) {
+            // Let Laravel render it: 422 JSON (with field errors) for AJAX, redirect back otherwise
+            throw $e;
         } catch (\Exception $e) {
             Log::error('Pet Registration Error: '.$e->getMessage());
             Log::error('Stack trace: '.$e->getTraceAsString());
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to register pet: '.$e->getMessage(),
+                ], 500);
+            }
 
             return back()->with('error', 'Failed to register pet: '.$e->getMessage())->withInput();
         }
