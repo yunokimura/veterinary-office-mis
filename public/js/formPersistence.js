@@ -64,6 +64,76 @@ window.FormPersistence = (function () {
         return false;
     }
 
+    function captureInitialState(form, excludeNames) {
+        var initial = {};
+        var elements = form.querySelectorAll('input, select, textarea');
+        Array.prototype.forEach.call(elements, function (el) {
+            if (shouldSkipField(el, excludeNames)) return;
+            var name = el.getAttribute('name');
+            if (!name) return;
+            var type = (el.getAttribute('type') || '').toLowerCase();
+            if (type === 'radio') {
+                if (el.checked) initial[name] = el.value;
+            } else if (type === 'checkbox') {
+                var group = form.querySelectorAll('input[type="checkbox"][name="' + cssEscape(name) + '"]');
+                if (group.length > 1) {
+                    if (!Array.isArray(initial[name])) initial[name] = [];
+                    if (el.checked) initial[name].push(el.value);
+                } else {
+                    initial[name] = el.checked;
+                }
+            } else if (el.tagName.toLowerCase() === 'select') {
+                if (el.multiple) {
+                    var values = [];
+                    Array.prototype.forEach.call(el.options, function (opt) {
+                        if (opt.selected) values.push(opt.value);
+                    });
+                    initial[name] = values;
+                } else {
+                    initial[name] = el.value;
+                }
+            } else {
+                initial[name] = el.value;
+            }
+        });
+        return initial;
+    }
+
+    function captureInitialState(form, excludeNames) {
+        var initial = {};
+        var elements = form.querySelectorAll('input, select, textarea');
+        Array.prototype.forEach.call(elements, function (el) {
+            if (shouldSkipField(el, excludeNames)) return;
+            var name = el.getAttribute('name');
+            if (!name) return;
+            var type = (el.getAttribute('type') || '').toLowerCase();
+            if (type === 'radio') {
+                if (el.checked) initial[name] = el.value;
+            } else if (type === 'checkbox') {
+                var group = form.querySelectorAll('input[type="checkbox"][name="' + cssEscape(name) + '"]');
+                if (group.length > 1) {
+                    if (!Array.isArray(initial[name])) initial[name] = [];
+                    if (el.checked) initial[name].push(el.value);
+                } else {
+                    initial[name] = el.checked;
+                }
+            } else if (el.tagName.toLowerCase() === 'select') {
+                if (el.multiple) {
+                    var values = [];
+                    Array.prototype.forEach.call(el.options, function (opt) {
+                        if (opt.selected) values.push(opt.value);
+                    });
+                    initial[name] = values;
+                } else {
+                    initial[name] = el.value;
+                }
+            } else {
+                initial[name] = el.value;
+            }
+        });
+        return initial;
+    }
+
     function serializeFields(form, excludeNames) {
         var fields = {};
         var elements = form.querySelectorAll('input, select, textarea');
@@ -195,6 +265,26 @@ window.FormPersistence = (function () {
                 return true;
             }
         }
+        
+        // Check if any field values differ from what was initially saved
+        // (to avoid showing toast on load when no changes were made)
+        var initial = payload.initialState;
+        if (initial) {
+            for (var name in initial) {
+                if (!Object.prototype.hasOwnProperty.call(initial, name)) continue;
+                var initVal = initial[name];
+                var currentVal = fields[name];
+                if (Array.isArray(initVal) && Array.isArray(currentVal)) {
+                    if (initVal.length !== currentVal.length) return true;
+                    for (var i = 0; i < initVal.length; i++) {
+                        if (initVal[i] !== currentVal[i]) return true;
+                    }
+                } else if (initVal !== currentVal && initVal !== undefined && initVal !== null) {
+                    return true;
+                }
+            }
+        }
+        
         return false;
     }
 
@@ -276,7 +366,8 @@ window.FormPersistence = (function () {
                 savedAt: Date.now(),
                 userId: typeof options.userId === 'undefined' ? null : options.userId,
                 custom: {},
-                fields: serializeFields(form, excludeNames)
+                fields: serializeFields(form, excludeNames),
+                initialState: captureInitialState(form, excludeNames)
             };
             if (options.custom && typeof options.custom.save === 'function') {
                 try {
@@ -299,6 +390,8 @@ window.FormPersistence = (function () {
 
         function clear() {
             if (saveTimer) window.clearTimeout(saveTimer);
+            // Signal that we're clearing the draft so pagehide doesn't re-save
+            discardInProgress = true;
             remove(key);
         }
 
