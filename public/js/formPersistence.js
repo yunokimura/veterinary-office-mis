@@ -198,7 +198,7 @@ window.FormPersistence = (function () {
         return false;
     }
 
-    function showRestoreToast(key) {
+    function showRestoreToast(key, onDiscard) {
         if (document.getElementById('formDraftToast')) return;
 
         var toast = document.createElement('div');
@@ -215,6 +215,8 @@ window.FormPersistence = (function () {
         discardBtn.className = 'text-sm font-semibold underline hover:text-emerald-200';
         discardBtn.textContent = 'Discard draft';
         discardBtn.addEventListener('click', function () {
+            // Signal that we're discarding so pagehide doesn't re-save
+            if (onDiscard) onDiscard();
             remove(key);
             window.location.reload();
         });
@@ -301,9 +303,16 @@ window.FormPersistence = (function () {
         }
 
         // --- Auto-save: any input or change inside the form -----------------
+        var discardInProgress = false;
+
         form.addEventListener('input', saveDebounced);
         form.addEventListener('change', saveDebounced);
-        window.addEventListener('pagehide', save);
+
+        function saveHandler() {
+            if (discardInProgress) return;
+            save();
+        }
+        window.addEventListener('pagehide', saveHandler);
 
         // --- Auto-clear on submission --------------------------------------
         // Registered here (after the page's own listeners), so validation
@@ -350,7 +359,9 @@ window.FormPersistence = (function () {
             }
 
             if (hasRestorableContent(payload)) {
-                showRestoreToast(key);
+                showRestoreToast(key, function () {
+                    discardInProgress = true;
+                });
             }
         }
 

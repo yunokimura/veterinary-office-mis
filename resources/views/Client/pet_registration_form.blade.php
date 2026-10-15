@@ -1756,7 +1756,7 @@ groups[letter].forEach((breed, breedIndex) => {
             const firstOption = months.querySelector('option[value="0"]');
             if (firstOption) {
                 if (yearsVal === '0') {
-                    firstOption.textContent = '< 1 Month';
+                    firstOption.textContent = 'less than 1 month';
                 } else {
                     firstOption.textContent = '0 months';
                 }
@@ -2682,6 +2682,8 @@ groups[letter].forEach((breed, breedIndex) => {
                 handleEyeSideChange('Left');
                 handleEyeSideChange('Right');
                 updateWeightSuffix();
+                updateMonthsDropdownLabel();
+                toggleWeightUnknown();
 
                 // Re-apply the pill / vaccine checkbox styling and state arrays.
                 // A change event reuses the page's own handlers without re-toggling.
@@ -2920,8 +2922,8 @@ groups[letter].forEach((breed, breedIndex) => {
             },
             firstDose: {
                 title: 'Anti-Rabies Vaccination Recommended',
-                message: (petName) => `We noticed ${petName} has no Anti-Rabies vaccination on record yet. Would you like to schedule a first Anti-Rabies vaccination appointment with Veterinary Services now?`,
-                primary: 'Yes, Book Vaccination Appointment'
+                message: (petName) => `We noticed ${petName} has no anti-rabies vaccination on record yet. Would you like to schedule a first anti-rabies vaccination appointment with the Veterinary Services Office now?`,
+                primary: 'Book Appointment'
             }
         };
 
