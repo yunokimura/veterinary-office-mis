@@ -1342,20 +1342,20 @@
         const inputs = fieldsContainer ? fieldsContainer.querySelectorAll('input') : [];
         
         if (checkbox.checked) {
-            if (fieldsContainer) {
-                fieldsContainer.style.display = 'none';
-            }
             inputs.forEach(input => {
                 input.value = '';
                 input.disabled = true;
             });
-        } else {
             if (fieldsContainer) {
-                fieldsContainer.style.display = 'block';
+                fieldsContainer.classList.add('opacity-50', 'pointer-events-none');
             }
+        } else {
             inputs.forEach(input => {
                 input.disabled = false;
             });
+            if (fieldsContainer) {
+                fieldsContainer.classList.remove('opacity-50', 'pointer-events-none');
+            }
         }
     }
 
