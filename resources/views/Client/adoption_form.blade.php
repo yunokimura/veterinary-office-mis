@@ -1263,7 +1263,7 @@
 
         <!-- Right Sidebar -->
         <div class="lg:col-span-4 space-y-6">
-            <div class="lg:sticky lg:top-16 space-y-6">
+            <div class="lg:sticky lg:top-12 space-y-6">
                 <!-- Applicant Information Card -->
                 <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
                     <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
@@ -1486,18 +1486,6 @@
                 formatPhone(this);
             });
         });
-
-        const noAltContactCheckbox = document.getElementById('noAlternateContact');
-        if (noAltContactCheckbox) {
-            const altFields = document.getElementById('alternateContactFields');
-            const altInputs = altFields ? altFields.querySelectorAll('input') : [];
-            const hasAltContact = altInputs.length > 0 && Array.from(altInputs).some(input => input.value.trim() !== '');
-            
-            if (!hasAltContact) {
-                noAltContactCheckbox.checked = true;
-                toggleAlternateContact(noAltContactCheckbox);
-            }
-        }
 
         const livingAloneCheckbox = document.querySelector('input[name="household_members[]"][value="Living alone"]');
         if (livingAloneCheckbox) {
