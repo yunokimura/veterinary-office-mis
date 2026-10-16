@@ -41,6 +41,7 @@
                 }
             }
         }
+    </script>
     <style>
         .no-scrollbar {
             -ms-overflow-style: none;
