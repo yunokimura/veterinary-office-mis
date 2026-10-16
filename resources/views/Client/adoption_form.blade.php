@@ -115,39 +115,72 @@
         @endif
 
         <!-- Form Card with Progress Steps -->
-        <div class="bg-white border border-gray-200 rounded-lg p-8">
-            <!-- Progress Bar -->
-            <div class="mb-8">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700" id="stepLabel">Step 1 of 5</span>
-                    <span class="text-sm font-medium text-emerald-600" id="stepTitle">Part 1: Alternate Contact</span>
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+            <!-- Progress Header -->
+            <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <h4 class="text-sm font-semibold text-white">ADOPTION PROGRESS</h4>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div id="progressBar" class="bg-emerald-600 h-2.5 rounded-full transition-all duration-300" style="width: 20%"></div>
+                <span id="stepIndicatorText" class="text-sm text-emerald-300 font-medium">Step 1 of 5 — Alternate Contact</span>
+            </div>
+            <div class="p-6">
+                <div class="flex items-start justify-between gap-2">
+                    <button type="button" onclick="goToStep(1)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="1">
+                        <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition-colors flex-shrink-0" data-step="1">1</span>
+                        <span class="hidden sm:block min-w-0">
+                            <span class="step-title block text-sm font-semibold truncate">Alternate Contact</span>
+                            <span class="step-subtitle block text-xs text-gray-700 truncate">Emergency contact person</span>
+                        </span>
+                    </button>
+                    <div class="flex-1 hidden sm:flex items-center pt-4">
+                        <div class="w-full h-0.5 bg-slate-200"></div>
+                    </div>
+                    <button type="button" onclick="goToStep(2)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="2">
+                        <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-300 text-gray-400 transition-colors flex-shrink-0" data-step="2">2</span>
+                        <span class="hidden sm:block min-w-0">
+                            <span class="step-title block text-sm font-semibold truncate">Adoption Questionnaire</span>
+                            <span class="step-subtitle block text-xs text-gray-700 truncate">Household & readiness</span>
+                        </span>
+                    </button>
+                    <div class="flex-1 hidden sm:flex items-center pt-4">
+                        <div class="w-full h-0.5 bg-slate-200"></div>
+                    </div>
+                    <button type="button" onclick="goToStep(3)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="3">
+                        <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-300 text-gray-400 transition-colors flex-shrink-0" data-step="3">3</span>
+                        <span class="hidden sm:block min-w-0">
+                            <span class="step-title block text-sm font-semibold truncate">Home Photos</span>
+                            <span class="step-subtitle block text-xs text-gray-700 truncate">Property images</span>
+                        </span>
+                    </button>
+                    <div class="flex-1 hidden sm:flex items-center pt-4">
+                        <div class="w-full h-0.5 bg-slate-200"></div>
+                    </div>
+                    <button type="button" onclick="goToStep(4)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="4">
+                        <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-300 text-gray-400 transition-colors flex-shrink-0" data-step="4">4</span>
+                        <span class="hidden sm:block min-w-0">
+                            <span class="step-title block text-sm font-semibold truncate">Upload Valid ID</span>
+                            <span class="step-subtitle block text-xs text-gray-700 truncate">Identification document</span>
+                        </span>
+                    </button>
+                    <div class="flex-1 hidden sm:flex items-center pt-4">
+                        <div class="w-full h-0.5 bg-slate-200"></div>
+                    </div>
+                    <button type="button" onclick="goToStep(5)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="5">
+                        <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-300 text-gray-400 transition-colors flex-shrink-0" data-step="5">5</span>
+                        <span class="hidden sm:block min-w-0">
+                            <span class="step-title block text-sm font-semibold truncate">Appointment Setup</span>
+                            <span class="step-subtitle block text-xs text-gray-700 truncate">Schedule appointment</span>
+                        </span>
+                    </button>
                 </div>
-                <div class="flex justify-between mt-2">
-                    <div class="text-xs text-center flex-1">
-                        <div id="step1Indicator" class="font-semibold text-emerald-600">1</div>
-                        <div class="text-gray-500">Alternate Contact</div>
-                    </div>
-                    <div class="text-xs text-center flex-1">
-                        <div id="step2Indicator" class="font-semibold text-gray-400">2</div>
-                        <div class="text-gray-400">Questionnaire</div>
-                    </div>
-                    <div class="text-xs text-center flex-1">
-                        <div id="step3Indicator" class="font-semibold text-gray-400">3</div>
-                        <div class="text-gray-400">Home Photos</div>
-                    </div>
-                    <div class="text-xs text-center flex-1">
-                        <div id="step4Indicator" class="font-semibold text-gray-400">4</div>
-                        <div class="text-gray-400">Valid ID</div>
-                    </div>
-                    <div class="text-xs text-center flex-1">
-                        <div id="step5Indicator" class="font-semibold text-gray-400">5</div>
-                        <div class="text-gray-400">Appointment</div>
-                    </div>
+                <div class="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-emerald-600 transition-all duration-300" style="width: 20%"></div>
                 </div>
             </div>
+        </div>
 
             <form method="POST" action="{{ $formAction }}" enctype="multipart/form-data" id="adoptionForm" @if($isView) onsubmit="return false;" @endif>
                 @csrf
@@ -157,108 +190,121 @@
 
                 <!-- PART 1: ALTERNATE CONTACT -->
                 <div id="part1" class="form-part">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 1: Alternate Contact <span class="text-sm font-normal text-gray-500">(Optional)</span></h3>
-
-                    @if($isView && empty($appAltContact))
-                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-                            <p class="text-sm text-gray-600">No alternate contact provided.</p>
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Alternate Contact Person</h4>
+                            </div>
+                            <span class="text-xs text-emerald-300 font-medium">Optional</span>
                         </div>
-                    @endif
+                        <div class="p-6 space-y-6">
 
-                    <div class="mb-4">
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" id="noAlternateContact" onchange="toggleAlternateContact(this)" {{ $disabledAttr }}
-                                   class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500">
-                            <span class="ml-2 text-sm text-gray-700">I do not have an alternate contact person</span>
-                        </label>
-                    </div>
+                            @if($isView && empty($appAltContact))
+                                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600">No alternate contact provided.</p>
+                                </div>
+                            @endif
 
-                    <div id="alternateContactFields">
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <!-- Name -->
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Name
-                                    <span class="text-gray-500 text-xs ml-2">(First name and Last name)</span>
+                            <div class="mb-4">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" id="noAlternateContact" onchange="toggleAlternateContact(this)" {{ $disabledAttr }}
+                                           class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500">
+                                    <span class="ml-2 text-sm text-gray-700">I do not have an alternate contact person</span>
                                 </label>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <input type="text" name="alt_first_name" placeholder="First Name"
-                                           value="{{ old('alt_first_name', $appAltContact['first_name'] ?? '') }}"
-                                           {{ $disabledAttr }}
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
-                                    <input type="text" name="alt_last_name" placeholder="Last Name"
-                                           value="{{ old('alt_last_name', $appAltContact['last_name'] ?? '') }}"
-                                           {{ $disabledAttr }}
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
+                            </div>
+
+                            <div id="alternateContactFields">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <!-- Name -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Name <span class="text-gray-500 text-xs">(First name and Last name)</span></label>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <input type="text" name="alt_first_name" placeholder="First Name"
+                                                   value="{{ old('alt_first_name', $appAltContact['first_name'] ?? '') }}"
+                                                   {{ $disabledAttr }}
+                                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all{{ $readonlyClass }}">
+                                            <input type="text" name="alt_last_name" placeholder="Last Name"
+                                                   value="{{ old('alt_last_name', $appAltContact['last_name'] ?? '') }}"
+                                                   {{ $disabledAttr }}
+                                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all{{ $readonlyClass }}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Relationship -->
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Relationship</label>
+                                        <input type="text" name="alt_relationship" placeholder="Relationship to you"
+                                               value="{{ old('alt_relationship', $appAltContact['relationship'] ?? '') }}"
+                                               {{ $disabledAttr }}
+                                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all{{ $readonlyClass }}">
+                                    </div>
+
+                                    <!-- Mobile Number -->
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Mobile Number</label>
+                                        <div class="flex">
+                                            <span class="inline-flex items-center px-3.5 py-2.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-50 text-gray-600 text-sm">
+                                                +63
+                                            </span>
+                                            <input type="tel" name="alt_phone" placeholder="943 210 2012" maxlength="14" oninput="formatPhone(this)"
+                                                   value="{{ old('alt_phone', $appAltContact['phone'] ?? '') }}"
+                                                   {{ $disabledAttr }}
+                                                   class="flex-1 px-3.5 py-2.5 rounded-r-lg border border-slate-300 bg-slate-50 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all{{ $readonlyClass }}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Email</label>
+                                        <input type="email" name="alt_email" placeholder="name@example.com"
+                                               value="{{ old('alt_email', $appAltContact['email'] ?? '') }}"
+                                               {{ $disabledAttr }}
+                                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all{{ $readonlyClass }}">
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Relationship -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Relationship
-                                </label>
-                                <input type="text" name="alt_relationship" placeholder="Relationship to you"
-                                       value="{{ old('alt_relationship', $appAltContact['relationship'] ?? '') }}"
-                                       {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
+                            <!-- Navigation Buttons -->
+                            <div class="flex justify-between mt-8 pt-6 border-t border-slate-200">
+                                <button type="button" onclick="goToStep(1)" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    Previous
+                                </button>
+                                <button type="button" onclick="goToStep(2)" class="inline-flex items-center justify-center gap-2 px-10 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg w-full sm:w-auto">
+                                    Next: Adoption Questionnaire
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
                             </div>
 
-                            <!-- Mobile Number -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Mobile Number
-                                </label>
-                                <div class="flex">
-                                    <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                                        +63
-                                    </span>
-                                    <input type="tel" name="alt_phone" placeholder="943 210 2012" maxlength="14" oninput="formatPhone(this)"
-                                           value="{{ old('alt_phone', $appAltContact['phone'] ?? '') }}"
-                                           {{ $disabledAttr }}
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
-                                </div>
-                            </div>
-
-                            <!-- Email -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Email
-                                </label>
-                                <input type="email" name="alt_email" placeholder="name@example.com"
-                                       value="{{ old('alt_email', $appAltContact['email'] ?? '') }}"
-                                       {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
-                            </div>
                         </div>
-                    </div>
-
-                    <!-- Navigation Buttons for Part 2 -->
-                    <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(1)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Previous
-                        </button>
-                        <button type="button" onclick="goToStep(2)" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
-                            Next: Adoption Questionnaire
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
                     </div>
                 </div>
 
                 <!-- PART 2: ADOPTION QUESTIONNAIRE -->
                 <div id="part2" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 2: Adoption Questionnaire</h3>
-                    
-                    <p class="text-sm text-gray-600 italic mb-6">
-                        Please answer the questions below to help us understand your household and readiness for adoption.
-                    </p>
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Adoption Questionnaire</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            
+                            <p class="text-sm text-gray-600 italic mb-6">
+                                Please answer the questions below to help us understand your household and readiness for adoption.
+                            </p>
 
-                    <!-- Have you adopted before? (Moved from Applicant Information) -->
+                            <!-- Have you adopted before? (Moved from Applicant Information) -->
                     <div class="border border-emerald-200 rounded-lg p-4 bg-emerald-50/60 mb-6">
                         <div class="flex items-center justify-between mb-3">
                             <label class="block text-sm font-medium">
@@ -311,7 +357,7 @@
                             <div class="space-y-4">
                                 <!-- Type of Housing -->
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Type of Housing <span class="text-red-500">*</span>
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
@@ -340,7 +386,7 @@
 
                                 <!-- Housing Ownership -->
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Housing Ownership <span class="text-red-500">*</span>
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
@@ -361,7 +407,7 @@
 
                                 <!-- Household Members -->
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Who lives in your household? <span class="text-red-500">*</span>
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
@@ -390,7 +436,7 @@
 
                                 <!-- Pet Allergies -->
                                 <div id="petAllergiesSection">
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Are any household members allergic to animals? <span class="text-red-500">*</span>
                                     </label>
                                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl">
@@ -417,7 +463,7 @@
                             <div class="space-y-4">
                                 <!-- Household Agreement -->
                                 <div id="householdAgreementSection">
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Does everyone in your household agree to adopt this pet? <span class="text-red-500">*</span>
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
@@ -434,7 +480,7 @@
 
                                 <!-- Primary Caregiver -->
                                 <div id="primaryCaregiverSection">
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Who will be primarily responsible for feeding, care, and vet expenses? <span class="text-red-500">*</span>
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
@@ -455,7 +501,7 @@
 
                                 <!-- Time Alone -->
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         How many hours will the pet be left alone on a typical workday? <span class="text-red-500">*</span>
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
@@ -476,7 +522,7 @@
 
                                 <!-- Relocation Plan -->
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         What will happen to the pet if you move to a new residence? <span class="text-red-500">*</span>
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
@@ -507,7 +553,7 @@
                             <div class="space-y-4">
                                 <!-- Current Pets -->
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Do you currently have other pets in your home? <span class="text-red-500">*</span>
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
@@ -524,7 +570,7 @@
 
                                 <!-- Past Pet Experience -->
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Have you owned pets in the past 5 years? <span class="text-red-500">*</span>
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
@@ -541,7 +587,7 @@
 
                                 <!-- Vaccination & Spay/Neuter Stance -->
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                         Are you willing to keep this pet updated on vaccines and spay/neuter (kapon)?
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
@@ -559,20 +605,23 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons for Part 2 -->
-                    <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(1)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Previous
-                        </button>
-                        <button type="button" onclick="goToStep(3)" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
-                            Next: Home Photos
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
+                            <!-- Navigation Buttons -->
+                            <div class="flex justify-between mt-8 pt-6 border-t border-slate-200">
+                                <button type="button" onclick="goToStep(1)" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    Previous
+                                </button>
+                                <button type="button" onclick="goToStep(3)" class="inline-flex items-center justify-center gap-2 px-10 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg w-full sm:w-auto">
+                                    Next: Home Photos
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
@@ -997,21 +1046,30 @@
 
                 <!-- PART 3: HOME PHOTOS -->
                 <div id="part3" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 3: Home Photos</h3>
-                    
-                    <p class="text-sm text-gray-600 italic mb-4">
-                        Please attach 2–3 photos showing where the pet will sleep, play, and live (e.g., living room, yard, or balcony).
-                    </p>
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Home Photos</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            
+                            <p class="text-sm text-gray-600 italic mb-4">
+                                Please attach 2–3 photos showing where the pet will sleep, play, and live (e.g., living room, yard, or balcony).
+                            </p>
 
-                    <div class="space-y-6">
+                            <div class="space-y-6">
                         <!-- Primary Living Area -->
                         <div class="border border-slate-200 rounded-lg p-4 bg-gray-50/50">
-                            <label class="block text-sm font-medium mb-1.5">
+                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                 Primary Living Area <span class="text-red-500">*</span>
                             </label>
                             <p class="text-xs text-gray-500 mb-2">Upload 1–3 photos of living room, indoor area, or sleeping area</p>
                             <input type="file" name="primary_living_area[]" accept="image/*" multiple
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none"
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                    onchange="handlePhotoSelect(this, 'primaryLivingAreaPreview', 3)">
                             <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb per photo</p>
 
@@ -1021,12 +1079,12 @@
 
                         <!-- Outdoor / Yard / Gate Area -->
                         <div class="border border-slate-200 rounded-lg p-4 bg-gray-50/50">
-                            <label class="block text-sm font-medium mb-1.5">
+                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
                                 Outdoor / Yard / Gate Area <span class="text-gray-500">(Optional)</span>
                             </label>
                             <p class="text-xs text-gray-500 mb-2">Photos of yard, balcony, or front gate if applicable</p>
                             <input type="file" name="outdoor_yard_gate[]" accept="image/*" multiple
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none"
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                    onchange="handlePhotoSelect(this, 'outdoorYardGatePreview', 3)">
                             <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb per photo</p>
 
@@ -1035,93 +1093,115 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons for Part 3 -->
-                    <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(2)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Previous
-                        </button>
-                        <button type="button" onclick="goToStep(4)" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
-                            Next: Upload Valid ID
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
+                            <!-- Navigation Buttons -->
+                            <div class="flex justify-between mt-8 pt-6 border-t border-slate-200">
+                                <button type="button" onclick="goToStep(2)" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    Previous
+                                </button>
+                                <button type="button" onclick="goToStep(4)" class="inline-flex items-center justify-center gap-2 px-10 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg w-full sm:w-auto">
+                                    Next: Upload Valid ID
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
                 <!-- PART 4: UPLOAD VALID ID -->
                 <div id="part4" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 4: Upload Valid ID</h3>
-                    
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5">
-                            Upload a valid ID <span class="text-red-500">*</span>
-                        </label>
-                        <input type="file" id="validIdInput" name="valid_id" accept="image/*"
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none"
-                               onchange="handleValidIdSelect(this)">
-                        <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb</p>
-
-                        <div id="validIdPreview" class="mt-3">
-                            @if($isEdit && !empty($application->valid_id_path))
-                                @php
-                                    $validIdPath = $application->valid_id_path;
-                                    $isPdf = str_contains(strtolower($validIdPath), '.pdf');
-                                @endphp
-                                <div class="relative inline-block" data-existing-path="{{ $validIdPath }}">
-                                    @if($isPdf)
-                                        <a href="{{ asset('storage/' . $validIdPath) }}" target="_blank" class="block">
-                                            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 flex items-center gap-3">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0014.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                                </svg>
-                                                <div>
-                                                    <p class="text-sm font-medium text-gray-700">Valid ID Document</p>
-                                                    <p class="text-xs text-gray-500">PDF - Click to view</p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    @else
-                                        <img src="{{ asset('storage/' . $validIdPath) }}" alt="Valid ID" class="max-w-xs max-h-48 object-contain border border-gray-200 rounded-lg">
-                                        <p class="text-xs text-gray-500 mt-1">Current valid ID</p>
-                                    @endif
-                                    <button type="button" 
-                                            onclick="removeValidId()" 
-                                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition-colors">
-                                        ×
-                                    </button>
-                                </div>
-                            @endif
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Upload Valid ID</h4>
+                            </div>
                         </div>
-                    </div>
+                        <div class="p-6 space-y-6">
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Upload a valid ID <span class="text-red-500">*</span></label>
+                                <input type="file" id="validIdInput" name="valid_id" accept="image/*"
+                                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                                       onchange="handleValidIdSelect(this)">
+                                <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb</p>
 
-                    <!-- Navigation Buttons for Part 4 -->
-                    <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(3)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Previous
-                        </button>
-                        <button type="button" onclick="goToStep(5)" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
-                            Next: Appointment Setup
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
+                                <div id="validIdPreview" class="mt-3">
+                                    @if($isEdit && !empty($application->valid_id_path))
+                                        @php
+                                            $validIdPath = $application->valid_id_path;
+                                            $isPdf = str_contains(strtolower($validIdPath), '.pdf');
+                                        @endphp
+                                        <div class="relative inline-block" data-existing-path="{{ $validIdPath }}">
+                                            @if($isPdf)
+                                                <a href="{{ asset('storage/' . $validIdPath) }}" target="_blank" class="block">
+                                                    <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 flex items-center gap-3">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0014.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <div>
+                                                            <p class="text-sm font-medium text-gray-700">Valid ID Document</p>
+                                                            <p class="text-xs text-gray-500">PDF - Click to view</p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            @else
+                                                <img src="{{ asset('storage/' . $validIdPath) }}" alt="Valid ID" class="max-w-xs max-h-48 object-contain border border-gray-200 rounded-lg">
+                                                <p class="text-xs text-gray-500 mt-1">Current valid ID</p>
+                                            @endif
+                                            <button type="button" 
+                                                    onclick="removeValidId()" 
+                                                    class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition-colors">
+                                                ×
+                                            </button>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Navigation Buttons -->
+                            <div class="flex justify-between mt-8 pt-6 border-t border-slate-200">
+                                <button type="button" onclick="goToStep(3)" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    Previous
+                                </button>
+                                <button type="button" onclick="goToStep(5)" class="inline-flex items-center justify-center gap-2 px-10 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg w-full sm:w-auto">
+                                    Next: Appointment Setup
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
                 <!-- PART 5: APPOINTMENT SETUP -->
                 <div id="part5" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 5: Appointment Setup</h3>
-
-                    <div class="space-y-6">
-                        <!-- Appointment Slot Picker -->
-                        <div id="scheduleInterviewField" class="mt-6 pt-6 border-t border-gray-200">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                        <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <h4 class="text-sm font-semibold text-white">Appointment Setup</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            
+                            <div class="space-y-6">
+                                <!-- Appointment Slot Picker -->
+                                <div id="scheduleInterviewField" class="mt-6 pt-6 border-t border-gray-200">
                             <h4 class="text-md font-semibold text-gray-800 mb-4">Schedule Appointment</h4>
                             <p class="text-sm text-gray-500 mb-4">
                                 Select a date and time for your adoption appointment.
@@ -1142,37 +1222,40 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons for Part 5 -->
-                    <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(4)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Previous
-                        </button>
-                        @if($isView)
-                            <a href="{{ route('owner.dashboard') }}" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
-                                Back to Dashboard
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </a>
-                        @else
-                            <button type="submit"
-                                    class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
-                                {{ $submitLabel }}
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </button>
-                        @endif
-                    </div>
-                    
-                    <!-- Back to Adoption Page Link -->
-                    <div class="text-center mt-6">
-                        <a href="{{ url('/adoption') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">
-                            ← Back to Adoption Page
-                        </a>
+                            <!-- Navigation Buttons -->
+                            <div class="flex justify-between mt-8 pt-6 border-t border-slate-200">
+                                <button type="button" onclick="goToStep(4)" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    Previous
+                                </button>
+                                @if($isView)
+                                    <a href="{{ route('owner.dashboard') }}" class="inline-flex items-center justify-center gap-2 px-10 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg w-full sm:w-auto">
+                                        Back to Dashboard
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </a>
+                                @else
+                                    <button type="submit"
+                                            class="inline-flex items-center justify-center gap-2 px-10 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg w-full sm:w-auto">
+                                        {{ $submitLabel }}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </button>
+                                @endif
+                            </div>
+                            
+                            <!-- Back to Adoption Page Link -->
+                            <div class="text-center mt-6">
+                                <a href="{{ url('/adoption') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">
+                                    ← Back to Adoption Page
+                                </a>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </form>
@@ -1605,28 +1688,27 @@
         // Update progress bar
         const progress = (step / 5) * 100;
         document.getElementById('progressBar').style.width = progress + '%';
-        document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 5';
 
-        // Update step titles
-        const titles = [
+        // Update step indicator text
+        const stepLabels = [
             '',
-            'Part 1: Alternate Contact',
-            'Part 2: Adoption Questionnaire',
-            'Part 3: Home Photos',
-            'Part 4: Upload Valid ID',
-            'Part 5: Appointment Setup'
+            'Step 1 of 5 — Alternate Contact',
+            'Step 2 of 5 — Adoption Questionnaire',
+            'Step 3 of 5 — Home Photos',
+            'Step 4 of 5 — Upload Valid ID',
+            'Step 5 of 5 — Appointment Setup'
         ];
-        document.getElementById('stepTitle').textContent = titles[step];
+        document.getElementById('stepIndicatorText').textContent = stepLabels[step];
 
-        // Update step indicators
+        // Update step circles
         for (let i = 1; i <= 5; i++) {
-            const indicator = document.getElementById('step' + i + 'Indicator');
+            const circle = document.querySelector('[data-step="' + i + '"]');
             if (i <= step) {
-                indicator.classList.remove('text-gray-400');
-                indicator.classList.add('text-emerald-600');
+                circle.classList.remove('border-gray-300', 'text-gray-400');
+                circle.classList.add('border-emerald-600', 'bg-emerald-600', 'text-white');
             } else {
-                indicator.classList.remove('text-emerald-600');
-                indicator.classList.add('text-gray-400');
+                circle.classList.remove('border-emerald-600', 'bg-emerald-600', 'text-white');
+                circle.classList.add('border-gray-300', 'text-gray-400');
             }
         }
 
