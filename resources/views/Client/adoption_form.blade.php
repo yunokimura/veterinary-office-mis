@@ -1689,10 +1689,11 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Validation function for each step
-    function validateStep(step) {
-        const part = document.getElementById('part' + step);
-        const requiredFields = part.querySelectorAll('[name]');
+        // Validation function for each step
+        function validateStep(step) {
+            const part = document.getElementById('part' + step);
+            if (!part) return true;
+            const requiredFields = part.querySelectorAll('[name]');
         let isValid = true;
         let firstError = null;
 
