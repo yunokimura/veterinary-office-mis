@@ -41,7 +41,15 @@
                 }
             }
         }
-    </script>
+    <style>
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
 </head>
 
 <body class="font-sans bg-gray-50 min-h-screen">
@@ -121,52 +129,52 @@
                 <span id="stepIndicatorText" class="text-sm text-emerald-300 font-medium">Step 1 of 5 — Alternate Contact</span>
             </div>
             <div class="p-6">
-                <div class="flex items-start justify-between gap-2">
-                    <button type="button" onclick="goToStep(1)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="1">
+                    <div class="flex items-start gap-2 overflow-x-auto pb-2 no-scrollbar">
+                    <button type="button" onclick="goToStep(1)" class="step-item flex items-center gap-3 text-left flex-shrink-0" data-step="1">
                         <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition-colors flex-shrink-0 ring-2 ring-emerald-300 ring-offset-1" data-step="1">1</span>
-                        <span class="hidden sm:block min-w-0">
-                            <span class="step-title block text-sm font-semibold truncate">Alternate Contact</span>
-                            <span class="step-subtitle block text-xs text-gray-700 truncate">Emergency contact person</span>
+                        <span class="min-w-0">
+                            <span class="step-title block text-sm font-semibold">Alternate Contact</span>
+                            <span class="step-subtitle block text-xs text-gray-700">Emergency contact person</span>
                         </span>
                     </button>
-                    <div class="flex-1 hidden sm:flex items-center pt-4">
+                    <div class="w-10 flex items-center pt-4 flex-shrink-0">
                         <div class="w-full h-0.5 bg-slate-200"></div>
                     </div>
-                    <button type="button" onclick="goToStep(2)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="2">
+                    <button type="button" onclick="goToStep(2)" class="step-item flex items-center gap-3 text-left flex-shrink-0" data-step="2">
                         <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-300 text-gray-400 transition-colors flex-shrink-0" data-step="2">2</span>
-                        <span class="hidden sm:block min-w-0">
-                            <span class="step-title block text-sm font-semibold truncate">Adoption Questionnaire</span>
-                            <span class="step-subtitle block text-xs text-gray-700 truncate">Household & readiness</span>
+                        <span class="min-w-0">
+                            <span class="step-title block text-sm font-semibold">Adoption Questionnaire</span>
+                            <span class="step-subtitle block text-xs text-gray-700">Household & readiness</span>
                         </span>
                     </button>
-                    <div class="flex-1 hidden sm:flex items-center pt-4">
+                    <div class="w-10 flex items-center pt-4 flex-shrink-0">
                         <div class="w-full h-0.5 bg-slate-200"></div>
                     </div>
-                    <button type="button" onclick="goToStep(3)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="3">
+                    <button type="button" onclick="goToStep(3)" class="step-item flex items-center gap-3 text-left flex-shrink-0" data-step="3">
                         <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-300 text-gray-400 transition-colors flex-shrink-0" data-step="3">3</span>
-                        <span class="hidden sm:block min-w-0">
-                            <span class="step-title block text-sm font-semibold truncate">Home Photos</span>
-                            <span class="step-subtitle block text-xs text-gray-700 truncate">Property images</span>
+                        <span class="min-w-0">
+                            <span class="step-title block text-sm font-semibold">Home Photos</span>
+                            <span class="step-subtitle block text-xs text-gray-700">Property images</span>
                         </span>
                     </button>
-                    <div class="flex-1 hidden sm:flex items-center pt-4">
+                    <div class="w-10 flex items-center pt-4 flex-shrink-0">
                         <div class="w-full h-0.5 bg-slate-200"></div>
                     </div>
-                    <button type="button" onclick="goToStep(4)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="4">
+                    <button type="button" onclick="goToStep(4)" class="step-item flex items-center gap-3 text-left flex-shrink-0" data-step="4">
                         <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-300 text-gray-400 transition-colors flex-shrink-0" data-step="4">4</span>
-                        <span class="hidden sm:block min-w-0">
-                            <span class="step-title block text-sm font-semibold truncate">Upload Valid ID</span>
-                            <span class="step-subtitle block text-xs text-gray-700 truncate">Identification document</span>
+                        <span class="min-w-0">
+                            <span class="step-title block text-sm font-semibold">Upload Valid ID</span>
+                            <span class="step-subtitle block text-xs text-gray-700">Identification document</span>
                         </span>
                     </button>
-                    <div class="flex-1 hidden sm:flex items-center pt-4">
+                    <div class="w-10 flex items-center pt-4 flex-shrink-0">
                         <div class="w-full h-0.5 bg-slate-200"></div>
                     </div>
-                    <button type="button" onclick="goToStep(5)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="5">
+                    <button type="button" onclick="goToStep(5)" class="step-item flex items-center gap-3 text-left flex-shrink-0" data-step="5">
                         <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-gray-300 text-gray-400 transition-colors flex-shrink-0" data-step="5">5</span>
-                        <span class="hidden sm:block min-w-0">
-                            <span class="step-title block text-sm font-semibold truncate">Appointment Setup</span>
-                            <span class="step-subtitle block text-xs text-gray-700 truncate">Schedule appointment</span>
+                        <span class="min-w-0">
+                            <span class="step-title block text-sm font-semibold">Appointment Setup</span>
+                            <span class="step-subtitle block text-xs text-gray-700">Schedule appointment</span>
                         </span>
                     </button>
                 </div>
@@ -1676,7 +1684,7 @@
         // Update step circles
         const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>`;
         for (let i = 1; i <= 5; i++) {
-            const circle = document.querySelector('[data-step="' + i + '"]');
+            const circle = document.querySelector('[data-step="' + i + '"].step-circle');
             const stepItem = circle ? circle.closest('.step-item') : null;
             const title = stepItem ? stepItem.querySelector('.step-title') : null;
             const subtitle = stepItem ? stepItem.querySelector('.step-subtitle') : null;
