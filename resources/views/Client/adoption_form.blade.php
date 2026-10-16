@@ -51,51 +51,45 @@
 
 <!-- Main -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    @php
+    $isEdit = isset($application) && $application instanceof \App\Models\AdoptionApplication;
+    $isView = isset($isView) && $isView === true;
+    $formAction = $isEdit && ! $isView ? route('adoption.form.update', $application) : '#';
+    $formMethod = $isEdit && ! $isView ? 'PUT' : 'POST';
+    $submitLabel = $isEdit && ! $isView ? 'Update Application' : ($isView ? 'View Mode' : 'Submit Application');
+    $pageTitle = $isView ? 'View Adoption Application' : ($isEdit ? 'Edit Adoption Application' : 'Adoption Application');
+    $appAltContact = $isEdit ? ($application->alternate_contact ?? []) : [];
+    $appQuestionnaire = $isEdit ? ($application->questionnaire ?? []) : [];
+    $appHomePhotos = $appQuestionnaire['home_photos'] ?? [];
+    $readonlyClass = $isView ? ' bg-gray-100' : '';
+    $readonlyAttr = $isView ? ' readonly' : '';
+    $disabledAttr = $isView ? ' disabled' : '';
+
+    $backwardCompatibilityMapping = [
+        'building_type' => 'housing_type',
+        'rent' => 'housing_ownership',
+        'live_with' => 'household_members',
+    ];
+
+    foreach ($backwardCompatibilityMapping as $oldKey => $newKey) {
+        if (isset($appQuestionnaire[$oldKey]) && empty($appQuestionnaire[$newKey])) {
+            $appQuestionnaire[$newKey] = $appQuestionnaire[$oldKey];
+        }
+    }
+    @endphp
+
+    <!-- Page Title -->
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-900">{{ $pageTitle }}</h2>
+        <p class="text-gray-700 text-xs mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- Main Content -->
         <div class="lg:col-span-8 space-y-6">
 
-            @php
-            $isEdit = isset($application) && $application instanceof \App\Models\AdoptionApplication;
-            $isView = isset($isView) && $isView === true;
-            $formAction = $isEdit && ! $isView ? route('adoption.form.update', $application) : '#';
-            $formMethod = $isEdit && ! $isView ? 'PUT' : 'POST';
-            $submitLabel = $isEdit && ! $isView ? 'Update Application' : ($isView ? 'View Mode' : 'Submit Application');
-            $pageTitle = $isView ? 'View Adoption Application' : ($isEdit ? 'Edit Adoption Application' : 'Adoption Application');
-            $appAltContact = $isEdit ? ($application->alternate_contact ?? []) : [];
-            $appQuestionnaire = $isEdit ? ($application->questionnaire ?? []) : [];
-            $appHomePhotos = $appQuestionnaire['home_photos'] ?? [];
-            $readonlyClass = $isView ? ' bg-gray-100' : '';
-            $readonlyAttr = $isView ? ' readonly' : '';
-            $disabledAttr = $isView ? ' disabled' : '';
-
-            $backwardCompatibilityMapping = [
-                'building_type' => 'housing_type',
-                'rent' => 'housing_ownership',
-                'live_with' => 'household_members',
-                'allergic' => 'pet_allergies',
-                'family_support' => 'household_agreement',
-                'other_pets' => 'current_pets',
-                'past_pets' => 'past_pet_experience',
-            ];
-
-            foreach ($backwardCompatibilityMapping as $oldKey => $newKey) {
-                if (isset($appQuestionnaire[$oldKey]) && empty($appQuestionnaire[$newKey])) {
-                    $appQuestionnaire[$newKey] = $appQuestionnaire[$oldKey];
-                }
-            }
-        @endphp
-
-        <!-- Title -->
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold">{{ $pageTitle }}</h2>
-            <p class="mt-2 text-gray-600 text-sm text-left">
-                Fields marked with <span class="text-red-500">*</span> are required
-            </p>
-        </div>
-
-        <!-- Session Status -->
+            <!-- Session Status -->
         @if (session('status'))
             <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm">
                 {{ session('status') }}
@@ -1263,7 +1257,7 @@
 
         <!-- Right Sidebar -->
         <div class="lg:col-span-4 space-y-6">
-            <div class="lg:sticky lg:top-12 space-y-6">
+            <div class="lg:sticky lg:top-20 space-y-6">
                 <!-- Applicant Information Card -->
                 <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
                     <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
