@@ -1714,7 +1714,7 @@
             if (i === step) {
                 // CURRENT STEP — strongly highlighted
                 circle.classList.remove('border-gray-300', 'text-gray-400', 'bg-emerald-100', 'text-emerald-700', 'bg-white', 'border-slate-300', 'ring-emerald-300');
-                circle.classList.add('border-emerald-600', 'bg-emerald-600', 'text-white', 'ring-2', 'ring-white', 'ring-offset-1');
+                circle.classList.add('border-emerald-600', 'bg-emerald-600', 'text-white', 'ring-2', 'ring-emerald-300', 'ring-offset-1');
                 circle.innerHTML = String(i);
                 if (title) {
                     title.classList.remove('text-emerald-700', 'text-slate-500');
