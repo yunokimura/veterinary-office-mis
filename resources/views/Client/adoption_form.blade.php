@@ -123,7 +123,7 @@
             <div class="p-6">
                 <div class="flex items-start justify-between gap-2">
                     <button type="button" onclick="goToStep(1)" class="step-item flex-1 flex items-center gap-3 text-left" data-step="1">
-                        <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition-colors flex-shrink-0" data-step="1">1</span>
+                        <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition-colors flex-shrink-0 ring-2 ring-emerald-300 ring-offset-1" data-step="1">1</span>
                         <span class="hidden sm:block min-w-0">
                             <span class="step-title block text-sm font-semibold truncate">Alternate Contact</span>
                             <span class="step-subtitle block text-xs text-gray-700 truncate">Emergency contact person</span>
@@ -1674,14 +1674,52 @@
         document.getElementById('stepIndicatorText').textContent = stepLabels[step];
 
         // Update step circles
+        const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>`;
         for (let i = 1; i <= 5; i++) {
             const circle = document.querySelector('[data-step="' + i + '"]');
-            if (i <= step) {
-                circle.classList.remove('border-gray-300', 'text-gray-400');
-                circle.classList.add('border-emerald-600', 'bg-emerald-600', 'text-white');
+            const stepItem = circle ? circle.closest('.step-item') : null;
+            const title = stepItem ? stepItem.querySelector('.step-title') : null;
+            const subtitle = stepItem ? stepItem.querySelector('.step-subtitle') : null;
+
+            if (i === step) {
+                // CURRENT STEP — strongly highlighted
+                circle.classList.remove('border-gray-300', 'text-gray-400', 'bg-emerald-100', 'text-emerald-700', 'bg-white', 'border-slate-300', 'ring-emerald-300');
+                circle.classList.add('border-emerald-600', 'bg-emerald-600', 'text-white', 'ring-2', 'ring-white', 'ring-offset-1');
+                circle.innerHTML = String(i);
+                if (title) {
+                    title.classList.remove('text-emerald-700', 'text-slate-500');
+                    title.classList.add('text-emerald-900');
+                }
+                if (subtitle) {
+                    subtitle.classList.remove('text-slate-400', 'text-gray-700');
+                    subtitle.classList.add('text-emerald-600');
+                }
+            } else if (i < step) {
+                // COMPLETED STEP — light green with check mark
+                circle.classList.remove('border-gray-300', 'text-gray-400', 'bg-emerald-600', 'text-white', 'bg-white', 'border-slate-300', 'ring-2', 'ring-white', 'ring-emerald-300', 'ring-offset-1');
+                circle.classList.add('border-emerald-600', 'bg-emerald-100', 'text-emerald-700');
+                circle.innerHTML = checkIcon;
+                if (title) {
+                    title.classList.remove('text-emerald-900', 'text-slate-500');
+                    title.classList.add('text-emerald-700');
+                }
+                if (subtitle) {
+                    subtitle.classList.remove('text-emerald-600', 'text-gray-700');
+                    subtitle.classList.add('text-slate-400');
+                }
             } else {
-                circle.classList.remove('border-emerald-600', 'bg-emerald-600', 'text-white');
-                circle.classList.add('border-gray-300', 'text-gray-400');
+                // UPCOMING STEP — muted outline
+                circle.classList.remove('border-emerald-600', 'bg-emerald-600', 'text-white', 'bg-emerald-100', 'text-emerald-700', 'ring-2', 'ring-white', 'ring-emerald-300', 'ring-offset-1');
+                circle.classList.add('border-gray-300', 'text-gray-400', 'bg-white');
+                circle.innerHTML = String(i);
+                if (title) {
+                    title.classList.remove('text-emerald-900', 'text-emerald-700');
+                    title.classList.add('text-slate-500');
+                }
+                if (subtitle) {
+                    subtitle.classList.remove('text-emerald-600', 'text-emerald-700');
+                    subtitle.classList.add('text-slate-400', 'text-gray-700');
+                }
             }
         }
 
