@@ -19,10 +19,23 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
                         primary: {
-                            DEFAULT: '#066D33',
-                            light: '#077a40',
-                            dark: '#055a29',
+                            DEFAULT: '#059669',
+                            light: '#065f46',
+                            dark: '#047857',
                         }
                     }
                 }
@@ -37,10 +50,13 @@
 @include('Client.partials.navbar')
 
 <!-- Main -->
-<main class="py-10">
-    <div class="max-w-4xl mx-auto px-6">
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        @php
+        <!-- Main Content -->
+        <div class="lg:col-span-8 space-y-6">
+
+            @php
             $isEdit = isset($application) && $application instanceof \App\Models\AdoptionApplication;
             $isView = isset($isView) && $isView === true;
             $formAction = $isEdit && ! $isView ? route('adoption.form.update', $application) : '#';
@@ -103,36 +119,32 @@
             <!-- Progress Bar -->
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700" id="stepLabel">Step 1 of 6</span>
-                    <span class="text-sm font-medium text-primary" id="stepTitle">Part 1: Application Information</span>
+                    <span class="text-sm font-medium text-gray-700" id="stepLabel">Step 1 of 5</span>
+                    <span class="text-sm font-medium text-emerald-600" id="stepTitle">Part 1: Alternate Contact</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div id="progressBar" class="bg-primary h-2.5 rounded-full transition-all duration-300" style="width: 16.67%"></div>
+                    <div id="progressBar" class="bg-emerald-600 h-2.5 rounded-full transition-all duration-300" style="width: 20%"></div>
                 </div>
                 <div class="flex justify-between mt-2">
                     <div class="text-xs text-center flex-1">
-                        <div id="step1Indicator" class="font-semibold text-primary">1</div>
-                        <div class="text-gray-500">Application</div>
+                        <div id="step1Indicator" class="font-semibold text-emerald-600">1</div>
+                        <div class="text-gray-500">Alternate Contact</div>
                     </div>
                     <div class="text-xs text-center flex-1">
                         <div id="step2Indicator" class="font-semibold text-gray-400">2</div>
-                        <div class="text-gray-400">Alt. Contact</div>
-                    </div>
-                    <div class="text-xs text-center flex-1">
-                        <div id="step3Indicator" class="font-semibold text-gray-400">3</div>
                         <div class="text-gray-400">Questionnaire</div>
                     </div>
                     <div class="text-xs text-center flex-1">
-                        <div id="step4Indicator" class="font-semibold text-gray-400">4</div>
+                        <div id="step3Indicator" class="font-semibold text-gray-400">3</div>
                         <div class="text-gray-400">Home Photos</div>
                     </div>
                     <div class="text-xs text-center flex-1">
-                        <div id="step5Indicator" class="font-semibold text-gray-400">5</div>
+                        <div id="step4Indicator" class="font-semibold text-gray-400">4</div>
                         <div class="text-gray-400">Valid ID</div>
                     </div>
                     <div class="text-xs text-center flex-1">
-                        <div id="step6Indicator" class="font-semibold text-gray-400">6</div>
-                        <div class="text-gray-400">Interview</div>
+                        <div id="step5Indicator" class="font-semibold text-gray-400">5</div>
+                        <div class="text-gray-400">Appointment</div>
                     </div>
                 </div>
             </div>
@@ -143,192 +155,9 @@
                     @method('PUT')
                 @endif
 
-                <!-- PART 1: APPLICATION INFORMATION -->
+                <!-- PART 1: ALTERNATE CONTACT -->
                 <div id="part1" class="form-part">
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 1: Application Information</h3>
-
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <!-- Name -->
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Name <span class="text-red-500">*</span>
-                                    <span class="text-gray-500 text-xs ml-2">(First name and Last name)</span>
-                                </label>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <input type="text" name="first_name" placeholder="First name" value="{{ old('first_name', $petOwner->first_name ?? '') }}" readonly
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
-                                    <input type="text" name="last_name" placeholder="Last name" value="{{ old('last_name', $petOwner->last_name ?? '') }}" readonly
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
-                                </div>
-                            </div>
-
-                            <!-- Email -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Email <span class="text-red-500">*</span>
-                                </label>
-                                <input type="email" name="email" placeholder="name@example.com" value="{{ old('email', $user->email ?? '') }}" readonly
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
-                            </div>
-
-                            <!-- Mobile Number -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Mobile Number <span class="text-red-500">*</span>
-                                </label>
-                                <div class="flex">
-                                    <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                                        +63
-                                    </span>
-                                    <input type="tel" name="mobile_number" placeholder="943 210 2012" maxlength="14" value="{{ old('mobile_number', $petOwner->phone_number ?? '') }}" readonly
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 bg-gray-100">
-                                </div>
-                            </div>
-
-                            <!-- Alternate Mobile Number -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Alternate Mobile Number
-                                </label>
-                                <div class="flex">
-                                    <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
-                                        +63
-                                    </span>
-                                    <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="14" value="{{ old('alt_mobile_number', $petOwner->alternate_phone_number ?? '') }}" readonly
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 bg-gray-100">
-                                </div>
-                            </div>
-
-                            <!-- House No. / Unit No. -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    House No. / Unit No. <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->address->block_lot_phase ?? '') }}" readonly
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
-                            </div>
-
-                            <!-- Street -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Street <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->address->street ?? '') }}" readonly
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
-                            </div>
-
-                            <!-- Barangay -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Barangay <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->address->barangay->barangay_name ?? '') }}" readonly
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
-                            </div>
-
-                            <!-- Birth Date -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Birth Date <span class="text-red-500">*</span>
-                                </label>
-                                <input type="date" name="birth_date" value="{{ old('birth_date', $petOwner->date_of_birth ?? '') }}" readonly
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100">
-                            </div>
-
-                            <!-- Occupation -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Occupation
-                                </label>
-                                <input type="text" name="occupation" placeholder="Your occupation"
-                                       value="{{ old('occupation', $application->occupation ?? '') }}"
-                                       {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
-                            </div>
-
-                            <!-- Company/Business Name -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Company/Business Name
-                                </label>
-                                <input type="text" name="company" placeholder="Company/Business Name"
-                                       value="{{ old('company', $application->company ?? '') }}"
-                                       {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
-                            </div>
-
-                            <!-- Social Media -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Social Media
-                                </label>
-                                <input type="text" name="social_media" placeholder="Facebook/Instagram URL"
-                                       value="{{ old('social_media', $application->social_media ?? '') }}"
-                                       {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
-                            </div>
-
-                            <!-- Status -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Status <span class="text-red-500">*</span>
-                                </label>
-                                <div class="flex gap-4 mt-2">
-    <label class="inline-flex items-center">
-        <input type="radio" name="status" value="Single" class="text-primary" {{ old('status', $application->marital_status ?? $application->status ?? '') === 'Single' ? 'checked' : '' }} {{ $disabledAttr }}>
-        <span class="ml-2">Single</span>
-    </label>
-    <label class="inline-flex items-center">
-        <input type="radio" name="status" value="Married" class="text-primary" {{ old('status', $application->marital_status ?? $application->status ?? '') === 'Married' ? 'checked' : '' }} {{ $disabledAttr }}>
-        <span class="ml-2">Married</span>
-    </label>
-    <label class="inline-flex items-center">
-        <input type="radio" name="status" value="Others" class="text-primary" {{ old('status', $application->marital_status ?? $application->status ?? '') === 'Others' ? 'checked' : '' }} {{ $disabledAttr }}>
-        <span class="ml-2">Others</span>
-    </label>
-                                </div>
-                            </div>
-
-                            <!-- Have you adopted before? -->
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium mb-1.5">
-                                    Have you adopted before? <span class="text-red-500">*</span>
-                                </label>
-                                <div class="flex gap-4 mt-2">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="adopted_before" value="yes" class="text-primary" {{ old('adopted_before', $application->adopted_before ?? '') === 'yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                        <span class="ml-2">Yes</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="adopted_before" value="no" class="text-primary" {{ old('adopted_before', $application->adopted_before ?? '') === 'no' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                        <span class="ml-2">No</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Navigation Buttons for Part 1 -->
-                    <div class="flex justify-between items-center mt-8">
-                        <a href="{{ url('/adoption') }}" class="text-gray-600 hover:text-primary transition-colors flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Back to Adoption Page
-                        </a>
-                        <button type="button" onclick="goToStep(2)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
-                            Next: Alternate Contact
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- PART 2: ALTERNATE CONTACT -->
-                <div id="part2" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 2: Alternate Contact <span class="text-sm font-normal text-gray-500">(Optional)</span></h3>
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 1: Alternate Contact <span class="text-sm font-normal text-gray-500">(Optional)</span></h3>
 
                     @if($isView && empty($appAltContact))
                         <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
@@ -339,7 +168,7 @@
                     <div class="mb-4">
                         <label class="inline-flex items-center">
                             <input type="checkbox" id="noAlternateContact" onchange="toggleAlternateContact(this)" {{ $disabledAttr }}
-                                   class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
+                                   class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500">
                             <span class="ml-2 text-sm text-gray-700">I do not have an alternate contact person</span>
                         </label>
                     </div>
@@ -356,11 +185,11 @@
                                     <input type="text" name="alt_first_name" placeholder="First Name"
                                            value="{{ old('alt_first_name', $appAltContact['first_name'] ?? '') }}"
                                            {{ $disabledAttr }}
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
+                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
                                     <input type="text" name="alt_last_name" placeholder="Last Name"
                                            value="{{ old('alt_last_name', $appAltContact['last_name'] ?? '') }}"
                                            {{ $disabledAttr }}
-                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
+                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
                                 </div>
                             </div>
 
@@ -372,7 +201,7 @@
                                 <input type="text" name="alt_relationship" placeholder="Relationship to you"
                                        value="{{ old('alt_relationship', $appAltContact['relationship'] ?? '') }}"
                                        {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
+                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
                             </div>
 
                             <!-- Mobile Number -->
@@ -387,7 +216,7 @@
                                     <input type="tel" name="alt_phone" placeholder="943 210 2012" maxlength="14" oninput="formatPhone(this)"
                                            value="{{ old('alt_phone', $appAltContact['phone'] ?? '') }}"
                                            {{ $disabledAttr }}
-                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
+                                           class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
                                 </div>
                             </div>
 
@@ -399,7 +228,7 @@
                                 <input type="email" name="alt_email" placeholder="name@example.com"
                                        value="{{ old('alt_email', $appAltContact['email'] ?? '') }}"
                                        {{ $disabledAttr }}
-                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none{{ $readonlyClass }}">
+                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none{{ $readonlyClass }}">
                             </div>
                         </div>
                     </div>
@@ -412,8 +241,8 @@
                             </svg>
                             Previous
                         </button>
-                        <button type="button" onclick="goToStep(3)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
-                            Next: Questionnaire
+                        <button type="button" onclick="goToStep(2)" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
+                            Next: Adoption Questionnaire
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                             </svg>
@@ -421,13 +250,32 @@
                     </div>
                 </div>
 
-                <!-- PART 3: ADOPTION QUESTIONNAIRE -->
-                <div id="part3" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 3: Adoption Questionnaire</h3>
+                <!-- PART 2: ADOPTION QUESTIONNAIRE -->
+                <div id="part2" class="form-part hidden">
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 2: Adoption Questionnaire</h3>
                     
                     <p class="text-sm text-gray-600 italic mb-6">
                         Please answer the questions below to help us understand your household and readiness for adoption.
                     </p>
+
+                    <!-- Have you adopted before? (Moved from Applicant Information) -->
+                    <div class="border border-emerald-200 rounded-lg p-4 bg-emerald-50/60 mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="block text-sm font-medium">
+                                Have you adopted before? <span class="text-red-500">*</span>
+                            </label>
+                        </div>
+                        <div class="flex gap-4 mt-2 max-w-md">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="adopted_before" value="yes" class="text-emerald-600" {{ old('adopted_before', $appQuestionnaire['adopted_before'] ?? $application->adopted_before ?? '') === 'yes' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                <span class="ml-2">Yes</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="adopted_before" value="no" class="text-emerald-600" {{ old('adopted_before', $appQuestionnaire['adopted_before'] ?? $application->adopted_before ?? '') === 'no' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                <span class="ml-2">No</span>
+                            </label>
+                        </div>
+                    </div>
 
                     <div class="space-y-6">
                         <!-- Pet Selector Highlight -->
@@ -437,7 +285,7 @@
                                     Select Pet to Adopt <span class="text-red-500">*</span>
                                 </label>
                                 <button type="button" onclick="openAdoptionPetModal()" 
-                                        class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
+                                        class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center text-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                                     </svg>
@@ -468,23 +316,23 @@
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="housing_type" value="House" class="text-primary" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'House' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="housing_type" value="House" class="text-emerald-600" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'House' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">House</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="housing_type" value="Apartment" class="text-primary" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Apartment' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="housing_type" value="Apartment" class="text-emerald-600" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Apartment' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Apartment</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="housing_type" value="Condo" class="text-primary" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Condo' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="housing_type" value="Condo" class="text-emerald-600" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Condo' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Condo</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="housing_type" value="Townhouse" class="text-primary" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Townhouse' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="housing_type" value="Townhouse" class="text-emerald-600" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Townhouse' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Townhouse</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="housing_type" value="Other" class="text-primary" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Other' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="housing_type" value="Other" class="text-emerald-600" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Other' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Other</span>
                                         </label>
                                     </div>
@@ -497,15 +345,15 @@
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="housing_ownership" value="Own" class="text-primary" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Own' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="housing_ownership" value="Own" class="text-emerald-600" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Own' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Own</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="housing_ownership" value="Rent (Landlord allows pets)" class="text-primary" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Rent (Landlord allows pets)' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="housing_ownership" value="Rent (Landlord allows pets)" class="text-emerald-600" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Rent (Landlord allows pets)' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Rent (Landlord allows pets)</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="housing_ownership" value="Rent (Written permission pending)" class="text-primary" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Rent (Written permission pending)' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="housing_ownership" value="Rent (Written permission pending)" class="text-emerald-600" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Rent (Written permission pending)' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Rent (Written permission pending)</span>
                                         </label>
                                     </div>
@@ -522,19 +370,19 @@
                                             if (!is_array($householdMembers)) $householdMembers = [];
                                         @endphp
                                         <label class="inline-flex items-center">
-                                            <input type="checkbox" name="household_members[]" value="Living alone" class="text-primary" {{ in_array('Living alone', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
+                                            <input type="checkbox" name="household_members[]" value="Living alone" class="text-emerald-600" {{ in_array('Living alone', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
                                             <span class="ml-2">Living alone</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="checkbox" name="household_members[]" value="Spouse or Partner" class="text-primary" {{ in_array('Spouse or Partner', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
+                                            <input type="checkbox" name="household_members[]" value="Spouse or Partner" class="text-emerald-600" {{ in_array('Spouse or Partner', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
                                             <span class="ml-2">Spouse or Partner</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="checkbox" name="household_members[]" value="Children under 18" class="text-primary" {{ in_array('Children under 18', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
+                                            <input type="checkbox" name="household_members[]" value="Children under 18" class="text-emerald-600" {{ in_array('Children under 18', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
                                             <span class="ml-2">Children under 18</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="checkbox" name="household_members[]" value="Adults or Relatives" class="text-primary" {{ in_array('Adults or Relatives', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
+                                            <input type="checkbox" name="household_members[]" value="Adults or Relatives" class="text-emerald-600" {{ in_array('Adults or Relatives', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
                                             <span class="ml-2">Adults or Relatives</span>
                                         </label>
                                     </div>
@@ -547,15 +395,15 @@
                                     </label>
                                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="pet_allergies" value="Yes" class="text-primary" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="pet_allergies" value="Yes" class="text-emerald-600" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="pet_allergies" value="No" class="text-primary" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="pet_allergies" value="No" class="text-emerald-600" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">No</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="pet_allergies" value="Unknown" class="text-primary" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'Unknown' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="pet_allergies" value="Unknown" class="text-emerald-600" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'Unknown' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Unknown</span>
                                         </label>
                                     </div>
@@ -574,11 +422,11 @@
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="household_agreement" value="Yes" class="text-primary" {{ old('household_agreement', $appQuestionnaire['household_agreement'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="household_agreement" value="Yes" class="text-emerald-600" {{ old('household_agreement', $appQuestionnaire['household_agreement'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="household_agreement" value="No" class="text-primary" {{ old('household_agreement', $appQuestionnaire['household_agreement'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="household_agreement" value="No" class="text-emerald-600" {{ old('household_agreement', $appQuestionnaire['household_agreement'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">No</span>
                                         </label>
                                     </div>
@@ -591,15 +439,15 @@
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="primary_caregiver" value="Myself" class="text-primary" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Myself' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="primary_caregiver" value="Myself" class="text-emerald-600" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Myself' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Myself</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="primary_caregiver" value="Myself & Spouse/Partner" class="text-primary" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Myself & Spouse/Partner' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="primary_caregiver" value="Myself & Spouse/Partner" class="text-emerald-600" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Myself & Spouse/Partner' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Myself & Spouse/Partner</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="primary_caregiver" value="Parents / Family" class="text-primary" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Parents / Family' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="primary_caregiver" value="Parents / Family" class="text-emerald-600" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Parents / Family' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Parents / Family</span>
                                         </label>
                                     </div>
@@ -612,15 +460,15 @@
                                     </label>
                                     <div class="flex flex-wrap gap-4 mt-2">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="time_alone" value="Less than 4 hours" class="text-primary" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === 'Less than 4 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="time_alone" value="Less than 4 hours" class="text-emerald-600" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === 'Less than 4 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Less than 4 hours</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="time_alone" value="4 – 8 hours" class="text-primary" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === '4 – 8 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="time_alone" value="4 – 8 hours" class="text-emerald-600" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === '4 – 8 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">4 – 8 hours</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="time_alone" value="More than 8 hours" class="text-primary" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === 'More than 8 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="time_alone" value="More than 8 hours" class="text-emerald-600" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === 'More than 8 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">More than 8 hours</span>
                                         </label>
                                     </div>
@@ -633,19 +481,19 @@
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="relocation_plan" value="Bring the pet with me" class="text-primary" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Bring the pet with me' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="relocation_plan" value="Bring the pet with me" class="text-emerald-600" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Bring the pet with me' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Bring the pet with me</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="relocation_plan" value="Leave under care of family" class="text-primary" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Leave under care of family' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="relocation_plan" value="Leave under care of family" class="text-emerald-600" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Leave under care of family' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2 whitespace-nowrap">Leave under care of family</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="relocation_plan" value="Return to clinic" class="text-primary" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Return to clinic' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="relocation_plan" value="Return to clinic" class="text-emerald-600" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Return to clinic' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Return to clinic</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="relocation_plan" value="Rehome responsibly" class="text-primary" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Rehome responsibly' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="relocation_plan" value="Rehome responsibly" class="text-emerald-600" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Rehome responsibly' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Rehome responsibly</span>
                                         </label>
                                     </div>
@@ -664,11 +512,11 @@
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="current_pets" value="Yes" class="text-primary" {{ old('current_pets', $appQuestionnaire['current_pets'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="current_pets" value="Yes" class="text-emerald-600" {{ old('current_pets', $appQuestionnaire['current_pets'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="current_pets" value="No" class="text-primary" {{ old('current_pets', $appQuestionnaire['current_pets'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="current_pets" value="No" class="text-emerald-600" {{ old('current_pets', $appQuestionnaire['current_pets'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">No</span>
                                         </label>
                                     </div>
@@ -681,11 +529,11 @@
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="past_pet_experience" value="Yes" class="text-primary" {{ old('past_pet_experience', $appQuestionnaire['past_pet_experience'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="past_pet_experience" value="Yes" class="text-emerald-600" {{ old('past_pet_experience', $appQuestionnaire['past_pet_experience'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="past_pet_experience" value="No" class="text-primary" {{ old('past_pet_experience', $appQuestionnaire['past_pet_experience'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="past_pet_experience" value="No" class="text-emerald-600" {{ old('past_pet_experience', $appQuestionnaire['past_pet_experience'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">No</span>
                                         </label>
                                     </div>
@@ -698,11 +546,11 @@
                                     </label>
                                     <div class="grid grid-cols-2 gap-3 max-w-md">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="vaccination_stance" value="Yes" class="text-primary" {{ old('vaccination_stance', $appQuestionnaire['vaccination_stance'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="vaccination_stance" value="Yes" class="text-emerald-600" {{ old('vaccination_stance', $appQuestionnaire['vaccination_stance'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="vaccination_stance" value="No" class="text-primary" {{ old('vaccination_stance', $appQuestionnaire['vaccination_stance'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
+                                            <input type="radio" name="vaccination_stance" value="No" class="text-emerald-600" {{ old('vaccination_stance', $appQuestionnaire['vaccination_stance'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
                                             <span class="ml-2">No</span>
                                         </label>
                                     </div>
@@ -711,15 +559,15 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons for Part 3 -->
+                    <!-- Navigation Buttons for Part 2 -->
                     <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(2)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
+                        <button type="button" onclick="goToStep(1)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                             </svg>
                             Previous
                         </button>
-                        <button type="button" onclick="goToStep(4)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
+                        <button type="button" onclick="goToStep(3)" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
                             Next: Home Photos
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -745,7 +593,7 @@
                                 @if($adoptionPets->isEmpty())
                                     <div class="text-center py-8">
                                         <p class="text-gray-500 mb-4">No pets available for adoption at the moment.</p>
-                                        <a href="{{ url('/adoption') }}" class="text-primary hover:text-primary-light font-medium">
+                                        <a href="{{ url('/adoption') }}" class="text-emerald-600 hover:text-emerald-700 font-medium">
                                             Go back to adoption page
                                         </a>
                                     </div>
@@ -753,9 +601,9 @@
                                     <p class="text-sm text-gray-600 mb-4">Select up to 2 pets for adoption:</p>
                                     <div class="space-y-3" id="adoptionPetSelectionList">
                                         @foreach($adoptionPets as $pet)
-                                            <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet->pet_id }}">
+                                            <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-emerald-50 hover:border-emerald-200 transition-colors pet-selection-card" data-pet-id="{{ $pet->pet_id }}">
                                                 <input type="checkbox" name="selected_adoption_pets[]" value="{{ $pet->pet_id }}" 
-                                                       class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary adoption-pet-checkbox"
+                                                       class="mt-1 w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 adoption-pet-checkbox"
                                                        onchange="toggleAdoptionPetSelection(this)">
                                                 <div class="ml-3 flex-1">
                                                     <div class="flex items-center justify-between">
@@ -782,7 +630,7 @@
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm text-gray-600">Selected: <span id="adoptionSelectedCount">0</span> pet(s) (Max: 2)</span>
                                     <button type="button" onclick="confirmAdoptionPetSelection()" 
-                                            class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                                            class="bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors">
                                         Confirm Selection
                                     </button>
                                 </div>
@@ -808,7 +656,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     <p class="text-gray-600 mb-4">No pets available for adoption at the moment.</p>
-                                    <a href="{{ url('/adoption') }}" class="inline-block bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                                    <a href="{{ url('/adoption') }}" class="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-colors">
                                         Go back to adoption page
                                     </a>
                                 </div>
@@ -859,7 +707,7 @@
                                             </svg>
                                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Pet Limit Reached</h3>
                                             <p class="text-gray-600 mb-6">You can select up to 2 pets for adoption per application.</p>
-                                            <button type="button" onclick="closeAdoptionPetLimitModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                                            <button type="button" onclick="closeAdoptionPetLimitModal()" class="bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors">
                                                 I understand
                                             </button>
                                         </div>
@@ -924,8 +772,8 @@
                                     const imageSrc = pet.image.startsWith('http') ? pet.image : assetBaseUrl + pet.image;
                                     imageHtml = `<img src="${imageSrc}" alt="${pet.pet_name}" class="w-12 h-12 rounded-full object-cover">`;
                                 } else {
-                                    imageHtml = `<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    imageHtml = `<div class="w-12 h-12 rounded-full bg-emerald-600/10 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>`;
@@ -1147,9 +995,9 @@
                     });
                 </script>
 
-                <!-- PART 4: HOME PHOTOS -->
-                <div id="part4" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 4: Home Photos</h3>
+                <!-- PART 3: HOME PHOTOS -->
+                <div id="part3" class="form-part hidden">
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 3: Home Photos</h3>
                     
                     <p class="text-sm text-gray-600 italic mb-4">
                         Please attach 2–3 photos showing where the pet will sleep, play, and live (e.g., living room, yard, or balcony).
@@ -1163,7 +1011,7 @@
                             </label>
                             <p class="text-xs text-gray-500 mb-2">Upload 1–3 photos of living room, indoor area, or sleeping area</p>
                             <input type="file" name="primary_living_area[]" accept="image/*" multiple
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none"
                                    onchange="handlePhotoSelect(this, 'primaryLivingAreaPreview', 3)">
                             <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb per photo</p>
 
@@ -1178,7 +1026,7 @@
                             </label>
                             <p class="text-xs text-gray-500 mb-2">Photos of yard, balcony, or front gate if applicable</p>
                             <input type="file" name="outdoor_yard_gate[]" accept="image/*" multiple
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none"
                                    onchange="handlePhotoSelect(this, 'outdoorYardGatePreview', 3)">
                             <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb per photo</p>
 
@@ -1187,15 +1035,15 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons for Part 4 -->
+                    <!-- Navigation Buttons for Part 3 -->
                     <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(3)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
+                        <button type="button" onclick="goToStep(2)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                             </svg>
                             Previous
                         </button>
-                        <button type="button" onclick="goToStep(5)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
+                        <button type="button" onclick="goToStep(4)" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
                             Next: Upload Valid ID
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -1204,16 +1052,16 @@
                     </div>
                 </div>
 
-                <!-- PART 5: UPLOAD VALID ID -->
-                <div id="part5" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 5: Upload Valid ID</h3>
+                <!-- PART 4: UPLOAD VALID ID -->
+                <div id="part4" class="form-part hidden">
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 4: Upload Valid ID</h3>
                     
                     <div>
                         <label class="block text-sm font-medium mb-1.5">
                             Upload a valid ID <span class="text-red-500">*</span>
                         </label>
                         <input type="file" id="validIdInput" name="valid_id" accept="image/*"
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                               class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none"
                                onchange="handleValidIdSelect(this)">
                         <p class="text-xs text-gray-500 mt-1">Max. file size: 8mb</p>
 
@@ -1250,15 +1098,15 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons for Part 5 -->
+                    <!-- Navigation Buttons for Part 4 -->
                     <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(4)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
+                        <button type="button" onclick="goToStep(3)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                             </svg>
                             Previous
                         </button>
-                        <button type="button" onclick="goToStep(6)" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
+                        <button type="button" onclick="goToStep(5)" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
                             Next: Appointment Setup
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -1267,9 +1115,9 @@
                     </div>
                 </div>
 
-                <!-- PART 6: APPOINTMENT SETUP -->
-                <div id="part6" class="form-part hidden">
-                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 6: Appointment Setup</h3>
+                <!-- PART 5: APPOINTMENT SETUP -->
+                <div id="part5" class="form-part hidden">
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-emerald-50 px-4 py-2 rounded-lg">Part 5: Appointment Setup</h3>
 
                     <div class="space-y-6">
                         <!-- Appointment Slot Picker -->
@@ -1294,16 +1142,16 @@
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons for Part 6 -->
+                    <!-- Navigation Buttons for Part 5 -->
                     <div class="flex justify-between mt-8">
-                        <button type="button" onclick="goToStep(5)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
+                        <button type="button" onclick="goToStep(4)" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                             </svg>
                             Previous
                         </button>
                         @if($isView)
-                            <a href="{{ route('owner.dashboard') }}" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
+                            <a href="{{ route('owner.dashboard') }}" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
                                 Back to Dashboard
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1311,7 +1159,7 @@
                             </a>
                         @else
                             <button type="submit"
-                                    class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center">
+                                    class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center">
                                 {{ $submitLabel }}
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1322,12 +1170,84 @@
                     
                     <!-- Back to Adoption Page Link -->
                     <div class="text-center mt-6">
-                        <a href="{{ url('/adoption') }}" class="text-gray-600 hover:text-primary transition-colors">
+                        <a href="{{ url('/adoption') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">
                             ← Back to Adoption Page
                         </a>
                     </div>
                 </div>
             </form>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="lg:col-span-4 space-y-6">
+            <div class="lg:sticky lg:top-20 space-y-6">
+                <!-- Applicant Information Card -->
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <h4 class="text-sm font-semibold text-white">APPLICANT INFORMATION</h4>
+                        </div>
+                        <span class="text-sm text-emerald-300">Read-Only</span>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-700 mb-1">Name</p>
+                            <p class="text-sm font-semibold text-gray-900">{{ $petOwner->first_name ?? '' }} {{ $petOwner->last_name ?? '' }}</p>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <div class="min-w-0">
+                                    <p class="text-sm text-gray-700">Email</p>
+                                    <p class="text-sm text-gray-900 truncate">{{ $user->email ?? '' }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 00-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                <div class="min-w-0">
+                                    <p class="text-sm text-gray-700">Mobile Number</p>
+                                    <p class="text-sm text-gray-900">+63 {{ $petOwner->phone_number ?? '' }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <div class="min-w-0">
+                                    <p class="text-sm text-gray-700">Address</p>
+                                    <p class="text-sm text-gray-900">{{ $petOwner->address->block_lot_phase ?? '' }}, {{ $petOwner->address->street ?? '' }}, {{ $petOwner->address->barangay->barangay_name ?? '' }}, Dasmariñas City</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <div class="min-w-0">
+                                    <p class="text-sm text-gray-700">Birth Date</p>
+                                    <p class="text-sm text-gray-900">{{ $petOwner->date_of_birth ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <div class="min-w-0">
+                                    <p class="text-sm text-gray-700">Alternate Mobile Number</p>
+                                    <p class="text-sm text-gray-900">+63 {{ $petOwner->alternate_phone_number ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
@@ -1597,7 +1517,7 @@
                                </div>`;
                         
                         const petCard = `
-                            <div class="flex items-center p-4 border border-primary rounded-lg bg-green-50">
+                            <div class="flex items-center p-4 border border-emerald-200 rounded-lg bg-emerald-50">
                                 ${imageHtml}
                                 <div class="ml-4 flex-1">
                                     <div class="font-semibold text-gray-900">${petData.pet_name}</div>
@@ -1683,30 +1603,29 @@
         document.getElementById('part' + step).classList.remove('hidden');
         
         // Update progress bar
-        const progress = (step / 6) * 100;
+        const progress = (step / 5) * 100;
         document.getElementById('progressBar').style.width = progress + '%';
-        document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 6';
+        document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 5';
 
         // Update step titles
         const titles = [
             '',
-            'Part 1: Application Information',
-            'Part 2: Alternate Contact',
-            'Part 3: Adoption Questionnaire',
-            'Part 4: Home Photos',
-            'Part 5: Upload Valid ID',
-            'Part 6: Appointment Setup'
+            'Part 1: Alternate Contact',
+            'Part 2: Adoption Questionnaire',
+            'Part 3: Home Photos',
+            'Part 4: Upload Valid ID',
+            'Part 5: Appointment Setup'
         ];
         document.getElementById('stepTitle').textContent = titles[step];
 
         // Update step indicators
-        for (let i = 1; i <= 6; i++) {
+        for (let i = 1; i <= 5; i++) {
             const indicator = document.getElementById('step' + i + 'Indicator');
             if (i <= step) {
                 indicator.classList.remove('text-gray-400');
-                indicator.classList.add('text-primary');
+                indicator.classList.add('text-emerald-600');
             } else {
-                indicator.classList.remove('text-primary');
+                indicator.classList.remove('text-emerald-600');
                 indicator.classList.add('text-gray-400');
             }
         }
@@ -1744,10 +1663,7 @@
                 name === 'alt_last_name' ||
                 name === 'alt_relationship' ||
                 name === 'alt_phone' ||
-                name === 'alt_email' ||
-                name === 'occupation' ||
-                name === 'company' ||
-                name === 'social_media') {
+                name === 'alt_email') {
                 return;
             }
 
@@ -1814,10 +1730,10 @@
                 <div>
                     <h4 class="font-semibold text-lg mb-4">Quick Links</h4>
                     <ul class="space-y-2">
-                        <li><a href="{{ route('public.home') }}" class="text-gray-600 hover:text-primary transition-colors">Home</a></li>
-                        <li><a href="{{ url('/about-us') }}" class="text-gray-600 hover:text-primary transition-colors">About Us</a></li>
-                        <li><a href="{{ url('/services') }}" class="text-gray-600 hover:text-primary transition-colors">Services</a></li>
-                        <li><a href="{{ url('/missing-pets') }}" class="text-gray-600 hover:text-primary transition-colors">Missing Pets</a></li>
+                        <li><a href="{{ route('public.home') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">Home</a></li>
+                        <li><a href="{{ url('/about-us') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">About Us</a></li>
+                        <li><a href="{{ url('/services') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">Services</a></li>
+                        <li><a href="{{ url('/missing-pets') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">Missing Pets</a></li>
                     </ul>
                 </div>
                 
@@ -1825,10 +1741,10 @@
                 <div>
                     <h4 class="font-semibold text-lg mb-4">Services</h4>
                     <ul class="space-y-2">
-                        <li><a href="{{ url('/pet-registration') }}" class="text-gray-600 hover:text-primary transition-colors">Pet Registration</a></li>
-                        <li><a href="{{ url('/vaccination') }}" class="text-gray-600 hover:text-primary transition-colors">Anti-Rabies Vaccination</a></li>
-                        <li><a href="{{ url('/adoption') }}" class="text-gray-600 hover:text-primary transition-colors">Adoption</a></li>
-                        <li><a href="{{ url('/kapon') }}" class="text-gray-600 hover:text-primary transition-colors">Kapon Program</a></li>
+                        <li><a href="{{ url('/pet-registration') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">Pet Registration</a></li>
+                        <li><a href="{{ url('/vaccination') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">Anti-Rabies Vaccination</a></li>
+                        <li><a href="{{ url('/adoption') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">Adoption</a></li>
+                        <li><a href="{{ url('/kapon') }}" class="text-gray-600 hover:text-emerald-600 transition-colors">Kapon Program</a></li>
                     </ul>
                 </div>
                 
@@ -1837,26 +1753,26 @@
                     <h4 class="font-semibold text-lg mb-4">Contact Us</h4>
                     <ul class="space-y-3">
                         <li class="flex items-start space-x-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             <span class="text-gray-600 text-sm">Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite</span>
                         </li>
                         <li class="flex items-center space-x-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
                             <span class="text-gray-600 text-sm">0966-881-2010</span>
                         </li>
                         <li class="flex items-center space-x-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                             <span class="text-gray-600 text-sm">vetdasma@yahoo.com</span>
                         </li>
                         <li class="flex items-center space-x-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <span class="text-gray-600 text-sm">Mon-Fri: 8AM - 5PM</span>
@@ -1868,11 +1784,11 @@
             <div class="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
                 <p class="text-gray-500 text-sm">© 2025 Dasmariñas City Veterinary Services. All rights reserved.</p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                    <a href="#" class="text-gray-400 hover:text-emerald-600 transition-colors">
                         <span class="sr-only">Facebook</span>
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                    <a href="#" class="text-gray-400 hover:text-emerald-600 transition-colors">
                         <span class="sr-only">Twitter</span>
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/></svg>
                     </a>

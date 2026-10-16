@@ -34,10 +34,6 @@ class AdoptionFormController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'occupation' => 'nullable|string|max:255',
-            'company' => 'nullable|string|max:255',
-            'social_media' => 'nullable|string|max:255',
-            'status' => 'nullable|in:Single,Married,Others',
             'adopted_before' => 'required|in:yes,no',
             'selected_adoption_pets' => 'nullable|array',
             'selected_adoption_pets.*' => 'integer|exists:pets,pet_id',
@@ -144,10 +140,6 @@ class AdoptionFormController extends Controller
                 'owner_id' => $petOwner->owner_id,
                 'address_id' => $addressId,
                 'selected_pet_id' => $selectedPetId,
-                'occupation' => $validated['occupation'] ?? null,
-                'company' => $validated['company'] ?? null,
-                'social_media' => $validated['social_media'] ?? null,
-                'marital_status' => $validated['status'] ?? null,
                 'adopted_before' => $validated['adopted_before'],
                 'alternate_contact' => $alternateContact,
                 'questionnaire' => $questionnaire,
@@ -211,10 +203,6 @@ class AdoptionFormController extends Controller
         }
 
         $validated = $request->validate([
-            'occupation' => 'nullable|string|max:255',
-            'company' => 'nullable|string|max:255',
-            'social_media' => 'nullable|string|max:255',
-            'status' => 'nullable|in:Single,Married,Others',
             'adopted_before' => 'required|in:yes,no',
             'selected_adoption_pets' => 'nullable|array',
             'selected_adoption_pets.*' => 'integer|exists:pets,pet_id',
@@ -321,10 +309,6 @@ class AdoptionFormController extends Controller
         DB::beginTransaction();
         try {
             $application->update([
-                'occupation' => $validated['occupation'] ?? null,
-                'company' => $validated['company'] ?? null,
-                'social_media' => $validated['social_media'] ?? null,
-                'marital_status' => $validated['status'] ?? null,
                 'adopted_before' => $validated['adopted_before'],
                 'alternate_contact' => $alternateContact,
                 'questionnaire' => $questionnaire,

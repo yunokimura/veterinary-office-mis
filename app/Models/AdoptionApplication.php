@@ -12,10 +12,6 @@ use Illuminate\Support\Carbon;
  * @property int|null $owner_id
  * @property int|null $address_id
  * @property int|null $selected_pet_id
- * @property string $company
- * @property string|null $occupation
- * @property string|null $social_media
- * @property string|null $marital_status
  * @property string $adopted_before
  * @property string $status
  * @property array<array-key, mixed>|null $alternate_contact
@@ -81,10 +77,6 @@ class AdoptionApplication extends Model
         'owner_id',
         'address_id',
         'selected_pet_id',
-        'company',
-        'occupation',
-        'social_media',
-        'marital_status',
         'adopted_before',
         'status',
         'alternate_contact',
