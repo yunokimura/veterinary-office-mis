@@ -1652,6 +1652,17 @@
         @endif
     });
 
+        // Small screen: show labels only for current step (step 1 on initial load)
+        if (window.innerWidth < 640) {
+            document.querySelectorAll('.step-item').forEach(item => {
+                const labels = item.querySelector('.min-w-0');
+                const itemStep = item.getAttribute('data-step');
+                if (labels) {
+                    labels.classList.toggle('hidden', itemStep !== '1');
+                }
+            });
+        }
+
     // Step navigation
     function goToStep(step) {
         // Validate current step before moving forward
@@ -1730,6 +1741,23 @@
                     subtitle.classList.add('text-slate-400', 'text-gray-700');
                 }
             }
+        }
+
+        // Auto-scroll active step into view
+        const activeStepItem = document.querySelector('.step-item[data-step="' + step + '"]');
+        if (activeStepItem) {
+            activeStepItem.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+
+        // Small screen: show labels only for current step
+        if (window.innerWidth < 640) {
+            document.querySelectorAll('.step-item').forEach(item => {
+                const labels = item.querySelector('.min-w-0');
+                const itemStep = item.getAttribute('data-step');
+                if (labels) {
+                    labels.classList.toggle('hidden', itemStep !== String(step));
+                }
+            });
         }
 
         // Scroll to top of form
