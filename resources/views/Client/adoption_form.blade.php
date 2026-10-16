@@ -130,7 +130,7 @@
                 <span id="stepIndicatorText" class="text-sm text-emerald-300 font-medium">Step 1 of 5 — Alternate Contact</span>
             </div>
             <div class="p-6">
-                    <div class="flex items-start gap-2 overflow-x-auto pb-2 no-scrollbar">
+                    <div class="flex items-center gap-2 overflow-x-auto px-4 pt-2 pb-2 no-scrollbar">
                     <button type="button" onclick="goToStep(1)" class="step-item flex items-center gap-3 text-left flex-shrink-0" data-step="1">
                         <span class="step-circle w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition-colors flex-shrink-0 ring-2 ring-emerald-300 ring-offset-1" data-step="1">1</span>
                         <span class="min-w-0">
@@ -1664,7 +1664,17 @@
         }
 
     // Step navigation
+    let currentStep = 1;
     function goToStep(step) {
+        // Block re-clicking current step
+        if (step === currentStep) {
+            return;
+        }
+        // Block skipping ahead past the next unlocked step
+        if (step > currentStep + 1) {
+            return;
+        }
+
         // Validate current step before moving forward
         if (!validateStep(step - 1) && step > 1) {
             return;
@@ -1743,6 +1753,16 @@
             }
         }
 
+        // Visually disable future steps beyond currentStep + 1
+        document.querySelectorAll('.step-item').forEach(item => {
+            const itemStep = parseInt(item.getAttribute('data-step'));
+            if (itemStep > currentStep + 1) {
+                item.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                item.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
         // Auto-scroll active step into view
         const activeStepItem = document.querySelector('.step-item[data-step="' + step + '"]');
         if (activeStepItem) {
@@ -1759,6 +1779,8 @@
                 }
             });
         }
+
+        currentStep = step;
 
         // Scroll to top of form
         window.scrollTo({ top: 0, behavior: 'smooth' });
