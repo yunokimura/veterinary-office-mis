@@ -1277,6 +1277,7 @@ Route::get('/missing-pets/form', function () {
             'eye_color' => $pet->petInfo?->eye_color,
             'body_mark_details' => $pet->body_mark_details,
             'body_mark_image' => $pet->body_mark_image,
+            'body_mark_image_url' => $pet->body_mark_image_url,
             'additional_photos' => $pet->additional_photos,
         ];
     })->toArray();

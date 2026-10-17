@@ -238,6 +238,54 @@ class Pet extends Model
         return null;
     }
 
+    /**
+     * Resolve the body mark image to a usable public URL.
+     *
+     * body_mark_image values follow several storage conventions:
+     * - Full relative public path (e.g. "images/pets/abc.jpg")
+     * - Storage disk path (e.g. "pets/abc.jpg", "missing-pets/abc.jpg")
+     * - Legacy bare filename stored under public/images/missing pets
+     */
+    public function getBodyMarkImageUrlAttribute()
+    {
+        $raw = $this->body_mark_image;
+
+        if (! $raw) {
+            return null;
+        }
+
+        if (str_starts_with($raw, 'http://') || str_starts_with($raw, 'https://')) {
+            return $raw;
+        }
+
+        $path = ltrim($raw, '/');
+
+        if (file_exists(public_path($path))) {
+            return str_replace(' ', '%20', asset($path));
+        }
+
+        if (file_exists(storage_path('app/public/'.$path))) {
+            return asset('storage/'.$path);
+        }
+
+        foreach (['images/missing pets', 'images/adoption pets', 'images/pets', 'images'] as $directory) {
+            $candidate = public_path($directory.'/'.$path);
+            if (file_exists($candidate)) {
+                return str_replace(' ', '%20', asset($directory.'/'.$path));
+            }
+
+            $baseName = pathinfo($path, PATHINFO_FILENAME);
+            foreach (['jpeg', 'jpg', 'png', 'webp'] as $extension) {
+                $alternative = $directory.'/'.$baseName.'.'.$extension;
+                if (file_exists(public_path($alternative))) {
+                    return str_replace(' ', '%20', asset($alternative));
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function getAgeAttribute()
     {
         if ($this->birthdate) {
