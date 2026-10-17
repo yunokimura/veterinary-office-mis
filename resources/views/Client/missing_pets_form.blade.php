@@ -397,6 +397,7 @@
 <script>
     // Pet data from server
     const petsData = @json($petsArray);
+    const assetBase = "{{ rtrim(asset(''), '/') }}/";
     
     // Format age - remove underscores and format naturally
     function formatAge(age) {
@@ -557,7 +558,7 @@
                         if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
                             imgPath = 'images/pets/' + imgPath.split('/').pop();
                         }
-                        imgSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                        imgSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
                         hasAnyView = true;
                     }
                     viewsHtml += `
@@ -578,7 +579,7 @@
                     if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
                         imgPath = 'images/pets/' + imgPath.split('/').pop();
                     }
-                    bodyMarkImgSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                    bodyMarkImgSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
                 }
                 const bodyMarkDetails = pet.body_mark_details || '';
                 const hasBodyMarkData = bodyMarkImgSrc || bodyMarkDetails;
@@ -661,7 +662,7 @@
                 if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
                     imgPath = 'images/pets/' + imgPath.split('/').pop();
                 }
-                const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                const imageSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
                 imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-20 h-20 rounded-full object-cover">`;
             } else {
                 imageHtml = `<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
@@ -771,7 +772,7 @@
                 if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
                     imgPath = 'images/pets/' + imgPath.split('/').pop();
                 }
-                const imageSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
+                const imageSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
                 imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-10 h-10 rounded-full object-cover">`;
             } else {
                 imageHtml = `<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
