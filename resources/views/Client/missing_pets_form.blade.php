@@ -587,9 +587,9 @@
                 // Build Unique Body Mark HTML using string concatenation (avoid nested template literals)
                 let bodyMarkPhotoHtml;
                 if (bodyMarkImgSrc) {
-                    bodyMarkPhotoHtml = '<div class="flex-1 min-w-[120px] max-w-[264px] aspect-square border-2 border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center"><img src="' + bodyMarkImgSrc + '" alt="Body mark" class="w-full h-full object-cover rounded-lg"></div>';
+                    bodyMarkPhotoHtml = '<div class="flex-1 min-w-[120px] max-w-[264px] aspect-square border-2 border-slate-300 rounded-xl relative"><img src="' + bodyMarkImgSrc + '" alt="Body mark" class="w-full h-full object-cover rounded-lg"></div>';
                 } else {
-                    bodyMarkPhotoHtml = '<div class="flex-1 min-w-[120px] max-w-[264px] aspect-square border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center"><input type="file" name="physical_marks[body_marks_photo]" id="body_mark_photo_' + pet.id + '" accept="image/*" class="hidden" onchange="updateBodyMarkFromFile(this, \'' + pet.id + '\')"><label for="body_mark_photo_' + pet.id + '" class="cursor-pointer block"><svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 002 2v12a2 2 0 002 2z" /></svg><p class="text-xs text-gray-500 font-medium">Click to upload</p><p class="text-[10px] text-gray-400 mt-1">Optional — upload a photo of a distinguishing mark if you have one.</p></label></div>';
+                    bodyMarkPhotoHtml = '<div class="flex-1 min-w-[120px] max-w-[264px] aspect-square border-2 border-dashed border-slate-300 rounded-xl relative hover:border-emerald-400 transition-colors"><input type="file" name="physical_marks[body_marks_photo]" id="body_mark_photo_' + pet.id + '" accept="image/*" class="hidden" onchange="updateBodyMarkFromFile(this, \'' + pet.id + '\')"><button type="button" onclick="document.getElementById(\'body_mark_photo_' + pet.id + '\').click()" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg"><i class="fi fi-br-picture text-4xl mb-2"></i>Click to upload</button></div>';
                 }
 
                 let bodyMarkDetailsHtml;
@@ -621,10 +621,11 @@
 
                         <!-- Unique Body Mark -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-800 mb-2">Unique Body Mark</label>
+                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Unique Body Mark</label>
                             <div class="flex">
                                 ${bodyMarkPhotoHtml}
                             </div>
+                            <p class="text-xs text-gray-700 mt-2">Optional — upload a photo of a distinguishing mark if you have one.</p>
                             <div class="mt-3">
                                 <label class="block text-xs font-medium text-gray-600 mb-1">Body Mark Details</label>
                                 ${bodyMarkDetailsHtml}
