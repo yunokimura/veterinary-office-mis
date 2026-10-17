@@ -1260,7 +1260,7 @@ Route::get('/missing-pets/form', function () {
     $petOwner = $user ? $user->petOwner()->with(['address' => function ($query) {
         $query->with('barangay');
     }])->first() : null;
-    $pets = $petOwner ? $petOwner->pets : collect([]);
+    $pets = $petOwner ? $petOwner->pets->load('petInfo') : collect([]);
 
     $petsArray = $pets->map(function ($pet) {
         return [
@@ -1273,6 +1273,10 @@ Route::get('/missing-pets/form', function () {
             'age' => $pet->age,
             'weight' => $pet->weight,
             'image' => $pet->pet_image,
+            'eye_color' => $pet->petInfo?->eye_color,
+            'body_mark_details' => $pet->body_mark_details,
+            'body_mark_image' => $pet->body_mark_image,
+            'additional_photos' => $pet->additional_photos,
         ];
     })->toArray();
 
