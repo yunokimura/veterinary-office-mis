@@ -145,6 +145,7 @@
                         <input type="hidden" name="physical_marks[body_marks]" id="hmBodyMarks" value="">
                         <input type="hidden" name="physical_marks[eye_color]" id="hmEyeColor" value="">
                         <input type="hidden" name="physical_marks[collar_harness]" id="hmCollarHarness" value="">
+                        <input type="hidden" name="physical_marks[body_marks_photo]" id="hmBodyMarkImage" value="">
                     </div>
                 </div>
 
@@ -521,8 +522,9 @@
                 document.getElementById('hmBodyMarks').value = '';
                 document.getElementById('hmEyeColor').value = '';
                 document.getElementById('hmCollarHarness').value = '';
+                document.getElementById('hmBodyMarkImage').value = '';
+                return;
             }
-            return;
         }
 
         container.innerHTML = '';
@@ -579,6 +581,7 @@
                     bodyMarkImgSrc = imgPath.startsWith('http') ? imgPath : "{{ asset('') }}" + imgPath;
                 }
                 const bodyMarkDetails = pet.body_mark_details || '';
+                const hasBodyMarkData = bodyMarkImgSrc || bodyMarkDetails;
 
                 // --- C. Eye Color (display-only from registration pet_info) ---
                 const eyeColor = pet.eye_color || 'Not specified';
@@ -601,12 +604,16 @@
                         <!-- Unique Body Mark -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-800 mb-2">Unique Body Mark</label>
-                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center relative ${bodyMarkImgSrc ? 'border-transparent' : ''} min-h-[144px] flex items-center justify-center">
-                                ${bodyMarkImgSrc ? `<img src="${bodyMarkImgSrc}" alt="Body mark" class="w-full h-full object-cover rounded-lg">` : `<div class="w-12 h-12 text-gray-400 mb-2"><i class="fi fi-br-picture text-4xl"></i></div><p class="text-xs text-gray-500">Click to upload</p><p class="text-[10px] text-gray-400 mt-1">Optional — upload a photo of a distinguishing mark if you have one.</p>`}
-                            </div>
+                            ${bodyMarkImgSrc
+                                ? `<div class="border-2 border-transparent border-gray-300 rounded-xl p-4 text-center relative min-h-[144px] flex items-center justify-center"><img src="${bodyMarkImgSrc}" alt="Body mark" class="w-full h-full object-cover rounded-lg"></div>`
+                                : `<div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center relative min-h-[144px] flex items-center justify-center"><input type="file" name="physical_marks[body_marks_photo]" id="body_mark_photo_${pet.id}" accept="image/*" class="hidden" onchange="updateBodyMarkFromFile(this, '${pet.id}')"><label for="body_mark_photo_${pet.id}" class="cursor-pointer block"><div class="w-12 h-12 text-gray-400 mx-auto mb-2"><i class="fi fi-br-picture text-4xl"></i></div><p class="text-xs text-gray-500 font-medium">Click to upload</p><p class="text-[10px] text-gray-400 mt-1">Optional — upload a photo of a distinguishing mark if you have one.</p></label></div>`
+                            }
                             <div class="mt-3">
                                 <label class="block text-xs font-medium text-gray-600 mb-1">Body Mark Details</label>
-                                <div class="w-full border border-gray-300 rounded-lg p-3 bg-gray-50 text-sm text-gray-700 leading-relaxed">${bodyMarkDetails || 'Describe any unique marks, scars, or distinguishing features...'}</div>
+                                ${bodyMarkDetails
+                                    ? `<div class="w-full border border-gray-300 rounded-lg p-3 bg-gray-50 text-sm text-gray-700 leading-relaxed">${bodyMarkDetails}</div>`
+                                    : `<textarea name="physical_marks[body_marks]" id="body_mark_details_${pet.id}" rows="3" placeholder="Describe any unique marks, scars, or distinguishing features..." oninput="updateBodyMarkDetails(this, '${pet.id}')" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-y"></textarea>`
+                                }
                             </div>
                         </div>
 
@@ -699,12 +706,35 @@
                 document.getElementById('hmBodyMarks').value = firstPet.body_mark_details || '';
                 document.getElementById('hmEyeColor').value = firstPet.eye_color || '';
                 document.getElementById('hmCollarHarness').value = firstPet.collar_harness || '';
+                document.getElementById('hmBodyMarkImage').value = firstPet.body_mark_image || '';
             } else {
                 document.getElementById('hmBodyMarks').value = '';
                 document.getElementById('hmEyeColor').value = '';
                 document.getElementById('hmCollarHarness').value = '';
+                document.getElementById('hmBodyMarkImage').value = '';
             }
         }
+    }
+
+    function updateBodyMarkFromFile(input, petId) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgSrc = e.target.result;
+            // Update hidden input with data URL
+            document.getElementById('hmBodyMarkImage').value = imgSrc;
+            // Replace the upload placeholder with the image preview
+            const label = input.parentElement;
+            if (label) {
+                label.innerHTML = `<img src="${imgSrc}" alt="Body mark" class="w-full h-full object-cover rounded-lg">`;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function updateBodyMarkDetails(textarea, petId) {
+        document.getElementById('hmBodyMarks').value = textarea.value;
     }
 
     function updateSidebarSelectedPets() {
