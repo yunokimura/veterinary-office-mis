@@ -13,6 +13,7 @@
     <script src="{{ asset('js/formPersistence.js') }}"></script>
 
     <style>
+        @import url('https://cdn-uicons.flaticon.com/4.0.0/uicons-thin-rounded/css/uicons-thin-rounded.css');
         .dropdown-option {
             transition: all 0.2s ease;
         }
@@ -115,9 +116,7 @@
                         <div id="selectedPetsList" class="grid md:grid-cols-1 gap-4">
                             <!-- Empty state -->
                             <div id="noPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
+                                <i class="fi fi-tr-cat-dog text-4xl text-gray-400 mx-auto mb-3"></i>
                                 <p class="text-gray-500">No pet selected yet. Click "Select Pet" to choose from your registered pets.</p>
                             </div>
                         </div>
@@ -619,9 +618,7 @@
         if (selectedPets.length === 0) {
             container.innerHTML = `
                 <div id="noPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                    <i class="fi fi-tr-cat-dog text-4xl text-gray-400 mx-auto mb-3"></i>
                     <p class="text-gray-500">No pet selected yet. Click "Select Pet" to choose from your registered pets.</p>
                 </div>
             `;
