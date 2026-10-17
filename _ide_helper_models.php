@@ -1189,7 +1189,6 @@ namespace App\Models{
  * @property int $user_id
  * @property int $pet_id
  * @property string|null $body_marks
- * @property string $eye_color
  * @property string|null $collar_harness
  * @property \Illuminate\Support\Carbon $last_seen_at
  * @property string $location_barangay

@@ -35,7 +35,6 @@ use Illuminate\Support\Carbon;
  * @property-read Barangay|null $barangay
  * @property-read Collection<int, Notification> $notifications
  * @property-read int|null $notifications_count
- *
  * @method static Builder<static>|BiteRabiesReport newModelQuery()
  * @method static Builder<static>|BiteRabiesReport newQuery()
  * @method static Builder<static>|BiteRabiesReport query()
@@ -60,7 +59,13 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|BiteRabiesReport whereUpdatedAt($value)
  * @method static Builder<static>|BiteRabiesReport whereVaccinationStatus($value)
  * @method static Builder<static>|BiteRabiesReport whereWoundManagement($value)
- *
+ * @method static Builder<static>|BiteRabiesReport byAnimalGender(string $gender)
+ * @method static Builder<static>|BiteRabiesReport byAnimalType(string $type)
+ * @method static Builder<static>|BiteRabiesReport byBarangay(int $barangayId)
+ * @method static Builder<static>|BiteRabiesReport byDateRange(string $from, string $to)
+ * @method static Builder<static>|BiteRabiesReport whereActionTaken($value)
+ * @method static Builder<static>|BiteRabiesReport whereAnimalName($value)
+ * @method static Builder<static>|BiteRabiesReport whereIncidentDate($value)
  * @mixin \Eloquent
  */
 class BiteRabiesReport extends Model

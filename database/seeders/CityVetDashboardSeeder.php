@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use App\Models\Barangay;
-use App\Models\User;
-use App\Models\PetOwner;
 use App\Models\Pet;
+use App\Models\PetInfo;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CityVetDashboardSeeder extends Seeder
 {
@@ -69,7 +69,7 @@ class CityVetDashboardSeeder extends Seeder
                 'contact_person' => $est[3],
                 'contact_number' => $est[4],
                 'email' => $est[5],
-                'address_text' => fake()->streetAddress() . ', Dasmariñas City',
+                'address_text' => fake()->streetAddress().', Dasmariñas City',
                 'barangay_id' => Barangay::inRandomOrder()->first()->barangay_id,
                 'inspection_date' => $est[6],
                 'status' => $est[6] < '2024-01-01' ? 'Expired' : (rand(0, 1) ? 'Active' : 'Pending Inspection'),
@@ -83,7 +83,7 @@ class CityVetDashboardSeeder extends Seeder
 
     private function seedVaccinationReports(): void
     {
-        $users = User::whereHas('roles', function($q) {
+        $users = User::whereHas('roles', function ($q) {
             $q->whereIn('name', ['clinic', 'hospital']);
         })->get();
 
@@ -117,7 +117,7 @@ class CityVetDashboardSeeder extends Seeder
 
     private function seedRabiesVaccinationReports(): void
     {
-        $users = User::whereHas('roles', function($q) {
+        $users = User::whereHas('roles', function ($q) {
             $q->whereIn('name', ['clinic', 'hospital']);
         })->get();
 
@@ -137,9 +137,9 @@ class CityVetDashboardSeeder extends Seeder
 
             DB::table('rabies_vaccination_reports')->insert([
                 'user_id' => $user->id,
-                'clinic_name' => fake()->company() . ' Veterinary Clinic',
+                'clinic_name' => fake()->company().' Veterinary Clinic',
                 'patient_name' => fake()->name(),
-                'patient_contact' => '09' . rand(100000000, 999999999),
+                'patient_contact' => '09'.rand(100000000, 999999999),
                 'patient_address' => fake()->address(),
                 'pet_name' => fake()->firstName(),
                 'pet_species' => $animalTypes[array_rand($animalTypes)],
@@ -148,9 +148,9 @@ class CityVetDashboardSeeder extends Seeder
                 'pet_gender' => fake()->randomElement(['male', 'female']),
                 'pet_color' => fake()->randomElement(['Brown', 'Black', 'White', 'Golden', 'Gray', 'Orange']),
                 'vaccine_brand' => $vaccineBrands[array_rand($vaccineBrands)],
-                'vaccine_batch_number' => 'BATCH-' . strtoupper(fake()->bothify('??###')),
+                'vaccine_batch_number' => 'BATCH-'.strtoupper(fake()->bothify('??###')),
                 'vaccination_date' => $vaccinationDate,
-                'vaccination_time' => Carbon::parse(rand(8, 17) . ':' . str_pad(rand(0, 59), 2, '0', STR_PAD_LEFT)),
+                'vaccination_time' => Carbon::parse(rand(8, 17).':'.str_pad(rand(0, 59), 2, '0', STR_PAD_LEFT)),
                 'next_vaccination_date' => $status === 'completed' ? $vaccinationDate->copy()->addYear() : null,
                 'weight' => rand(100, 35000) / 100,
                 'vaccination_type' => $vaccinationTypes[array_rand($vaccinationTypes)],
@@ -165,7 +165,7 @@ class CityVetDashboardSeeder extends Seeder
 
     private function seedAdoptionApplications(): void
     {
-        $users = User::whereHas('roles', function($q) {
+        $users = User::whereHas('roles', function ($q) {
             $q->whereIn('name', ['pet_owner', 'citizen']);
         })->get();
 
@@ -198,11 +198,11 @@ class CityVetDashboardSeeder extends Seeder
                 'marital_status' => ['Single', 'Married', 'Others'][rand(0, 2)],
                 'adopted_before' => rand(0, 1) ? 'yes' : 'no',
                 'status' => $status,
-                'alternate_contact' => json_encode(['name' => fake()->name(), 'phone' => '09' . rand(100000000, 999999999)]),
+                'alternate_contact' => json_encode(['name' => fake()->name(), 'phone' => '09'.rand(100000000, 999999999)]),
                 'questionnaire' => json_encode(['q1' => 'Yes', 'q2' => 'No']),
                 'valid_id_path' => fake()->optional(0.7)->filePath(),
                 'appointment_date' => rand(0, 1) ? Carbon::now()->addDays(rand(7, 21))->format('Y-m-d') : null,
-                'appointment_time' => rand(0, 1) ? Carbon::parse(rand(9, 16) . ':00')->format('H:i:s') : null,
+                'appointment_time' => rand(0, 1) ? Carbon::parse(rand(9, 16).':00')->format('H:i:s') : null,
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt,
             ]);
@@ -211,7 +211,7 @@ class CityVetDashboardSeeder extends Seeder
 
     private function seedMissingPetsReports(): void
     {
-        $users = User::whereHas('roles', function($q) {
+        $users = User::whereHas('roles', function ($q) {
             $q->whereIn('name', ['pet_owner', 'citizen']);
         })->get();
 
@@ -235,16 +235,20 @@ class CityVetDashboardSeeder extends Seeder
                 'user_id' => $user->id,
                 'pet_id' => $pet->pet_id,
                 'body_marks' => fake()->optional(0.6)->sentence(),
-                'eye_color' => $eyeColors[array_rand($eyeColors)],
                 'collar_harness' => fake()->randomElement(['Red Collar', 'Blue Harness', 'None', 'Green Collar']),
                 'last_seen_at' => $lastSeen,
                 'barangay_id' => $barangay->barangay_id,
                 'location_description' => fake()->optional(0.7)->sentence(),
-                'emergency_contact' => '09' . rand(100000000, 999999999),
+                'emergency_contact' => '09'.rand(100000000, 999999999),
                 'status' => $status,
                 'created_at' => $lastSeen,
                 'updated_at' => $status === 'reunited' ? $lastSeen->copy()->addDays(rand(1, 14)) : $lastSeen,
             ]);
+
+            PetInfo::updateOrCreate(
+                ['pet_id' => $pet->pet_id],
+                ['eye_color' => $eyeColors[array_rand($eyeColors)]]
+            );
         }
     }
 }

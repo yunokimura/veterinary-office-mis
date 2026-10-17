@@ -134,7 +134,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Eye Color</p>
-                    <p class="font-medium text-gray-800">{{ $missingPet->eye_color ?? 'N/A' }}</p>
+                    <p class="font-medium text-gray-800">{{ $missingPet->pet?->petInfo?->eye_color ?? 'N/A' }}</p>
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Collar/Harness</p>

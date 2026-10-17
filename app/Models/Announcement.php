@@ -30,7 +30,6 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, AnnouncementRead> $reads
  * @property-read int|null $reads_count
  * @property-read User|null $usersRead
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement campaigns()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement events()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement newModelQuery()
@@ -52,7 +51,9 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereUpdatedAt($value)
- *
+ * @property string|null $organized_by
+ * @property-read string|null $photo_url
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereOrganizedBy($value)
  * @mixin \Eloquent
  */
 class Announcement extends Model

@@ -35,7 +35,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read User|null $user
  * @property-read VaccinationReport|null $vaccinationReport
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport completed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport newQuery()
@@ -65,7 +64,10 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereVaccineBrand($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereWeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereVaccinationReportId($value)
- *
+ * @property int|null $barangay_id
+ * @property-read \App\Models\Barangay|null $barangay
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport pending()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesVaccinationReport whereBarangayId($value)
  * @mixin \Eloquent
  */
 class RabiesVaccinationReport extends Model

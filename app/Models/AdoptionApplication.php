@@ -36,7 +36,6 @@ use Illuminate\Support\Carbon;
  * @property-read string $street
  * @property-read string $barangay
  * @property-read string $full_address
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication query()
@@ -65,7 +64,14 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereValidIdPath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereAppointmentDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereAppointmentTime($value)
- *
+ * @property string|null $occupation
+ * @property string|null $company
+ * @property string|null $social_media
+ * @property string|null $marital_status
+ * @property string|null $rejection_reason
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereMaritalStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AdoptionApplication whereRejectionReason($value)
  * @mixin \Eloquent
  */
 class AdoptionApplication extends Model

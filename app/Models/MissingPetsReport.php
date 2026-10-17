@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $report_id
@@ -15,21 +16,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $reporter_email
  * @property string|null $photo_path
  * @property string|null $body_marks
- * @property string $eye_color
  * @property string|null $collar_harness
- * @property \Illuminate\Support\Carbon $last_seen_at
+ * @property Carbon $last_seen_at
  * @property int|null $barangay_id
  * @property string|null $location_description
  * @property string|null $emergency_contact
  * @property string $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Pet|null $pet
- * @property-read \App\Models\User|null $user
- * @property-read \App\Models\Barangay|null $barangay
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Pet|null $pet
+ * @property-read User|null $user
+ * @property-read Barangay|null $barangay
  * @property-read string $reporter_display_name
  * @property-read string|null $reporter_contact
  * @property-read string|null $reporter_email
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport query()
@@ -37,7 +38,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereCollarHarness($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereEmergencyContact($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereEyeColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereLastSeenAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereLocationBarangay($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereLocationDescription($value)
@@ -51,11 +51,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MissingPetsReport wherePhotoPath($value)
+ *
  * @mixin \Eloquent
  */
 class MissingPetsReport extends Model
 {
     protected $table = 'missing_pets_reports';
+
     protected $primaryKey = 'report_id';
 
     protected $fillable = [
@@ -67,7 +70,6 @@ class MissingPetsReport extends Model
         'reporter_email',
         'photo_path',
         'body_marks',
-        'eye_color',
         'collar_harness',
         'last_seen_at',
         'barangay_id',

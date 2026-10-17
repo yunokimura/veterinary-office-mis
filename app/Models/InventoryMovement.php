@@ -38,6 +38,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereReferenceNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereTargetBarangayId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereUpdatedAt($value)
+ * @property int|null $vaccination_report_id
+ * @property-read \App\Models\VaccinationReport|null $vaccinationReport
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereVaccinationReportId($value)
  * @mixin \Eloquent
  */
 class InventoryMovement extends Model

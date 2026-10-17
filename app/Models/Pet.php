@@ -73,6 +73,16 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereVaccinationDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereVaccinationStatus($value)
  *                                                                                                 *
+ * @property array<array-key, mixed>|null $additional_photos
+ * @property Carbon|null $deleted_at
+ * @property-read mixed $image_url
+ * @property-read Collection<int, \App\Models\SpayNeuterReport> $spayNeuterReports
+ * @property-read int|null $spay_neuter_reports_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereAdditionalPhotos($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet withoutTrashed()
  * @mixin \Eloquent
  */
 class Pet extends Model

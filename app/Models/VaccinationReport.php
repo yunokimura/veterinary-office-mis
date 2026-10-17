@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $pet_species
  * @property string|null $pet_breed
  * @property string|null $pet_gender
-     * @property int|null $pet_age
-     * @property string|null $vaccine_brand
+ * @property int|null $pet_age
+ * @property string|null $vaccine_brand
  * @property string|null $vaccine_batch_number
  * @property \Illuminate\Support\Carbon|null $vaccination_date
  * @property \Illuminate\Support\Carbon|null $vaccination_time
@@ -45,9 +45,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereNextVaccinationDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereObservations($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetAge($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetBreed($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetAge($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetBreed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport wherePetSpecies($value)
@@ -60,6 +60,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereVaccineBatchNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereVaccineBrand($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereWeight($value)
+ * @property bool $not_vaccinated
+ * @property array<array-key, mixed>|null $vaccination_records
+ * @property array<array-key, mixed>|null $anti_rabies_details
+ * @property string|null $vaccination_card_path
+ * @property-read string $status_badge
+ * @property-read \App\Models\PetOwner|null $owner
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereAntiRabiesDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereNotVaccinated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereVaccinationCardPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationReport whereVaccinationRecords($value)
  * @mixin \Eloquent
  */
 class VaccinationReport extends Model

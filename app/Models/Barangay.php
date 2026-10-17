@@ -43,6 +43,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Barangay whereProvince($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Barangay whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Barangay whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Pet> $pets
+ * @property-read int|null $pets_count
  * @mixin \Eloquent
  */
 class Barangay extends Model

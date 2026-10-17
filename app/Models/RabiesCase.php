@@ -59,6 +59,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereVaccinationStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereWoundManagement($value)
+ * @property string|null $animal_gender
+ * @property string|null $action_taken
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereActionTaken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereAnimalGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereAnimalName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RabiesCase whereIncidentDate($value)
  * @mixin \Eloquent
  */
 class RabiesCase extends Model

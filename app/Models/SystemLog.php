@@ -53,6 +53,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemLog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemLog whereUserAgent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemLog whereUserId($value)
+ * @property-read string $action_display
+ * @property-read string $action_in_past_tense
+ * @property-read string $activity_text
+ * @property-read string $module_display
+ * @property-read string $status_color
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemLog search(string $search)
  * @mixin \Eloquent
  */
 class SystemLog extends Model

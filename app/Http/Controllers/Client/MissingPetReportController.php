@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\MissingPetsReport;
 use App\Models\Pet;
-use App\Models\PetOwner;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -40,7 +40,7 @@ class MissingPetReportController extends Controller
         ]);
 
         $selectedPetIds = $validated['selected_pets'];
-        $lastSeenAt = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $validated['last_seen_date'] . ' ' . $validated['last_seen_time']);
+        $lastSeenAt = Carbon::createFromFormat('Y-m-d H:i', $validated['last_seen_date'].' '.$validated['last_seen_time']);
 
         $petIds = Pet::where('owner_id', $petOwner->owner_id)
             ->whereIn('pet_id', $selectedPetIds)
@@ -75,11 +75,10 @@ class MissingPetReportController extends Controller
                 'user_id' => $user->id,
                 'pet_id' => $petId,
                 'report_type' => 'missing',
-                'reported_by_name' => $validated['reported_by_name'] ?? trim(($petOwner->first_name ?? '') . ' ' . ($petOwner->last_name ?? '')),
+                'reported_by_name' => $validated['reported_by_name'] ?? trim(($petOwner->first_name ?? '').' '.($petOwner->last_name ?? '')),
                 'reporter_contact' => $validated['reporter_contact'] ?? $petOwner->phone_number ?? $user->contact_number,
                 'reporter_email' => $validated['reporter_email'] ?? $user->email,
                 'body_marks' => $validated['physical_marks']['body_marks'] ?? null,
-                'eye_color' => $validated['physical_marks']['eye_color'],
                 'collar_harness' => $validated['physical_marks']['collar_harness'] ?? null,
                 'last_seen_at' => $lastSeenAt,
                 'barangay_id' => $validated['barangay_id'],
@@ -87,6 +86,15 @@ class MissingPetReportController extends Controller
                 'emergency_contact' => $validated['additional_contact'] ?? null,
                 'status' => 'pending review',
             ]);
+
+            if ($pet && $request->filled('physical_marks.eye_color')) {
+                $eyeColor = $validated['physical_marks']['eye_color'];
+                if ($pet->petInfo) {
+                    $pet->petInfo->update(['eye_color' => $eyeColor]);
+                } else {
+                    $pet->petInfo()->create(['eye_color' => $eyeColor]);
+                }
+            }
         }
 
         return redirect()->route('missing-pets.form')->with('success', 'Missing pet report submitted successfully!');

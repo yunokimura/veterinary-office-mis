@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Barangay;
 use App\Models\MissingPetsReport;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Storage;
 
 class GuestMissingPetReportController extends Controller
 {
@@ -19,7 +20,7 @@ class GuestMissingPetReportController extends Controller
         }
 
         $loadedAt = now()->timestamp;
-        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get();
+        $barangays = Barangay::orderBy('barangay_name')->get();
 
         return view('Client.guest_missing_pet_form', [
             'reportType' => $reportType,
@@ -36,7 +37,7 @@ class GuestMissingPetReportController extends Controller
             $reportType = 'missing';
         }
 
-        $rateKey = 'guest-missing-pet-report|' . ($request->ip() ?? 'unknown') . '|' . ($request->input('reporter_contact') ?? 'no-phone');
+        $rateKey = 'guest-missing-pet-report|'.($request->ip() ?? 'unknown').'|'.($request->input('reporter_contact') ?? 'no-phone');
 
         if (RateLimiter::tooManyAttempts($rateKey, 3)) {
             return back()->with('error', 'Too many submissions. Please try again later.')->withInput();
@@ -99,13 +100,12 @@ class GuestMissingPetReportController extends Controller
             $lastSeenAt = null;
             if (! empty($validated['last_seen_date'])) {
                 $time = ! empty($validated['last_seen_time']) ? $validated['last_seen_time'] : '00:00';
-                $lastSeenAt = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $validated['last_seen_date'] . ' ' . $time);
+                $lastSeenAt = Carbon::createFromFormat('Y-m-d H:i', $validated['last_seen_date'].' '.$time);
             }
 
             $reportData = array_merge($reportData, [
                 'pet_id' => null,
                 'body_marks' => $validated['body_marks'] ?? null,
-                'eye_color' => $validated['eye_color'] ?? null,
                 'collar_harness' => $validated['collar_harness'] ?? null,
                 'last_seen_at' => $lastSeenAt,
                 'barangay_id' => $validated['barangay_id'],
@@ -116,10 +116,9 @@ class GuestMissingPetReportController extends Controller
             $reportData = array_merge($reportData, [
                 'pet_id' => null,
                 'body_marks' => $validated['found_description'] ?? null,
-                'eye_color' => null,
                 'collar_harness' => null,
                 'last_seen_at' => ! empty($validated['date_found'])
-                    ? \Carbon\Carbon::parse($validated['date_found'])
+                    ? Carbon::parse($validated['date_found'])
                     : now(),
                 'barangay_id' => $validated['barangay_id'],
                 'location_description' => $validated['location_description'] ?? null,
@@ -130,6 +129,6 @@ class GuestMissingPetReportController extends Controller
         MissingPetsReport::create($reportData);
 
         return redirect()->route('missing-pets.report-landing')
-            ->with('success', 'Your ' . ($reportType === 'found' ? 'found pet' : 'missing pet') . ' report has been submitted successfully!');
+            ->with('success', 'Your '.($reportType === 'found' ? 'found pet' : 'missing pet').' report has been submitted successfully!');
     }
 }

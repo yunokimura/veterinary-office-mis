@@ -38,7 +38,6 @@ use Illuminate\Support\Carbon;
  * @property-read string|null $owner_contact
  * @property-read string|null $owner_address
  * @property-read string $barangay_name
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport query()
@@ -66,7 +65,15 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport whereVeterinarian($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport whereWeight($value)
- *
+ * @property-read string|null $clinic_name
+ * @property-read string|null $color_markings
+ * @property-read string|null $pet_sex
+ * @property-read string|null $pet_type
+ * @property-read mixed $procedure_date
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport byPetType($type)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport byProcedureType($type)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport dateRange($startDate, $endDate)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterReport whereSpayNeuterAppointmentId($value)
  * @mixin \Eloquent
  */
 class SpayNeuterReport extends Model

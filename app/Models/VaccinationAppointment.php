@@ -38,6 +38,20 @@ use App\Models\Pet;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereUserId($value)
+ * @property string|null $clinic_name
+ * @property string|null $vaccination_certificate
+ * @property string|null $vaccine_lot_number
+ * @property string|null $vaccination_certificate_path
+ * @property int|null $assigned_vet
+ * @property-read \App\Models\Admin|null $assignedVet
+ * @property-read string $assigned_vet_name
+ * @property-read string $owner_name
+ * @property-read int|null $vaccination_reports_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereAssignedVet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereClinicName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereVaccinationCertificate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereVaccinationCertificatePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|VaccinationAppointment whereVaccineLotNumber($value)
  * @mixin \Eloquent
  */
 class VaccinationAppointment extends Model

@@ -25,7 +25,6 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Pet> $pets
  * @property-read int|null $pets_count
  * @property-read User $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner newQuery()
@@ -42,7 +41,10 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner whereSuffix($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetOwner whereUserId($value)
- *
+ * @property-read Collection<int, \App\Models\SpayNeuterReport> $spayNeuterReports
+ * @property-read int|null $spay_neuter_reports_count
+ * @property-read Collection<int, \App\Models\VaccinationReport> $vaccinationReports
+ * @property-read int|null $vaccination_reports_count
  * @mixin \Eloquent
  */
 class PetOwner extends Model

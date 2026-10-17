@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminAsst;
 
 use App\Http\Controllers\Controller;
+use App\Models\Barangay;
 use App\Models\MissingPetsReport;
 use App\Models\Pet;
 use App\Models\PetOwner;
@@ -41,7 +42,8 @@ class MissingPetController extends Controller
     public function create()
     {
         $clients = PetOwner::active()->orderBy('last_name')->get();
-        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get();
+        $barangays = Barangay::orderBy('barangay_name')->get();
+
         return view('admin-asst.missing-pets.create', compact('clients', 'barangays'));
     }
 
@@ -77,6 +79,10 @@ class MissingPetController extends Controller
             'pet_status' => 'missing',
         ]);
 
+        if ($request->filled('eye_color')) {
+            $pet->petInfo()->create(['eye_color' => $request->input('eye_color')]);
+        }
+
         $photoPath = null;
         if ($request->hasFile('image')) {
             $photoPath = $request->file('image')->store('missing-pets', 'public');
@@ -90,7 +96,6 @@ class MissingPetController extends Controller
             'reporter_contact' => $validated['reporter_contact'],
             'reporter_email' => $validated['reporter_email'] ?? null,
             'body_marks' => $validated['body_marks'] ?? null,
-            'eye_color' => $validated['eye_color'],
             'collar_harness' => $validated['collar_harness'] ?? null,
             'last_seen_at' => $validated['last_seen_at'],
             'barangay_id' => $validated['barangay_id'],
@@ -106,6 +111,7 @@ class MissingPetController extends Controller
     public function show(MissingPetsReport $missingPet)
     {
         $missingPet->load('pet');
+
         return view('admin-asst.missing-pets.show', compact('missingPet'));
     }
 
@@ -113,7 +119,8 @@ class MissingPetController extends Controller
     {
         $missingPet->load('pet');
         $clients = PetOwner::active()->orderBy('last_name')->get();
-        $barangays = \App\Models\Barangay::orderBy('barangay_name')->get();
+        $barangays = Barangay::orderBy('barangay_name')->get();
+
         return view('admin-asst.missing-pets.edit', compact('missingPet', 'clients', 'barangays'));
     }
 
@@ -150,6 +157,14 @@ class MissingPetController extends Controller
             ]);
         }
 
+        if ($pet && $request->filled('eye_color')) {
+            if ($pet->petInfo) {
+                $pet->petInfo->update(['eye_color' => $request->input('eye_color')]);
+            } else {
+                $pet->petInfo()->create(['eye_color' => $request->input('eye_color')]);
+            }
+        }
+
         if ($request->hasFile('image')) {
             if ($pet->pet_image) {
                 Storage::disk('public')->delete($pet->pet_image);
@@ -160,7 +175,6 @@ class MissingPetController extends Controller
 
         $missingPet->update([
             'body_marks' => $validated['body_marks'] ?? null,
-            'eye_color' => $validated['eye_color'],
             'collar_harness' => $validated['collar_harness'] ?? null,
             'last_seen_at' => $validated['last_seen_at'],
             'barangay_id' => $validated['barangay_id'],

@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SpayNeuterReport> $spayNeuterReports
  * @property-read string $pet_name
  * @property-read string $owner_name
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment query()
@@ -50,6 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment whereVeterinarian($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment whereWeight($value)
+ * @property-read int|null $spay_neuter_reports_count
  * @mixin \Eloquent
  */
 class SpayNeuterAppointment extends Model

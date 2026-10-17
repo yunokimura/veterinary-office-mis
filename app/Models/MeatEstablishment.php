@@ -8,23 +8,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Barangay;
 
     /**
-     * @property int $establishment_id
-     * @property string $establishment_name
-     * @property string|null $establishment_type
-     * @property string|null $owner_name
-     * @property string|null $contact_person
-     * @property string|null $contact_number
-     * @property string|null $email
-     * @property string $address_text
-     * @property string|null $landmark
-     * @property string|null $permit_no
-     * @property string|null $inspection_date
-     * @property string $status
-     * @property string|null $permit_expiry_date
-     * @property int|null $barangay_id
-     * @property int $registered_by_user_id
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $establishment_id
+ * @property string $establishment_name
+ * @property string|null $establishment_type
+ * @property string|null $owner_name
+ * @property string|null $contact_person
+ * @property string|null $contact_number
+ * @property string|null $email
+ * @property string $address_text
+ * @property string|null $landmark
+ * @property string|null $permit_no
+ * @property string|null $inspection_date
+ * @property string $status
+ * @property string|null $permit_expiry_date
+ * @property int|null $barangay_id
+ * @property int $registered_by_user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read Barangay|null $barangay
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MeatEstablishment newModelQuery()
@@ -45,6 +45,8 @@ use App\Models\Barangay;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MeatEstablishment wherePermitNo($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MeatEstablishment whereRegisteredByUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MeatEstablishment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MeatEstablishment wherePermitExpiryDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MeatEstablishment whereStatus($value)
  * @mixin \Eloquent
  */
 class MeatEstablishment extends Model

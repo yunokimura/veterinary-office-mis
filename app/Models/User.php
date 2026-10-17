@@ -59,9 +59,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $roles_count
  * @property-read Collection<int, SystemLog> $systemLogs
  * @property-read int|null $system_logs_count
- *
  * @mixin HasRoles
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User permission($permissions, $without = false)
@@ -81,6 +79,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutPermission($permissions)
+ * @property int|null $barangay_id
+ * @property int|null $facility_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereBarangayId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereFacilityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, $guard = null)
+ * @mixin \Eloquent
  */
 class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, Authorizable
 {
