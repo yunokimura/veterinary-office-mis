@@ -427,7 +427,7 @@
             </div>
 
             <!-- Modal Body -->
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto min-h-[360px]">
                 <div class="px-5 pt-4 pb-4">
                     <!-- Alphabetical List -->
                     <div id="barangayModalList"></div>
