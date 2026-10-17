@@ -317,11 +317,11 @@
                         <div class="flex gap-2 mt-2 max-w-md">
                             <label class="inline-flex items-center">
                                 <input type="radio" name="adopted_before" value="yes" class="sr-only peer" {{ old('adopted_before', $appQuestionnaire['adopted_before'] ?? $application->adopted_before ?? '') === 'yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
+                                <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
                             </label>
                             <label class="inline-flex items-center">
                                 <input type="radio" name="adopted_before" value="no" class="sr-only peer" {{ old('adopted_before', $appQuestionnaire['adopted_before'] ?? $application->adopted_before ?? '') === 'no' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
+                                <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
                             </label>
                         </div>
                     </div>
@@ -366,23 +366,23 @@
                                     <div class="flex flex-wrap gap-2 mt-2">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="housing_type" value="House" class="sr-only peer" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'House' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">House</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">House</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="housing_type" value="Apartment" class="sr-only peer" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Apartment' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Apartment</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Apartment</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="housing_type" value="Condo" class="sr-only peer" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Condo' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Condo</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Condo</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="housing_type" value="Townhouse" class="sr-only peer" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Townhouse' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Townhouse</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Townhouse</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="housing_type" value="Other" class="sr-only peer" {{ old('housing_type', $appQuestionnaire['housing_type'] ?? '') === 'Other' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Other</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Other</span>
                                         </label>
                                     </div>
                                 </div>
@@ -395,15 +395,15 @@
                                     <div class="flex flex-wrap gap-2 mt-2">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="housing_ownership" value="Own" class="sr-only peer" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Own' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Own</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Own</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="housing_ownership" value="Rent (Landlord allows pets)" class="sr-only peer" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Rent (Landlord allows pets)' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Rent (Landlord allows pets)</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Rent (Landlord allows pets)</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="housing_ownership" value="Rent (Written permission pending)" class="sr-only peer" {{ old('housing_ownership', $appQuestionnaire['housing_ownership'] ?? '') === 'Rent (Written permission pending)' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Rent (Written permission pending)</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Rent (Written permission pending)</span>
                                         </label>
                                     </div>
                                 </div>
@@ -420,19 +420,19 @@
                                         @endphp
                                         <label class="inline-flex items-center">
                                             <input type="checkbox" name="household_members[]" value="Living alone" class="sr-only peer" {{ in_array('Living alone', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Living alone</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Living alone</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="checkbox" name="household_members[]" value="Spouse or Partner" class="sr-only peer" {{ in_array('Spouse or Partner', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Spouse or Partner</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Spouse or Partner</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="checkbox" name="household_members[]" value="Children under 18" class="sr-only peer" {{ in_array('Children under 18', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Children under 18</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Children under 18</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="checkbox" name="household_members[]" value="Adults or Relatives" class="sr-only peer" {{ in_array('Adults or Relatives', $householdMembers) ? 'checked' : '' }} {{ $disabledAttr }} onchange="toggleHouseholdMembers(this)">
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Adults or Relatives</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Adults or Relatives</span>
                                         </label>
                                     </div>
                                 </div>
@@ -445,15 +445,15 @@
                                     <div class="flex flex-wrap gap-2 max-w-2xl">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="pet_allergies" value="Yes" class="sr-only peer" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Yes</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="pet_allergies" value="No" class="sr-only peer" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">No</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">No</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="pet_allergies" value="Unknown" class="sr-only peer" {{ old('pet_allergies', $appQuestionnaire['pet_allergies'] ?? '') === 'Unknown' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Unknown</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Unknown</span>
                                         </label>
                                     </div>
                                 </div>
@@ -472,11 +472,11 @@
                                     <div class="flex gap-2 max-w-md">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="household_agreement" value="Yes" class="sr-only peer" {{ old('household_agreement', $appQuestionnaire['household_agreement'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="household_agreement" value="No" class="sr-only peer" {{ old('household_agreement', $appQuestionnaire['household_agreement'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
                                         </label>
                                     </div>
                                 </div>
@@ -489,15 +489,15 @@
                                     <div class="flex flex-wrap gap-2 mt-2">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="primary_caregiver" value="Myself" class="sr-only peer" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Myself' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Myself</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Myself</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="primary_caregiver" value="Myself & Spouse/Partner" class="sr-only peer" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Myself & Spouse/Partner' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Myself & Spouse/Partner</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Myself & Spouse/Partner</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="primary_caregiver" value="Parents / Family" class="sr-only peer" {{ old('primary_caregiver', $appQuestionnaire['primary_caregiver'] ?? '') === 'Parents / Family' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Parents / Family</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Parents / Family</span>
                                         </label>
                                     </div>
                                 </div>
@@ -510,15 +510,15 @@
                                     <div class="flex flex-wrap gap-2 mt-2">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="time_alone" value="Less than 4 hours" class="sr-only peer" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === 'Less than 4 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Less than 4 hours</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Less than 4 hours</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="time_alone" value="4 – 8 hours" class="sr-only peer" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === '4 – 8 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">4 – 8 hours</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">4 – 8 hours</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="time_alone" value="More than 8 hours" class="sr-only peer" {{ old('time_alone', $appQuestionnaire['time_alone'] ?? '') === 'More than 8 hours' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">More than 8 hours</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">More than 8 hours</span>
                                         </label>
                                     </div>
                                 </div>
@@ -531,19 +531,19 @@
                                     <div class="flex flex-wrap gap-2 max-w-md">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="relocation_plan" value="Bring the pet with me" class="sr-only peer" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Bring the pet with me' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Bring the pet with me</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Bring the pet with me</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="relocation_plan" value="Leave under care of family" class="sr-only peer" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Leave under care of family' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors whitespace-nowrap">Leave under care of family</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors whitespace-nowrap">Leave under care of family</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="relocation_plan" value="Return to clinic" class="sr-only peer" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Return to clinic' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Return to clinic</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Return to clinic</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="relocation_plan" value="Rehome responsibly" class="sr-only peer" {{ old('relocation_plan', $appQuestionnaire['relocation_plan'] ?? '') === 'Rehome responsibly' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Rehome responsibly</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors">Rehome responsibly</span>
                                         </label>
                                     </div>
                                 </div>
@@ -562,11 +562,11 @@
                                     <div class="flex gap-2 max-w-md">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="current_pets" value="Yes" class="sr-only peer" {{ old('current_pets', $appQuestionnaire['current_pets'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="current_pets" value="No" class="sr-only peer" {{ old('current_pets', $appQuestionnaire['current_pets'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
                                         </label>
                                     </div>
                                 </div>
@@ -579,11 +579,11 @@
                                     <div class="flex gap-2 max-w-md">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="past_pet_experience" value="Yes" class="sr-only peer" {{ old('past_pet_experience', $appQuestionnaire['past_pet_experience'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="past_pet_experience" value="No" class="sr-only peer" {{ old('past_pet_experience', $appQuestionnaire['past_pet_experience'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
                                         </label>
                                     </div>
                                 </div>
@@ -596,11 +596,11 @@
                                     <div class="flex gap-2 max-w-md">
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="vaccination_stance" value="Yes" class="sr-only peer" {{ old('vaccination_stance', $appQuestionnaire['vaccination_stance'] ?? '') === 'Yes' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center">
                                             <input type="radio" name="vaccination_stance" value="No" class="sr-only peer" {{ old('vaccination_stance', $appQuestionnaire['vaccination_stance'] ?? '') === 'No' ? 'checked' : '' }} {{ $disabledAttr }}>
-                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
+                                            <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:peer-hover:opacity-85 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition-colors flex-1 text-center">No</span>
                                         </label>
                                     </div>
                                 </div>
@@ -1653,14 +1653,16 @@
     });
 
     // Allow unselecting radio buttons by clicking the already-selected pill again
-    document.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('mousedown', function() {
-            this.wasChecked = this.checked;
+    document.querySelectorAll('label').forEach(label => {
+        const radio = label.querySelector('input[type="radio"]');
+        if (!radio) return;
+        label.addEventListener('mousedown', function() {
+            radio.wasChecked = radio.checked;
         });
-        radio.addEventListener('click', function() {
-            if (this.wasChecked) {
-                this.checked = false;
-                this.dispatchEvent(new Event('change', { bubbles: true }));
+        label.addEventListener('click', function() {
+            if (radio.wasChecked) {
+                radio.checked = false;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
             }
         });
     });
