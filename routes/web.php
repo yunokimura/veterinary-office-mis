@@ -1273,6 +1273,7 @@ Route::get('/missing-pets/form', function () {
             'age' => $pet->age,
             'weight' => $pet->weight,
             'image' => $pet->pet_image,
+            'image_url' => $pet->image_url,
             'eye_color' => $pet->petInfo?->eye_color,
             'body_mark_details' => $pet->body_mark_details,
             'body_mark_image' => $pet->body_mark_image,

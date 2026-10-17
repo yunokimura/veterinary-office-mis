@@ -543,7 +543,11 @@
                 const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
 
                 // --- A. Front, Side, Top-down View (display-only from registration additional_photos) ---
-                const addPhotos = pet.additional_photos || {};
+                let addPhotos = pet.additional_photos;
+                if (typeof addPhotos === 'string') {
+                    try { addPhotos = JSON.parse(addPhotos); } catch (e) { addPhotos = {}; }
+                }
+                addPhotos = addPhotos || {};
                 const views = [
                     { key: 'front', label: 'Front View' },
                     { key: 'side', label: 'Side View' },
@@ -551,25 +555,31 @@
                 ];
                 let viewsHtml = '';
                 let hasAnyView = false;
-                views.forEach(v => {
-                    let imgSrc = null;
-                    if (addPhotos[v.key]) {
-                        let imgPath = addPhotos[v.key];
-                        if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
-                            imgPath = 'images/pets/' + imgPath.split('/').pop();
+                    views.forEach(v => {
+                        let imgSrc = null;
+                        let viewImgHtml = '';
+                        if (addPhotos[v.key]) {
+                            let imgPath = addPhotos[v.key];
+                            if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
+                                imgPath = 'images/pets/' + imgPath.split('/').pop();
+                            }
+                            imgSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
+                            hasAnyView = true;
                         }
-                        imgSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
-                        hasAnyView = true;
-                    }
-                    viewsHtml += `
-                        <div class="flex-1 min-w-[120px]">
-                            <div class="mb-1 text-xs text-gray-500 text-center font-medium">${v.label}</div>
-                            <div class="aspect-square border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center">
-                                ${imgSrc ? `<img src="${imgSrc}" alt="${pet.name} ${v.label}" class="w-full h-full object-cover rounded-lg">` : `<div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No ${v.label.toLowerCase()}</div>`}
+                        if (imgSrc) {
+                            viewImgHtml = '<img src="' + imgSrc + '" alt="' + pet.name + ' ' + v.label + '" class="w-full h-full object-cover rounded-lg">';
+                        } else {
+                            viewImgHtml = '<div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No ' + v.label.toLowerCase() + '</div>';
+                        }
+                        viewsHtml += `
+                            <div class="flex-1 min-w-[120px]">
+                                <div class="mb-1 text-xs text-gray-500 text-center font-medium">${v.label}</div>
+                                <div class="aspect-square border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center">
+                                    ${viewImgHtml}
+                                </div>
                             </div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
 
                 // --- B. Unique Body Mark (details + image from registration) ---
                 const bodyMarkImage = pet.body_mark_image;
@@ -582,6 +592,22 @@
                     bodyMarkImgSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
                 }
                 const bodyMarkDetails = pet.body_mark_details || '';
+
+                // Build Unique Body Mark HTML using string concatenation (avoid nested template literals)
+                let bodyMarkPhotoHtml;
+                if (bodyMarkImgSrc) {
+                    bodyMarkPhotoHtml = '<div class="border-2 border-transparent border-gray-300 rounded-xl p-4 text-center relative min-h-[144px] flex items-center justify-center"><img src="' + bodyMarkImgSrc + '" alt="Body mark" class="w-full h-full object-cover rounded-lg"></div>';
+                } else {
+                    bodyMarkPhotoHtml = '<div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center relative min-h-[144px] flex items-center justify-center"><input type="file" name="physical_marks[body_marks_photo]" id="body_mark_photo_' + pet.id + '" accept="image/*" class="hidden" onchange="updateBodyMarkFromFile(this, \'' + pet.id + '\')"><label for="body_mark_photo_' + pet.id + '" class="cursor-pointer block"><svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 002 2v12a2 2 0 002 2z" /></svg><p class="text-xs text-gray-500 font-medium">Click to upload</p><p class="text-[10px] text-gray-400 mt-1">Optional — upload a photo of a distinguishing mark if you have one.</p></label></div>';
+                }
+
+                let bodyMarkDetailsHtml;
+                if (bodyMarkDetails) {
+                    bodyMarkDetailsHtml = '<div class="w-full border border-gray-300 rounded-lg p-3 bg-gray-50 text-sm text-gray-700 leading-relaxed">' + bodyMarkDetails + '</div>';
+                } else {
+                    bodyMarkDetailsHtml = '<textarea name="physical_marks[body_marks]" id="body_mark_details_' + pet.id + '" rows="3" placeholder="Describe any unique marks, scars, or distinguishing features..." oninput="updateBodyMarkDetails(this, \'' + pet.id + '\')" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-y"></textarea>';
+                }
+                let noViewsHtml = !hasAnyView ? '<p class="mt-2 text-xs text-gray-400 text-center">No additional view photos available.</p>' : '';
                 const hasBodyMarkData = bodyMarkImgSrc || bodyMarkDetails;
 
                 // --- C. Eye Color (display-only from registration pet_info) ---
@@ -599,23 +625,18 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                 ${viewsHtml}
                             </div>
-                            ${!hasAnyView ? `<p class="mt-2 text-xs text-gray-400 text-center">No additional view photos available.</p>` : ''}
+                            ${noViewsHtml}
                         </div>
 
                         <!-- Unique Body Mark -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-800 mb-2">Unique Body Mark</label>
-                            ${bodyMarkImgSrc
-                                ? `<div class="border-2 border-transparent border-gray-300 rounded-xl p-4 text-center relative min-h-[144px] flex items-center justify-center"><img src="${bodyMarkImgSrc}" alt="Body mark" class="w-full h-full object-cover rounded-lg"></div>`
-                                : `<div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center relative min-h-[144px] flex items-center justify-center"><input type="file" name="physical_marks[body_marks_photo]" id="body_mark_photo_${pet.id}" accept="image/*" class="hidden" onchange="updateBodyMarkFromFile(this, '${pet.id}')"><label for="body_mark_photo_${pet.id}" class="cursor-pointer block"><svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><p class="text-xs text-gray-500 font-medium">Click to upload</p><p class="text-[10px] text-gray-400 mt-1">Optional — upload a photo of a distinguishing mark if you have one.</p></label></div>`
-                            }
+                            ${bodyMarkPhotoHtml}
                             <div class="mt-3">
                                 <label class="block text-xs font-medium text-gray-600 mb-1">Body Mark Details</label>
-                                ${bodyMarkDetails
-                                    ? `<div class="w-full border border-gray-300 rounded-lg p-3 bg-gray-50 text-sm text-gray-700 leading-relaxed">${bodyMarkDetails}</div>`
-                                    : `<textarea name="physical_marks[body_marks]" id="body_mark_details_${pet.id}" rows="3" placeholder="Describe any unique marks, scars, or distinguishing features..." oninput="updateBodyMarkDetails(this, '${pet.id}')" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-y"></textarea>`
-                                }
+                                ${bodyMarkDetailsHtml}
                             </div>
+                        </div>
                         </div>
 
                         <!-- Eye Color -->
@@ -657,17 +678,13 @@
             const neuteredDisplay = pet.is_neutered ? 'Yes' : 'No';
 
             let imageHtml = '';
-            if (pet.image) {
-                let imgPath = pet.image;
-                if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
-                    imgPath = 'images/pets/' + imgPath.split('/').pop();
-                }
-                const imageSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
+            const imageSrc = pet.image_url;
+            if (imageSrc) {
                 imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-20 h-20 rounded-full object-cover">`;
             } else {
                 imageHtml = `<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
                     </svg>
                 </div>`;
             }
@@ -767,17 +784,13 @@
             const breedDisplay = pet.breed || 'Unknown';
 
             let imageHtml = '';
-            if (pet.image) {
-                let imgPath = pet.image;
-                if (!imgPath.includes('images/pets') && !imgPath.startsWith('http')) {
-                    imgPath = 'images/pets/' + imgPath.split('/').pop();
-                }
-                const imageSrc = imgPath.startsWith('http') ? imgPath : assetBase + imgPath;
+            const imageSrc = pet.image_url;
+            if (imageSrc) {
                 imageHtml = `<img src="${imageSrc}" alt="${pet.name}" class="w-10 h-10 rounded-full object-cover">`;
             } else {
                 imageHtml = `<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
                     </svg>
                 </div>`;
             }
