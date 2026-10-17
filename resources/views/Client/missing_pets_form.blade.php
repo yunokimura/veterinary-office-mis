@@ -205,26 +205,25 @@
                                           class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-y"
                                           placeholder="Describe the specific location where the pet was last seen (e.g., near the church, at the park, etc.)"></textarea>
                             </div>
+
+                            <!-- Submit -->
+                            <div class="flex justify-center mt-6">
+                                <!-- Reporter fields (hidden, populated from Part 1) -->
+                                <input type="hidden" name="reported_by_name" id="reported_by_name" value="{{ old('reported_by_name', trim(($petOwner->first_name ?? '') . ' ' . ($petOwner->last_name ?? ''))) }}">
+                                <input type="hidden" name="reporter_contact" id="reporter_contact" value="{{ old('reporter_contact', $petOwner->phone_number ?? '') }}">
+                                <input type="hidden" name="reporter_email" id="reporter_email" value="{{ old('reporter_email', $user->email ?? '') }}">
+                                <button type="submit" class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center gap-2 w-full md:w-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Submit Missing Pet Report
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Submit -->
-                <div class="flex justify-center mt-8">
-                    <!-- Reporter fields (hidden, populated from Part 1) -->
-                    <input type="hidden" name="reported_by_name" id="reported_by_name" value="{{ old('reported_by_name', trim(($petOwner->first_name ?? '') . ' ' . ($petOwner->last_name ?? ''))) }}">
-                    <input type="hidden" name="reporter_contact" id="reporter_contact" value="{{ old('reporter_contact', $petOwner->phone_number ?? '') }}">
-                    <input type="hidden" name="reporter_email" id="reporter_email" value="{{ old('reporter_email', $user->email ?? '') }}">
-                    <button type="submit" class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Submit Missing Pet Report
-                    </button>
-                </div>
-            </form>
-
-            <!-- Back Link -->
+                <!-- Back Link -->
         </div>
 
         <!-- Right Sidebar -->
@@ -263,8 +262,18 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
                                 <div class="min-w-0">
-                                    <p class="text-xs text-gray-500">Primary</p>
+                                    <p class="text-xs text-gray-500">Primary Number</p>
                                     <p class="text-sm text-gray-900">+63 {{ $petOwner->phone_number ?? '' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <div class="min-w-0">
+                                    <p class="text-xs text-gray-500">Alternate Mobile Number</p>
+                                    <p class="text-sm text-gray-900">+63 {{ $petOwner->alternate_phone_number ?? '' }}</p>
                                 </div>
                             </div>
 
@@ -278,16 +287,6 @@
                                     <p class="text-sm text-gray-900">
                                         {{ $petOwner->address->block_lot_phase ?? '' }}, {{ $petOwner->address->street ?? '' }}, {{ $petOwner->address->barangay->barangay_name ?? '' }}, Dasmariñas City
                                     </p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                </svg>
-                                <div class="min-w-0">
-                                    <p class="text-xs text-gray-500">Alternate Mobile Number</p>
-                                    <p class="text-sm text-gray-900">+63 {{ $petOwner->alternate_phone_number ?? '' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -343,7 +342,7 @@
                         </a>
                     </div>
                 @else
-                    <p class="text-sm text-gray-600 mb-4">Select your pet that is missing:</p>
+                    <p class="text-sm text-gray-600 mb-4">Select your pet/s that is missing:</p>
                     <div class="space-y-3" id="petSelectionList">
                         @foreach($petsArray as $pet)
                             @php
@@ -637,20 +636,21 @@
                                 ${bodyMarkDetailsHtml}
                             </div>
                         </div>
-                        </div>
-
-                        <!-- Eye Color -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-800 mb-1">Eye Color</label>
-                            <div class="w-full border border-gray-300 rounded-lg px-3 py-2.5 bg-gray-50 text-sm text-gray-700">${eyeColor}</div>
-                        </div>
-
-                        <!-- Collar/Harness -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-800 mb-1">Collar/Harness <span class="text-red-500">*</span></label>
-                            <input type="text" name="physical_marks[collar_harness]" placeholder="e.g., Red collar with bells, Blue harness, None, etc."
-                                   value="${pet.collar_harness || ''}"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                        <!-- Eye Color & Collar/Harness (side by side) -->
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <!-- Eye Color -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-800 mb-1">Eye Color</label>
+                                <div class="w-full border border-gray-300 rounded-lg px-3 py-2.5 bg-gray-50 text-sm text-gray-700">${eyeColor}</div>
+                            </div>
+                        
+                            <!-- Collar/Harness -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-800 mb-1">Collar/Harness <span class="text-red-500">*</span></label>
+                                <input type="text" name="physical_marks[collar_harness]" placeholder="e.g., Red collar with bells, Blue harness, None, etc."
+                                       value="${pet.collar_harness || ''}"
+                                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                            </div>
                         </div>
                     </div>
                 `;
