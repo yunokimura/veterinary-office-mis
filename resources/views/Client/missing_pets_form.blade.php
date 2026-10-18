@@ -701,9 +701,13 @@
                             <!-- Collar/Harness -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-800 mb-1">Collar/Harness</label>
-                                <input type="text" name="physical_marks[collar_harness]" placeholder="e.g., Red collar with bells, Blue harness, None, etc."
+                                <input type="text" id="collarHarnessInput-${pet.id}" name="physical_marks[collar_harness]" placeholder="e.g., Red collar with bells, Blue harness, None, etc."
                                        value="${pet.collar_harness || ''}"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                <label class="inline-flex items-center cursor-pointer mt-2">
+                                    <input type="checkbox" id="noCollarHarness-${pet.id}" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleNoCollarHarness('${pet.id}')">
+                                    <span class="ml-3 text-gray-700 font-medium">Pet doesn't wear any collar/harness</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -997,6 +1001,25 @@
         document.getElementById('barangayIdInput').value = id;
         document.getElementById('selectedBarangayText').textContent = name;
         closeBarangayModal();
+    }
+
+    // Toggle "Pet doesn't wear any collar/harness" checkbox
+    function toggleNoCollarHarness(petId) {
+        const checkbox = document.getElementById('noCollarHarness-' + petId);
+        const input = document.getElementById('collarHarnessInput-' + petId);
+        if (!checkbox || !input) return;
+
+        if (checkbox.checked) {
+            input.value = 'None';
+            input.disabled = true;
+            input.classList.add('opacity-50', 'pointer-events-none');
+            input.classList.remove('focus:border-primary', 'focus:ring-2', 'focus:ring-primary/20');
+        } else {
+            input.value = '';
+            input.disabled = false;
+            input.classList.remove('opacity-50', 'pointer-events-none');
+            input.classList.add('focus:border-primary', 'focus:ring-2', 'focus:ring-primary/20');
+        }
     }
 
     document.addEventListener('keydown', function(e) {
