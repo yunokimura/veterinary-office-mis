@@ -697,7 +697,11 @@
         const otherWrap = document.getElementById('eyeColorOtherWrap');
         const heteroWrap = document.getElementById('eyeColorHeterochromiaWrap');
         const selected = document.querySelector('input[name="eye_color"]:checked');
-        if (!selected) return;
+        if (!selected) {
+            otherWrap.classList.add('hidden');
+            heteroWrap.classList.add('hidden');
+            return;
+        }
         if (selected.value === 'Other') {
             otherWrap.classList.remove('hidden');
         } else {
