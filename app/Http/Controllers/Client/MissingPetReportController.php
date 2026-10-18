@@ -145,6 +145,9 @@ class MissingPetReportController extends Controller
             'reported_by_name' => 'nullable|string|max:255',
             'reporter_contact' => 'nullable|string|max:255',
             'reporter_email' => 'nullable|email|max:255',
+            'eye_color_left' => 'nullable|string|max:255',
+            'eye_color_right' => 'nullable|string|max:255',
+            'eye_color_other' => 'nullable|string|max:255',
         ]);
 
         $dateFoundAt = Carbon::createFromFormat('Y-m-d H:i', $validated['date_found'].' '.$validated['time_found']);
@@ -155,22 +158,6 @@ class MissingPetReportController extends Controller
         }
 
         $bodyMarks = null;
-        if ($request->filled('condition') || $request->filled('fur_colors') || $request->filled('gender') || $request->filled('estimated_age')) {
-            $parts = [];
-            if ($request->filled('condition')) {
-                $parts[] = 'Condition: '.$validated['condition'];
-            }
-            if ($request->filled('fur_colors')) {
-                $parts[] = 'Fur Colors: '.$validated['fur_colors'];
-            }
-            if ($request->filled('gender')) {
-                $parts[] = 'Gender: '.$validated['gender'];
-            }
-            if ($request->filled('estimated_age')) {
-                $parts[] = 'Estimated Age: '.$validated['estimated_age'];
-            }
-            $bodyMarks = implode('; ', $parts);
-        }
 
         MissingPetsReport::create([
             'user_id' => $user->id,
@@ -179,8 +166,17 @@ class MissingPetReportController extends Controller
             'reported_by_name' => $validated['reported_by_name'] ?? trim(($petOwner->first_name ?? '').' '.($petOwner->last_name ?? '')),
             'reporter_contact' => $validated['reporter_contact'] ?? $petOwner->phone_number ?? $user->contact_number,
             'reporter_email' => $validated['reporter_email'] ?? $user->email,
-            'body_marks' => $bodyMarks,
+            'body_marks' => null,
             'collar_harness' => $validated['collar_harness'] ?? null,
+            'breed' => $validated['breed'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'estimated_age' => $validated['estimated_age'] ?? null,
+            'fur_colors' => $validated['fur_colors'] ?? null,
+            'condition' => $validated['condition'] ?? null,
+            'eye_color' => $validated['eye_color'] ?? null,
+            'eye_color_left' => $validated['eye_color_left'] ?? null,
+            'eye_color_right' => $validated['eye_color_right'] ?? null,
+            'eye_color_other' => $validated['eye_color_other'] ?? null,
             'last_seen_at' => $dateFoundAt,
             'barangay_id' => $validated['barangay_id'],
             'location_description' => $validated['location_notes'] ?? null,
