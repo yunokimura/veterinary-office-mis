@@ -31,7 +31,7 @@
                         <li><a href="{{ url('/about-us') }}" class="hover:text-white transition-colors">About Us</a></li>
                         <li><a href="{{ url('/services') }}" class="hover:text-white transition-colors">Services Overview</a></li>
                         <li><a href="{{ url('/adoption') ?? '#' }}" class="hover:text-white transition-colors">Adoption</a></li>
-                        <li><a href="{{ url('/missing-pets') }}" class="hover:text-white transition-colors">Missing Pets</a></li>
+                        <li><a href="{{ url('/missing-pets') }}" class="hover:text-white transition-colors">Lost &amp; Found Pets</a></li>
                     </ul>
                 </div>
 
