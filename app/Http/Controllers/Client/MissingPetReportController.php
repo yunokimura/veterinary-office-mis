@@ -103,6 +103,7 @@ class MissingPetReportController extends Controller
                 'location_description' => $validated['location_description'] ?? null,
                 'emergency_contact' => $validated['additional_contact'] ?? null,
                 'status' => 'pending review',
+                'eye_color' => $validated['physical_marks']['eye_color'] ?? null,
             ]);
 
             if ($pet && $request->filled('physical_marks.eye_color')) {

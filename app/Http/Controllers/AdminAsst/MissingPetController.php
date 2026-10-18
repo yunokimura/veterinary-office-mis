@@ -102,6 +102,7 @@ class MissingPetController extends Controller
             'location_description' => $validated['location_description'] ?? null,
             'emergency_contact' => $validated['emergency_contact'] ?? null,
             'status' => 'approved',
+            'eye_color' => $validated['eye_color'],
         ]);
 
         return redirect()->route('admin-asst.missing-pets.index')
@@ -183,6 +184,7 @@ class MissingPetController extends Controller
             'reported_by_name' => $validated['reported_by_name'] ?? null,
             'reporter_contact' => $validated['reporter_contact'],
             'reporter_email' => $validated['reporter_email'] ?? null,
+            'eye_color' => $validated['eye_color'],
         ]);
 
         return redirect()->route('admin-asst.missing-pets.show', $missingPet->report_id)

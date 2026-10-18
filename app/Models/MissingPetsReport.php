@@ -61,7 +61,7 @@ class MissingPetsReport extends Model
 
     protected $primaryKey = 'report_id';
 
-    protected $fillable = [
+protected $fillable = [
         'user_id',
         'pet_id',
         'report_type',
