@@ -997,7 +997,11 @@
                     targetUrl = '/missing-pets/report/guest?type=missing';
                 }
             } else if (reportType === 'found') {
-                targetUrl = '/missing-pets/report/guest?type=found';
+                if (isLoggedIn) {
+                    targetUrl = '{{ route('found-pets.form') }}';
+                } else {
+                    targetUrl = '/missing-pets/report/guest?type=found';
+                }
             }
 
             closeModal('reportTypeModal');

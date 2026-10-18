@@ -1291,6 +1291,22 @@ Route::post('/missing-pets/report', [\App\Http\Controllers\Client\MissingPetRepo
     ->middleware('auth')
     ->name('missing-pets.report.store');
 
+// Found Pets Form Page Route
+Route::get('/found-pets/form', function () {
+    $user = auth()->user();
+    $petOwner = $user ? $user->petOwner()->with(['address' => function ($query) {
+        $query->with('barangay');
+    }])->first() : null;
+
+    $barangays = \App\Models\Barangay::orderBy('barangay_name')->get();
+
+    return view('Client.found_pets_form', compact('user', 'petOwner', 'barangays'));
+})->middleware('auth')->name('found-pets.form');
+
+Route::post('/found-pets/report', [\App\Http\Controllers\Client\MissingPetReportController::class, 'storeFound'])
+    ->middleware('auth')
+    ->name('found-pets.report.store');
+
 Route::get('/missing-pets/report/guest', [\App\Http\Controllers\Client\GuestMissingPetReportController::class, 'create'])
     ->name('missing-pets.report.guest.create');
 

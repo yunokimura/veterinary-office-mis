@@ -117,4 +117,70 @@ class MissingPetReportController extends Controller
 
         return redirect()->route('missing-pets.form')->with('success', 'Missing pet report submitted successfully!');
     }
+
+    public function storeFound(Request $request)
+    {
+        $user = Auth::user();
+        $petOwner = $user->petOwner()->first();
+
+        if (! $petOwner) {
+            return redirect()->back()->with('error', 'Please complete your pet owner profile first.')->withInput();
+        }
+
+        $validated = $request->validate([
+            'report_type' => 'required|in:found',
+            'species' => 'required|in:Dog,Cat',
+            'breed_mix' => 'required|string|max:255',
+            'pet_photo' => 'required|image|max:8192',
+            'eye_color' => 'nullable|string|max:255',
+            'collar_harness' => 'nullable|string|max:255',
+            'fur_colors' => 'nullable|string|max:255',
+            'condition' => 'nullable|string|max:255',
+            'date_found' => 'required|date',
+            'time_found' => 'required',
+            'barangay_id' => 'required|integer|exists:barangays,barangay_id',
+            'location_notes' => 'nullable|string|max:2000',
+            'reported_by_name' => 'nullable|string|max:255',
+            'reporter_contact' => 'nullable|string|max:255',
+            'reporter_email' => 'nullable|email|max:255',
+        ]);
+
+        $dateFoundAt = Carbon::createFromFormat('Y-m-d H:i', $validated['date_found'].' '.$validated['time_found']);
+
+        $photoPath = null;
+        if ($request->hasFile('pet_photo')) {
+            $photoPath = $request->file('pet_photo')->store('found-pets', 'public');
+        }
+
+        $bodyMarks = null;
+        if ($request->filled('condition') || $request->filled('fur_colors')) {
+            $parts = [];
+            if ($request->filled('condition')) {
+                $parts[] = 'Condition: '.$validated['condition'];
+            }
+            if ($request->filled('fur_colors')) {
+                $parts[] = 'Fur Colors: '.$validated['fur_colors'];
+            }
+            $bodyMarks = implode('; ', $parts);
+        }
+
+        MissingPetsReport::create([
+            'user_id' => $user->id,
+            'pet_id' => null,
+            'report_type' => 'found',
+            'reported_by_name' => $validated['reported_by_name'] ?? trim(($petOwner->first_name ?? '').' '.($petOwner->last_name ?? '')),
+            'reporter_contact' => $validated['reporter_contact'] ?? $petOwner->phone_number ?? $user->contact_number,
+            'reporter_email' => $validated['reporter_email'] ?? $user->email,
+            'body_marks' => $bodyMarks,
+            'collar_harness' => $validated['collar_harness'] ?? null,
+            'last_seen_at' => $dateFoundAt,
+            'barangay_id' => $validated['barangay_id'],
+            'location_description' => $validated['location_notes'] ?? null,
+            'emergency_contact' => $validated['reporter_contact'] ?? $petOwner->phone_number ?? $user->contact_number,
+            'photo_path' => $photoPath,
+            'status' => 'pending review',
+        ]);
+
+        return redirect('/missing-pets')->with('success', 'Found pet report submitted successfully!');
+    }
 }
