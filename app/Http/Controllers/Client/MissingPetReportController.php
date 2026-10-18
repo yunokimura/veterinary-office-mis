@@ -131,6 +131,8 @@ class MissingPetReportController extends Controller
             'report_type' => 'required|in:found',
             'species' => 'required|in:Dog,Cat',
             'breed' => 'required|string|max:255',
+            'gender' => 'required|in:Male,Female,Unknown',
+            'estimated_age' => 'required|in:Puppy/Kitten,Adult,Senior',
             'pet_photo' => 'required|image|max:8192',
             'eye_color' => 'nullable|string|max:255',
             'collar_harness' => 'nullable|string|max:255',
@@ -153,13 +155,19 @@ class MissingPetReportController extends Controller
         }
 
         $bodyMarks = null;
-        if ($request->filled('condition') || $request->filled('fur_colors')) {
+        if ($request->filled('condition') || $request->filled('fur_colors') || $request->filled('gender') || $request->filled('estimated_age')) {
             $parts = [];
             if ($request->filled('condition')) {
                 $parts[] = 'Condition: '.$validated['condition'];
             }
             if ($request->filled('fur_colors')) {
                 $parts[] = 'Fur Colors: '.$validated['fur_colors'];
+            }
+            if ($request->filled('gender')) {
+                $parts[] = 'Gender: '.$validated['gender'];
+            }
+            if ($request->filled('estimated_age')) {
+                $parts[] = 'Estimated Age: '.$validated['estimated_age'];
             }
             $bodyMarks = implode('; ', $parts);
         }

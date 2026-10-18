@@ -101,14 +101,56 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 Species <span class="text-red-500">*</span>
                             </label>
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap gap-2">
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input type="radio" name="species" value="Dog" class="sr-only peer" required {{ old('species') === 'Dog' ? 'checked' : '' }}>
-                                    <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:ring-2 peer-checked:ring-emerald-400 peer-checked:ring-offset-1 peer-checked:shadow-sm">Dog</span>
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Dog</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input type="radio" name="species" value="Cat" class="sr-only peer" required {{ old('species') === 'Cat' ? 'checked' : '' }}>
-                                    <span class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-sm bg-white cursor-pointer peer-hover:border-emerald-200 peer-hover:bg-emerald-50 peer-hover:text-emerald-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:ring-2 peer-checked:ring-emerald-400 peer-checked:ring-offset-1 peer-checked:shadow-sm">Cat</span>
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Cat</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Gender -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">
+                                Gender <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="gender" value="Male" class="sr-only peer" required {{ old('gender') === 'Male' ? 'checked' : '' }}>
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Male</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="gender" value="Female" class="sr-only peer" required {{ old('gender') === 'Female' ? 'checked' : '' }}>
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Female</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="gender" value="Unknown" class="sr-only peer" required {{ old('gender') === 'Unknown' ? 'checked' : '' }}>
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Unknown</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Estimated Age -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">
+                                Estimated Age <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="estimated_age" value="Puppy/Kitten" class="sr-only peer" required {{ old('estimated_age') === 'Puppy/Kitten' ? 'checked' : '' }}>
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Puppy/Kitten</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="estimated_age" value="Adult" class="sr-only peer" required {{ old('estimated_age') === 'Adult' ? 'checked' : '' }}>
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Adult</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="estimated_age" value="Senior" class="sr-only peer" required {{ old('estimated_age') === 'Senior' ? 'checked' : '' }}>
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Senior</span>
                                 </label>
                             </div>
                         </div>
@@ -122,7 +164,7 @@
 
                             <!-- Breed display / modal trigger -->
                             <div class="relative">
-                                <button type="button" id="breedDisplay" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg cursor-pointer hover:border-slate-400 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" onclick="openBreedModal()">
+                                <button type="button" id="breedDisplay" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg cursor-pointer hover:border-slate-400 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" onclick="openBreedModal()">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
@@ -200,9 +242,50 @@
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Other</span>
                                 </label>
                             </div>
+                            <!-- Left / Right Eye Color (shown for heterochromia) -->
+                            <div id="eyeColorHeterochromiaWrap" class="mt-2 p-4 bg-emerald-50/60 border border-emerald-200 rounded-xl hidden {{ old('eye_color') === 'Heterochromia (Two different colors)' ? '' : 'hidden' }}">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <!-- Left Eye -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Left Eye Color</label>
+                                        <select id="eyeColorLeft" name="eye_color_left"
+                                                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                            <option value="">Select left eye color</option>
+                                            <option value="Brown" {{ old('eye_color_left') === 'Brown' ? 'selected' : '' }}>Brown</option>
+                                            <option value="Blue" {{ old('eye_color_left') === 'Blue' ? 'selected' : '' }}>Blue</option>
+                                            <option value="Amber / Yellow" {{ old('eye_color_left') === 'Amber / Yellow' ? 'selected' : '' }}>Amber / Yellow</option>
+                                            <option value="Green" {{ old('eye_color_left') === 'Green' ? 'selected' : '' }}>Green</option>
+                                            <option value="Hazel" {{ old('eye_color_left') === 'Hazel' ? 'selected' : '' }}>Hazel</option>
+                                            <option value="Parti-Colored / Marbled" {{ old('eye_color_left') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
+                                            <option value="Other" {{ old('eye_color_left') === 'Other' ? 'selected' : '' }}>Other</option>
+                                        </select>
+                                        <div id="eyeColorLeftOtherWrap" class="mt-2 hidden {{ old('eye_color_left') === 'Other' ? '' : 'hidden' }}">
+                                            <input type="text" id="eyeColorLeftOther" name="eye_color_left_other" value="{{ old('eye_color_left_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify left eye color">
+                                        </div>
+                                    </div>
+                                    <!-- Right Eye -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Right Eye Color</label>
+                                        <select id="eyeColorRight" name="eye_color_right"
+                                                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                            <option value="">Select right eye color</option>
+                                            <option value="Brown" {{ old('eye_color_right') === 'Brown' ? 'selected' : '' }}>Brown</option>
+                                            <option value="Blue" {{ old('eye_color_right') === 'Blue' ? 'selected' : '' }}>Blue</option>
+                                            <option value="Amber / Yellow" {{ old('eye_color_right') === 'Amber / Yellow' ? 'selected' : '' }}>Amber / Yellow</option>
+                                            <option value="Green" {{ old('eye_color_right') === 'Green' ? 'selected' : '' }}>Green</option>
+                                            <option value="Hazel" {{ old('eye_color_right') === 'Hazel' ? 'selected' : '' }}>Hazel</option>
+                                            <option value="Parti-Colored / Marbled" {{ old('eye_color_right') === 'Parti-Colored / Marbled' ? 'selected' : '' }}>Parti-Colored / Marbled</option>
+                                            <option value="Other" {{ old('eye_color_right') === 'Other' ? 'selected' : '' }}>Other</option>
+                                        </select>
+                                        <div id="eyeColorRightOtherWrap" class="mt-2 hidden {{ old('eye_color_right') === 'Other' ? '' : 'hidden' }}">
+                                            <input type="text" id="eyeColorRightOther" name="eye_color_right_other" value="{{ old('eye_color_right_other') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify right eye color">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div id="eyeColorOtherWrap" class="mt-3 hidden {{ old('eye_color') === 'Other' ? '' : 'hidden' }}">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Please specify eye color</label>
-                                <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify eye color">
+                                <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify eye color">
                             </div>
                         </div>
 
@@ -212,8 +295,12 @@
                                 Collar / Harness Description
                             </label>
                             <input type="text" name="collar_harness" id="collar_harness"
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                                   class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                    placeholder="e.g., Red collar with bell, Blue harness">
+                            <label class="inline-flex items-center cursor-pointer mt-2">
+                                <input type="checkbox" id="noCollarHarness" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleNoCollarHarness()">
+                                <span class="ml-3 text-[14px] text-gray-700 font-medium">Pet doesn't wear any collar/harness</span>
+                            </label>
                         </div>
 
                         <!-- Fur Colors -->
@@ -222,7 +309,7 @@
                                 Fur Colors
                             </label>
                             <input type="text" name="fur_colors" id="fur_colors"
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                                   class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                    placeholder="e.g., White with brown patches, Black and tan">
                         </div>
 
@@ -232,7 +319,7 @@
                                 Condition
                             </label>
                             <input type="text" name="condition" id="condition"
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                                   class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                    placeholder="e.g., Injured, Friendly, Wearing blue collar, Scared">
                         </div>
 
@@ -259,12 +346,12 @@
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
                                     <input type="date" name="date_found" id="date_found"
-                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                                           class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                            required>
                                 </div>
                                 <div>
                                     <input type="time" name="time_found" id="time_found"
-                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                                           class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                            required>
                                 </div>
                             </div>
@@ -276,7 +363,7 @@
                                 Barangay <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <button type="button" id="barangayDisplay" class="w-1/2 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg cursor-pointer hover:border-slate-400 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" onclick="openBarangayModal()">
+                                <button type="button" id="barangayDisplay" class="w-1/2 px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg cursor-pointer hover:border-slate-400 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" onclick="openBarangayModal()">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
@@ -428,7 +515,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input type="text" id="breedModalSearch" placeholder="Search breed..." onkeyup="filterBreedModal()"
-                           class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
+                           class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
                 </div>
             </div>
 
@@ -455,8 +542,8 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="px-5 py-4 border-t border-slate-200 bg-slate-50">
-                <button type="button" onclick="closeBreedModal()" class="w-full px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-slate-50 transition-colors">Done</button>
+            <div class="px-5 py-4 border-t border-slate-200 bg-white">
+                <button type="button" onclick="closeBreedModal()" class="w-full px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-white transition-colors">Done</button>
             </div>
         </div>
     </div>
@@ -545,7 +632,7 @@
             groups[letter].forEach((breed) => {
                 const selected = selectedBreed === breed;
                 html += `
-                    <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}" onclick="selectBreed('${breed.replace(/'/g, "\\'")}')">
+                    <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-white'}" onclick="selectBreed('${breed.replace(/'/g, "\\'")}')">
                         <input type="radio" name="breed_option" value="${breed}" class="sr-only peer" ${selected ? 'checked' : ''}>
                         <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
                         ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
@@ -605,17 +692,34 @@
         document.getElementById('petPhotoUploadBtn').classList.remove('hidden');
     }
 
-    // Toggle "Other" eye color input
+    // Toggle "Other" eye color input and heterochromia left/right eye colors
     document.querySelectorAll('input[name="eye_color"]').forEach(radio => {
         radio.addEventListener('change', function() {
             const otherWrap = document.getElementById('eyeColorOtherWrap');
+            const heteroWrap = document.getElementById('eyeColorHeterochromiaWrap');
             if (this.value === 'Other') {
                 otherWrap.classList.remove('hidden');
             } else {
                 otherWrap.classList.add('hidden');
             }
+            if (this.value === 'Heterochromia (Two different colors)') {
+                heteroWrap.classList.remove('hidden');
+            } else {
+                heteroWrap.classList.add('hidden');
+            }
         });
     });
+
+    // Handle Left/Right Eye Color "Other" toggle
+    function handleEyeSideChange(side) {
+        const otherWrap = document.getElementById(`eyeColor${side}OtherWrap`);
+        const select = document.getElementById(`eyeColor${side}`);
+        if (select.value === 'Other') {
+            otherWrap.classList.remove('hidden');
+        } else {
+            otherWrap.classList.add('hidden');
+        }
+    }
 
     // Open the barangay selector modal
     function openBarangayModal() {
@@ -678,7 +782,7 @@
                 const selected = document.getElementById('barangayIdInput').value == b.barangay_id;
                 html += `
                     <button type="button" onclick="handleBarangaySelect(${b.barangay_id}, '${String(b.barangay_name).replace(/'/g, "\\'")}')"
-                            class="w-full flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors text-left ${selected ? 'bg-emerald-50 text-emerald-800 font-semibold' : 'text-gray-700 hover:bg-slate-50'}">
+                            class="w-full flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors text-left ${selected ? 'bg-emerald-50 text-emerald-800 font-semibold' : 'text-gray-700 hover:bg-white'}">
                         ${b.barangay_name}
                     </button>`;
             });
@@ -698,6 +802,25 @@
         document.getElementById('barangayIdInput').value = id;
         document.getElementById('selectedBarangayText').textContent = name;
         closeBarangayModal();
+    }
+
+    // Toggle "Pet doesn't wear any collar/harness" checkbox
+    function toggleNoCollarHarness() {
+        const checkbox = document.getElementById('noCollarHarness');
+        const input = document.getElementById('collar_harness');
+        if (!checkbox || !input) return;
+
+        if (checkbox.checked) {
+            input.value = 'None';
+            input.disabled = true;
+            input.classList.add('opacity-50', 'pointer-events-none');
+            input.classList.remove('focus:border-primary', 'focus:ring-2', 'focus:ring-primary/20');
+        } else {
+            input.value = '';
+            input.disabled = false;
+            input.classList.remove('opacity-50', 'pointer-events-none');
+            input.classList.add('focus:border-primary', 'focus:ring-2', 'focus:ring-primary/20');
+        }
     }
 </script>
 
@@ -727,7 +850,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input type="text" id="barangayModalSearch" placeholder="Search barangay..." onkeyup="filterBarangayModal()"
-                           class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
+                           class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
                 </div>
             </div>
 
@@ -748,8 +871,8 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="px-5 py-4 border-t border-slate-200 bg-slate-50">
-                <button type="button" onclick="closeBarangayModal()" class="w-full px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-slate-50 transition-colors">Cancel</button>
+            <div class="px-5 py-4 border-t border-slate-200 bg-white">
+                <button type="button" onclick="closeBarangayModal()" class="w-full px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-white transition-colors">Cancel</button>
             </div>
         </div>
     </div>
