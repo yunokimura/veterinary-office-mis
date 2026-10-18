@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missing Pets - Dasmariñas City Veterinary Services</title>
+    <title>Lost Pets - Dasmariñas City Veterinary Services</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -69,20 +69,20 @@
              <div class="grid md:grid-cols-12 gap-8 items-center">
                  <div class="md:col-span-7 lg:col-span-6 space-y-6">
                      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-                         Report your Missing Pets
+                         Report your Lost Pets
                      </h1>
 
                      <p class="text-white text-base sm:text-lg max-w-2xl font-light leading-relaxed">
-                         Help reunite lost pets with their owners. Report missing pets quickly and reach out to the community for assistance.
+                         Help reunite lost pets with their owners. Report lost pets quickly and reach out to the community for assistance.
                      </p>
 
                       <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
                           <button type="button" onclick="openModal('reportTypeModal')" class="w-full sm:w-auto bg-white text-amber-600 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                              <span>Report a Missing Pet</span>
+                              <span>Report a Lost Pet</span>
                               <i class="fa-solid fa-arrow-right text-sm"></i>
                           </button>
                           <a href="#" class="w-full sm:w-auto bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center space-x-2">
-                              <span>View Missing Pets</span>
+                              <span>View Lost Pets</span>
                           </a>
                       </div>
                  </div>
@@ -90,7 +90,7 @@
                   <div class="md:col-span-5 lg:col-span-6">
                       <div class="relative">
                           <div class="rounded-2xl overflow-hidden shadow-xl h-96">
-                              <img src="{{ asset('images/herosection/missing.jpg') }}" alt="Missing Pets" class="w-full h-full object-cover">
+                              <img src="{{ asset('images/herosection/missing.jpg') }}" alt="Lost Pets" class="w-full h-full object-cover">
                           </div>
                       </div>
                   </div>
@@ -103,7 +103,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Missing Pets</h2>
+                    <h2 class="text-2xl font-bold text-gray-900">Lost Pets</h2>
                     <p class="text-sm text-gray-500 mt-1">Help reunite these pets with their owners</p>
                 </div>
                 <button onclick="toggleFilterPanel()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
@@ -316,7 +316,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
-                    <p class="text-gray-500 text-lg">No missing pets found.</p>
+                    <p class="text-gray-500 text-lg">No lost pets found.</p>
                     <p class="text-gray-400 text-sm mt-1">Try adjusting your filters or check back later.</p>
                 </div>
                 @endforelse
@@ -753,7 +753,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
-                    <p class="text-gray-500 text-lg">No missing pets found.</p>
+                    <p class="text-gray-500 text-lg">No lost pets found.</p>
                     <p class="text-gray-400 text-sm mt-1">Try adjusting your filters or check back later.</p>
                 </div>`;
             } else {
@@ -927,7 +927,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
-                        <h4 class="font-bold text-gray-900 text-lg mb-1">Report a Missing Pet</h4>
+                        <h4 class="font-bold text-gray-900 text-lg mb-1">Report a Lost Pet</h4>
                         <p class="text-sm text-gray-500 leading-relaxed">
                             I lost my pet and want to post an alert so the community can help me locate them.
                         </p>
