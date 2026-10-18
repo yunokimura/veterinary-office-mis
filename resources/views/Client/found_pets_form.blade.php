@@ -103,11 +103,11 @@
                             </label>
                             <div class="flex flex-wrap gap-2">
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="species" value="Dog" class="sr-only peer" required {{ old('species') === 'Dog' ? 'checked' : '' }}>
+                                    <input type="radio" name="species" value="Dog" class="sr-only peer" required {{ old('species') === 'Dog' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Dog</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="species" value="Cat" class="sr-only peer" required {{ old('species') === 'Cat' ? 'checked' : '' }}>
+                                    <input type="radio" name="species" value="Cat" class="sr-only peer" required {{ old('species') === 'Cat' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Cat</span>
                                 </label>
                             </div>
@@ -120,15 +120,15 @@
                             </label>
                             <div class="flex flex-wrap gap-2">
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="gender" value="Male" class="sr-only peer" required {{ old('gender') === 'Male' ? 'checked' : '' }}>
+                                    <input type="radio" name="gender" value="Male" class="sr-only peer" required {{ old('gender') === 'Male' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Male</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="gender" value="Female" class="sr-only peer" required {{ old('gender') === 'Female' ? 'checked' : '' }}>
+                                    <input type="radio" name="gender" value="Female" class="sr-only peer" required {{ old('gender') === 'Female' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Female</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="gender" value="Unknown" class="sr-only peer" required {{ old('gender') === 'Unknown' ? 'checked' : '' }}>
+                                    <input type="radio" name="gender" value="Unknown" class="sr-only peer" required {{ old('gender') === 'Unknown' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Unknown</span>
                                 </label>
                             </div>
@@ -141,15 +141,15 @@
                             </label>
                             <div class="flex flex-wrap gap-2">
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="estimated_age" value="Puppy/Kitten" class="sr-only peer" required {{ old('estimated_age') === 'Puppy/Kitten' ? 'checked' : '' }}>
+                                    <input type="radio" name="estimated_age" value="Puppy/Kitten" class="sr-only peer" required {{ old('estimated_age') === 'Puppy/Kitten' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Puppy/Kitten</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="estimated_age" value="Adult" class="sr-only peer" required {{ old('estimated_age') === 'Adult' ? 'checked' : '' }}>
+                                    <input type="radio" name="estimated_age" value="Adult" class="sr-only peer" required {{ old('estimated_age') === 'Adult' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Adult</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="estimated_age" value="Senior" class="sr-only peer" required {{ old('estimated_age') === 'Senior' ? 'checked' : '' }}>
+                                    <input type="radio" name="estimated_age" value="Senior" class="sr-only peer" required {{ old('estimated_age') === 'Senior' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Senior</span>
                                 </label>
                             </div>
@@ -218,27 +218,27 @@
                             </label>
                             <div class="flex flex-wrap gap-2" id="eyeColorOptions">
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="eye_color" value="Brown" class="peer sr-only" required {{ old('eye_color') === 'Brown' ? 'checked' : '' }}>
+                                    <input type="radio" name="eye_color" value="Brown" class="peer sr-only" required {{ old('eye_color') === 'Brown' ? 'checked' : '' }} onclick="togglePill(this)" onchange="handleEyeColorChange()">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Brown</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="eye_color" value="Blue" class="peer sr-only" required {{ old('eye_color') === 'Blue' ? 'checked' : '' }}>
+                                    <input type="radio" name="eye_color" value="Blue" class="peer sr-only" required {{ old('eye_color') === 'Blue' ? 'checked' : '' }} onclick="togglePill(this)" onchange="handleEyeColorChange()">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Blue</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="eye_color" value="Amber / Yellow" class="peer sr-only" required {{ old('eye_color') === 'Amber / Yellow' ? 'checked' : '' }}>
+                                    <input type="radio" name="eye_color" value="Amber / Yellow" class="peer sr-only" required {{ old('eye_color') === 'Amber / Yellow' ? 'checked' : '' }} onclick="togglePill(this)" onchange="handleEyeColorChange()">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Amber / Yellow</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="eye_color" value="Green" class="peer sr-only" required {{ old('eye_color') === 'Green' ? 'checked' : '' }}>
+                                    <input type="radio" name="eye_color" value="Green" class="peer sr-only" required {{ old('eye_color') === 'Green' ? 'checked' : '' }} onclick="togglePill(this)" onchange="handleEyeColorChange()">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Green</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="eye_color" value="Heterochromia (Two different colors)" class="peer sr-only" required {{ old('eye_color') === 'Heterochromia (Two different colors)' ? 'checked' : '' }}>
+                                    <input type="radio" name="eye_color" value="Heterochromia (Two different colors)" class="peer sr-only" required {{ old('eye_color') === 'Heterochromia (Two different colors)' ? 'checked' : '' }} onclick="togglePill(this)" onchange="handleEyeColorChange()">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Heterochromia</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="eye_color" value="Other" class="peer sr-only" required {{ old('eye_color') === 'Other' ? 'checked' : '' }}>
+                                    <input type="radio" name="eye_color" value="Other" class="peer sr-only" required {{ old('eye_color') === 'Other' ? 'checked' : '' }} onclick="togglePill(this)" onchange="handleEyeColorChange()">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Other</span>
                                 </label>
                             </div>
@@ -283,7 +283,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="eyeColorOtherWrap" class="mt-3 hidden {{ old('eye_color') === 'Other' ? '' : 'hidden' }}">
+                            <div id="eyeColorOtherWrap" class="mt-3 hidden">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Please specify eye color</label>
                                 <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify eye color">
                             </div>
@@ -692,22 +692,47 @@
         document.getElementById('petPhotoUploadBtn').classList.remove('hidden');
     }
 
-    // Toggle "Other" eye color input and heterochromia left/right eye colors
-    document.querySelectorAll('input[name="eye_color"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            const otherWrap = document.getElementById('eyeColorOtherWrap');
-            const heteroWrap = document.getElementById('eyeColorHeterochromiaWrap');
-            if (this.value === 'Other') {
-                otherWrap.classList.remove('hidden');
-            } else {
-                otherWrap.classList.add('hidden');
-            }
-            if (this.value === 'Heterochromia (Two different colors)') {
-                heteroWrap.classList.remove('hidden');
-            } else {
-                heteroWrap.classList.add('hidden');
-            }
-        });
+    // Handle Eye Color "Other" and Heterochromia visibility
+    function handleEyeColorChange() {
+        const otherWrap = document.getElementById('eyeColorOtherWrap');
+        const heteroWrap = document.getElementById('eyeColorHeterochromiaWrap');
+        const selected = document.querySelector('input[name="eye_color"]:checked');
+        if (!selected) return;
+        if (selected.value === 'Other') {
+            otherWrap.classList.remove('hidden');
+        } else {
+            otherWrap.classList.add('hidden');
+        }
+        if (selected.value === 'Heterochromia (Two different colors)') {
+            heteroWrap.classList.remove('hidden');
+        } else {
+            heteroWrap.classList.add('hidden');
+        }
+    }
+
+    // Toggle pill selection (click again to deselect)
+    const pillLastSelected = {};
+
+    function togglePill(radio) {
+        const group = radio.name;
+        const wasAlreadySelected = pillLastSelected[group] === radio;
+
+        if (wasAlreadySelected) {
+            // Deselect the previously selected pill
+            radio.checked = false;
+            pillLastSelected[group] = null;
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            // Normal selection — remember which radio is now selected
+            pillLastSelected[group] = radio;
+        }
+    }
+
+    // Initialize pill state from any pre-checked radios (old() Blade values)
+    document.querySelectorAll('input[type="radio"][onclick="togglePill(this)"]').forEach(radio => {
+        if (radio.checked) {
+            pillLastSelected[radio.name] = radio;
+        }
     });
 
     // Handle Left/Right Eye Color "Other" toggle
