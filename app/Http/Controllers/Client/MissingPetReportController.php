@@ -34,6 +34,7 @@ class MissingPetReportController extends Controller
             'location_description' => 'nullable|string|max:2000',
             'additional_contact' => 'nullable|string|max:1000',
             'pet_photo' => 'nullable|image|max:8192',
+            'physical_marks.body_marks_photo' => 'nullable|image|max:8192',
             'reported_by_name' => 'nullable|string|max:255',
             'reporter_contact' => 'nullable|string|max:255',
             'reporter_email' => 'nullable|email|max:255',
@@ -69,6 +70,23 @@ class MissingPetReportController extends Controller
                 }
                 $photoPath = $request->file('pet_photo')->store('missing-pets', 'public');
                 $pet->update(['pet_image' => $photoPath]);
+            }
+
+            // Persist Unique Body Mark details + photo to the pets table
+            if ($pet) {
+                $petData = [];
+                if ($request->filled('physical_marks.body_marks')) {
+                    $petData['body_mark_details'] = $validated['physical_marks']['body_marks'];
+                }
+                if ($request->hasFile('physical_marks.body_marks_photo')) {
+                    if ($pet->body_mark_image) {
+                        Storage::disk('public')->delete($pet->body_mark_image);
+                    }
+                    $petData['body_mark_image'] = $request->file('physical_marks.body_marks_photo')->store('missing-pets', 'public');
+                }
+                if (! empty($petData)) {
+                    $pet->update($petData);
+                }
             }
 
             $reports[] = MissingPetsReport::create([

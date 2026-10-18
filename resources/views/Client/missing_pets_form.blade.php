@@ -144,7 +144,6 @@
                         <!-- Hidden inputs carried over for form submission -->
                         <input type="hidden" name="physical_marks[body_marks]" id="hmBodyMarks" value="">
                         <input type="hidden" name="physical_marks[eye_color]" id="hmEyeColor" value="">
-                        <input type="hidden" name="physical_marks[collar_harness]" id="hmCollarHarness" value="">
                         <input type="hidden" name="physical_marks[body_marks_photo]" id="hmBodyMarkImage" value="">
                     </div>
                 </div>
@@ -719,11 +718,9 @@
             if (firstPet) {
                 document.getElementById('hmBodyMarks').value = firstPet.body_mark_details || '';
                 document.getElementById('hmEyeColor').value = firstPet.eye_color || '';
-                document.getElementById('hmCollarHarness').value = firstPet.collar_harness || '';
             } else {
                 document.getElementById('hmBodyMarks').value = '';
                 document.getElementById('hmEyeColor').value = '';
-                document.getElementById('hmCollarHarness').value = '';
             }
         }
 
@@ -1042,7 +1039,7 @@
         form: '#missingPetForm',
         userId: {{ auth()->id() ?? 'null' }},
         skipRestore: {{ $errors->any() ? 'true' : 'false' }},
-        exclude: ['selected_pets[]'],
+        exclude: ['selected_pets[]', 'physical_marks[collar_harness]'],
         custom: {
             save: function () {
                 return {
