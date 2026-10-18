@@ -1291,10 +1291,6 @@ Route::post('/missing-pets/report', [\App\Http\Controllers\Client\MissingPetRepo
     ->middleware('auth')
     ->name('missing-pets.report.store');
 
-Route::get('/missing-pets/report', function () {
-    return view('Client.missing_pets_landing');
-})->name('missing-pets.report-landing');
-
 Route::get('/missing-pets/report/guest', [\App\Http\Controllers\Client\GuestMissingPetReportController::class, 'create'])
     ->name('missing-pets.report.guest.create');
 
