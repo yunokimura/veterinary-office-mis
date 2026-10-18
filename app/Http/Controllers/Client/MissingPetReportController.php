@@ -130,7 +130,7 @@ class MissingPetReportController extends Controller
         $validated = $request->validate([
             'report_type' => 'required|in:found',
             'species' => 'required|in:Dog,Cat',
-            'breed_mix' => 'required|string|max:255',
+            'breed' => 'required|string|max:255',
             'pet_photo' => 'required|image|max:8192',
             'eye_color' => 'nullable|string|max:255',
             'collar_harness' => 'nullable|string|max:255',
