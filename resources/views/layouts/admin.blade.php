@@ -60,21 +60,22 @@
             gap: 10px;
             padding: 9px 14px;
             border-radius: 8px;
-            color: #fff;
+            color: rgba(167, 243, 208, 0.7);
             font-size: 13.5px;
             font-weight: 500;
             transition: all 0.15s ease;
             text-decoration: none;
+            background: transparent;
         }
-        .nav-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .nav-item:hover { background: #065f46; color: #a7f3d0; }
         .nav-item.active-nav {
-            background: #15803d;
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(21,128,61,0.35);
+            background: #047857;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(4, 120, 87, 0.35);
         }
         .nav-item i { width: 20px; text-align: center; font-size: 16px; flex-shrink: 0; }
 
-        .sidebar-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 12px 16px; }
+        .sidebar-divider { height: 1px; background: #065f46; margin: 12px 16px; }
         .sidebar-section-label {
             font-size: 10.5px;
             font-weight: 700;
@@ -173,8 +174,8 @@
         <div class="flex items-center justify-start gap-3 px-3 h-16 border-b border-green-700 bg-[rgb(2_44_34/_0.4)]">
             <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 rounded-full object-contain ring-1 ring-white" loading="lazy">
             <div class="min-w-0">
-<h1 class="font-bold text-[16px] leading-tight truncate">Veterinary Office MIS</h1>
-<p class="text-[12px] text-green-200 leading-tight">City of Dasmariñas</p>
+<h1 class="font-bold text-[16px] leading-tight truncate text-emerald-200">Veterinary Office MIS</h1>
+<p class="text-[12px] text-emerald-200 leading-tight">City of Dasmariñas</p>
             </div>
         </div>
 
