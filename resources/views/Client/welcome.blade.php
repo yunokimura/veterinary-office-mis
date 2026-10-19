@@ -247,7 +247,7 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
-                        <a href="{{ url('/pet-registration') }}" class="w-full sm:w-auto bg-white hover:bg-primary/10 text-primary font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                        <a href="{{ url('/pet-registration') }}" class="w-full sm:w-auto bg-white text-primary font-bold px-8 py-4 rounded-xl shadow-lg hover:opacity-90 hover:shadow-xl hover:-translate-y-0.5 transition-all transform flex items-center justify-center space-x-2">
                             <span>Book Veterinary Services</span>
                             <i class="fa-solid fa-arrow-right text-sm"></i>
                         </a>
