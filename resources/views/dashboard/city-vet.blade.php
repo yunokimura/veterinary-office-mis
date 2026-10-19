@@ -108,43 +108,45 @@
     <!-- Spay/Neuter (Kapon) Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Spay/Neuter (<i> Kapon </i>) Reports</h3>
-            <p class="text-xs text-gray-500">By Barangay</p>
-        </div>
-        <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-2">
-                <div class="flex bg-gray-100 rounded-md p-0.5">
-                    <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="spayneuter-mode-btn px-2.5 py-1 text-xs rounded {{ $spayneuterChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
-                        Months
-                    </button>
-                    <button type="button" data-mode="years" data-timeframe="3" class="spayneuter-mode-btn px-2.5 py-1 text-xs rounded {{ $spayneuterChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
-                        Years
-                    </button>
+            <div>
+                <h3 class="text-base font-semibold text-gray-800">Spay/Neuter (<i> Kapon </i>) Reports</h3>
+                <p class="text-xs text-gray-500">By Barangay</p>
+            </div>
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                    <div class="flex bg-gray-100 rounded-md p-0.5">
+                        <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="spayneuter-mode-btn px-2.5 py-1 text-xs rounded {{ $spayneuterChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                            Months
+                        </button>
+                        <button type="button" data-mode="years" data-timeframe="3" class="spayneuter-mode-btn px-2.5 py-1 text-xs rounded {{ $spayneuterChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                            Years
+                        </button>
+                    </div>
+                    @if($spayneuterChartMode === 'months')
+                        <select id="spayneuterChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                            @foreach($availableYears as $y)
+                                <option value="{{ $y }}" {{ $spayneuterChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        <select id="spayneuterChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                            <option value="3" {{ $spayneuterChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
+                            <option value="5" {{ $spayneuterChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
+                            <option value="all" {{ $spayneuterChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                        </select>
+                    @endif
                 </div>
-                @if($spayneuterChartMode === 'months')
-                    <select id="spayneuterChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                        @foreach($availableYears as $y)
-                            <option value="{{ $y }}" {{ $spayneuterChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                <div class="flex items-center gap-2">
+                    <select id="spayneuterBarangaySelect" onchange="window.location.href='?spayneuter_barangay='+this.value" 
+                            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        <option value="">All Barangays</option>
+                        @foreach($barangays as $id => $name)
+                            <option value="{{ $id }}" {{ ($spayneuterBarangayId ?? '') == $id ? 'selected' : '' }}>
+                                {{ $name }}
+                            </option>
                         @endforeach
                     </select>
-                @else
-                    <select id="spayneuterChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                        <option value="3" {{ $spayneuterChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
-                        <option value="5" {{ $spayneuterChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
-                        <option value="all" {{ $spayneuterChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
-                    </select>
-                @endif
-            </div>
-            <div class="flex items-center gap-2">
-                <select id="spayneuterBarangaySelect" onchange="window.location.href='?spayneuter_barangay='+this.value" 
-                        class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                    <option value="">All Barangays</option>
-                    @foreach($barangays as $id => $name)
-                        <option value="{{ $id }}" {{ ($spayneuterBarangayId ?? '') == $id ? 'selected' : '' }}>
-                            {{ $name }}
-                        </option>
-                    @endforeach
-                </select>
+                </div>
             </div>
         </div>
         <div class="h-64">
