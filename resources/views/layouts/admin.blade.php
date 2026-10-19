@@ -170,7 +170,7 @@
     <!-- Sidebar -->
     <aside id="sidebar" class="sidebar bg-green-800 text-white">
         <!-- Brand -->
-        <div class="flex items-center justify-start gap-3 px-3 h-16 border-b border-green-700">
+        <div class="flex items-center justify-start gap-3 px-3 h-16 border-b border-green-700 bg-[rgb(2_44_34/_0.4)]">
             <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 rounded-full object-contain ring-1 ring-white" loading="lazy">
             <div class="min-w-0">
                 <h1 class="font-bold text-[14px] leading-tight truncate">Dasmariñas City Vet</h1>
