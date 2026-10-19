@@ -105,6 +105,53 @@
         </div>
     </div>
 
+    <!-- Spay/Neuter (Kapon) Reports -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Spay/Neuter (<i> Kapon </i>) Reports</h3>
+            <p class="text-xs text-gray-500">By Barangay</p>
+        </div>
+        <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+                <div class="flex bg-gray-100 rounded-md p-0.5">
+                    <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="spayneuter-mode-btn px-2.5 py-1 text-xs rounded {{ $spayneuterChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Months
+                    </button>
+                    <button type="button" data-mode="years" data-timeframe="3" class="spayneuter-mode-btn px-2.5 py-1 text-xs rounded {{ $spayneuterChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                        Years
+                    </button>
+                </div>
+                @if($spayneuterChartMode === 'months')
+                    <select id="spayneuterChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ $spayneuterChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                @else
+                    <select id="spayneuterChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        <option value="3" {{ $spayneuterChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
+                        <option value="5" {{ $spayneuterChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
+                        <option value="all" {{ $spayneuterChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                    </select>
+                @endif
+            </div>
+            <div class="flex items-center gap-2">
+                <select id="spayneuterBarangaySelect" onchange="window.location.href='?spayneuter_barangay='+this.value" 
+                        class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                    <option value="">All Barangays</option>
+                    @foreach($barangays as $id => $name)
+                        <option value="{{ $id }}" {{ ($spayneuterBarangayId ?? '') == $id ? 'selected' : '' }}>
+                            {{ $name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="spayneuterReportsChart"></canvas>
+        </div>
+    </div>
+
     <!-- Pet Adoption Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
@@ -252,6 +299,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const biteChartMode = '{{ $biteChartMode ?? 'months' }}';
     const adoptionChartMode = '{{ $adoptionChartMode ?? 'months' }}';
     const missingChartMode = '{{ $missingChartMode ?? 'months' }}';
+    const spayneuterChartMode = '{{ $spayneuterChartMode ?? 'months' }}';
+    const spayneuterChartTimeframe = '{{ $spayneuterChartTimeframe ?? '' }}';
+    const spayneuterBarangayId = '{{ $spayneuterBarangayId ?? '' }}';
+    const spayneuterLabels = @json($spayneuterLabels ?? []);
+    const spayneuterData = @json($spayneuterData ?? []);
     const availableYears = @json($availableYears ?? []);
 
     function buildLineDataset(label, data, borderColor, backgroundColor) {
@@ -821,6 +873,127 @@ document.addEventListener('DOMContentLoaded', function() {
             const activeModeBtn = document.querySelector('.compare-mode-btn.bg-white');
             const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'months';
             loadCompareChart(mode, compareChartTimeframe ? compareChartTimeframe.value : '{{ date('Y') }}', compareBarangaySelect.value);
+        });
+    }
+
+    // Spay/Neuter (Kapon) Reports Chart
+    const spayneuterCtx = document.getElementById('spayneuterReportsChart').getContext('2d');
+    const spayneuterChart = new Chart(spayneuterCtx, {
+        type: 'bar',
+        data: {
+            labels: spayneuterChartMode === 'years' ? spayneuterLabels.map(String) : monthLabels,
+            datasets: [{
+                label: 'Spay/Neuter Procedures',
+                data: spayneuterData,
+                backgroundColor: '#10b981',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#111827',
+                    bodyColor: '#374151',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    padding: 10
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    ticks: { stepSize: 1, color: '#374151' },
+                    grid: { color: '#f3f4f6' },
+                    title: {
+                        display: true,
+                        text: 'Number of Procedures',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                },
+                x: { grid: { display: false }, ticks: { color: '#374151' } }
+            }
+        }
+    });
+
+    const loadSpayneuterChart = async (mode, timeframe, barangayId = null) => {
+        const url = new URL('{{ route('city-vet.dashboard.chart-data') }}', window.location.origin);
+        url.searchParams.set('mode', 'spayneuter');
+        url.searchParams.set('view', mode);
+        url.searchParams.set('timeframe', timeframe);
+        if (barangayId) {
+            url.searchParams.set('barangay_id', barangayId);
+        } else if (spayneuterBarangayId) {
+            url.searchParams.set('barangay_id', spayneuterBarangayId);
+        }
+
+        try {
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const data = await response.json();
+
+            spayneuterChart.data.labels = data.labels.map(String);
+            spayneuterChart.data.datasets[0].data = data.total;
+            spayneuterChart.update();
+        } catch (error) {
+            console.error('Failed to load spayneuter chart data:', error);
+        }
+    };
+
+    document.querySelectorAll('.spayneuter-mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mode = btn.dataset.mode;
+            const timeframe = btn.dataset.timeframe;
+            const timeframeSelect = document.getElementById('spayneuterChartTimeframe');
+
+            document.querySelectorAll('.spayneuter-mode-btn').forEach(b => {
+                b.classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+                b.classList.add('text-gray-500', 'hover:text-gray-700');
+            });
+            btn.classList.remove('text-gray-500', 'hover:text-gray-700');
+            btn.classList.add('bg-white', 'shadow-sm', 'text-gray-900');
+
+            if (timeframeSelect) {
+                if (mode === 'months') {
+                    timeframeSelect.innerHTML = availableYears.map(y => `<option value="${y}">${y}</option>`).join('');
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                } else {
+                    timeframeSelect.innerHTML = `
+                        <option value="3">Last 3 Years</option>
+                        <option value="5">Last 5 Years</option>
+                        <option value="all">All Years</option>
+                    `;
+                    const selected = timeframeSelect.querySelector(`option[value="${timeframe}"]`);
+                    if (selected) selected.selected = true;
+                }
+            }
+
+            loadSpayneuterChart(mode, timeframeSelect ? timeframeSelect.value : timeframe);
+        });
+    });
+
+    const spayneuterChartTimeframeEl = document.getElementById('spayneuterChartTimeframe');
+    if (spayneuterChartTimeframeEl) {
+        spayneuterChartTimeframeEl.addEventListener('change', () => {
+            const activeModeBtn = document.querySelector('.spayneuter-mode-btn.bg-white');
+            const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'months';
+            loadSpayneuterChart(mode, spayneuterChartTimeframeEl.value);
+        });
+    }
+
+    const spayneuterBarangaySelect = document.getElementById('spayneuterBarangaySelect');
+    if (spayneuterBarangaySelect) {
+        spayneuterBarangaySelect.addEventListener('change', () => {
+            const activeModeBtn = document.querySelector('.spayneuter-mode-btn.bg-white');
+            const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'months';
+            loadSpayneuterChart(mode, spayneuterChartTimeframeEl ? spayneuterChartTimeframeEl.value : '{{ date('Y') }}', spayneuterBarangaySelect.value);
         });
     }
 });

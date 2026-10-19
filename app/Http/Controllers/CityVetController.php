@@ -204,6 +204,20 @@ class CityVetController extends Controller
         $compareChartTimeframe = $request->compare_chart_timeframe ?? ($compareChartMode === 'years' ? '3' : $currentYear);
         $compareBarangayId = $request->compare_barangay ?? null;
 
+        $spayneuterChartMode = $request->spayneuter_chart_mode ?? 'months';
+        $spayneuterChartTimeframe = $request->spayneuter_chart_timeframe ?? ($spayneuterChartMode === 'years' ? '3' : $currentYear);
+        $spayneuterBarangayId = $request->spayneuter_barangay ?? null;
+
+        if ($spayneuterChartMode === 'months') {
+            $spayneuterLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            $spayneuterData = $this->getMonthlySpayneuterData((int)$spayneuterChartTimeframe, $spayneuterBarangayId ? (int)$spayneuterBarangayId : null);
+        } else {
+            $yearsBack = $spayneuterChartTimeframe === 'all' ? 50 : (int)$spayneuterChartTimeframe;
+            $yearlyRaw = $this->getYearlySpayneuterData($yearsBack, $spayneuterBarangayId ? (int)$spayneuterBarangayId : null);
+            $spayneuterLabels = $yearlyRaw['labels'];
+            $spayneuterData = $yearlyRaw['total'];
+        }
+
         if ($compareChartMode === 'months') {
             $compareMonthlyRaw = $this->getMonthlyCompareData((int)$compareChartTimeframe, $compareBarangayId ? (int)$compareBarangayId : null);
             $compareLabels = $compareMonthlyRaw['labels'];
@@ -331,6 +345,11 @@ class CityVetController extends Controller
             'compareLabels',
             'compareBiteData',
             'compareVaccData',
+            'spayneuterChartMode',
+            'spayneuterChartTimeframe',
+            'spayneuterBarangayId',
+            'spayneuterLabels',
+            'spayneuterData',
             'kpiSecondary'
         ));
     }
@@ -747,6 +766,60 @@ class CityVetController extends Controller
             'labels' => $labels,
             'bite' => $biteData,
             'vacc' => $vaccData,
+        ];
+    }
+
+    private function getMonthlySpayneuterData(int $year, ?int $barangayId = null): array
+    {
+        $query = \App\Models\SpayNeuterReport::whereYear('report_date', $year)
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', 0);
+
+        if ($barangayId) {
+            $query->where('barangay_id', $barangayId);
+        }
+
+        $spayneuterMonthly = $query->selectRaw('MONTH(report_date) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        $data = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $data[] = $spayneuterMonthly[$m] ?? 0;
+        }
+
+        return $data;
+    }
+
+    private function getYearlySpayneuterData(int $yearsBack = 50, ?int $barangayId = null): array
+    {
+        $currentYear = (int) date('Y');
+        $startYear = $currentYear - $yearsBack + 1;
+
+        $query = \App\Models\SpayNeuterReport::whereYear('report_date', '>=', $startYear)
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', 0);
+
+        if ($barangayId) {
+            $query->where('barangay_id', $barangayId);
+        }
+
+        $spayneuterYearly = $query->selectRaw('YEAR(report_date) as year, COUNT(*) as count')
+            ->groupBy('year')
+            ->pluck('count', 'year')
+            ->toArray();
+
+        $labels = [];
+        $data = [];
+        for ($y = $startYear; $y <= $currentYear; $y++) {
+            $labels[] = $y;
+            $data[] = $spayneuterYearly[$y] ?? 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'total' => $data,
         ];
     }
 
@@ -1517,6 +1590,36 @@ class CityVetController extends Controller
                 'pendingCount' => \App\Models\AdoptionApplication::where('status', 'pending_review')->whereYear('created_at', $year)->count(),
                 'approvedCount' => \App\Models\AdoptionApplication::where('status', 'approved')->whereYear('created_at', $year)->count(),
                 'rejectedCount' => \App\Models\AdoptionApplication::where('status', 'rejected')->whereYear('created_at', $year)->count(),
+            ]);
+        }
+
+        if ($mode === 'spayneuter') {
+            $barangayId = $request->query('barangay_id');
+
+            if ($request->query('view') === 'years') {
+                $yearsBack = $timeframe === 'all' ? 50 : (int) $timeframe;
+                $yearlyRaw = $this->getYearlySpayneuterData($yearsBack, $barangayId);
+
+                return response()->json([
+                    'mode' => 'years',
+                    'labels' => $yearlyRaw['labels'],
+                    'total' => $yearlyRaw['total'],
+                    'totalCount' => \App\Models\SpayNeuterReport::whereNotNull('barangay_id')
+                        ->where('barangay_id', '!=', 0)
+                        ->count(),
+                ]);
+            }
+
+            $year = (int) ($timeframe ?? date('Y'));
+
+            return response()->json([
+                'mode' => 'months',
+                'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                'total' => array_values(array_map(fn($m) => $this->getMonthlySpayneuterData($year, $barangayId)[$m] ?? 0, range(1, 12))),
+                'totalCount' => \App\Models\SpayNeuterReport::whereNotNull('barangay_id')
+                    ->where('barangay_id', '!=', 0)
+                    ->whereYear('report_date', $year)
+                    ->count(),
             ]);
         }
 
