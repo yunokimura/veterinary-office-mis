@@ -34,7 +34,7 @@
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
 
         .sidebar {
-            width: 220px;
+            width: 240px;
             position: fixed;
             height: 100vh;
             top: 0;
@@ -44,7 +44,7 @@
         }
 
         main {
-            margin-left: 220px;
+            margin-left: 240px;
             min-height: 100vh;
         }
 
@@ -80,7 +80,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #86efac;
+            color: #059669;
             padding: 12px 16px 6px;
         }
 
@@ -168,13 +168,13 @@
     </header>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar bg-green-800 text-white">
+    <aside id="sidebar" class="sidebar bg-[#064e3b] text-white">
         <!-- Brand -->
         <div class="flex items-center justify-start gap-3 px-3 h-16 border-b border-green-700 bg-[rgb(2_44_34/_0.4)]">
             <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 rounded-full object-contain ring-1 ring-white" loading="lazy">
             <div class="min-w-0">
-                <h1 class="font-bold text-[14px] leading-tight truncate">Dasmariñas City Vet</h1>
-                <p class="text-[10px] text-green-200 leading-tight">Veterinary Office MIS</p>
+<h1 class="font-bold text-[16px] leading-tight truncate">Veterinary Office MIS</h1>
+<p class="text-[12px] text-green-200 leading-tight">City of Dasmariñas</p>
             </div>
         </div>
 
@@ -600,6 +600,19 @@
                             }
                         }
                     }
+                    showGlobalToast('error', error.message || 'Please check the form for errors.');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                });
+            }
+        });
+    </script>
+    @stack('scripts')
+</body>
+</html>
+         }
                     showGlobalToast('error', error.message || 'Please check the form for errors.');
                 })
                 .finally(() => {
