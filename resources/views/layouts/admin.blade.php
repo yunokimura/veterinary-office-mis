@@ -207,6 +207,7 @@
                 });
             }
         }" x-init="scrollToActive()" class="px-3 py-2 overflow-y-auto space-y-2" style="height: calc(100vh - 140px);">
+            <div class="sidebar-section-label">MAIN MENU</div>
             <a href="{{ route($dashboardRoute) }}"
                class="nav-item {{ request()->routeIs($prefix.'.dashboard') ? 'active-nav' : '' }}">
                 <i class="bi bi-grid-1x2"></i>
