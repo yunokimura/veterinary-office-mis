@@ -90,6 +90,10 @@ use Illuminate\Http\Request;
 // ... existing imports
 
 Route::get('/', function () {
+    return redirect()->route('public.home');
+})->name('landing');
+
+Route::get('/home', function () {
     // If user is authenticated, redirect to their role-based dashboard
     if (Auth::check()) {
         $user = Auth::user();
@@ -113,38 +117,6 @@ Route::get('/', function () {
             return redirect()->route('login');
         }
     }
-    // Get missing pets for the landing page
-    $missingPets = Pet::where('pet_status', 'missing')
-        ->with(['missingReport' => function ($query) {
-            $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
-        }])
-        ->limit(5)
-        ->get();
-
-    // Get adoption pets for the landing page
-    $adoptionPets = Pet::availableForAdoption()
-        ->with(['barangay'])
-        ->limit(5)
-        ->get();
-
-    // Get active announcements for public
-    $announcements = Announcement::where('is_active', true)
-        ->where('status', 'Published')
-        ->orderBy('created_at', 'desc')
-        ->get();
-
-    // Dynamic stats
-    $vaccinationReportsCount = \App\Models\VaccinationReport::count();
-    $petsRegisteredCount = Pet::whereHas('owner')->count();
-    $spayedNeuteredCount = SpayNeuterReport::count();
-    $reunitedCount = \App\Models\MissingPetsReport::where('status', 'resolved - reunited')->count();
-    $rehomedCount = \App\Models\AdoptionApplication::where('status', 'adopted')->count();
-
-    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayedNeuteredCount', 'reunitedCount', 'rehomedCount'));
-})->name('landing');
-
-// Public Home Route - Always shows welcome page
-Route::get('/home', function () {
     // Get missing pets for the landing page
     $missingPets = Pet::where('pet_status', 'missing')
         ->with(['missingReport' => function ($query) {

@@ -99,8 +99,8 @@
                             </div>
                         </div>
                     @else
-                        <a href="{{ route('login') }}" class="text-primary font-medium hover:text-secondary transition-colors">Login</a>
-                        <a href="{{ route('register') }}" class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">Register</a>
+                         <a href="{{ route('login') }}" class="text-primary font-medium hover:text-secondary transition-colors mr-3">Login</a>
+                         <a href="{{ route('register') }}" class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">Register</a>
                     @endauth
                 </div>
 
