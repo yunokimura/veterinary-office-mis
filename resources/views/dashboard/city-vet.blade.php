@@ -33,11 +33,11 @@
             <p class="text-xs text-gray-400 mt-1">Output: {{ $analytics['vaccination_performance']['actual'] ?? 0 }}</p>
         </div>
 
-        <!-- Adoption Performance -->
+        <!-- Pet Adoption Performance -->
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <p class="text-xs font-medium text-gray-500 mb-2">Adoption Performance</p>
+            <p class="text-xs font-medium text-gray-500 mb-2">Pet Adoption Performance</p>
             <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['adoption_performance']['adoption_rate'] ?? 0 }}%</p>
-            <p class="text-xs text-gray-500 mb-3">Adoption Rate</p>
+            <p class="text-xs text-gray-500 mb-3">Pet Adoption Rate</p>
             <div class="flex gap-2">
                 <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['adoption_performance']['approved'] ?? 0 }} Approved</span>
                 <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">{{ $analytics['adoption_performance']['pending'] ?? 0 }} Pending</span>
@@ -59,11 +59,57 @@
 
 <!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
-    <!-- Adoption Reports -->
+    <!-- Confirmed Rabies Cases vs Vaccinations per Barangay -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases vs Vaccinations per Barangay</h3>
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                    <div class="flex bg-gray-100 rounded-md p-0.5">
+                        <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                            Months
+                        </button>
+                        <button type="button" data-mode="years" data-timeframe="3" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
+                            Years
+                        </button>
+                    </div>
+                    @if($compareChartMode === 'months')
+                        <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                            @foreach($availableYears as $y)
+                                <option value="{{ $y }}" {{ $compareChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                            <option value="3" {{ $compareChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
+                            <option value="5" {{ $compareChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
+                            <option value="all" {{ $compareChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
+                        </select>
+                    @endif
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="compareBarangaySelect" onchange="window.location.href='?compare_barangay='+this.value" 
+                            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
+                        <option value="">All Barangays</option>
+                        @foreach($barangays as $id => $name)
+                            <option value="{{ $id }}" {{ ($compareBarangayId ?? '') == $id ? 'selected' : '' }}>
+                                {{ $name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="biteVsVaccinationChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Pet Adoption Reports -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h3 class="text-base font-semibold text-gray-800">Adoption Reports</h3>
+                <h3 class="text-base font-semibold text-gray-800">Pet Adoption Reports</h3>
                 <p class="text-xs text-gray-500">By Status</p>
             </div>
             <div class="flex items-center gap-2">
@@ -160,52 +206,6 @@
         </div>
         <div class="h-64">
             <canvas id="missingPetReportsChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Confirmed Rabies Cases vs Vaccinations per Barangay -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases vs Vaccinations per Barangay</h3>
-            <div class="flex flex-col gap-2">
-                <div class="flex items-center gap-2">
-                    <div class="flex bg-gray-100 rounded-md p-0.5">
-                        <button type="button" data-mode="months" data-timeframe="{{ date('Y') }}" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'months' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
-                            Months
-                        </button>
-                        <button type="button" data-mode="years" data-timeframe="3" class="compare-mode-btn px-2.5 py-1 text-xs rounded {{ $compareChartMode === 'years' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
-                            Years
-                        </button>
-                    </div>
-                    @if($compareChartMode === 'months')
-                        <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                            @foreach($availableYears as $y)
-                                <option value="{{ $y }}" {{ $compareChartTimeframe == $y ? 'selected' : '' }}>{{ $y }}</option>
-                            @endforeach
-                        </select>
-                    @else
-                        <select id="compareChartTimeframe" class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                            <option value="3" {{ $compareChartTimeframe == '3' ? 'selected' : '' }}>Last 3 Years</option>
-                            <option value="5" {{ $compareChartTimeframe == '5' ? 'selected' : '' }}>Last 5 Years</option>
-                            <option value="all" {{ $compareChartTimeframe == 'all' ? 'selected' : '' }}>All Years</option>
-                        </select>
-                    @endif
-                </div>
-                <div class="flex items-center gap-2">
-                    <select id="compareBarangaySelect" onchange="window.location.href='?compare_barangay='+this.value" 
-                            class="bg-white border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none leading-tight">
-                        <option value="">All Barangays</option>
-                        @foreach($barangays as $id => $name)
-                            <option value="{{ $id }}" {{ ($compareBarangayId ?? '') == $id ? 'selected' : '' }}>
-                                {{ $name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="h-64">
-            <canvas id="biteVsVaccinationChart"></canvas>
         </div>
     </div>
 </div>
