@@ -204,6 +204,10 @@ class CityVetController extends Controller
         $adoptionVolumeApplications = array_map(fn($m) => $this->getMonthlyAdoptionByYear((int)$adoptionVolumeYear)[$m] ?? 0, range(1, 12));
         $adoptionVolumeCompleted = array_map(fn($m) => $this->getMonthlyAdoptionStatusByYear((int)$adoptionVolumeYear, 'Completed')[$m] ?? 0, range(1, 12));
 
+        $lostFoundYear = $request->lost_found_year ?? $year;
+        $lostFoundReportsFiled = array_map(fn($m) => $this->getMonthlyMissingByYear((int)$lostFoundYear)[$m] ?? 0, range(1, 12));
+        $lostFoundPetsReunited = array_map(fn($m) => $this->getMonthlyMissingStatusByYear((int)$lostFoundYear, 'Resolved')[$m] ?? 0, range(1, 12));
+
         $compareChartMode = $request->compare_chart_mode ?? 'months';
         $compareChartTimeframe = $request->compare_chart_timeframe ?? ($compareChartMode === 'years' ? '3' : $currentYear);
         $compareBarangayId = $request->compare_barangay ?? null;
@@ -340,6 +344,8 @@ class CityVetController extends Controller
             'missingYearlyData',
             'adoptionVolumeApplications',
             'adoptionVolumeCompleted',
+            'lostFoundReportsFiled',
+            'lostFoundPetsReunited',
             'yearlyMissingLabels',
             'yearlyMissingPendingData',
             'yearlyMissingApprovedData',

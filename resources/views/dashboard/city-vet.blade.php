@@ -251,6 +251,19 @@
             <canvas id="petAdoptionVolumeChart"></canvas>
         </div>
     </div>
+
+    <!-- Lost & Found Pet Reunification Volume -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-base font-semibold text-gray-800">Lost &amp; Found Pet Reunification Volume</h3>
+                <p class="text-xs text-gray-500">Reports Filed vs Pets Reunited</p>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="lostFoundReunificationChart"></canvas>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -286,6 +299,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const adoptionVolumeApplications = @json($adoptionVolumeApplications ?? []);
     const adoptionVolumeCompleted = @json($adoptionVolumeCompleted ?? []);
+
+    const lostFoundReportsFiled = @json($lostFoundReportsFiled ?? []);
+    const lostFoundPetsReunited = @json($lostFoundPetsReunited ?? []);
 
     function buildLineDataset(label, data, borderColor, backgroundColor) {
         return {
@@ -370,6 +386,72 @@ document.addEventListener('DOMContentLoaded', function() {
                     title: {
                         display: true,
                         text: 'Number of Applications / Adoptions',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#374151' },
+                    title: {
+                        display: true,
+                        text: 'Month (Jan to Dec)',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                }
+            }
+        }
+    });
+
+    // Lost & Found Pet Reunification Volume (Dual-Line)
+    const lostFoundCtx = document.getElementById('lostFoundReunificationChart').getContext('2d');
+    const lostFoundChart = new Chart(lostFoundCtx, {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [
+                buildLineDataset('Lost &amp; Found Reports Filed', lostFoundReportsFiled, '#f59e0b', 'rgba(245, 158, 11, 0.1)'),
+                buildLineDataset('Pets Reunited / Resolved', lostFoundPetsReunited, '#1e40af', 'rgba(30, 64, 175, 0.1)')
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 16,
+                        font: { size: 12 },
+                        color: '#374151',
+                        useBorderRadius: true,
+                        borderRadius: 4
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#111827',
+                    bodyColor: '#374151',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    padding: 10
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: 15,
+                    ticks: { stepSize: 1, color: '#374151' },
+                    grid: { color: '#f3f4f6' },
+                    title: {
+                        display: true,
+                        text: 'Number of Reports / Cases',
                         color: '#374151',
                         font: { size: 12, weight: 'normal' }
                     }
