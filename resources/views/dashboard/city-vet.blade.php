@@ -26,10 +26,10 @@
             </div>
 
 <!-- KPI Cards Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
   
     <!-- Card 1: Rabies Cases -->
-    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 flex flex-col justify-between h-full">
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
         <!-- Title Section (Fixed height ensures 1-line and 2-line titles take identical space) -->
         <div class="h-10 flex items-center mb-2">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Card 2: Anti-Rabies Vaccination Performance -->
-    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 flex flex-col justify-between h-full">
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
         <div class="h-10 flex items-center mb-2">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
                 Anti-Rabies Vaccination
@@ -90,7 +90,7 @@
     </div>
 
     <!-- Card 3: Pet Adoption Performance -->
-    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 flex flex-col justify-between h-full">
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
         <div class="h-10 flex items-center mb-2">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
                 Pet Adoption Rate
@@ -115,7 +115,7 @@
     </div>
 
     <!-- Card 4: Missing Pet Recovery -->
-    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 flex flex-col justify-between h-full">
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
         <div class="h-10 flex items-center mb-2">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
                 Missing Pet Recovery
