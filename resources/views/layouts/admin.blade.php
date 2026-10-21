@@ -83,7 +83,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #059669;
+            color: #ffffff;
             padding: 12px 16px 6px;
         }
 
@@ -176,7 +176,7 @@
         <div class="flex items-center justify-start gap-3 px-3 h-16 border-b border-065f46 bg-[rgb(2_44_34/_0.4)]">
             <img src="{{ asset('images/Dasmalogof.png') }}" alt="Logo" class="w-9 h-9 rounded-full object-contain ring-1 ring-white" loading="lazy">
             <div class="min-w-0">
-<h1 class="font-bold text-[16px] leading-tight truncate text-emerald-200">Veterinary Office MIS</h1>
+<h1 class="font-bold text-[16px] leading-tight truncate text-white">Veterinary Office MIS</h1>
 <p class="text-[12px] text-emerald-200 leading-tight">City of Dasmariñas</p>
             </div>
         </div>

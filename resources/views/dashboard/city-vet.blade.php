@@ -10,10 +10,6 @@
 <!-- Top Row: Key Metrics Summary Cards -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-xl shadow-sm p-4 border border-gray-100 mb-6">
                 <div class="flex items-center space-x-2">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-brand-700 border border-emerald-200">
-                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1 text-brand-600"></i>
-                        Active Region: Dasmariñas City
-                    </span>
                     <span class="text-xs text-slate-400">|</span>
                     <span class="text-xs text-slate-500">Updated today at 08:30 AM</span>
                 </div>
@@ -29,87 +25,121 @@
                 </div>
             </div>
 
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-6">
-                
-                <!-- Card 1: Rabies Cases -->
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Confirmed Rabies Cases</span>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">30</span>
-                        <span class="text-xs font-medium text-slate-500">Total Cases</span>
-                    </div>
-                    
-                    <!-- Badges Grid -->
-                    <div class="mt-2 pt-2 border-t border-gray-100 grid grid-cols-2 gap-1">
-                        <span class="px-2 py-1 rounded text-[10px] font-semibold bg-amber-100 text-amber-700 flex items-center justify-between">
-                            <span>Dog:</span> <span class="font-bold">12</span>
-                        </span>
-                        <span class="px-2 py-1 rounded text-[10px] font-semibold bg-indigo-100 text-indigo-700 flex items-center justify-between">
-                            <span>Cat:</span> <span class="font-bold">18</span>
-                        </span>
-                        <span class="px-2 py-1 rounded text-[10px] font-semibold bg-rose-100 text-rose-700 flex items-center justify-between">
-                            <span>Stray:</span> <span class="font-bold">10</span>
-                        </span>
-                        <span class="px-2 py-1 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-700 flex items-center justify-between">
-                            <span>Owned:</span> <span class="font-bold">20</span>
-                        </span>
-                    </div>
-                </div>
+<!-- KPI Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  
+    <!-- Card 1: Rabies Cases -->
+    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 flex flex-col justify-between h-full">
+        <!-- Title Section (Fixed height ensures 1-line and 2-line titles take identical space) -->
+        <div class="h-10 flex items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                Confirmed Rabies Cases
+            </span>
+        </div>
 
-                <!-- Card 2: Anti-Rabies Vaccination Performance -->
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Anti-Rabies Vaccination</span>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">0.2%</span>
-                        <span class="text-xs font-semibold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded">Performance</span>
-                    </div>
-                    <div class="mt-2 pt-2 border-t border-gray-100 space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-500 font-medium">Progress</span>
-                            <span class="font-bold text-slate-700">1 / 600 Output</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: 0.2%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3: Pet Adoption Performance -->
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Pet Adoption Rate</span>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">0%</span>
-                        <span class="text-xs font-medium text-slate-500">Adoption Rate</span>
-                    </div>
-                    <div class="mt-2 pt-2 border-t border-gray-100 flex items-center space-x-2">
-                        <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-700 text-xs font-semibold flex-1 text-center">
-                            0 Approved
-                        </span>
-                        <span class="px-2.5 py-1 rounded bg-amber-100 text-amber-700 text-xs font-semibold flex-1 text-center">
-                            4 Pending
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Card 4: Missing Pet Recovery -->
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Missing Pet Recovery</span>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">0%</span>
-                        <span class="text-xs font-medium text-slate-500">Recovery Rate</span>
-                    </div>
-                    <div class="mt-2 pt-2 border-t border-gray-100 flex items-center space-x-2">
-                        <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-700 text-xs font-semibold flex-1 text-center">
-                            0 Resolved
-                        </span>
-                        <span class="px-2.5 py-1 rounded bg-blue-100 text-blue-700 text-xs font-semibold flex-1 text-center">
-                            10 Active
-                        </span>
-                    </div>
-                </div>
-
+        <!-- Metric & Badges Section -->
+        <div class="flex-1 flex flex-col justify-between">
+            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                <span class="text-3xl font-extrabold text-slate-900 tracking-tight">30</span>
+                <span class="text-xs font-medium text-slate-500">Total Cases</span>
             </div>
+            
+            <div class="pt-3 grid grid-cols-2 gap-1.5">
+                <span class="px-2 py-1 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-between">
+                    <span>Dog:</span> <span class="font-bold">12</span>
+                </span>
+                <span class="px-2 py-1 rounded-md text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/60 flex items-center justify-between">
+                    <span>Cat:</span> <span class="font-bold">18</span>
+                </span>
+                <span class="px-2 py-1 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/60 flex items-center justify-between">
+                    <span>Stray:</span> <span class="font-bold">10</span>
+                </span>
+                <span class="px-2 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 flex items-center justify-between">
+                    <span>Owned:</span> <span class="font-bold">20</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2: Anti-Rabies Vaccination Performance -->
+    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 flex flex-col justify-between h-full">
+        <div class="h-10 flex items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                Anti-Rabies Vaccination
+            </span>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-between">
+            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                <span class="text-3xl font-extrabold text-slate-900 tracking-tight">0.2%</span>
+                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-md">
+                    Performance
+                </span>
+            </div>
+            
+            <div class="pt-3 space-y-1.5">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500 font-medium">Progress</span>
+                    <span class="font-bold text-slate-700">1 / 600 Output</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                    <div class="bg-emerald-600 h-2 rounded-full" style="width: 0.2%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3: Pet Adoption Performance -->
+    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 flex flex-col justify-between h-full">
+        <div class="h-10 flex items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                Pet Adoption Rate
+            </span>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-between">
+            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                <span class="text-3xl font-extrabold text-slate-900 tracking-tight">0%</span>
+                <span class="text-xs font-medium text-slate-500">Adoption Rate</span>
+            </div>
+            
+            <div class="pt-3 flex items-center space-x-2">
+                <span class="px-2.5 py-1.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-semibold flex-1 text-center">
+                    0 Approved
+                </span>
+                <span class="px-2.5 py-1.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200/60 text-xs font-semibold flex-1 text-center">
+                    4 Pending
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4: Missing Pet Recovery -->
+    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100 flex flex-col justify-between h-full">
+        <div class="h-10 flex items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                Missing Pet Recovery
+            </span>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-between">
+            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                <span class="text-3xl font-extrabold text-slate-900 tracking-tight">0%</span>
+                <span class="text-xs font-medium text-slate-500">Recovery Rate</span>
+            </div>
+            
+            <div class="pt-3 flex items-center space-x-2">
+                <span class="px-2.5 py-1.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-semibold flex-1 text-center">
+                    0 Resolved
+                </span>
+                <span class="px-2.5 py-1.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/60 text-xs font-semibold flex-1 text-center">
+                    10 Active
+                </span>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <!-- Spacing between KPI and Charts -->
 <div class="mb-6"></div>
