@@ -7,55 +7,112 @@
 
 @section('content')
 
-<!-- Analytics Section -->
-<div class="mb-6">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
-
-        <!-- Bite Cases by Barangay -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <p class="text-xs font-medium text-gray-500 mb-2">Confirmed Rabies Cases</p>
-            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['bite_cases_by_barangay']['total_confirmed_cases'] ?? 0 }}</p>
-            <p class="text-xs text-gray-500 mb-3">Total Confirmed Cases</p>
-            <div class="flex gap-2 flex-wrap">
-                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">{{ $analytics['bite_cases_by_barangay']['dog_cases'] ?? 0 }} Dog</span>
-                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">{{ $analytics['bite_cases_by_barangay']['cat_cases'] ?? 0 }} Cat</span>
-                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">{{ $analytics['bite_cases_by_barangay']['stray_cases'] ?? 0 }} Stray</span>
-                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['bite_cases_by_barangay']['owned_cases'] ?? 0 }} Owned</span>
+<!-- Top Row: Key Metrics Summary Cards -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-xl shadow-sm p-4 border border-gray-100 mb-6">
+                <div class="flex items-center space-x-2">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-brand-700 border border-emerald-200">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1 text-brand-600"></i>
+                        Active Region: Dasmariñas City
+                    </span>
+                    <span class="text-xs text-slate-400">|</span>
+                    <span class="text-xs text-slate-500">Updated today at 08:30 AM</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="refreshData()" class="px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors flex items-center space-x-1.5">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        <span>Refresh</span>
+                    </button>
+                    <button class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-brand-700 hover:bg-brand-800 transition-colors shadow-sm flex items-center space-x-1.5">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>Export Summary Report</span>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <!-- Anti-Rabies Vaccination -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <p class="text-xs font-medium text-gray-500 mb-2">Anti-Rabies Vaccination</p>
-            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['vaccination_performance']['percentage'] ?? 0 }}%</p>
-            <p class="text-xs text-gray-500 mb-3">Vaccination Performance</p>
-            <p class="text-xs text-gray-400">Target: {{ $analytics['vaccination_performance']['target'] ?? 0 }}</p>
-            <p class="text-xs text-gray-400 mt-1">Output: {{ $analytics['vaccination_performance']['actual'] ?? 0 }}</p>
-        </div>
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-6">
+                
+                <!-- Card 1: Rabies Cases -->
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Confirmed Rabies Cases</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">30</span>
+                        <span class="text-xs font-medium text-slate-500">Total Cases</span>
+                    </div>
+                    
+                    <!-- Badges Grid -->
+                    <div class="mt-2 pt-2 border-t border-gray-100 grid grid-cols-2 gap-1">
+                        <span class="px-2 py-1 rounded text-[10px] font-semibold bg-amber-100 text-amber-700 flex items-center justify-between">
+                            <span>Dog:</span> <span class="font-bold">12</span>
+                        </span>
+                        <span class="px-2 py-1 rounded text-[10px] font-semibold bg-indigo-100 text-indigo-700 flex items-center justify-between">
+                            <span>Cat:</span> <span class="font-bold">18</span>
+                        </span>
+                        <span class="px-2 py-1 rounded text-[10px] font-semibold bg-rose-100 text-rose-700 flex items-center justify-between">
+                            <span>Stray:</span> <span class="font-bold">10</span>
+                        </span>
+                        <span class="px-2 py-1 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-700 flex items-center justify-between">
+                            <span>Owned:</span> <span class="font-bold">20</span>
+                        </span>
+                    </div>
+                </div>
 
-        <!-- Pet Adoption Performance -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <p class="text-xs font-medium text-gray-500 mb-2">Pet Adoption Performance</p>
-            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['adoption_performance']['adoption_rate'] ?? 0 }}%</p>
-            <p class="text-xs text-gray-500 mb-3">Pet Adoption Rate</p>
-            <div class="flex gap-2">
-                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['adoption_performance']['approved'] ?? 0 }} Approved</span>
-                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">{{ $analytics['adoption_performance']['pending'] ?? 0 }} Pending</span>
+                <!-- Card 2: Anti-Rabies Vaccination Performance -->
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Anti-Rabies Vaccination</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">0.2%</span>
+                        <span class="text-xs font-semibold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded">Performance</span>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-gray-100 space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-500 font-medium">Progress</span>
+                            <span class="font-bold text-slate-700">1 / 600 Output</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 0.2%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Pet Adoption Performance -->
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Pet Adoption Rate</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">0%</span>
+                        <span class="text-xs font-medium text-slate-500">Adoption Rate</span>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-gray-100 flex items-center space-x-2">
+                        <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-700 text-xs font-semibold flex-1 text-center">
+                            0 Approved
+                        </span>
+                        <span class="px-2.5 py-1 rounded bg-amber-100 text-amber-700 text-xs font-semibold flex-1 text-center">
+                            4 Pending
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Missing Pet Recovery -->
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Missing Pet Recovery</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">0%</span>
+                        <span class="text-xs font-medium text-slate-500">Recovery Rate</span>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-gray-100 flex items-center space-x-2">
+                        <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-700 text-xs font-semibold flex-1 text-center">
+                            0 Resolved
+                        </span>
+                        <span class="px-2.5 py-1 rounded bg-blue-100 text-blue-700 text-xs font-semibold flex-1 text-center">
+                            10 Active
+                        </span>
+                    </div>
+                </div>
+
             </div>
-        </div>
 
-        <!-- Missing Pet Recovery -->
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <p class="text-xs font-medium text-gray-500 mb-2">Missing Pet Recovery</p>
-            <p class="text-4xl font-bold text-gray-800 mb-1">{{ $analytics['missing_pet_recovery']['recovery_rate'] ?? 0 }}%</p>
-            <p class="text-xs text-gray-500 mb-3">Recovery Rate</p>
-            <div class="flex gap-2">
-                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ $analytics['missing_pet_recovery']['resolved'] ?? 0 }} Resolved</span>
-                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">{{ $analytics['missing_pet_recovery']['active'] ?? 0 }} Active</span>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Spacing between KPI and Charts -->
+<div class="mb-6"></div>
 
 <!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
