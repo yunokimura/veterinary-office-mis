@@ -40,7 +40,7 @@
         <!-- Metric & Badges Section -->
         <div class="flex-1 flex flex-col justify-between">
             <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
-                <span class="text-3xl font-extrabold text-slate-900 tracking-tight">30</span>
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $stats['confirmed_bite_cases'] ?? 0 }}</span>
                 <span class="text-xs font-medium text-slate-500">Total Cases</span>
             </div>
             
@@ -71,19 +71,17 @@
 
         <div class="flex-1 flex flex-col justify-between">
             <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
-                <span class="text-3xl font-extrabold text-slate-900 tracking-tight">0.2%</span>
-                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-md">
-                    Performance
-                </span>
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ ceil($analytics['vaccination_performance']['percentage'] ?? 0) }}%</span>
+                <span class="text-xs font-medium text-slate-500">Performance</span>
             </div>
             
             <div class="pt-3 space-y-1.5">
                 <div class="flex justify-between text-xs">
                     <span class="text-slate-500 font-medium">Progress</span>
-                    <span class="font-bold text-slate-700">1 / 600 Output</span>
+                    <span class="font-bold text-slate-700">{{ ceil($analytics['vaccination_performance']['percentage'] ?? 0) }}% Output</span>
                 </div>
                 <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                    <div class="bg-emerald-600 h-2 rounded-full" style="width: 0.2%"></div>
+                    <div class="bg-emerald-600 h-2 rounded-full" style="width: {{ ceil($analytics['vaccination_performance']['percentage'] ?? 0) }}%"></div>
                 </div>
             </div>
         </div>
@@ -99,13 +97,13 @@
 
         <div class="flex-1 flex flex-col justify-between">
             <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
-                <span class="text-3xl font-extrabold text-slate-900 tracking-tight">0%</span>
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ ceil($analytics['adoption_performance']['adoption_rate'] ?? 0) }}%</span>
                 <span class="text-xs font-medium text-slate-500">Adoption Rate</span>
             </div>
             
             <div class="pt-3 flex items-center space-x-2">
                 <span class="px-2.5 py-1.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-semibold flex-1 text-center">
-                    0 Approved
+                    0 Completed
                 </span>
                 <span class="px-2.5 py-1.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200/60 text-xs font-semibold flex-1 text-center">
                     4 Pending
@@ -124,7 +122,7 @@
 
         <div class="flex-1 flex flex-col justify-between">
             <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
-                <span class="text-3xl font-extrabold text-slate-900 tracking-tight">0%</span>
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ ceil($analytics['missing_pet_recovery']['recovery_rate'] ?? 0) }}%</span>
                 <span class="text-xs font-medium text-slate-500">Recovery Rate</span>
             </div>
             
