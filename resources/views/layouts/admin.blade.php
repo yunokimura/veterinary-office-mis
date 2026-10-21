@@ -250,10 +250,10 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('city_vet'))
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Rabies Control</div>
+            <div class="sidebar-section-label">Monitoring</div>
 
             <a href="{{ route('city-vet.rabies-geomap') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-geomap') ? 'active-nav' : '' }}">
-                <i class="bi bi-map"></i><span>Rabies Geomap</span>
+                <i class="bi bi-map"></i><span>Confirmed Rabies Geospatial</span>
             </a>
 
             <div class="sidebar-divider"></div>
