@@ -102,7 +102,7 @@
             </div>
             
             <div class="pt-3 flex items-center space-x-2">
-                <span class="px-2.5 py-1.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-semibold flex-1 text-center">
+                <span class="px-2.5 py-1.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-semibold flex-1 text-center whitespace-nowrap">
                     0 Completed
                 </span>
                 <span class="px-2.5 py-1.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200/60 text-xs font-semibold flex-1 text-center">

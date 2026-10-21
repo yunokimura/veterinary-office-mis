@@ -34,6 +34,7 @@ The controller already passes the required data via the `$stats` array:
 **File**: `resources/views/dashboard/city-vet.blade.php` (line 82-101)
 - Change: `<span class="text-4xl font-extrabold text-slate-900 tracking-tight">0%</span>`
 - To: `<span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $stats['adoption_reports'] ?? 0 }}%</span>`
+- **Badge Text Change**: Changed "Approved" to "Completed" badge text in the adoption rate section
 
 ### Step 4: Update KPI Card 4 - Missing Pet Recovery
 **File**: `resources/views/dashboard/city-vet.blade.php` (line 117-140)
@@ -58,6 +59,8 @@ The controller already passes the required data via the `$stats` array:
 2. **Other cards display format**: Keep as is (user confirmed: "No, keep them as is")
    - Implementation: Just add `%` to the vaccination card, keep adoption and missing pet reports unchanged in format
 
+3. **"Completed" badge one-line display**: Added `whitespace-nowrap` CSS class to prevent text wrapping in the Pet Adoption Rate badge. The "Completed" badge now displays on a single line instead of wrapping to two lines.
+
 ## Risks & Considerations
 - The `$stats` array is already populated in the controller, no additional queries needed
 - Fallback values (`?? 0`) ensure cards don't break if data is missing
@@ -77,8 +80,9 @@ The controller already passes the required data via the `$stats` array:
 
 1. Edit Card 1: Replace hardcoded `30` with `{{ $stats['confirmed_bite_cases'] ?? 0 }}`
 2. Edit Card 2: Replace hardcoded `0.2%` with `{{ $stats['anti_rabies_vaccinations'] ?? 0 }}%` (add `%` symbol)
-3. Edit Card 3: Replace hardcoded `0%` with `{{ $stats['adoption_reports'] ?? 0 }}%`
+3. Edit Card 3: Replace hardcoded `0%` with `{{ $stats['adoption_reports'] ?? 0 }}%` and change "Approved" to "Completed" badge text
 4. Edit Card 4: Replace hardcoded `0%` with `{{ $stats['missing_pet_reports'] ?? 0 }}%`
+5. Add `whitespace-nowrap` class to Pet Adoption Rate badges to ensure "Completed" and "Pending" display on single lines
 5. Test the dashboard to verify dynamic data rendering
 6. Verify alignment and spacing remain consistent
 7. Run any existing tests to ensure no regressions
@@ -112,7 +116,7 @@ The view currently uses `compact()` which extracts the `$stats` array making all
 1. Navigate to `/city-vet/dashboard` with data in the database
 2. Verify Card 1 shows actual bite rabies case count
 3. Verify Card 2 shows actual vaccination count with `%` symbol
-4. Verify Card 3 shows actual adoption application count with `%` symbol
+4. Verify Card 3 shows actual adoption application count with `%` symbol and "Completed" badge
 5. Verify Card 4 shows actual missing pet report count with `%` symbol
 6. Test with no data (edge case) - should show 0
 7. Verify symmetrical layout is intact across all screen sizes
