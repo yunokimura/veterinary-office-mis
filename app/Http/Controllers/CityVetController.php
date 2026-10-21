@@ -200,6 +200,10 @@ class CityVetController extends Controller
         $missingMonthlyData = $this->getMonthlyMissingByYear($missingChartTimeframe);
         $missingYearlyData = $this->getYearlyMissingTotals();
 
+        $adoptionVolumeYear = $request->adoption_volume_year ?? $year;
+        $adoptionVolumeApplications = array_map(fn($m) => $this->getMonthlyAdoptionByYear((int)$adoptionVolumeYear)[$m] ?? 0, range(1, 12));
+        $adoptionVolumeCompleted = array_map(fn($m) => $this->getMonthlyAdoptionStatusByYear((int)$adoptionVolumeYear, 'Completed')[$m] ?? 0, range(1, 12));
+
         $compareChartMode = $request->compare_chart_mode ?? 'months';
         $compareChartTimeframe = $request->compare_chart_timeframe ?? ($compareChartMode === 'years' ? '3' : $currentYear);
         $compareBarangayId = $request->compare_barangay ?? null;
@@ -334,6 +338,8 @@ class CityVetController extends Controller
             'chartMissingResolvedCount',
             'chartMissingClosedCount',
             'missingYearlyData',
+            'adoptionVolumeApplications',
+            'adoptionVolumeCompleted',
             'yearlyMissingLabels',
             'yearlyMissingPendingData',
             'yearlyMissingApprovedData',

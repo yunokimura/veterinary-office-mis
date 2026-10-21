@@ -292,6 +292,19 @@
             <canvas id="missingPetReportsChart"></canvas>
         </div>
     </div>
+
+    <!-- Pet Adoption Operational Volume -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-base font-semibold text-gray-800">Pet Adoption Operational Volume</h3>
+                <p class="text-xs text-gray-500">Applications vs Successful Adoptions</p>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="petAdoptionVolumeChart"></canvas>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -333,6 +346,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const spayneuterLabels = @json($spayneuterLabels ?? []);
     const spayneuterData = @json($spayneuterData ?? []);
     const availableYears = @json($availableYears ?? []);
+
+    const adoptionVolumeApplications = @json($adoptionVolumeApplications ?? []);
+    const adoptionVolumeCompleted = @json($adoptionVolumeCompleted ?? []);
 
     function buildLineDataset(label, data, borderColor, backgroundColor) {
         return {
@@ -575,6 +591,72 @@ document.addEventListener('DOMContentLoaded', function() {
             loadMissingChart(mode, missingChartTimeframe.value);
         });
     }
+
+    // Pet Adoption Operational Volume (Dual-Line)
+    const adoptionVolumeCtx = document.getElementById('petAdoptionVolumeChart').getContext('2d');
+    const adoptionVolumeChart = new Chart(adoptionVolumeCtx, {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [
+                buildLineDataset('Applications Submitted', adoptionVolumeApplications, '#3b82f6', 'rgba(59, 130, 246, 0.1)'),
+                buildLineDataset('Successful Adopted Pets', adoptionVolumeCompleted, '#22c55e', 'rgba(34, 197, 94, 0.1)')
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 16,
+                        font: { size: 12 },
+                        color: '#374151',
+                        useBorderRadius: true,
+                        borderRadius: 4
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#111827',
+                    bodyColor: '#374151',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    padding: 10
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: 15,
+                    ticks: { stepSize: 1, color: '#374151' },
+                    grid: { color: '#f3f4f6' },
+                    title: {
+                        display: true,
+                        text: 'Number of Applications / Adoptions',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#374151' },
+                    title: {
+                        display: true,
+                        text: 'Month (Jan to Dec)',
+                        color: '#374151',
+                        font: { size: 12, weight: 'normal' }
+                    }
+                }
+            }
+        }
+    });
 
     // Confirmed Rabies Cases vs Vaccinations per Barangay (Clustered Bar)
     const compareCtx = document.getElementById('biteVsVaccinationChart').getContext('2d');
