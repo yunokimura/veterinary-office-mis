@@ -7,24 +7,6 @@
 
 @section('content')
 
-<!-- Top Row: Key Metrics Summary Cards -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-xl shadow-sm p-4 border border-gray-100 mb-6">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xs text-slate-400">|</span>
-                    <span class="text-xs text-slate-500">Updated today at 08:30 AM</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="refreshData()" class="px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors flex items-center space-x-1.5">
-                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                        <span>Refresh</span>
-                    </button>
-                    <button class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-brand-700 hover:bg-brand-800 transition-colors shadow-sm flex items-center space-x-1.5">
-                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                        <span>Export Summary Report</span>
-                    </button>
-                </div>
-            </div>
-
 <!-- KPI Cards Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
   
@@ -144,10 +126,13 @@
 
 <!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
-    <!-- Confirmed Rabies Cases vs Vaccinations per Barangay -->
+    <!-- Confirmed Rabies Cases vs Anti-Rabies Vaccinations -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases vs Vaccinations per Barangay</h3>
+            <div>
+                <h3 class="text-base font-semibold text-gray-800">Confirmed Rabies Cases vs Anti-Rabies Vaccinations</h3>
+                <p class="text-xs text-gray-500">By Barangay</p>
+            </div>
             <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-2">
                     <div class="flex bg-gray-100 rounded-md p-0.5">
@@ -411,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: monthLabels,
             datasets: [
-                buildLineDataset('Lost &amp; Found Reports Filed', lostFoundReportsFiled, '#f59e0b', 'rgba(245, 158, 11, 0.1)'),
+                buildLineDataset('Lost & Found Reports Filed', lostFoundReportsFiled, '#f59e0b', 'rgba(245, 158, 11, 0.1)'),
                 buildLineDataset('Pets Reunited / Resolved', lostFoundPetsReunited, '#1e40af', 'rgba(30, 64, 175, 0.1)')
             ]
         },
@@ -478,13 +463,13 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: compareLabels.map(String),
             datasets: [
                 {
-                    label: 'Bite Cases',
+                    label: 'Confirmed Rabies Cases',
                     data: compareBiteData,
                     backgroundColor: '#ef4444',
                     borderRadius: 4
                 },
                 {
-                    label: 'Vaccinations',
+                    label: 'Anti-Rabies Vaccinations',
                     data: compareVaccData,
                     backgroundColor: '#3b82f6',
                     borderRadius: 4
