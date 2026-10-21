@@ -600,8 +600,9 @@
                                 input.parentNode.appendChild(errorEl);
                             }
                         }
+                    } else {
+                        showGlobalToast('error', error.message || 'Please check the form for errors.');
                     }
-                    showGlobalToast('error', error.message || 'Please check the form for errors.');
                 })
                 .finally(() => {
                     submitBtn.disabled = false;
@@ -609,20 +610,7 @@
                 });
             }
         });
-    </script>
-    @stack('scripts')
-</body>
-</html>
-         }
-                    showGlobalToast('error', error.message || 'Please check the form for errors.');
-                })
-                .finally(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalBtnText;
-                });
-            }
-        });
-    </script>
+</script>
     @stack('scripts')
 </body>
 </html>
