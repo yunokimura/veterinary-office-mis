@@ -32,119 +32,139 @@
             </div>
         </div>
 
-        {{-- Floating: Stats Pills (top-right) --}}
-        <div class="geomap-stats">
-            <div class="geomap-stats-inner">
-                <div class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 rounded-full bg-red-500" id="statTotalIcon"></div>
-                    <span class="text-[10px] text-slate-400 font-medium" id="statTotalLabel">Total Cases</span>
-                    <span class="text-sm font-bold text-slate-800" id="statTotalCases">{{ $totalCases }}</span>
+        {{-- Floating: Left Column — Stats + Legend (top-left) --}}
+        <div class="geomap-left-column">
+            {{-- Stats Pills --}}
+            <div class="geomap-stats">
+                <div class="geomap-stats-inner">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-2 h-2 rounded-full bg-red-500" id="statTotalIcon"></div>
+                        <span class="text-[10px] text-slate-400 font-medium" id="statTotalLabel">Total Cases</span>
+                        <span class="text-sm font-bold text-slate-800" id="statTotalCases">{{ $totalCases }}</span>
+                    </div>
+                    <div class="w-px h-4 bg-slate-200"></div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-2 h-2 rounded-full bg-amber-500" id="statAffectedIcon"></div>
+                        <span class="text-[10px] text-slate-400 font-medium" id="statAffectedLabel">Affected</span>
+                        <span class="text-sm font-bold text-amber-600" id="statAffected">{{ $activeBarangays }}</span>
+                    </div>
+                    <div class="w-px h-4 bg-slate-200"></div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-2 h-2 rounded-full bg-rose-500" id="statCriticalIcon"></div>
+                        <span class="text-[10px] text-slate-400 font-medium" id="statCriticalLabel">Critical</span>
+                        <span class="text-sm font-bold text-rose-600" id="statCritical">{{ $criticalCount }}</span>
+                    </div>
                 </div>
-                <div class="w-px h-4 bg-slate-200"></div>
-                <div class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 rounded-full bg-amber-500" id="statAffectedIcon"></div>
-                    <span class="text-[10px] text-slate-400 font-medium" id="statAffectedLabel">Affected</span>
-                    <span class="text-sm font-bold text-amber-600" id="statAffected">{{ $activeBarangays }}</span>
-                </div>
-                <div class="w-px h-4 bg-slate-200"></div>
-                <div class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 rounded-full bg-rose-500" id="statCriticalIcon"></div>
-                    <span class="text-[10px] text-slate-400 font-medium" id="statCriticalLabel">Critical</span>
-                    <span class="text-sm font-bold text-rose-600" id="statCritical">{{ $criticalCount }}</span>
+            </div>
+
+            {{-- Legend Panel (below stats) --}}
+            <div class="geomap-legend">
+                {{-- Simple Legend Card --}}
+                <div class="simple-legend-card">
+                    <div class="simple-legend">
+                        <p class="simple-legend-title">Legend</p>
+                        <div class="simple-legend-items">
+                            <div class="simple-legend-item">
+                                <span class="simple-legend-dot" style="background: #dc2626;"></span>
+                                <span class="simple-legend-text">Critical (20+)</span>
+                            </div>
+                            <div class="simple-legend-item">
+                                <span class="simple-legend-dot" style="background: #ea580c;"></span>
+                                <span class="simple-legend-text">High (11-19)</span>
+                            </div>
+                            <div class="simple-legend-item">
+                                <span class="simple-legend-dot" style="background: #eab308;"></span>
+                                <span class="simple-legend-text">Moderate (6-10)</span>
+                            </div>
+                            <div class="simple-legend-item">
+                                <span class="simple-legend-dot" style="background: #fde68a;"></span>
+                                <span class="simple-legend-text">Low (1-5)</span>
+                            </div>
+                            <div class="simple-legend-item">
+                                <span class="simple-legend-dot" style="background: #cbd5e1;"></span>
+                                <span class="simple-legend-text">No Cases</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- Floating: Filter Button (top-right, below stats) --}}
-        <div class="geomap-filter-controls" x-data="{ filterOpen: false }">
-            <button @click="filterOpen = !filterOpen" class="filter-toggle-btn">
-                <i class="bi bi-funnel text-[10px]"></i>
-                <span>Filter and Legends</span>
-                <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
+        {{-- Floating: View Changers + Filters (top-right column) --}}
+        <div class="geomap-view-changers">
+            <button id="btnRabiesLayer" class="layer-toggle-btn active" onclick="switchLayer('rabies')">
+                <i class="bi bi-virus"></i>
+                <span>Confirmed Rabies Cases</span>
+            </button>
+            <button id="btnVaccinationLayer" class="layer-toggle-btn" onclick="switchLayer('vaccination')">
+                <i class="bi bi-shield-check"></i>
+                <span>Anti-Rabies Vaccination</span>
             </button>
 
-            {{-- Filter Panel --}}
-            <div x-show="filterOpen" x-transition @click.away="filterOpen = false" class="filter-panel">
-                {{-- Year Filter --}}
-                <div class="filter-section">
-                    <label class="filter-label">Year</label>
-                    <select id="filterYear" onchange="setFilter('year', parseInt(this.value))" class="filter-select">
-                        @foreach($years as $y)
-                        <option value="{{ $y }}" {{ $y == $selectedYear ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            {{-- Filter Button --}}
+            <div class="geomap-filter-controls" x-data="{ filterOpen: false }">
+                <button @click="filterOpen = !filterOpen" class="filter-toggle-btn">
+                    <i class="bi bi-funnel text-[10px]"></i>
+                    <span>Filter and Legends</span>
+                    <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
+                </button>
 
-                {{-- Month Filter --}}
-                <div class="filter-section">
-                    <label class="filter-label">Month</label>
-                    <select id="filterMonth" onchange="setFilter('month', this.value ? parseInt(this.value) : null)" class="filter-select">
-                        <option value="">All Months</option>
-                        @foreach($months as $num => $name)
-                        <option value="{{ $num }}">{{ $name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                {{-- Filter Panel --}}
+                <div x-show="filterOpen" x-transition @click.away="filterOpen = false" class="filter-panel">
+                    {{-- Year Filter --}}
+                    <div class="filter-section">
+                        <label class="filter-label">Year</label>
+                        <select id="filterYear" onchange="setFilter('year', parseInt(this.value))" class="filter-select">
+                            @foreach($years as $y)
+                            <option value="{{ $y }}" {{ $y == $selectedYear ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                {{-- Week Filter --}}
-                <div class="filter-section">
-                    <label class="filter-label">Week</label>
-                    <select id="filterWeek" onchange="setFilter('week', this.value ? parseInt(this.value) : null)" class="filter-select">
-                        <option value="">All Weeks</option>
-                        @for($w = 1; $w <= 53; $w++)
-                        <option value="{{ $w }}">Week {{ $w }}</option>
-                        @endfor
-                    </select>
-                </div>
+                    {{-- Month Filter --}}
+                    <div class="filter-section">
+                        <label class="filter-label">Month</label>
+                        <select id="filterMonth" onchange="setFilter('month', this.value ? parseInt(this.value) : null)" class="filter-select">
+                            <option value="">All Months</option>
+                            @foreach($months as $num => $name)
+                            <option value="{{ $num }}">{{ $name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                {{-- Date Range Filter --}}
-                <div class="filter-section">
-                    <label class="filter-label">Date Range</label>
-                    <div class="filter-date-range">
-                        <div class="filter-date-field">
-                            <label class="filter-date-label">From</label>
-                            <input type="date" id="filterDateFrom" class="filter-date-input">
-                        </div>
-                        <div class="filter-date-field">
-                            <label class="filter-date-label">To</label>
-                            <input type="date" id="filterDateTo" class="filter-date-input">
+                    {{-- Week Filter --}}
+                    <div class="filter-section">
+                        <label class="filter-label">Week</label>
+                        <select id="filterWeek" onchange="setFilter('week', this.value ? parseInt(this.value) : null)" class="filter-select">
+                            <option value="">All Weeks</option>
+                            @for($w = 1; $w <= 53; $w++)
+                            <option value="{{ $w }}">Week {{ $w }}</option>
+                            @endfor
+                        </select>
+                    </div>
+
+                    {{-- Date Range Filter --}}
+                    <div class="filter-section">
+                        <label class="filter-label">Date Range</label>
+                        <div class="filter-date-range">
+                            <div class="filter-date-field">
+                                <label class="filter-date-label">From</label>
+                                <input type="date" id="filterDateFrom" class="filter-date-input">
+                            </div>
+                            <div class="filter-date-field">
+                                <label class="filter-date-label">To</label>
+                                <input type="date" id="filterDateTo" class="filter-date-input">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="filter-actions">
-                    <button id="clearFilterBtn" class="filter-clear-btn">
-                        <i class="bi bi-x-circle text-[10px]"></i> Clear Filter
-                    </button>
-                </div>
-
-                {{-- Simple Legend --}}
-                <div class="simple-legend">
-                    <p class="simple-legend-title">Legend</p>
-                    <div class="simple-legend-items">
-                        <div class="simple-legend-item">
-                            <span class="simple-legend-dot" style="background: #dc2626;"></span>
-                            <span class="simple-legend-text">Critical (20+)</span>
-                        </div>
-                        <div class="simple-legend-item">
-                            <span class="simple-legend-dot" style="background: #ea580c;"></span>
-                            <span class="simple-legend-text">High (11-19)</span>
-                        </div>
-                        <div class="simple-legend-item">
-                            <span class="simple-legend-dot" style="background: #eab308;"></span>
-                            <span class="simple-legend-text">Moderate (6-10)</span>
-                        </div>
-                        <div class="simple-legend-item">
-                            <span class="simple-legend-dot" style="background: #fde68a;"></span>
-                            <span class="simple-legend-text">Low (1-5)</span>
-                        </div>
-                        <div class="simple-legend-item">
-                            <span class="simple-legend-dot" style="background: #cbd5e1;"></span>
-                            <span class="simple-legend-text">No Cases</span>
-                        </div>
+                    <div class="filter-actions">
+                        <button id="clearFilterBtn" class="filter-clear-btn">
+                            <i class="bi bi-x-circle text-[10px]"></i> Clear Filter
+                        </button>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
 
@@ -249,12 +269,20 @@
         z-index: 1004;
     }
 
-    /* Floating stats pills */
-    .geomap-stats {
+    /* Floating left column: stats + legend */
+    .geomap-left-column {
         position: absolute;
         top: 1rem;
-        right: 1rem;
+        left: 1rem;
         z-index: 1000;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Floating stats pills */
+    .geomap-stats {
         pointer-events: none;
     }
     .geomap-stats-inner {
@@ -267,6 +295,24 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        pointer-events: auto;
+    }
+
+    /* Floating legend panel (below stats) */
+    .geomap-legend {
+        pointer-events: none;
+    }
+
+    /* Legend card styling */
+    .simple-legend-card {
+        width: fit-content;
+        max-width: 200px;
+        backdrop-filter: blur(12px);
+        background: rgba(255,255,255,0.95);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+        border: 1px solid #e2e8f0;
         pointer-events: auto;
     }
 
@@ -305,20 +351,18 @@
         50% { opacity: 0.5; }
     }
 
-    /* Layer Toggle Control (Leaflet custom control) */
-    .layer-toggle-control {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        margin-left: 12px !important;
-        margin-top: 12px !important;
-        display: flex !important;
+    /* View Changers column (top-right) */
+    .geomap-view-changers {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1000;
+        display: flex;
         flex-direction: column;
         gap: 8px;
     }
 
-    .layer-toggle-control .layer-toggle-btn {
+    .geomap-view-changers .layer-toggle-btn {
         display: flex;
         align-items: center;
         gap: 6px;
@@ -339,28 +383,28 @@
         justify-content: flex-start;
     }
 
-    .layer-toggle-control .layer-toggle-btn:hover {
+    .geomap-view-changers .layer-toggle-btn:hover {
         background: #fff;
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         border-color: #cbd5e1;
     }
 
-    .layer-toggle-control .layer-toggle-btn.active {
+    .geomap-view-changers .layer-toggle-btn.active {
         background: #4f46e5;
         color: #fff;
         border-color: #4f46e5;
         box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
     }
 
-    .layer-toggle-control .layer-toggle-btn i {
+    .geomap-view-changers .layer-toggle-btn i {
         font-size: 12px;
     }
 
     /* Filter Controls */
     .geomap-filter-controls {
         position: absolute;
-        top: 4.5rem;
-        right: 1rem;
+        top: calc(100% + 12px);
+        right: 0;
         z-index: 1000;
     }
 
@@ -512,9 +556,6 @@
 
     /* Simple Legend */
     .simple-legend {
-        margin-top: 12px;
-        padding-top: 10px;
-        border-top: 1px solid #f1f5f9;
     }
 
     .simple-legend-title {
@@ -560,13 +601,17 @@
             height: calc(100vh - 9rem);
             margin: -1.5rem;
         }
-        .geomap-stats {
+        .geomap-left-column {
+            top: 0.5rem;
+            left: 0.5rem;
+        }
+        .geomap-view-changers {
             top: 0.5rem;
             right: 0.5rem;
         }
         .geomap-filter-controls {
-            top: 3.75rem;
-            right: 0.5rem;
+            top: calc(100% + 8px);
+            right: 0;
         }
         .filter-panel {
             width: 180px;
@@ -606,26 +651,8 @@ document.addEventListener('DOMContentLoaded', function() {
         maxZoom: 19
     }).addTo(map);
 
-    // --- Layer Toggle Control (added first, so it appears at top) ---
-    var layerControl = L.control({ position: 'topleft' });
-    layerControl.onAdd = function() {
-        var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom layer-toggle-control');
-        div.innerHTML = `
-            <button id="btnRabiesLayer" class="layer-toggle-btn active" onclick="switchLayer('rabies')">
-                <i class="bi bi-virus"></i>
-                <span>Confirmed Rabies Cases</span>
-            </button>
-            <button id="btnVaccinationLayer" class="layer-toggle-btn" onclick="switchLayer('vaccination')">
-                <i class="bi bi-shield-check"></i>
-                <span>Anti-Rabies Vaccination</span>
-            </button>
-        `;
-        return div;
-    };
-    layerControl.addTo(map);
-
-    // --- Zoom Control (added second, appears below layer control) ---
-    L.control.zoom({ position: 'topleft' }).addTo(map);
+    // --- Zoom Control (bottom-right) ---
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     // Hide the loading placeholder
     var loadingEl = document.querySelector('.geomap-loading');
@@ -956,8 +983,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('statCritical').textContent = highCount;
     }
 
-    // --- Reset view button (added last, appears at bottom) ---
-    var resetControl = L.control({ position: 'topleft' });
+    // --- Reset view button (bottom-right) ---
+    var resetControl = L.control({ position: 'bottomright' });
     resetControl.onAdd = function() {
         var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
         div.innerHTML = '<a href="#" title="Reset view" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:16px;cursor:pointer;">⟲</a>';
