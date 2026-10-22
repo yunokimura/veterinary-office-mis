@@ -65,6 +65,7 @@
             <form method="POST" action="{{ route('missing-pets.report.guest.store', ['type' => 'missing']) }}" enctype="multipart/form-data" id="guestMissingPetForm">
                 @csrf
                 <input type="hidden" name="report_type" value="missing">
+                <input type="hidden" name="loaded_at" value="{{ $loadedAt ?? now()->timestamp }}">
                 <input type="hidden" name="step" id="stepInput" value="1">
 
                 <!-- Multi-Step Progress Indicator -->
@@ -189,9 +190,39 @@
                                             <input type="radio" name="gender" value="male" class="form-radio h-5 w-5 text-emerald-600" required {{ old('gender') === 'male' ? 'checked' : '' }}>
                                             <span class="ml-3 text-gray-700 font-medium">Male</span>
                                         </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="gender" value="female" class="form-radio h-5 w-5 text-emerald-600" required {{ old('gender') === 'female' ? 'checked' : '' }}>
+                                    <span class="ml-3 text-gray-700 font-medium">Female</span>
+                                </label>
+                                    </div>
+                                </div>
+
+                                <!-- Spayed / Neutered -->
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Spayed / Neutered <span class="text-red-500">*</span></label>
+                                    <div class="flex space-x-6">
                                         <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="gender" value="female" class="form-radio h-5 w-5 text-emerald-600" required {{ old('gender') === 'female' ? 'checked' : '' }}>
-                                            <span class="ml-3 text-gray-700 font-medium">Female</span>
+                                            <input type="radio" name="is_neutered" value="yes" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'yes' ? 'checked' : '' }}>
+                                            <span class="ml-3 text-gray-700 font-medium">Yes</span>
+                                        </label>
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="is_neutered" value="no" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'no' ? 'checked' : '' }}>
+                                            <span class="ml-3 text-gray-700 font-medium">No</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Crossbreed -->
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
+                                    <div class="flex space-x-6">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_crossbreed') === 'yes' ? 'checked' : '' }}>
+                                            <span class="ml-3 text-gray-700 font-medium">Yes</span>
+                                        </label>
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_crossbreed') === 'no' ? 'checked' : '' }}>
+                                            <span class="ml-3 text-gray-700 font-medium">No</span>
                                         </label>
                                     </div>
                                 </div>
