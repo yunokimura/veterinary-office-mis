@@ -305,8 +305,7 @@
 
     /* Legend card styling */
     .simple-legend-card {
-        width: fit-content;
-        max-width: 200px;
+        width: 180px;
         backdrop-filter: blur(12px);
         background: rgba(255,255,255,0.95);
         border-radius: 0.75rem;
