@@ -558,7 +558,7 @@
     }
 
     .simple-legend-title {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 600;
         color: #64748b;
         text-transform: uppercase;
@@ -569,18 +569,24 @@
     .simple-legend-items {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 10px;
     }
 
     .simple-legend-item {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
         cursor: pointer;
     }
 
     .simple-legend-item.severity-active {
         background: #e0e7ff;
+        border-radius: 6px;
+        padding: 4px 8px;
+    }
+
+    .simple-legend-item:hover {
+        background: #f8fafc;
         border-radius: 6px;
         padding: 4px 8px;
     }
@@ -594,7 +600,7 @@
     }
 
     .simple-legend-text {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 500;
         color: #475569;
     }
