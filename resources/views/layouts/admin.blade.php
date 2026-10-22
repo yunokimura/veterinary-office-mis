@@ -415,8 +415,13 @@
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open"
                                 class="flex items-center gap-2 pl-3 border-l border-slate-200 focus:outline-none rounded-md py-1 pr-2 hover:bg-slate-50">
-                            <div class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center">
-                                <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
+                            <div class="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center">
+                                <?php
+                                    $name = auth()->user()->name ?? 'M Santos';
+                                    $parts = explode(' ', trim($name));
+                                    $initials = (isset($parts[0]) ? strtoupper(substr($parts[0], 0, 1)) : 'M') . (isset($parts[1]) ? strtoupper(substr($parts[1], 0, 1)) : 'S');
+                                ?>
+                                <span class="text-white text-xs font-bold">{{ $initials }}</span>
                             </div>
                             <span class="text-sm font-medium text-slate-600 hidden md:block">{{ auth()->user()->name ?? 'Admin' }}</span>
                             <i class="bi text-xs text-slate-400 hidden md:block"
