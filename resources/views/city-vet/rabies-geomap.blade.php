@@ -39,20 +39,20 @@
                 <div class="geomap-stats-inner">
                     <div class="flex items-center gap-1.5">
                         <div class="w-2 h-2 rounded-full bg-red-500" id="statTotalIcon"></div>
-                        <span class="text-[10px] text-slate-400 font-medium" id="statTotalLabel">Total Cases</span>
-                        <span class="text-sm font-bold text-slate-800" id="statTotalCases">{{ $totalCases }}</span>
+                        <span class="text-[11px] text-slate-400 font-medium" id="statTotalLabel">Total Cases</span>
+                        <span class="text-base font-bold text-slate-800" id="statTotalCases">{{ $totalCases }}</span>
                     </div>
                     <div class="w-px h-4 bg-slate-200"></div>
                     <div class="flex items-center gap-1.5">
                         <div class="w-2 h-2 rounded-full bg-amber-500" id="statAffectedIcon"></div>
-                        <span class="text-[10px] text-slate-400 font-medium" id="statAffectedLabel">Affected</span>
-                        <span class="text-sm font-bold text-amber-600" id="statAffected">{{ $activeBarangays }}</span>
+                        <span class="text-[11px] text-slate-400 font-medium" id="statAffectedLabel">Affected</span>
+                        <span class="text-base font-bold text-amber-600" id="statAffected">{{ $activeBarangays }}</span>
                     </div>
                     <div class="w-px h-4 bg-slate-200"></div>
                     <div class="flex items-center gap-1.5">
                         <div class="w-2 h-2 rounded-full bg-rose-500" id="statCriticalIcon"></div>
-                        <span class="text-[10px] text-slate-400 font-medium" id="statCriticalLabel">Critical</span>
-                        <span class="text-sm font-bold text-rose-600" id="statCritical">{{ $criticalCount }}</span>
+                        <span class="text-[11px] text-slate-400 font-medium" id="statCriticalLabel">Critical</span>
+                        <span class="text-base font-bold text-rose-600" id="statCritical">{{ $criticalCount }}</span>
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
             <div class="geomap-filter-controls" x-data="{ filterOpen: false }">
                 <button @click="filterOpen = !filterOpen" class="filter-toggle-btn">
                     <i class="bi bi-funnel text-[10px]"></i>
-                    <span>Filter and Legends</span>
+                    <span>Filters</span>
                     <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
                 </button>
 
@@ -410,8 +410,8 @@
     .filter-toggle-btn {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
+        gap: 8px;
+        padding: 8px 16px;
         background: rgba(255,255,255,0.95);
         backdrop-filter: blur(8px);
         border: 1px solid #e2e8f0;
@@ -419,7 +419,7 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         cursor: pointer;
         color: #475569;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 500;
         transition: all 0.15s;
         font-family: 'Inter', system-ui, sans-serif;
