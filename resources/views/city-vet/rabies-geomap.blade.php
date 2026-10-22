@@ -577,6 +577,7 @@
         align-items: center;
         gap: 12px;
         cursor: pointer;
+        transition: all 0.15s ease;
     }
 
     .simple-legend-item.severity-active {
