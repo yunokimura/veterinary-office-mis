@@ -559,7 +559,7 @@
     }
 
     .simple-legend-title {
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 600;
         color: #64748b;
         text-transform: uppercase;
@@ -588,7 +588,7 @@
     }
 
     .simple-legend-text {
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 500;
         color: #475569;
     }
