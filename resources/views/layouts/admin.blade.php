@@ -156,8 +156,8 @@
                         class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-400">
                     <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
                 </button>
-                <div x-show="open" @click.away="open = false"
-                     class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-slate-200 z-50 py-1"
+                         <div x-show="open" @click.away="open = false"
+                              class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-slate-200 z-50 py-1"
                      style="display: none;">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -353,7 +353,7 @@
     <!-- Main Content -->
     <main>
         <!-- Top Bar -->
-        <header class="main-header bg-white border-b border-slate-200 hidden md:block">
+        <header class="main-header bg-white border-b border-slate-200 hidden md:block relative z-[1100]">
             <div class="flex items-center justify-between px-6 h-16">
                 <div>
                     <h2 class="text-lg font-semibold text-slate-800">@yield('header', 'Dashboard')</h2>
