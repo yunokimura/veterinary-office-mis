@@ -330,7 +330,7 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         cursor: pointer;
         color: #64748b;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 500;
         transition: all 0.2s;
         font-family: 'Inter', system-ui, sans-serif;
@@ -613,11 +613,11 @@ document.addEventListener('DOMContentLoaded', function() {
         div.innerHTML = `
             <button id="btnRabiesLayer" class="layer-toggle-btn active" onclick="switchLayer('rabies')">
                 <i class="bi bi-virus"></i>
-                <span>Rabies Cases</span>
+                <span>Confirmed Rabies Cases</span>
             </button>
             <button id="btnVaccinationLayer" class="layer-toggle-btn" onclick="switchLayer('vaccination')">
                 <i class="bi bi-shield-check"></i>
-                <span>Vaccination</span>
+                <span>Anti-Rabies Vaccination</span>
             </button>
         `;
         return div;
