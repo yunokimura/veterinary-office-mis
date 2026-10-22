@@ -445,10 +445,6 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     Route::put('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'update'])->name('medical-records.update');
     Route::delete('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
 
-    // Rabies Geomap (Geospatial Mapping)
-    Route::get('/rabies-geomap', [CityVetController::class, 'geomap'])->name('rabies-geomap');
-    Route::get('/rabies-geomap/data', [CityVetController::class, 'geomapData'])->name('rabies-geomap.data');
-
     // Missing Pet Reports
     Route::get('/missing-pet-reports', [CityVetController::class, 'indexMissingPetReports'])->name('missing-pet-reports.index');
     Route::get('/missing-pet-reports/filter', [CityVetController::class, 'filterMissingPetReports'])->name('missing-pet-reports.filter');

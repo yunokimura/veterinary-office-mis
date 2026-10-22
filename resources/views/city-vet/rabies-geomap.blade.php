@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('title', 'Rabies Geomap')
-@section('header', 'Rabies Case Distribution')
-@section('subheader', 'Dasmariñas City Disease Surveillance')
+@section('header', 'Confirmed Rabies Geospatial Map')
+@section('subheader', 'City of Dasmariñas Rabies Monitoring')
 
 @php
     $currentYear = date('Y');

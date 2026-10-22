@@ -254,7 +254,7 @@
             <div class="sidebar-section-label">Monitoring</div>
 
             <a href="{{ route('city-vet.rabies-geomap') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-geomap') ? 'active-nav' : '' }}">
-                <i class="bi bi-map"></i><span>Confirmed Rabies Geospatial</span>
+                <i class="bi bi-map"></i><span>Confirmed Rabies Geospatial Map</span>
             </a>
 
             <div class="sidebar-divider"></div>
