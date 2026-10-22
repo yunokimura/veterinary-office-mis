@@ -62,25 +62,25 @@
                 {{-- Simple Legend Card --}}
                 <div class="simple-legend-card">
                     <div class="simple-legend">
-                        <p class="simple-legend-title">Legend</p>
+                        <p class="simple-legend-title">Severity Legend</p>
                         <div class="simple-legend-items">
-                            <div class="simple-legend-item">
+                            <div class="simple-legend-item" onclick="setSeverityFilter('critical')">
                                 <span class="simple-legend-dot" style="background: #dc2626;"></span>
                                 <span class="simple-legend-text">Critical (20+)</span>
                             </div>
-                            <div class="simple-legend-item">
+                            <div class="simple-legend-item" onclick="setSeverityFilter('high')">
                                 <span class="simple-legend-dot" style="background: #ea580c;"></span>
                                 <span class="simple-legend-text">High (11-19)</span>
                             </div>
-                            <div class="simple-legend-item">
+                            <div class="simple-legend-item" onclick="setSeverityFilter('moderate')">
                                 <span class="simple-legend-dot" style="background: #eab308;"></span>
                                 <span class="simple-legend-text">Moderate (6-10)</span>
                             </div>
-                            <div class="simple-legend-item">
+                            <div class="simple-legend-item" onclick="setSeverityFilter('low')">
                                 <span class="simple-legend-dot" style="background: #fde68a;"></span>
                                 <span class="simple-legend-text">Low (1-5)</span>
                             </div>
-                            <div class="simple-legend-item">
+                            <div class="simple-legend-item" onclick="setSeverityFilter('none')">
                                 <span class="simple-legend-dot" style="background: #cbd5e1;"></span>
                                 <span class="simple-legend-text">No Cases</span>
                             </div>
@@ -577,6 +577,13 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        cursor: pointer;
+    }
+
+    .simple-legend-item.severity-active {
+        background: #e0e7ff;
+        border-radius: 6px;
+        padding: 4px 8px;
     }
 
     .simple-legend-dot {
@@ -633,7 +640,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var filters = { year: {{ $selectedYear }}, month: null, week: null };
+    var filters = { year: {{ $selectedYear }}, month: null, week: null, severity: null };
     var currentLayer = 'rabies'; // 'rabies' or 'vaccination'
     var map, barangayLayer, outsideMaskLayer, cityBounds, geojsonData;
 
@@ -882,6 +889,27 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchFilteredData();
     };
 
+    // Severity filter functionality (clickable legend items)
+    window.setSeverityFilter = function(severity) {
+        if (filters.severity === severity) {
+            filters.severity = null; // toggle off if same
+        } else {
+            filters.severity = severity;
+        }
+        updateSeverityLegendUI();
+        fetchFilteredData();
+    };
+
+    function updateSeverityLegendUI() {
+        document.querySelectorAll('.simple-legend-item').forEach(function(item) {
+            item.classList.remove('severity-active');
+        });
+        if (filters.severity) {
+            var activeItem = document.querySelector('.simple-legend-item[onclick*="' + filters.severity + '"]');
+            if (activeItem) activeItem.classList.add('severity-active');
+        }
+    }
+
     // Date picker handlers
     document.getElementById('filterDateFrom')?.addEventListener('change', function() {
         filters.date_from = this.value || null;
@@ -898,6 +926,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset filters to default values
         filters.month = null;
         filters.week = null;
+        filters.severity = null;
         filters.date_from = null;
         filters.date_to = null;
 
@@ -919,6 +948,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (filters.week) params.append('week', filters.week);
         if (filters.date_from) params.append('date_from', filters.date_from);
         if (filters.date_to) params.append('date_to', filters.date_to);
+        if (filters.severity) params.append('severity', filters.severity);
 
         var baseUrl = window.location.pathname.replace(/\/$/, '');
         fetch(baseUrl + '/data?' + params.toString())

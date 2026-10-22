@@ -886,6 +886,7 @@ class CityVetController extends Controller
         $dateFrom = $request->date_from ?: null;
         $dateTo = $request->date_to ?: null;
         $type = $request->type ?? 'rabies'; // 'rabies' or 'vaccination'
+        $severity = $request->severity ?? null; // 'critical', 'high', 'moderate', 'low', 'none'
 
         // Debug: Check if data exists
         $totalInDb = BiteRabiesReport::whereYear('incident_date', $year)->count();
@@ -894,11 +895,11 @@ class CityVetController extends Controller
 
         // Get data based on type
         if ($type === 'vaccination') {
-            $heatmapData = $this->getFilteredVaccinationHeatmapData($year, $month, $week, $dateFrom, $dateTo);
+            $heatmapData = $this->getFilteredVaccinationHeatmapData($year, $month, $week, $dateFrom, $dateTo, $severity);
             $caseTypeBreakdown = [];
             $totalCases = collect($heatmapData)->sum('count');
         } else {
-            $heatmapData = $this->getFilteredHeatmapData($year, $month, $week, $dateFrom, $dateTo);
+            $heatmapData = $this->getFilteredHeatmapData($year, $month, $week, $dateFrom, $dateTo, $severity);
             $caseTypeBreakdown = $this->getFilteredCaseTypeBreakdown($year, $month, $week, $dateFrom, $dateTo);
             $totalCases = collect($heatmapData)->sum('count');
         }
@@ -935,7 +936,7 @@ class CityVetController extends Controller
     /**
      * Get filtered heatmap data by year, month, and/or week.
      */
-    private function getFilteredHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
+    private function getFilteredHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null, ?string $severity = null): array
     {
         $query = BiteRabiesReport::whereYear('incident_date', $year)
             ->whereNotNull('barangay_id')
@@ -954,6 +955,27 @@ class CityVetController extends Controller
 
         if ($week) {
             $query->whereRaw('WEEK(incident_date, 1) = ?', [$week]);
+        }
+
+        // Apply severity filter on aggregated case count
+        if ($severity) {
+            switch ($severity) {
+                case 'critical':
+                    $query->havingRaw('COUNT(*) > 20');
+                    break;
+                case 'high':
+                    $query->havingRaw('COUNT(*) BETWEEN 11 AND 19');
+                    break;
+                case 'moderate':
+                    $query->havingRaw('COUNT(*) BETWEEN 6 AND 10');
+                    break;
+                case 'low':
+                    $query->havingRaw('COUNT(*) BETWEEN 1 AND 5');
+                    break;
+                case 'none':
+                    $query->havingRaw('COUNT(*) = 0');
+                    break;
+            }
         }
 
         $byBarangay = $query
@@ -990,7 +1012,7 @@ class CityVetController extends Controller
     /**
      * Get filtered vaccination heatmap data by year, month, and/or week.
      */
-    private function getFilteredVaccinationHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
+    private function getFilteredVaccinationHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null, ?string $severity = null): array
     {
         $query = VaccinationReport::whereYear('vaccination_date', $year)
             ->whereNotNull('barangay_id')
@@ -1010,6 +1032,27 @@ class CityVetController extends Controller
 
         if ($week) {
             $query->whereRaw('WEEK(vaccination_date, 1) = ?', [$week]);
+        }
+
+        // Apply severity filter on aggregated vaccination count
+        if ($severity) {
+            switch ($severity) {
+                case 'critical':
+                    $query->havingRaw('COUNT(*) > 20');
+                    break;
+                case 'high':
+                    $query->havingRaw('COUNT(*) BETWEEN 11 AND 19');
+                    break;
+                case 'moderate':
+                    $query->havingRaw('COUNT(*) BETWEEN 6 AND 10');
+                    break;
+                case 'low':
+                    $query->havingRaw('COUNT(*) BETWEEN 1 AND 5');
+                    break;
+                case 'none':
+                    $query->havingRaw('COUNT(*) = 0');
+                    break;
+            }
         }
 
         $byBarangay = $query
