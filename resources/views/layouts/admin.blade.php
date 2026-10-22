@@ -60,30 +60,31 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 9px 14px;
+            padding: 12px 16px;
             border-radius: 8px;
-            color: rgba(167, 243, 208, 0.7);
-            font-size: 13.5px;
-            font-weight: 500;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
             transition: all 0.15s ease;
             text-decoration: none;
             background: transparent;
         }
-        .nav-item:hover { background: #065f46; color: #a7f3d0; }
+        .nav-item:hover { background: #065f46; color: #ffffff; }
         .nav-item.active-nav {
             background: #047857;
             color: #ffffff;
             box-shadow: 0 2px 8px rgba(4, 120, 87, 0.35);
+            border-left: 3px solid #a7f3d0;
         }
         .nav-item i { width: 20px; text-align: center; font-size: 16px; flex-shrink: 0; }
 
         .sidebar-divider { height: 1px; background: #065f46; margin: 12px 16px; }
         .sidebar-section-label {
-            font-size: 10.5px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #ffffff;
+            color: rgba(255, 255, 255, 0.65);
             padding: 12px 16px 6px;
         }
 
@@ -276,22 +277,22 @@
                        :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
                 </button>
                 <div x-show="open" x-cloak class="ml-4 mt-1 mb-3 space-y-3">
-                    <a href="{{ route('admin.bite-reports.index') }}" class="nav-item block px-2 py-1 rounded-md transition-colors">
+                    <a href="{{ route('admin.bite-reports.index') }}"                         class="nav-item block rounded-md transition-colors">
                         <i class="bi bi-exclamation-triangle mr-2 text-xs"></i>Confirmed Rabies Reports
                     </a>
-                    <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item block px-2 py-1 rounded-md transition-colors">
+                    <a href="{{ route('admin.vaccination-reports.index') }}"                         class="nav-item block rounded-md transition-colors">
                         <i class="bi bi-shield-check mr-2 text-xs"></i>Anti-Rabies Vaccination
                     </a>
-                    <a href="{{ route('admin.missing-pet-reports.index') }}" class="nav-item block px-2 py-1 rounded-md transition-colors">
+                    <a href="{{ route('admin.missing-pet-reports.index') }}"                         class="nav-item block rounded-md transition-colors">
                         <i class="bi bi-search mr-2 text-xs"></i>Missing Pet Reports
                     </a>
-                    <a href="{{ route('admin.adoption-reports.index') }}" class="nav-item block px-2 py-1 rounded-md transition-colors">
+                    <a href="{{ route('admin.adoption-reports.index') }}"                         class="nav-item block rounded-md transition-colors">
                         <i class="bi bi-heart-fill mr-2 text-xs"></i>Adoption Reports
                     </a>
-                    <a href="{{ route('admin.meat-inspection-reports.index') }}" class="nav-item block px-2 py-1 rounded-md transition-colors">
+                    <a href="{{ route('admin.meat-inspection-reports.index') }}"                         class="nav-item block rounded-md transition-colors">
                         <i class="bi bi-clipboard-check mr-2 text-xs"></i>Meat Inspection
                     </a>
-                    <a href="{{ route('admin.all-reports') }}" class="nav-item block px-2 py-1 rounded-md transition-colors">
+                    <a href="{{ route('admin.all-reports') }}"                         class="nav-item block rounded-md transition-colors">
                         <i class="bi bi-file-earmark-bar-graph mr-2 text-xs"></i>All Reports
                     </a>
                 </div>
