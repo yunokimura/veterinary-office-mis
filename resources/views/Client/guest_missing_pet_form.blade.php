@@ -143,21 +143,6 @@
                             </div>
                         </div>
 
-                        <!-- Spayed / Neutered -->
-                        <div>
-                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Spayed / Neutered <span class="text-red-500">*</span></label>
-                            <div class="flex space-x-6">
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="is_neutered" value="yes" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'yes' ? 'checked' : '' }}>
-                                    <span class="ml-3 text-gray-700 font-medium">Yes</span>
-                                </label>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="is_neutered" value="no" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'no' ? 'checked' : '' }}>
-                                    <span class="ml-3 text-gray-700 font-medium">No</span>
-                                </label>
-                            </div>
-                        </div>
-
                         <!-- Crossbreed -->
                         <div>
                             <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
@@ -210,63 +195,6 @@
                         </div>
                     </div>
                     <div class="p-6 space-y-6">
-
-                        <!-- Do you know your pet's birthdate -->
-                        <div>
-                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Do you know your pet's birthdate? <span class="text-red-500">*</span></label>
-                            <div class="flex space-x-6">
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="know_birthdate" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" required {{ old('know_birthdate') === 'yes' ? 'checked' : '' }}>
-                                    <span class="ml-3 text-gray-700 font-medium">Yes</span>
-                                </label>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="know_birthdate" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleBirthdate()" required {{ old('know_birthdate') === 'no' ? 'checked' : '' }}>
-                                    <span class="ml-3 text-gray-700 font-medium">No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Pet's Birthdate / Pet Age -->
-                        <div id="ageOrBirthdateWrap" class="hidden border-l-2 border-emerald-300 pl-4 space-y-4">
-                            <!-- Pet's Birthdate -->
-                            <div id="birthdateSection" class="hidden space-y-2">
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-1">Pet's Birthdate</label>
-                                <input type="date" id="petBirthdate" name="pet_birthdate" value="{{ old('pet_birthdate') }}" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                            </div>
-
-                            <!-- Pet Age -->
-                            <div id="ageSection" class="hidden space-y-2">
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-1">Pet Age</label>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Years</label>
-                                        <select id="petAgeYears" name="pet_age_years" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                                            <option value="">Select years</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Months</label>
-                                        <select id="petAgeMonths" name="pet_age_months" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                                            <option value="">Select months</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <p id="ageHint" class="text-xs text-gray-700 mt-1 hidden">Please specify your pet's age in years or months.</p>
-                            </div>
-                        </div>
-
-                        <!-- Pet Weight -->
-                        <div>
-                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Pet's Weight (kg)</label>
-                            <div class="relative">
-                                <input type="text" id="petWeight" name="pet_weight" value="{{ old('pet_weight') }}" placeholder="Enter weight in kg" maxlength="6" class="w-full px-3.5 py-2.5 pr-12 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                                <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium pointer-events-none hidden">kg</span>
-                            </div>
-                            <label class="inline-flex items-center cursor-pointer mt-2">
-                                <input type="checkbox" id="weightUnknown" name="weight_unknown" value="1" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleWeightUnknown()" {{ old('weight_unknown') ? 'checked' : '' }}>
-                                <span class="ml-3 text-gray-700 font-medium">Weight unknown</span>
-                            </label>
-                        </div>
 
                         <!-- Eye Color -->
                         <div>
