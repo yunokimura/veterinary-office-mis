@@ -143,20 +143,20 @@
                             </div>
                         </div>
 
-                        <!-- Crossbreed -->
-                        <div>
-                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
-                            <div class="flex space-x-6">
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ old('is_crossbreed') === 'yes' ? 'checked' : '' }}>
-                                    <span class="ml-3 text-gray-700 font-medium">Yes</span>
-                                </label>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ old('is_crossbreed') === 'no' ? 'checked' : '' }}>
-                                    <span class="ml-3 text-gray-700 font-medium">No</span>
-                                </label>
-                            </div>
-                        </div>
+<!-- Crossbreed -->
+<div>
+    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
+    <div class="flex space-x-6">
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ (old('is_crossbreed') === 'yes' || (session('guest_prefill_data')?->is_crossbreed ?? '') === 'yes') ? 'checked' : '' }}>
+            <span class="ml-3 text-gray-700 font-medium">Yes</span>
+        </label>
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ (old('is_crossbreed') === 'no' || (session('guest_prefill_data')?->is_crossbreed ?? '') === 'no') ? 'checked' : '' }}>
+            <span class="ml-3 text-gray-700 font-medium">No</span>
+        </label>
+    </div>
+</div>
 
                         <!-- Pet Breed -->
                         <div id="breedSection">
