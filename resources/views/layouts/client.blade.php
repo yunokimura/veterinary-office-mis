@@ -16,6 +16,9 @@
                         'primary-light': '#088442',
                         secondary: '#6B21A8',
                         'secondary-light': '#7C3AED',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }

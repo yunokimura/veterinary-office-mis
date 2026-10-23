@@ -20,6 +20,9 @@
                         'primary-light': '#088442',
                         secondary: '#6B21A8',
                         'secondary-light': '#7C3AED',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
@@ -27,7 +30,7 @@
     </script>
     <script src="{{ asset('js/breeds.js') }}" defer></script>
 </head>
-<body class="font-sans bg-gray-50 min-h-screen">
+<body class="font-sans antialiased bg-gray-50 min-h-screen">
 
 <!-- Header -->
 @include('Client.partials.navbar')
