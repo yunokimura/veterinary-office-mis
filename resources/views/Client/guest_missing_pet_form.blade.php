@@ -354,12 +354,12 @@
                         </div>
 
                         <!-- Collar / Harness -->
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-3">
                             <div>
                                 <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-1">Collar / Harness</label>
-                                <input type="text" id="collarHarnessInput" name="collar_harness" value="{{ old('collar_harness') }}" placeholder="e.g., Red collar with bells, None" class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+                                <input type="text" id="collarHarnessInput" name="collar_harness" value="{{ old('collar_harness') }}" placeholder="e.g., Red collar with bells, None" class="w-[350px] px-3.5 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
-                            <div class="flex items-end">
+                            <div>
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="noCollarHarness" class="form-checkbox h-5 w-5 text-emerald-600 rounded" onchange="toggleNoCollarHarness()">
                                     <span class="ml-3 text-gray-700 font-medium">Pet doesn't wear any collar/harness</span>
