@@ -185,9 +185,11 @@
 
                 <form id="petRegistrationForm" method="POST" action="{{ url('/pet-registration/form') }}" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="book_booster" id="bookBoosterInput" value="0">
+<input type="hidden" name="book_booster" id="bookBoosterInput" value="0">
 
-                    <!-- STEP 1: Pet Basics -->
+@include('Client.partials.guest_email_verification')
+
+<!-- STEP 1: Pet Basics -->
                     <div id="step-1" class="step-pane space-y-6">
 <!-- Card 1: Pet Profile & Basic Info -->
                     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
@@ -228,26 +230,29 @@
                                 </div>
                             </div>
 
-                            <!-- Pet Name -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Your Pet's Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="pet_name" value="{{ old('pet_name') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter your pet's name" required>
-                            </div>
+<!-- Pet Name -->
+<div>
+    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Your Pet's Name <span class="text-red-500">*</span></label>
+    <input type="text" name="pet_name" 
+        value="{{ session('guest_prefill_data')?->pet_name ?? old('pet_name') }}" 
+        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" 
+        placeholder="Enter your pet's name" required>
+</div>
 
-                            <!-- Pet Type -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">What kind of pet do you have? <span class="text-red-500">*</span></label>
-                                <div class="flex space-x-6">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_type" value="dog" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required {{ old('pet_type') === 'dog' ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">Dog</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_type" value="cat" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required {{ old('pet_type') === 'cat' ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">Cat</span>
-                                    </label>
-                                </div>
-                            </div>
+<!-- Pet Type -->
+<div>
+    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">What kind of pet do you have? <span class="text-red-500">*</span></label>
+    <div class="flex space-x-6">
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="pet_type" value="dog" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required {{ (old('pet_type') === 'dog' || (session('guest_prefill_data')?->species ?? '') === 'dog') ? 'checked' : '' }}>
+            <span class="ml-3 text-gray-700 font-medium">Dog</span>
+        </label>
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="pet_type" value="cat" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required {{ (old('pet_type') === 'cat' || (session('guest_prefill_data')?->species ?? '') === 'cat') ? 'checked' : '' }}>
+            <span class="ml-3 text-gray-700 font-medium">Cat</span>
+        </label>
+    </div>
+</div>
 
                             <!-- Gender & Spayed / Neutered -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -296,20 +301,20 @@
                         </div>
                         <div class="p-6 space-y-6">
 
-                            <!-- Crossbreed -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
-                                <div class="flex space-x-6">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ old('is_crossbreed') === 'yes' ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">Yes</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ old('is_crossbreed') === 'no' ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">No</span>
-                                    </label>
-                                </div>
-                            </div>
+<!-- Crossbreed -->
+<div>
+    <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
+    <div class="flex space-x-6">
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ (old('is_crossbreed') === 'yes' || (session('guest_prefill_data')?->is_crossbreed ?? '') === 'yes') ? 'checked' : '' }}>
+            <span class="ml-3 text-gray-700 font-medium">Yes</span>
+        </label>
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ (old('is_crossbreed') === 'no' || (session('guest_prefill_data')?->is_crossbreed ?? '') === 'no') ? 'checked' : '' }}>
+            <span class="ml-3 text-gray-700 font-medium">No</span>
+        </label>
+    </div>
+</div>
 
                             <!-- Pet Breed -->
                             <div id="breedSection">

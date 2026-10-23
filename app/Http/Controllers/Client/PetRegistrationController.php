@@ -310,14 +310,17 @@ class PetRegistrationController extends Controller
 
             // Prepare pet data for success modal
             $refId = '2026-' . str_pad($pet->pet_id, 5, '0', STR_PAD_LEFT);
-            $petData = [
+$petData = [
                 'pet_id' => $pet->pet_id,
-                'ref_id' => $refId,
+                'ref_id' => '2026-' . str_pad($pet->pet_id, 5, '0', STR_PAD_LEFT),
                 'pet_name' => $pet->pet_name,
                 'species' => $pet->species,
                 'breed' => $pet->breed,
                 'pet_image' => $pet->pet_image,
             ];
+
+            // ✅ Clear session pre-fill data after successful registration
+            session()->forget('guest_prefill_data');
 
             // AJAX flow (booster booking): the page shows a "pet registered" alert first,
             // then redirects to the vaccination form with this pet pre-selected

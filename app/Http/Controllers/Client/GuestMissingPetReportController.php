@@ -7,6 +7,7 @@ use App\Models\Barangay;
 use App\Models\MissingPetsReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\RateLimiter;
 
 class GuestMissingPetReportController extends Controller
@@ -79,6 +80,7 @@ class GuestMissingPetReportController extends Controller
             'body_marks' => 'nullable|string|max:2000',
             'eye_color' => 'nullable|string|max:255',
             'collar_harness' => 'nullable|string|max:255',
+            'is_crossbreed' => 'nullable|string|in:yes,no',
 
             'found_description' => 'required_if:report_type,found|nullable|string|max:2000',
             'date_found' => 'required_if:report_type,found|nullable|date',
@@ -128,7 +130,89 @@ class GuestMissingPetReportController extends Controller
 
         MissingPetsReport::create($reportData);
 
+        // ✅ OPTIONAL: Save info for later registration (Option C hybrid)
+        if ($request->boolean('save_for_registration')) {
+            $token = Str::random(32); // 32-char cryptographically secure random string
+            $expiresAt = now()->addDays(7);
+
+            DB::table('guest_report_tokens')->insert([
+                'token' => $token,
+                'pet_name' => $validated['pet_name'] ?? null,
+                'species' => $validated['species'] ?? null,
+                'is_crossbreed' => $request->input('is_crossbreed'),
+                'reporter_contact' => $validated['reporter_contact'],
+                'reporter_email' => $validated['reporter_email'],
+                'expires_at' => $expiresAt,
+            ]);
+
+            return redirect()->route('missing-pets.report.guest.success')
+                ->with('token', $token)
+                ->with('saveInfo', true);
+        }
+
         return redirect()->route('missing-pets.report-landing')
             ->with('success', 'Your '.($reportType === 'found' ? 'found pet' : 'missing pet').' report has been submitted successfully!');
+    }
+
+    /**
+     * Handle the return-to-register link (one-time use token consumption)
+     *
+     * @param string $token The token from the bookmarked link
+     * @return \Illuminate\Http\Response
+     */
+    public function returnToRegister(string $token, Request $request)
+    {
+        // 1. Validate token exists and has not expired
+        $tokenRecord = DB::table('guest_report_tokens')
+            ->where('token', $token)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (! $tokenRecord) {
+            return redirect()->route('missing-pets.report.guest.create')
+                ->with('error', 'Invalid or expired token.');
+        }
+
+        // 2. LOAD INTO SESSION FIRST (before deleting token) - prevents data loss on refresh
+        $preFillData = [
+            'pet_name' => $tokenRecord->pet_name,
+            'species' => $tokenRecord->species,
+            'is_crossbreed' => $tokenRecord->is_crossbreed,
+        ];
+        session()->put('guest_prefill_data', $preFillData);
+
+        // 3. THEN DELETE TOKEN FROM DB (one-time use)
+        DB::table('guest_report_tokens')->where('id', $tokenRecord->id)->delete();
+
+        // 4. Email Verification Check
+        $storedEmail = $tokenRecord->reporter_email;
+        $verificationResult = null;
+
+        if ($storedEmail) {
+            // Email exists - show verification flow
+            session(['guest_stored_email' => $storedEmail]);
+
+            // If this is a POST (user clicked Yes/No on verification):
+            if ($request->isMethod('post') && $request->has('email_verified')) {
+                $verified = $request->input('email_verified');
+
+                if ($verified === 'yes') {
+                    $verificationResult = 'verified';
+                } elseif ($verified === 'no') {
+                    $verificationResult = 'failed';
+                }
+            }
+
+            session(['guest_email_verification' => $verificationResult]);
+        } else {
+            // No email stored - skip verification, still pre-fill form
+            session(['guest_email_verification' => '']);
+            session(['guest_no_email_from_token' => true]);
+        }
+
+        // 5. Redirect to pet registration form
+        return redirect()->route('pet.registration.form')
+            ->with('guest_prefill', true)
+            ->with('token', $token);
     }
 }

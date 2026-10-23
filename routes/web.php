@@ -1308,6 +1308,20 @@ Route::get('/missing-pets/report/guest', [\App\Http\Controllers\Client\GuestMiss
 Route::post('/missing-pets/report/guest', [\App\Http\Controllers\Client\GuestMissingPetReportController::class, 'store'])
     ->name('missing-pets.report.guest.store');
 
+// Success page after guest submits missing pet report + opts-in
+Route::get('/missing-pets/report/guest/success', function () {
+    $token = request('token');
+    $saveInfo = request('saveInfo');
+    return view('Client.guest_report_success', [
+        'token' => $token,
+        'saveInfo' => $saveInfo,
+    ]);
+})->name('missing-pets.report.guest.success');
+
+// Return-to-register (one-time use token consumption)
+Route::get('/return-to-register/{token}', [App\Http\Controllers\Client\GuestMissingPetReportController::class, 'returnToRegister'])
+    ->name('guest.return.to.register');
+
 // Pet Registration Page Route - Public
 Route::get('/pet-registration', function () {
     return view('Client.pet_registration_page');
