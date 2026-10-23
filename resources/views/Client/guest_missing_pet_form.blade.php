@@ -11,23 +11,21 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="{{ asset('js/breeds.js') }}" defer></script>
-
-    <style>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        primary: { DEFAULT: '#066D33', light: '#077a40', dark: '#055a29' },
+                        primary: '#066D33',
+                        'primary-light': '#088442',
+                        secondary: '#6B21A8',
+                        'secondary-light': '#7C3AED',
                     }
                 }
             }
         }
-        .dropdown-option { transition: all 0.2s ease; }
-        .dropdown-option:hover { background-color: #f3f4f6; }
-        .dropdown-option.selected { background-color: #e8f5e9; }
-    </style>
+    </script>
+    <script src="{{ asset('js/breeds.js') }}" defer></script>
 </head>
 <body class="font-sans bg-gray-50 min-h-screen">
 

@@ -57,7 +57,7 @@
             </div>
 
             <div class="pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500">
-                <p>&copy; 2025 City of Dasmariñas Veterinary Services. All rights reserved.</p>
+                <p>&copy; 2026 City of Dasmariñas Veterinary Services. All rights reserved.</p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
                     <a href="#" class="hover:text-slate-400">Privacy Policy</a>
                     <a href="#" class="hover:text-slate-400">Terms of Service</a>
