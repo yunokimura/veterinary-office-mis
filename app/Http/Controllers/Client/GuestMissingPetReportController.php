@@ -23,6 +23,14 @@ class GuestMissingPetReportController extends Controller
         $loadedAt = now()->timestamp;
         $barangays = Barangay::orderBy('barangay_name')->get();
 
+        if ($reportType === 'found') {
+            return view('Client.guest_found_pet_form', [
+                'reportType' => $reportType,
+                'loadedAt' => $loadedAt,
+                'barangays' => $barangays,
+            ]);
+        }
+
         return view('Client.guest_missing_pet_form', [
             'reportType' => $reportType,
             'loadedAt' => $loadedAt,
