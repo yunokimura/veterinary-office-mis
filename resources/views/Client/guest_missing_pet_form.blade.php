@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missing Pet Report - Dasmariñas City Veterinary Services</title>
+    <title>Lost Pet Report - Dasmariñas City Veterinary Services</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,7 +36,7 @@
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <!-- Title and Required Fields Notice -->
     <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-gray-900">Missing Pet Report</h2>
+        <h2 class="text-3xl font-bold text-gray-900">Lost Pet Report</h2>
         <p class="text-gray-500 text-sm mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
     </div>
 
@@ -412,11 +412,11 @@
 
                 <!-- Submit -->
                 <div class="flex justify-center mt-8">
-                    <button type="submit" class="bg-primary text-white px-12 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center gap-2 w-full md:w-auto">
+                    <button type="submit" class="bg-emerald-600 text-white px-12 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2 w-full md:w-auto shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Submit Missing Pet Report
+                        Submit Lost Pet Report
                     </button>
                 </div>
             </form>
