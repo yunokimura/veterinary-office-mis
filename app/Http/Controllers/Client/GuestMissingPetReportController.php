@@ -113,6 +113,10 @@ class GuestMissingPetReportController extends Controller
                 'barangay_id' => $validated['barangay_id'],
                 'location_description' => $validated['location_description'] ?? null,
                 'emergency_contact' => $validated['reporter_contact'],
+                'eye_color' => $validated['eye_color'] ?? null,
+                'eye_color_left' => $validated['eye_color_left'] ?? null,
+                'eye_color_right' => $validated['eye_color_right'] ?? null,
+                'eye_color_other' => $validated['eye_color_other'] ?? null,
             ]);
         } else {
             $reportData = array_merge($reportData, [

@@ -110,7 +110,7 @@
                         <!-- Pet Name -->
                         <div>
                             <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Your Pet's Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="pet_name" value="{{ old('pet_name') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter your pet's name" required>
+                            <input type="text" name="pet_name" value="{{ old('pet_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Enter your pet's name" required>
                         </div>
 
                         <!-- Pet Type -->
@@ -167,7 +167,7 @@
 
                             <!-- Modal trigger -->
                             <div class="relative">
-                                <button type="button" id="breedDisplay" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg cursor-pointer hover:border-slate-400 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" onclick="openBreedModal()">
+                                <button type="button" id="breedDisplay" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg cursor-pointer hover:border-slate-400 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" onclick="openBreedModal()">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
@@ -227,7 +227,7 @@
                             </div>
                             <div id="eyeColorOtherWrap" class="mt-3 hidden">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Please specify eye color</label>
-                                <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
+                                <input type="text" id="eyeColorOther" name="eye_color_other" value="{{ old('eye_color_other') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Specify your pet's eye color">
                             </div>
                             <div id="eyeColorHeterochromiaWrap" class="mt-2 p-4 bg-emerald-50/60 border border-emerald-200 rounded-xl rounded-tl-none hidden">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -279,7 +279,7 @@
                         <!-- Body Mark Details -->
                         <div>
                             <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Body Mark Details</label>
-                            <textarea id="bodyMarkDetails" name="body_marks" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Describe any unique marks, scars, or distinguishing features...">{{ old('body_marks') }}</textarea>
+                            <textarea id="bodyMarkDetails" name="body_marks" rows="3" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Describe any unique marks, scars, or distinguishing features...">{{ old('body_marks') }}</textarea>
                         </div>
 
                         <!-- Collar / Harness -->
@@ -315,10 +315,10 @@
                             <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Last Seen Date and Time <span class="text-red-500">*</span></label>
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <input type="date" name="last_seen_date" id="last_seen_date" max="{{ now()->format('Y-m-d') }}" value="{{ old('last_seen_date') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required>
+                                    <input type="date" name="last_seen_date" id="last_seen_date" max="{{ now()->format('Y-m-d') }}" value="{{ old('last_seen_date') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required>
                                 </div>
                                 <div>
-                                    <input type="time" name="last_seen_time" id="last_seen_time" value="{{ old('last_seen_time') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required>
+                                    <input type="time" name="last_seen_time" id="last_seen_time" value="{{ old('last_seen_time') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required>
                                 </div>
                             </div>
                         </div>
@@ -326,7 +326,7 @@
                         <!-- Location - Barangay -->
                         <div>
                             <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Location (Barangay) <span class="text-red-500">*</span></label>
-                            <select name="barangay_id" id="barangayIdInput" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required>
+                            <select name="barangay_id" id="barangayIdInput" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required>
                                 <option value="">Select Barangay</option>
                                 @if(isset($barangays) && $barangays->count() > 0)
                                     @foreach($barangays as $barangay)
@@ -375,15 +375,15 @@
                     <div class="p-6 space-y-4">
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Reporter Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name">
+                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Contact Number <span class="text-red-500">*</span></label>
-                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
+                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Email Address</label>
-                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com">
+                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com">
                         </div>
                     </div>
                 </div>
@@ -419,7 +419,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input type="text" id="breedModalSearch" placeholder="Search breed..." onkeyup="filterBreedModal()"
-                           class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
+                           class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
                 </div>
             </div>
 			<div class="flex-1 overflow-y-auto">
@@ -441,7 +441,7 @@
 					</div>
 				</div>
 			</div>
-            <div class="px-5 py-4 border-t border-slate-200 bg-slate-50">
+            <div class="px-5 py-4 border-t border-slate-200 bg-white">
                 <button type="button" onclick="showOtherBreedInput()" class="w-full px-4 py-2.5 border-2 border-dashed border-emerald-300 text-emerald-700 rounded-lg font-medium hover:bg-emerald-50 hover:border-emerald-400 transition-colors flex items-center justify-center gap-2 text-sm" id="otherBreedBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -452,7 +452,7 @@
                     <div class="flex gap-2">
                         <input type="text" id="otherBreedInput" placeholder="Enter breed name" class="flex-1 px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all">
                         <button type="button" onclick="submitOtherBreed()" class="px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors">Add</button>
-                        <button type="button" onclick="hideOtherBreedInput()" class="px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-slate-50 transition-colors">Cancel</button>
+                        <button type="button" onclick="hideOtherBreedInput()" class="px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-white transition-colors">Cancel</button>
                     </div>
                     <p class="text-xs text-gray-700 mt-1">Press Enter to add, Escape to cancel</p>
                 </div>
@@ -612,14 +612,14 @@
                     const inputId = `breed-opt-${breedSlug}-${breedIndex}`;
                     if (isCrossbreed) {
                         html += `
-                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}" for="${inputId}">
+                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-white'}" for="${inputId}">
                                 <input type="checkbox" id="${inputId}" value="${breed}" class="pet-breed-checkbox h-4 w-4 text-emerald-600 rounded border-slate-300" ${selected ? 'checked' : ''} onchange="handleBreedCheckbox(this)">
                                 <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
                                 ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
                             </label>`;
                     } else {
                         html += `
-                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}" for="${inputId}">
+                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-white'}" for="${inputId}">
                                 <input type="radio" id="${inputId}" name="breed_option" value="${breed}" class="pet-breed-radio h-4 w-4 text-emerald-600 border-slate-300" ${selected ? 'checked' : ''} onchange="handleSingleBreedSelect('${breed.replace(/'/g, "\\'")}')">
                                 <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
                                 ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
