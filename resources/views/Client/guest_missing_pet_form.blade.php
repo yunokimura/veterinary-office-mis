@@ -469,7 +469,7 @@
 <div id="breedModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="breedModalTitle">
     <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeBreedModal()"></div>
     <div class="fixed inset-0 flex items-end sm:items-center sm:justify-center p-0 sm:p-4">
-        <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-md max-h-[92vh] sm:max-h-[85vh] overflow-hidden flex flex-col">
+        <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-md min-h-[64vh] sm:min-h-[72vh] max-h-[92vh] sm:max-h-[85vh] overflow-hidden flex flex-col">
             <div class="px-5 pt-5 pb-4 border-b border-slate-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
@@ -493,22 +493,25 @@
                            class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
                 </div>
             </div>
-            <div class="flex-1 overflow-y-auto">
-                <div class="px-5 pt-4 pb-4">
-                    <div id="breedModalQuick" class="mb-5 hidden">
-                        <p class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Popular / Quick Selections</p>
-                        <div class="flex flex-wrap gap-2" id="breedModalQuickChips"></div>
-                    </div>
-                    <div id="breedModalList"></div>
-                    <div id="breedModalEmpty" class="hidden text-center py-8">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <p class="text-xs text-gray-700">No breeds match your search.</p>
-                        <p class="text-sm text-gray-400 mt-1">Try "Other / Breed Not Listed" below.</p>
-                    </div>
-                </div>
-            </div>
+			<div class="flex-1 overflow-y-auto">
+				<div class="px-5 pt-4 pb-4">
+					<div id="breedModalQuick" class="mb-5 hidden">
+						<p class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Popular / Quick Selections</p>
+						<div class="flex flex-wrap gap-2" id="breedModalQuickChips"></div>
+					</div>
+
+					<div id="breedModalListWrap" class="max-h-[60vh] overflow-y-auto pr-2">
+						<div id="breedModalList"></div>
+						<div id="breedModalEmpty" class="hidden text-center py-8">
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+							</svg>
+							<p class="text-xs text-gray-700">No breeds match your search.</p>
+							<p class="text-sm text-gray-400 mt-1">Try "Other / Breed Not Listed" below.</p>
+						</div>
+					</div>
+				</div>
+			</div>
             <div class="px-5 py-4 border-t border-slate-200 bg-slate-50">
                 <button type="button" onclick="showOtherBreedInput()" class="w-full px-4 py-2.5 border-2 border-dashed border-emerald-300 text-emerald-700 rounded-lg font-medium hover:bg-emerald-50 hover:border-emerald-400 transition-colors flex items-center justify-center gap-2 text-sm" id="otherBreedBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
