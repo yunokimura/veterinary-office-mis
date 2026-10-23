@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/breeds.js') }}" defer></script>
 
     <style>
         tailwind.config = {
@@ -116,16 +117,12 @@
                             <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">What kind of pet do you have? <span class="text-red-500">*</span></label>
                             <div class="flex space-x-6">
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="species" value="dog" class="form-radio h-5 w-5 text-emerald-600" required {{ old('species') === 'dog' ? 'checked' : '' }}>
+                                    <input type="radio" name="species" value="dog" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required {{ old('species') === 'dog' ? 'checked' : '' }}>
                                     <span class="ml-3 text-gray-700 font-medium">Dog</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="species" value="cat" class="form-radio h-5 w-5 text-emerald-600" required {{ old('species') === 'cat' ? 'checked' : '' }}>
+                                    <input type="radio" name="species" value="cat" class="form-radio h-5 w-5 text-emerald-600" onchange="updateBreedOptions()" required {{ old('species') === 'cat' ? 'checked' : '' }}>
                                     <span class="ml-3 text-gray-700 font-medium">Cat</span>
-                                </label>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="species" value="other" class="form-radio h-5 w-5 text-emerald-600" required {{ old('species') === 'other' ? 'checked' : '' }}>
-                                    <span class="ml-3 text-gray-700 font-medium">Other</span>
                                 </label>
                             </div>
                         </div>
@@ -146,47 +143,57 @@
                         </div>
 
                         <!-- Spayed / Neutered -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Spayed / Neutered <span class="text-red-500">*</span></label>
-                                <div class="flex space-x-6">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="is_neutered" value="yes" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'yes' ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">Yes</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="is_neutered" value="no" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'no' ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">No</span>
-                                    </label>
-                                </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Spayed / Neutered <span class="text-red-500">*</span></label>
+                            <div class="flex space-x-6">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="is_neutered" value="yes" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'yes' ? 'checked' : '' }}>
+                                    <span class="ml-3 text-gray-700 font-medium">Yes</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="is_neutered" value="no" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_neutered') === 'no' ? 'checked' : '' }}>
+                                    <span class="ml-3 text-gray-700 font-medium">No</span>
+                                </label>
                             </div>
+                        </div>
 
-                            <!-- Crossbreed -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
-                                <div class="flex space-x-6">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_crossbreed') === 'yes' ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">Yes</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" required {{ old('is_crossbreed') === 'no' ? 'checked' : '' }}>
-                                        <span class="ml-3 text-gray-700 font-medium">No</span>
-                                    </label>
-                                </div>
+                        <!-- Crossbreed -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
+                            <div class="flex space-x-6">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="is_crossbreed" value="yes" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ old('is_crossbreed') === 'yes' ? 'checked' : '' }}>
+                                    <span class="ml-3 text-gray-700 font-medium">Yes</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="is_crossbreed" value="no" class="form-radio h-5 w-5 text-emerald-600" onchange="toggleCrossbreed()" required {{ old('is_crossbreed') === 'no' ? 'checked' : '' }}>
+                                    <span class="ml-3 text-gray-700 font-medium">No</span>
+                                </label>
                             </div>
                         </div>
 
                         <!-- Pet Breed -->
-                        <div>
-                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Breed</label>
-                            <input type="text" name="breed" value="{{ old('breed') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Breed (if known)">
-                        </div>
+                        <div id="breedSection">
+                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">
+                                Pet Breed <span class="text-red-500">*</span>
+                                <span id="breedLimitText" class="text-xs text-gray-700 font-normal ml-1">(select one)</span>
+                            </label>
 
-                        <!-- Fur Colors -->
-                        <div>
-                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Color / Markings</label>
-                            <input type="text" name="color" value="{{ old('color') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., Brown, White with black spots">
+                            <!-- Modal trigger -->
+                            <div class="relative">
+                                <button type="button" id="breedDisplay" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg cursor-pointer hover:border-slate-400 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" onclick="openBreedModal()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                    <span id="selectedBreedText" class="text-gray-700 truncate">Search or select a breed</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Hidden input for breed -->
+                            <input type="hidden" id="petBreedInput" name="pet_breed" value="{{ old('pet_breed') }}" required>
                         </div>
                     </div>
                 </div>
@@ -458,8 +465,419 @@
 
 @include('Client.partials.footer')
 
+<!-- Breed Selector Modal -->
+<div id="breedModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="breedModalTitle">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeBreedModal()"></div>
+    <div class="fixed inset-0 flex items-end sm:items-center sm:justify-center p-0 sm:p-4">
+        <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-md max-h-[92vh] sm:max-h-[85vh] overflow-hidden flex flex-col">
+            <div class="px-5 pt-5 pb-4 border-b border-slate-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                        <h3 id="breedModalTitle" class="text-lg font-semibold text-gray-900">Select Breed</h3>
+                        <span id="breedModalLimit" class="text-sm text-slate-500 font-normal">(select one)</span>
+                    </div>
+                    <button type="button" onclick="closeBreedModal()" class="text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg p-1.5 transition-colors" aria-label="Close breed selector">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" id="breedModalSearch" placeholder="Search breed..." onkeyup="filterBreedModal()"
+                           class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-5 pt-4 pb-4">
+                    <div id="breedModalQuick" class="mb-5 hidden">
+                        <p class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Popular / Quick Selections</p>
+                        <div class="flex flex-wrap gap-2" id="breedModalQuickChips"></div>
+                    </div>
+                    <div id="breedModalList"></div>
+                    <div id="breedModalEmpty" class="hidden text-center py-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <p class="text-xs text-gray-700">No breeds match your search.</p>
+                        <p class="text-sm text-gray-400 mt-1">Try "Other / Breed Not Listed" below.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="px-5 py-4 border-t border-slate-200 bg-slate-50">
+                <button type="button" onclick="showOtherBreedInput()" class="w-full px-4 py-2.5 border-2 border-dashed border-emerald-300 text-emerald-700 rounded-lg font-medium hover:bg-emerald-50 hover:border-emerald-400 transition-colors flex items-center justify-center gap-2 text-sm" id="otherBreedBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Other / Breed Not Listed
+                </button>
+                <div id="otherBreedInputWrap" class="mt-3 hidden">
+                    <div class="flex gap-2">
+                        <input type="text" id="otherBreedInput" placeholder="Enter breed name" class="flex-1 px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all">
+                        <button type="button" onclick="submitOtherBreed()" class="px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors">Add</button>
+                        <button type="button" onclick="hideOtherBreedInput()" class="px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-slate-50 transition-colors">Cancel</button>
+                    </div>
+                    <p class="text-xs text-gray-700 mt-1">Press Enter to add, Escape to cancel</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    // --- Image preview ---
+        // Breed data loaded from external file (public/js/breeds.js)
+        // catBreeds, dogBreeds, quickCatBreeds, quickDogBreeds are globally available
+
+        let selectedBreeds = [];
+        let currentPetType = '';
+        let lastFocusedElement = null;
+
+        // Returns true only when the crossbreed answer is "Yes"
+        function isCrossbreedSelected() {
+            const selected = document.querySelector('input[name="is_crossbreed"]:checked');
+            return selected ? selected.value === 'yes' : false;
+        }
+
+        // Focus trap utility
+        function trapFocus(element) {
+            const focusableElements = element.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            element.addEventListener('keydown', function handleTab(e) {
+                if (e.key !== 'Tab') return;
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            });
+        }
+
+        // Open the breed selector modal
+        function openBreedModal() {
+            const petType = document.querySelector('input[name="species"]:checked');
+
+            if (!petType) {
+                alert('Please select the type of pet (Dog or Cat) first.');
+                return;
+            }
+
+            currentPetType = petType.value;
+
+            const isCrossbreed = isCrossbreedSelected();
+            document.getElementById('breedModalLimit').textContent = isCrossbreed ? '(maximum of 2)' : '(select one)';
+
+            renderBreedModal();
+            document.getElementById('breedModalSearch').value = '';
+
+            const modal = document.getElementById('breedModal');
+            modal.classList.remove('hidden');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('role', 'dialog');
+            document.body.classList.add('overflow-hidden');
+
+            lastFocusedElement = document.activeElement;
+
+            setTimeout(() => {
+                const searchInput = document.getElementById('breedModalSearch');
+                if (searchInput) {
+                    searchInput.focus();
+                    trapFocus(modal);
+                }
+            }, 50);
+        }
+
+        // Close the breed selector modal
+        function closeBreedModal() {
+            const modal = document.getElementById('breedModal');
+            modal.classList.add('hidden');
+            modal.removeAttribute('aria-modal');
+            modal.removeAttribute('role');
+            document.body.classList.remove('overflow-hidden');
+
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            }
+            lastFocusedElement = null;
+        }
+
+        // Render quick chips + alphabetical list for the current species
+        function renderBreedModal(filter = '') {
+            if (!currentPetType) return;
+
+            const breeds = currentPetType === 'cat' ? catBreeds : dogBreeds;
+            const quickBreeds = currentPetType === 'cat' ? quickCatBreeds : quickDogBreeds;
+            const isCrossbreed = isCrossbreedSelected();
+            const search = filter.trim().toLowerCase();
+
+            const quickWrap = document.getElementById('breedModalQuick');
+            const quickChips = document.getElementById('breedModalQuickChips');
+
+            if (search) {
+                quickWrap.classList.add('hidden');
+            } else {
+                quickWrap.classList.remove('hidden');
+                const availableQuick = quickBreeds.filter(b => breeds.includes(b));
+                quickChips.innerHTML = availableQuick.map(breed => {
+                    const selected = selectedBreeds.includes(breed);
+                    return `
+                        <button type="button" onclick="toggleBreedFromModal('${breed.replace(/'/g, "\\'")}')"
+                                class="px-3 py-1.5 text-sm rounded-full border transition-colors ${selected
+                                    ? 'bg-emerald-600 text-white border-emerald-600'
+                                    : 'border-slate-300 text-gray-700 hover:bg-emerald-50 hover:border-emerald-400'}"
+                                aria-pressed="${selected}">
+                            ${breed}
+                            ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline ml-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
+                        </button>`;
+                }).join('');
+            }
+
+            const filtered = breeds.filter(b => b.toLowerCase().includes(search));
+            const list = document.getElementById('breedModalList');
+            const empty = document.getElementById('breedModalEmpty');
+
+            if (filtered.length === 0) {
+                list.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+
+            const groups = {};
+            filtered.forEach(breed => {
+                const letter = breed.charAt(0).toUpperCase();
+                if (!groups[letter]) groups[letter] = [];
+                groups[letter].push(breed);
+            });
+
+            let html = '';
+            Object.keys(groups).sort().forEach(letter => {
+                html += `
+                    <div class="mb-4">
+                        <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-1.5">
+                            <span class="text-sm font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 border border-emerald-200 rounded-md px-2 py-0.5">${letter}</span>
+                        </div>
+                        <div class="space-y-1 mt-1">`;
+
+                groups[letter].forEach((breed, breedIndex) => {
+                    const selected = selectedBreeds.includes(breed);
+                    const breedSlug = breed.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                    const inputId = `breed-opt-${breedSlug}-${breedIndex}`;
+                    if (isCrossbreed) {
+                        html += `
+                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}" for="${inputId}">
+                                <input type="checkbox" id="${inputId}" value="${breed}" class="pet-breed-checkbox h-4 w-4 text-emerald-600 rounded border-slate-300" ${selected ? 'checked' : ''} onchange="handleBreedCheckbox(this)">
+                                <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
+                                ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
+                            </label>`;
+                    } else {
+                        html += `
+                            <label class="flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${selected ? 'bg-emerald-50' : 'hover:bg-slate-50'}" for="${inputId}">
+                                <input type="radio" id="${inputId}" name="breed_option" value="${breed}" class="pet-breed-radio h-4 w-4 text-emerald-600 border-slate-300" ${selected ? 'checked' : ''} onchange="handleSingleBreedSelect('${breed.replace(/'/g, "\\'")}')">
+                                <span class="ml-3 text-sm pet-breed-label ${selected ? 'text-emerald-800 font-semibold' : 'text-gray-700'}">${breed}</span>
+                                ${selected ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
+                            </label>`;
+                    }
+                });
+
+                html += `</div></div>`;
+            });
+
+            list.innerHTML = html;
+        }
+
+        // Filter the modal list as the user types
+        function filterBreedModal() {
+            renderBreedModal(document.getElementById('breedModalSearch').value);
+        }
+
+        // Toggle a quick-selection chip
+        function toggleBreedFromModal(breed) {
+            if (isCrossbreedSelected()) {
+                const checkbox = document.querySelector(`.pet-breed-checkbox[value="${breed}"]`);
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    handleBreedCheckbox(checkbox);
+                }
+            } else {
+                handleSingleBreedSelect(breed);
+            }
+        }
+
+        // Handle breed checkbox selection (crossbreed mode)
+        function handleBreedCheckbox(checkbox) {
+            const breed = checkbox.value;
+
+            if (checkbox.checked) {
+                if (selectedBreeds.length >= 2) {
+                    checkbox.checked = false;
+                    alert('Maximum of 2 breeds allowed');
+                    return;
+                }
+                selectedBreeds.push(breed);
+            } else {
+                selectedBreeds = selectedBreeds.filter(b => b !== breed);
+            }
+
+            updateSelectedBreedDisplay();
+            renderBreedModal(document.getElementById('breedModalSearch').value);
+        }
+
+        // Handle single breed selection (radio mode)
+        function handleSingleBreedSelect(breed) {
+            selectedBreeds = [breed];
+
+            document.getElementById('petBreedInput').value = breed;
+
+            const selectedText = document.getElementById('selectedBreedText');
+            selectedText.textContent = breed;
+            selectedText.classList.remove('text-gray-700');
+            selectedText.classList.add('text-gray-900');
+
+            updateSelectedBreedDisplay();
+            closeBreedModal();
+        }
+
+        // "Other / Breed Not Listed" fallback
+        function showOtherBreedInput() {
+            const btn = document.getElementById('otherBreedBtn');
+            const wrap = document.getElementById('otherBreedInputWrap');
+            const input = document.getElementById('otherBreedInput');
+
+            if (btn) btn.classList.add('hidden');
+            if (wrap) wrap.classList.remove('hidden');
+            if (input) {
+                input.value = '';
+                setTimeout(() => input.focus(), 50);
+            }
+        }
+
+        function hideOtherBreedInput() {
+            const btn = document.getElementById('otherBreedBtn');
+            const wrap = document.getElementById('otherBreedInputWrap');
+            const input = document.getElementById('otherBreedInput');
+
+            if (btn) btn.classList.remove('hidden');
+            if (wrap) wrap.classList.add('hidden');
+            if (input) input.value = '';
+        }
+
+        function submitOtherBreed() {
+            const input = document.getElementById('otherBreedInput');
+            if (!input) return;
+
+            const otherBreed = input.value.trim();
+            if (!otherBreed) {
+                input.focus();
+                return;
+            }
+
+            const isCrossbreed = isCrossbreedSelected();
+
+            if (isCrossbreed) {
+                if (selectedBreeds.length >= 2) {
+                    alert('Maximum of 2 breeds allowed');
+                    return;
+                }
+                selectedBreeds.push(otherBreed);
+            } else {
+                selectedBreeds = [otherBreed];
+            }
+
+            document.getElementById('petBreedInput').value = selectedBreeds.join(', ');
+
+            const selectedText = document.getElementById('selectedBreedText');
+            selectedText.textContent = selectedBreeds.join(', ');
+            selectedText.classList.remove('text-gray-700');
+            selectedText.classList.add('text-gray-900');
+
+            updateSelectedBreedDisplay();
+            hideOtherBreedInput();
+            closeBreedModal();
+        }
+
+        // Update the breed trigger text and hidden input
+        function updateSelectedBreedDisplay() {
+            const selectedText = document.getElementById('selectedBreedText');
+            const breedDisplay = document.getElementById('breedDisplay');
+            const petBreedInput = document.getElementById('petBreedInput');
+
+            if (breedDisplay) {
+                breedDisplay.classList.remove('ring-2', 'ring-red-400', 'border-red-400');
+            }
+
+            if (selectedBreeds.length === 0) {
+                petBreedInput.value = '';
+                if (selectedText) {
+                    selectedText.textContent = 'Search or select a breed';
+                    selectedText.classList.remove('text-gray-900');
+                    selectedText.classList.add('text-gray-700');
+                }
+                return;
+            }
+
+            selectedText.textContent = selectedBreeds.join(', ');
+            selectedText.classList.remove('text-gray-700');
+            selectedText.classList.add('text-gray-900');
+
+            petBreedInput.value = selectedBreeds.join(', ');
+        }
+
+        // Update breed options when the species changes
+        function updateBreedOptions() {
+            const petType = document.querySelector('input[name="species"]:checked');
+            currentPetType = petType ? petType.value : '';
+
+            const breedLimitText = document.getElementById('breedLimitText');
+
+            selectedBreeds = [];
+            updateSelectedBreedDisplay();
+
+            if (!currentPetType) {
+                return;
+            }
+
+            if (breedLimitText) {
+                breedLimitText.textContent = isCrossbreedSelected() ? '(maximum of 2)' : '(select one)';
+            }
+        }
+
+        // Toggle crossbreed mode
+        function toggleCrossbreed() {
+            const isCrossbreed = isCrossbreedSelected();
+
+            selectedBreeds = [];
+            updateSelectedBreedDisplay();
+
+            updateBreedOptions();
+        }
+
+        // Close modal with the Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const breedModal = document.getElementById('breedModal');
+                if (breedModal && !breedModal.classList.contains('hidden')) {
+                    closeBreedModal();
+                }
+            }
+        });
+
+        // --- Image preview ---
     function previewImage(event) {
         const file = event.target.files[0];
         if (!file) return;
