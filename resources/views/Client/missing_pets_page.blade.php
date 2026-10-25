@@ -153,10 +153,10 @@
                         <p class="text-sm text-gray-500 mb-3">Gender:</p>
                         <div class="grid grid-cols-2 gap-3">
                             <button onclick="filterPets('gender', 'Male')" class="filter-btn gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="Male" data-filter-type="gender">
-                                ♂ Male
+                                Male
                             </button>
                             <button onclick="filterPets('gender', 'Female')" class="filter-btn gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="Female" data-filter-type="gender">
-                                ♀ Female
+                                Female
                             </button>
                         </div>
                     </div>
@@ -273,7 +273,18 @@
                             <div class="flex flex-wrap gap-2 mb-3">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ $pet->species }}</span>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pet->gender == 'Male' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800' }}">
-                                    {{ $pet->gender == 'Male' ? '♂ Male' : '♀ Female' }}
+                                    @if($pet->gender == 'Male')
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-blue-500 shrink-0 mr-1">
+                                            <path d="M0 0h16v16H0z" fill="none" />
+                                            <path fill="#1e2099" fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8a4 4 0 0 0 0-8" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-pink-500 shrink-0 mr-1">
+                                            <path d="M0 0h16v16H0z" fill="none" />
+                                            <path fill="#d42ec9" fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8a4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" />
+                                        </svg>
+                                    @endif
+                                    {{ ucfirst(strtolower($pet->gender)) }}
                                 </span>
                             </div>
                             <div class="space-y-2 text-sm">
@@ -767,7 +778,10 @@
                                <h3 class="text-lg font-bold text-gray-900 mb-2">${pet.pet_name}</h3>
                                <div class="flex flex-wrap gap-2 mb-3">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${pet.species}</span>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${pet.gender === 'Male' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800'}">${pet.gender === 'Male' ? '♂ Male' : '♀ Female'}</span>
+                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${pet.gender === 'Male' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800'}">${pet.gender === 'Male'
+                        ? `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-blue-500 shrink-0 mr-1"><path d="M0 0h16v16H0z" fill="none" /><path fill="#1e2099" fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8a4 4 0 0 0 0-8" /></svg>`
+                        : `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-pink-500 shrink-0 mr-1"><path d="M0 0h16v16H0z" fill="none" /><path fill="#d42ec9" fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8a4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" /></svg>`
+                    } ${pet.gender === 'Male' ? 'Male' : 'Female'}</span>
                                </div>
                               <div class="space-y-2 text-sm">
                                   <div class="flex justify-between">
