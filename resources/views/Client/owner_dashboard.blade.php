@@ -170,55 +170,115 @@
     <!-- My Pets Section -->
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">My Pets</h2>
-                <a href="{{ url('/pet-registration/form') }}" class="text-primary font-medium hover:underline">Add New Pet</a>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        My Pets
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-0.5">Manage pet records, health histories, and vaccination tags</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" id="petSearch" placeholder="Filter pets..." class="pl-9 pr-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-36 sm:w-48">
+                    </div>
+                    <a href="{{ url('/pet-registration/form') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-green-50 hover:bg-green-100 px-3.5 py-2 rounded-xl transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>Add New Pet</span>
+                    </a>
+                </div>
             </div>
-            
+
             @php
                 $pets = \App\Models\Pet::where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
             @endphp
             
             @if($pets->count() > 0)
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" id="petGrid">
                     @foreach($pets as $pet)
-                        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                            <div class="flex items-center space-x-4 mb-4">
-                                @if($pet->pet_image)
-                                    @php
-                                        $imagePath = $pet->pet_image;
-                                        if (!str_contains($imagePath, 'images/pets') && !str_contains($imagePath, 'http')) {
-                                            $imagePath = 'images/pets/' . basename($imagePath);
-                                        }
-                                    @endphp
-                                    <img src="{{ asset($imagePath) }}" alt="{{ $pet->pet_name }}" class="w-16 h-16 rounded-full object-cover">
-                                @else
-                                    <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
-                                        <span class="text-white text-xl font-bold">{{ substr($pet->pet_name, 0, 1) }}</span>
-                                    </div>
-                                @endif
+                        @php
+                            $imagePath = $pet->pet_image;
+                            if (!str_contains($imagePath, 'images/pets') && !str_contains($imagePath, 'http')) {
+                                $imagePath = 'images/pets/' . basename($imagePath);
+                            }
+                        @endphp
+                        <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition overflow-hidden group flex flex-col justify-between" data-name="{{ strtolower($pet->pet_name) }} {{ strtolower($pet->species) }} {{ strtolower($pet->breed) }}">
+                            <div class="p-5 pb-4 border-b border-gray-100 flex items-start gap-3.5">
+                                <div class="relative">
+                                    @if($pet->pet_image)
+                                        <img src="{{ asset($imagePath) }}" alt="{{ $pet->pet_name }}" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-green-100 group-hover:ring-primary transition-all">
+                                        <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary border-2 border-white rounded-full" title="Vaccinated"></span>
+                                    @else
+                                        <div class="w-14 h-14 rounded-2xl bg-primary text-white font-extrabold text-xl flex items-center justify-center ring-2 ring-green-100 group-hover:ring-primary transition-all">
+                                            {{ substr($pet->pet_name, 0, 1) }}
+                                        </div>
+                                        <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary border-2 border-white rounded-full" title="Vaccinated"></span>
+                                    @endif
+                                </div>
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">{{ $pet->pet_name }}</h3>
-                                    <p class="text-sm text-gray-500">{{ ucfirst($pet->species) }} - {{ $pet->breed }}</p>
+                                    <div class="flex items-center gap-1.5">
+                                        <h4 class="font-bold text-gray-900 text-base">{{ $pet->pet_name }}</h4>
+                                        <span class="text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{{ ucfirst($pet->species) }}</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 font-medium">{{ $pet->breed }}</p>
+                                    <p class="text-[11px] text-primary font-semibold mt-1 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.047A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                        </svg>
+                                        ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
+                                    </p>
                                 </div>
                             </div>
-                            <div class="text-sm text-gray-600 space-y-1">
-                                <p><strong>Gender:</strong> {{ ucfirst($pet->gender) }}</p>
-                                @php
-                                    $ageDisplay = 'Unknown';
-                                    if ($pet->petInfo?->pet_age) {
-                                        $ageDisplay = $pet->petInfo->pet_age;
-                                    } elseif ($pet->birthdate) {
-                                        $birthYear = date('Y', strtotime($pet->birthdate));
-                                        $age = date('Y') - $birthYear;
-                                        $ageDisplay = $age . ' year' . ($age != 1 ? 's' : '') . ' old';
-                                    }
-                                @endphp
-                                <p><strong>Age:</strong> {{ $ageDisplay }}</p>
-                                <p><strong>Neutered:</strong> {{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Yes' : 'No' }}</p>
-                                @if($pet->petInfo?->pet_weight)
-                                    <p><strong>Weight:</strong> {{ $pet->petInfo?->pet_weight }} kg</p>
-                                @endif
+
+                            <div class="p-5 grid grid-cols-2 gap-3 text-xs">
+                                <div class="bg-gray-50 p-2.5 rounded-xl">
+                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Gender</span>
+                                    <span class="font-semibold text-gray-700 flex items-center gap-1 mt-0.5">{{ ucfirst($pet->gender) }}</span>
+                                </div>
+                                <div class="bg-gray-50 p-2.5 rounded-xl">
+                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Age</span>
+                                    @php
+                                        $ageDisplay = 'Unknown';
+                                        if ($pet->petInfo?->pet_age) {
+                                            $ageDisplay = $pet->petInfo->pet_age;
+                                        } elseif ($pet->birthdate) {
+                                            $birthYear = date('Y', strtotime($pet->birthdate));
+                                            $age = date('Y') - $birthYear;
+                                            $ageDisplay = $age . ' year' . ($age != 1 ? 's' : '') . ' old';
+                                        }
+                                    @endphp
+                                    <span class="font-semibold text-gray-700 mt-0.5 block">{{ $ageDisplay }}</span>
+                                </div>
+                                <div class="bg-gray-50 p-2.5 rounded-xl">
+                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Neutered/Spayed</span>
+                                    <span class="font-semibold {{ (($pet->petInfo?->is_neutered ?? '') === 'yes') ? 'text-primary' : 'text-amber-600' }} mt-0.5 block">{{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Yes' : 'No' }}</span>
+                                </div>
+                                <div class="bg-gray-50 p-2.5 rounded-xl">
+                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Weight</span>
+                                    @if($pet->petInfo?->pet_weight)
+                                        <span class="font-semibold text-gray-700 mt-0.5 block">{{ $pet->petInfo->pet_weight }} kg</span>
+                                    @else
+                                        <span class="font-semibold text-gray-700 mt-0.5 block">-</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-gray-50/80 border-t border-gray-100 flex items-center gap-2">
+                                <button class="flex-1 py-2 bg-white hover:bg-green-50 border border-gray-200 hover:border-green-300 text-gray-700 hover:text-primary text-xs font-semibold rounded-xl transition text-center shadow-xs">
+                                    View Profile
+                                </button>
+                                <button class="p-2 text-gray-500 hover:text-primary hover:bg-white rounded-xl border border-transparent hover:border-gray-200 transition" title="Download Vaccine Passport">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     @endforeach
@@ -240,8 +300,27 @@
     <!-- My Adoption Applications Section -->
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">My Adoption Applications</h2>
-            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012 2h2a2 2 0 002 2m0 0l2 2m-2-2v12m-6-6l2 2" />
+                        </svg>
+                        My Adoption Applications
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-0.5">Track and manage your submitted city pet adoption requests</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-gray-500">Status:</span>
+                    <select class="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option>All Statuses</option>
+                        <option selected>Pending Review</option>
+                        <option>Approved</option>
+                        <option>Completed</option>
+                    </select>
+                </div>
+            </div>
+
             @php
                 $applications = \App\Models\AdoptionApplication::where('user_id', auth()->id())
                     ->orderByDesc('created_at')
@@ -249,43 +328,56 @@
             @endphp
             
             @if($applications->count() > 0)
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                     @foreach($applications as $application)
-                        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Application #{{ $application->id }}</h3>
-                                    <p class="text-sm text-gray-500">Submitted {{ $application->created_at->format('M d, Y') }}</p>
+                        <div class="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-2 h-full bg-amber-400"></div>
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-3">
+                                    <span class="text-xs font-extrabold text-gray-900 tracking-wide uppercase">App #{{ $application->id }}</span>
+                                    @if($application->status === 'pending_review')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending Review
+                                        </span>
+                                    @elseif($application->status === 'approved')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-green-50 text-green-700 border border-green-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Approved
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Rejected
+                                        </span>
+                                    @endif
                                 </div>
-                                @if($application->status === 'pending_review')
-                                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">Pending</span>
-                                @elseif($application->status === 'approved')
-                                    <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">Approved</span>
-                                @elseif($application->status === 'rejected')
-                                    <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">Rejected</span>
-                                @endif
+
+                                <p class="text-xs text-gray-400 font-medium mb-4 flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Submitted {{ $application->created_at->format('M d, Y') }}
+                                </p>
+
+                                <div class="space-y-2 text-xs border-t border-gray-100 pt-3 mb-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Target Pet:</span>
+                                        <span class="font-bold text-gray-800">{{ $application->pet->pet_name ?? 'Unspecified (General)' }}</span>
+                                    </div>
+                                    @if($application->appointment_date)
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-500">Interview Date:</span>
+                                            <span class="font-semibold text-primary">{{ $application->appointment_date->format('M d, Y') }}</span>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
-                            
-                            <div class="text-sm text-gray-600 space-y-1 mb-4">
-                                @if($application->pet)
-                                    <p><strong>Pet:</strong> {{ $application->pet->pet_name }}</p>
-                                @endif
-                                <p><strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $application->status)) }}</p>
-                                @if($application->appointment_date)
-                                    <p><strong>Appointment:</strong> {{ $application->appointment_date->format('M d, Y') }}</p>
-                                @endif
-                            </div>
-                            
-                            <div class="flex gap-2">
-                                @if($application->status === 'pending_review')
-                                    <a href="{{ route('adoption.form.edit', $application) }}" class="flex-1 text-center bg-primary text-white py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
-                                        Edit Application
-                                    </a>
-                                @else
-                                    <a href="{{ route('adoption.form.edit', $application) }}" class="flex-1 text-center bg-gray-200 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">
-                                        View
-                                    </a>
-                                @endif
+
+                            <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
+                                <a href="{{ route('adoption.form.edit', $application) }}" class="flex-1 py-2 px-3 bg-primary hover:bg-primary-dark text-white font-semibold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 23l-3-3m0 0l-3-3m3 3V7h3m3 0l3 3m-3 3l3 3" />
+                                    </svg>
+                                    Edit Application
+                                </a>
                             </div>
                         </div>
                     @endforeach
