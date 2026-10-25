@@ -81,29 +81,20 @@
                     </div>
                     <div class="p-6 space-y-6">
 
-                        <!-- Profile Picture Section -->
+                        <!-- Pet Photo Upload (Required) -->
                         <div>
-                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Profile Picture</label>
-                            <div class="flex items-center space-x-6">
-                                <div class="shrink-0">
-                                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-300 relative bg-emerald-50 cursor-pointer" onclick="document.getElementById('petImage').click()">
-                                        <div id="petImagePlaceholder" class="absolute inset-0 flex items-center justify-center">
-                                            <i class="fi fi-rr-camera text-3xl sm:text-4xl text-emerald-500"></i>
-                                        </div>
-                                        <img id="petImagePreview" src="" alt="Pet Profile" class="w-full h-full object-cover hidden">
-                                        <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white opacity-0 hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="file" id="petImage" name="photo" accept="image/*" class="hidden" onchange="previewImage(event)">
-                                <div>
-                                    <p class="text-sm text-gray-600">Upload a photo of your pet</p>
-                                    <p class="text-sm text-gray-400">Click the image to upload</p>
-                                </div>
+                            <label class="block text-sm font-medium mb-1.5">
+                                Pet Photo <span class="text-red-500">*</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mb-2">A clear photo is essential for community identification.</p>
+                            <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[144px] w-36 md:w-48 cursor-pointer" onclick="document.getElementById('pet_photo').click()">
+                                <img id="petPhotoPreview" src="" class="w-full h-full object-cover rounded-lg hidden">
+                                <input type="file" name="pet_photo" id="pet_photo" accept="image/*" class="hidden" required onchange="previewPetPhoto(event)">
+                                <button type="button" onclick="removePetPhoto()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="petPhotoRemoveBtn" aria-label="Remove pet photo">×</button>
+                                <button type="button" onclick="document.getElementById('pet_photo').click()" id="petPhotoUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                    <i class="fi fi-br-picture text-4xl mb-2"></i>
+                                    Click to upload
+                                </button>
                             </div>
                         </div>
 
@@ -810,16 +801,25 @@
         });
 
         // --- Image preview ---
-    function previewImage(event) {
+    function previewPetPhoto(event) {
         const file = event.target.files[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById('petImagePreview').src = e.target.result;
-            document.getElementById('petImagePreview').classList.remove('hidden');
-            document.getElementById('petImagePlaceholder').classList.add('hidden');
+            document.getElementById('petPhotoPreview').src = e.target.result;
+            document.getElementById('petPhotoPreview').classList.remove('hidden');
+            document.getElementById('petPhotoRemoveBtn').classList.remove('hidden');
+            document.getElementById('petPhotoUploadBtn').classList.add('hidden');
         };
         reader.readAsDataURL(file);
+    }
+
+    function removePetPhoto() {
+        document.getElementById('pet_photo').value = '';
+        document.getElementById('petPhotoPreview').src = '';
+        document.getElementById('petPhotoPreview').classList.add('hidden');
+        document.getElementById('petPhotoRemoveBtn').classList.add('hidden');
+        document.getElementById('petPhotoUploadBtn').classList.remove('hidden');
     }
 
     // --- Birthdate / Age toggles ---
