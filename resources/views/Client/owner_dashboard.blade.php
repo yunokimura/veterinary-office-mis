@@ -121,59 +121,67 @@
     <section class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
-            <div class="grid md:grid-cols-4 gap-6 items-stretch">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Register New Pet -->
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
-                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                        </svg>
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-base">Register New Pet</h4>
+                        <p class="text-xs text-gray-500 mt-1 mb-4">Register your pet with the city</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Register New Pet</h3>
-                    <p class="text-gray-600 text-sm mb-4">Register your pet with the city</p>
-                    <a href="{{ url('/pet-registration/form') }}" class="w-full block text-center bg-primary text-white py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                    <a href="{{ url('/pet-registration/form') }}" class="w-full bg-primary text-white text-center text-xs font-bold py-2.5 rounded-lg hover:bg-primary-light transition-colors">
                         Register Now
                     </a>
                 </div>
 
                 <!-- Appointments -->
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
-                    <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-base">Appointments</h4>
+                        <p class="text-xs text-gray-500 mt-1 mb-4">Manage your anti-rabies vaccination or spay/neuter appointments</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Appointments</h3>
-                    <p class="text-gray-600 text-sm mb-4">Manage your anti-rabies vaccination or spay/neuter appointments</p>
-                    <button class="w-full bg-secondary text-white py-2 rounded-lg font-medium hover:bg-secondary-light transition-colors">
+                    <button class="w-full bg-secondary text-white text-center text-xs font-bold py-2.5 rounded-lg hover:bg-secondary-light transition-colors">
                         Schedule Now
                     </button>
                 </div>
 
                 <!-- View My Pets -->
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
-                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-base">My Pets</h4>
+                        <p class="text-xs text-gray-500 mt-1 mb-4">View and manage your registered pets</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">My Pets</h3>
-                    <p class="text-gray-600 text-sm mb-4">View and manage your registered pets</p>
-                    <a href="{{ route('owner.pets') }}" class="w-full block text-center bg-primary text-white py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                    <a href="{{ route('owner.pets') }}" class="w-full bg-primary text-white text-center text-xs font-bold py-2.5 rounded-lg hover:bg-primary-light transition-colors">
                         View Pets
-</a>
+                    </a>
                 </div>
 
                 <!-- Report Lost / Found -->
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 13l4 4m0 0l-4 4m4-4H15" />
-                        </svg>
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 13l4 4m0 0l-4 4m4-4H15" />
+                            </svg>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-base">Report Lost / Found</h4>
+                        <p class="text-xs text-gray-500 mt-1 mb-4">Alert the City Veterinarian Office and local community if a pet is missing or found.</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Report Lost / Found</h3>
-                    <p class="text-gray-600 text-sm mb-4">Alert the City Veterinarian Office and local community if a pet is missing or found.</p>
-                    <a href="{{ url('/lost-found/create') }}" class="w-full block text-center bg-red-600 text-white py-2 rounded-lg font-medium hover:bg-red-700 transition-colors">
+                    <a href="{{ url('/lost-found/create') }}" class="w-full bg-red-600 text-white text-center text-xs font-bold py-2.5 rounded-lg hover:bg-red-700 transition-colors">
                         Create Notice
                     </a>
                 </div>
