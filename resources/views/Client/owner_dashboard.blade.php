@@ -253,27 +253,11 @@
                                         <span class="text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{{ ucfirst($pet->species) }}</span>
                                     </div>
                                     <p class="text-xs text-gray-500 font-medium">{{ $pet->breed }}</p>
-                                    <p class="text-[11px] text-primary font-semibold mt-1 flex items-center gap-1">
+                                        <p class="text-[11px] text-primary font-semibold mt-1 flex items-center gap-1">
 ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
-                                    </p>
-                                    @php
-                                        $isVaccinated = \App\Models\VaccinationReport::where('pet_id', $pet->pet_id)->exists();
-                                    @endphp
-                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full mt-0.5 -ml-1 text-xs font-semibold @if($isVaccinated)bg-green-50 text-green-700 @else bg-red-50 text-red-700 @endif">
-                                        @if($isVaccinated)
-                                            <svg class="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            <span>Anti-rabies Vaccinated</span>
-                                        @else
-                                            <svg class="w-3 h-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                            <span>Not Vaccinated</span>
-                                        @endif
+                                        </p>
                                     </div>
                                 </div>
-                            </div>
 
                             <div class="p-5 grid grid-cols-2 gap-3 text-xs">
                                 <div class="bg-gray-50 p-2.5 rounded-xl">
