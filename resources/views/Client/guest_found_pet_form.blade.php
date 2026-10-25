@@ -38,7 +38,16 @@
                             DEFAULT: '#066D33',
                             light: '#077a40',
                             dark: '#055a29',
-                        }
+    // Handle Holding Status "Other" text field visibility
+    function toggleHoldingStatusOther() {
+        const wrap = document.getElementById('holdingStatusOtherWrap');
+        const selected = document.querySelector('input[name="holding_status"]:checked');
+        if (selected && selected.value === 'other') {
+            wrap.classList.remove('hidden');
+        } else {
+            wrap.classList.add('hidden');
+        }
+    }
                     }
                 }
             }
@@ -97,6 +106,23 @@
                         </div>
                     </div>
                     <div class="p-6 space-y-6">
+
+                        <!-- Pet Photo Upload (Required) -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">
+                                Pet Photo <span class="text-red-500">*</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mb-2">A clear photo is essential for community identification.</p>
+                            <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[144px] w-36 md:w-48 cursor-pointer" onclick="document.getElementById('pet_photo').click()">
+                                <img id="petPhotoPreview" src="" class="w-full h-full object-cover rounded-lg hidden">
+                                <input type="file" name="pet_photo" id="pet_photo" accept="image/*" class="hidden" required onchange="previewPetPhoto(event)">
+                                <button type="button" onclick="removePetPhoto()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="petPhotoRemoveBtn" aria-label="Remove pet photo">×</button>
+                                <button type="button" onclick="document.getElementById('pet_photo').click()" id="petPhotoUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
+                                    <i class="fi fi-br-picture text-4xl mb-2"></i>
+                                    Click to upload
+                                </button>
+                            </div>
+                        </div>
 
                         <!-- Species -->
                         <div>
@@ -181,20 +207,31 @@
                             <input type="hidden" id="breedInput" name="breed" value="" required>
                         </div>
 
-                        <!-- Pet Photo Upload (Required) -->
+                        <!-- Current Holding Status -->
                         <div>
                             <label class="block text-sm font-medium mb-1.5">
-                                Pet Photo <span class="text-red-500">*</span>
+                                Current Holding Status
                             </label>
-                            <p class="text-xs text-gray-500 mb-2">A clear photo is essential for community identification.</p>
-                            <div class="relative border-2 border-dashed border-slate-300 rounded-xl aspect-square hover:border-emerald-400 transition-colors min-h-[144px] w-36 md:w-48 cursor-pointer" onclick="document.getElementById('pet_photo').click()">
-                                <img id="petPhotoPreview" src="" class="w-full h-full object-cover rounded-lg hidden">
-                                <input type="file" name="pet_photo" id="pet_photo" accept="image/*" class="hidden" required onchange="previewPetPhoto(event)">
-                                <button type="button" onclick="removePetPhoto()" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 z-10 hidden" id="petPhotoRemoveBtn" aria-label="Remove pet photo">×</button>
-                                <button type="button" onclick="document.getElementById('pet_photo').click()" id="petPhotoUploadBtn" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 hover:text-emerald-600 text-sm font-medium bg-white bg-opacity-80 rounded-lg">
-                                    <i class="fi fi-br-picture text-4xl mb-2"></i>
-                                    Click to upload
-                                </button>
+                            <div class="grid md:grid-cols-3 gap-3">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="holding_status" value="keeping" class="sr-only peer" onclick="togglePill(this); toggleHoldingStatusOther()">
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">I'm keeping the pet safely</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="holding_status" value="free_roaming" class="sr-only peer" onclick="togglePill(this); toggleHoldingStatusOther()">
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Left in area / Free roaming</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="holding_status" value="barangay_shelter" class="sr-only peer" onclick="togglePill(this); toggleHoldingStatusOther()">
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Turned over to Barangay / Shelter</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="holding_status" value="other" class="sr-only peer" onclick="togglePill(this); toggleHoldingStatusOther()">
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Other:</span>
+                                </label>
+                            </div>
+                            <div id="holdingStatusOtherWrap" class="mt-3 hidden">
+                                <input type="text" name="holding_status_other" placeholder="Specify holding status" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                             </div>
                         </div>
 
@@ -428,7 +465,7 @@
                     </div>
                     <div class="p-6 space-y-4">
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">Reporter Name <span class="text-red-500">*</span></label>
+                            <label class="block text-xs text-gray-500 mb-1">Reporter Name</label>
                             <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name">
                         </div>
                         <div>
@@ -810,6 +847,17 @@
             input.disabled = false;
             input.classList.remove('opacity-50', 'pointer-events-none');
             input.classList.add('focus:border-primary', 'focus:ring-2', 'focus:ring-primary/20');
+        }
+    }
+
+    // Handle Holding Status "Other" text field visibility
+    function toggleHoldingStatusOther() {
+        const wrap = document.getElementById('holdingStatusOtherWrap');
+        const selected = document.querySelector('input[name="holding_status"]:checked');
+        if (selected && selected.value === 'other') {
+            wrap.classList.remove('hidden');
+        } else {
+            wrap.classList.add('hidden');
         }
     }
 </script>
