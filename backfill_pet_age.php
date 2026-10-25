@@ -10,7 +10,9 @@ $kernel->bootstrap();
 
 $count = 0;
 
-foreach (Pet::whereNotNull('birthdate')->whereYear('birthdate', '>=', 1)->with('petInfo') as $pet) {
+$pets = Pet::whereNotNull('birthdate')->get();
+
+foreach ($pets as $pet) {
     $age = PetAge::compute($pet->birthdate);
 
     if (! $pet->petInfo) {

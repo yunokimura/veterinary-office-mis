@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use App\Support\PetAge;
 
 /**
  * @property int $pet_id
@@ -82,5 +83,14 @@ class PetInfo extends Model
     public function pet(): BelongsTo
     {
         return $this->belongsTo(Pet::class, 'pet_id', 'pet_id');
+    }
+
+    public function getPetAgeAttribute($value)
+    {
+        if ($this->pet && $this->pet->birthdate) {
+            return PetAge::compute($this->pet->birthdate);
+        }
+
+        return $value;
     }
 }
