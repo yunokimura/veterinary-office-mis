@@ -136,15 +136,15 @@
                     </a>
                 </div>
 
-                <!-- Schedule Vaccination -->
+                <!-- Appointments -->
                 <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
                     <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Schedule Appointment</h3>
-                    <p class="text-gray-600 text-sm mb-4">Book a vaccination or checkup</p>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Appointments</h3>
+                    <p class="text-gray-600 text-sm mb-4">Manage your anti-rabies vaccination or spay/neuter appointments</p>
                     <button class="w-full bg-secondary text-white py-2 rounded-lg font-medium hover:bg-secondary-light transition-colors">
                         Schedule Now
                     </button>
@@ -467,4 +467,6 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
 
     @include('Client.partials.footer')
 </body>
+</html>
+ody>
 </html>
