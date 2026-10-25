@@ -59,6 +59,10 @@
                         <i class="fa-solid fa-calendar-check"></i>
                         <span>Book Appointment</span>
                     </button>
+                    <button class="relative text-emerald-600 hover:text-emerald-700 p-2 hover:bg-emerald-50 rounded-lg transition-colors">
+                        <i class="fa-solid fa-bell text-xl"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
                     @endauth
                     @auth
                         <div class="relative">
