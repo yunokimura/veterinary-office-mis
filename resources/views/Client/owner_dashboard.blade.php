@@ -121,9 +121,9 @@
     <section class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
-            <div class="grid md:grid-cols-3 gap-6">
+            <div class="grid md:grid-cols-4 gap-6 items-stretch">
                 <!-- Register New Pet -->
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
                     <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -137,7 +137,7 @@
                 </div>
 
                 <!-- Schedule Vaccination -->
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
                     <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -151,7 +151,7 @@
                 </div>
 
                 <!-- View My Pets -->
-                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
                     <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -161,6 +161,20 @@
                     <p class="text-gray-600 text-sm mb-4">View and manage your registered pets</p>
                     <a href="{{ route('owner.pets') }}" class="w-full block text-center bg-primary text-white py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
                         View Pets
+</a>
+                </div>
+
+                <!-- Report Lost / Found -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover flex flex-col h-full justify-between">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 13l4 4m0 0l-4 4m4-4H15" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Report Lost / Found</h3>
+                    <p class="text-gray-600 text-sm mb-4">Alert the City Veterinarian Office and local community if a pet is missing or found.</p>
+                    <a href="{{ url('/lost-found/create') }}" class="w-full block text-center bg-red-600 text-white py-2 rounded-lg font-medium hover:bg-red-700 transition-colors">
+                        Create Notice
                     </a>
                 </div>
             </div>
