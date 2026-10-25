@@ -224,6 +224,9 @@
             
             @if($pets->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" id="petGrid">
+                    @php
+                        $vaccinationReports = \App\Models\VaccinationReport::whereIn('pet_id', $pets->pluck('pet_id'))->get()->keyBy('pet_id');
+                    @endphp
                     @foreach($pets as $pet)
                         @php
                             $imagePath = $pet->pet_image;
@@ -339,6 +342,46 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                     @else
                                         <span class="font-semibold text-gray-700 mt-0.5 block">-</span>
                                     @endif
+                                </div>
+                                @php
+                                    $report = $vaccinationReports->get($pet->pet_id);
+                                    $hasReport = $report !== null;
+                                    $isVaccinated = $hasReport && !$report->not_vaccinated && $report->status === 'completed';
+                                    $nextVaccinationDate = $report->next_vaccination_date ?? null;
+                                    $needsBooster = $isVaccinated && $nextVaccinationDate !== null && $nextVaccinationDate->isPast();
+
+                                    if ($needsBooster) {
+                                        $vaxColor = 'bg-amber-50 text-amber-700 border border-amber-200';
+                                        $vaxIconColor = 'text-amber-500';
+                                        $vaxLabel = 'Vaccinated but needs a booster shot';
+                                    } elseif ($isVaccinated) {
+                                        $vaxColor = 'bg-green-50 text-green-700 border border-green-200';
+                                        $vaxIconColor = 'text-green-600';
+                                        $vaxLabel = 'Vaccinated';
+                                    } else {
+                                        $vaxColor = 'bg-red-50 text-red-700 border border-red-200';
+                                        $vaxIconColor = 'text-red-500';
+                                        $vaxLabel = 'Not Vaccinated/No History';
+                                    }
+                                @endphp
+                                <div class="col-span-2 bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Anti-Rabies Vaccination</span>
+                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full mt-0.5 font-semibold text-xs {{ $vaxColor }}">
+                                        @if($needsBooster)
+                                            <svg class="w-3 h-3 {{ $vaxIconColor }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        @elseif($isVaccinated)
+                                            <svg class="w-3 h-3 {{ $vaxIconColor }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        @else
+                                            <svg class="w-3 h-3 {{ $vaxIconColor }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        @endif
+                                        <span>{{ $vaxLabel }}</span>
+                                    </div>
                                 </div>
                             </div>
 
