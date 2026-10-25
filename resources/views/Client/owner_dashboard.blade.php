@@ -270,16 +270,40 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                 </div>
                                 <div class="bg-gray-50 p-2.5 rounded-xl">
                                     <span class="text-gray-400 block text-[10px] font-semibold uppercase">Age</span>
-                                    @php
-                                        $ageDisplay = 'Unknown';
-                                        if ($pet->petInfo?->pet_age) {
-                                            $ageDisplay = $pet->petInfo->pet_age;
-                                        } elseif ($pet->birthdate) {
-                                            $birthYear = date('Y', strtotime($pet->birthdate));
-                                            $age = date('Y') - $birthYear;
-                                            $ageDisplay = $age . ' year' . ($age != 1 ? 's' : '') . ' old';
-                                        }
-                                    @endphp
+@php
+    $ageDisplay = 'Unknown';
+    if ($pet->birthdate) {
+        $birthDate = strtotime($pet->birthdate);
+        $today = time();
+        $diffInMonths = floor(($today - $birthDate) / 86400 / 30.44);
+        
+        $years = floor($diffInMonths / 12);
+        $months = $diffInMonths % 12;
+        
+        // If months are minimal (1-2 months), just display years for cleaner display
+        if ($months <= 2 && $years > 0) {
+            $yearStr = $years === 1 ? '1 yr' : $years . ' yrs';
+            $ageDisplay = $yearStr;
+        } else {
+            $yearStr = $years === 1 ? '1 yr' : $years . ' yrs';
+            $monthStr = $months === 1 ? '1 mos' : $months . ' mos';
+            
+            if ($years > 0 && $months > 0) {
+                $ageDisplay = "$yearStr $monthStr";
+            } elseif ($years > 0) {
+                $ageDisplay = $yearStr;
+            } else {
+                $ageDisplay = $monthStr;
+            }
+        }
+    } elseif ($pet->petInfo?->pet_age) {
+        // Only display pet_age as-is if it's already in the new "X yrs X mos" format
+        if (preg_match('/\d+\s+yrs\s+\d+\s+mos/', $pet->petInfo->pet_age) ||
+            preg_match('/\d+\s+yr\s+\d+\s+mos/', $pet->petInfo->pet_age)) {
+            $ageDisplay = $pet->petInfo->pet_age;
+        }
+    }
+@endphp
                                     <span class="font-semibold text-gray-700 mt-0.5 block">{{ $ageDisplay }}</span>
                                 </div>
                                 <div class="bg-gray-50 p-2.5 rounded-xl">
