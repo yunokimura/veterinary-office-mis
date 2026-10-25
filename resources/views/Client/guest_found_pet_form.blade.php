@@ -428,13 +428,37 @@
 
                         <!-- Submit -->
                         <div class="flex justify-center mt-8">
-                            <button type="submit" class="bg-emerald-600 text-white px-12 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2 w-full md:w-auto shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Submit Found Pet Report
-                            </button>
+<button type="submit" class="bg-emerald-600 text-white px-12 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2 w-full md:w-auto shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Submit Found Pet Report
+                                </button>
+                            </div>
+
+                <!-- Found Pet Submit Modal -->
+                <div id="foundPetSubmitModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+                    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeFoundPetSubmitModal()"></div>
+                    <div class="fixed inset-0 flex items-end sm:items-center sm:justify-center p-0 sm:p-4">
+                        <div class="bg-white rounded-2xl shadow-xl w-full sm:max-w-md max-h-[90vh] sm:max-h-[80vh] overflow-hidden flex flex-col">
+                            <div class="px-6 py-5 border-b border-slate-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Confirm Submission</h3>
+                                <button type="button" onclick="closeFoundPetSubmitModal()" class="text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg p-2 transition-colors" aria-label="Close modal">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="p-6 text-center">
+                                <p class="text-gray-700 mb-6">Are you sure you want to submit this found pet report?</p>
+                                <div class="flex gap-4 justify-center">
+                                    <button type="button" onclick="closeFoundPetSubmitModal()" class="px-6 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-white transition-colors">Cancel</button>
+                                    <button type="submit" class="px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors">Confirm</button>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
                     </div>
                 </div>
 
@@ -859,6 +883,11 @@
         } else {
             wrap.classList.add('hidden');
         }
+    }
+
+    // Close found pet submit modal
+    function closeFoundPetSubmitModal() {
+        document.getElementById('foundPetSubmitModal').classList.add('hidden');
     }
 </script>
 

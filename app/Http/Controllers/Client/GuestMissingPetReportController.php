@@ -90,6 +90,12 @@ class GuestMissingPetReportController extends Controller
             'collar_harness' => 'nullable|string|max:255',
             'is_crossbreed' => 'nullable|string|in:yes,no',
 
+            'estimated_age' => 'required|in:Puppy/Kitten,Adult,Senior',
+            'time_found' => 'required',
+            'fur_colors' => 'nullable|string|max:255',
+            'condition' => 'nullable|string|max:255',
+            'holding_status' => 'nullable|string|in:keeping,free_roaming,barangay_shelter,other',
+
             'found_description' => 'required_if:report_type,found|nullable|string|max:2000',
             'date_found' => 'required_if:report_type,found|nullable|date',
             'photo' => 'nullable|image|max:8192',
