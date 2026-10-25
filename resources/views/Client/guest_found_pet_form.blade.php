@@ -25,8 +25,9 @@
         }
     </style>
 
-    <script>
+<script>
         const barangaysData = @json($barangays);
+        
         tailwind.config = {
             theme: {
                 extend: {
@@ -34,28 +35,17 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        primary: {
-                            DEFAULT: '#066D33',
-                            light: '#077a40',
-                            dark: '#055a29',
-    // Handle Holding Status "Other" text field visibility
-    function toggleHoldingStatusOther() {
-        const wrap = document.getElementById('holdingStatusOtherWrap');
-        const selected = document.querySelector('input[name="holding_status"]:checked');
-        if (selected && selected.value === 'other') {
-            wrap.classList.remove('hidden');
-        } else {
-            wrap.classList.add('hidden');
-        }
-    }
+                        primary: '#066D33',
+                        'primary-light': '#088442',
+                        secondary: '#6B21A8',
+                        'secondary-light': '#7C3AED',
                     }
                 }
             }
         }
     </script>
 </head>
-
-<body class="font-sans bg-gray-50 min-h-screen">
+<body class="font-sans antialiased bg-gray-50 min-h-screen">
 
 <!-- Header -->
 @include('Client.partials.navbar')
