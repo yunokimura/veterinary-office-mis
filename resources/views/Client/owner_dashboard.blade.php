@@ -103,7 +103,9 @@
         </script>
     @endif
 
-     @include('Client.partials.navbar')
+     @include('Client.partials.emergency_alert')
+
+    @include('Client.partials.navbar')
 
     <!-- Welcome Banner -->
     <section class="hero-bg py-12">
