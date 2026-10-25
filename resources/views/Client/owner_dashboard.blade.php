@@ -237,7 +237,20 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                             <div class="p-5 grid grid-cols-2 gap-3 text-xs">
                                 <div class="bg-gray-50 p-2.5 rounded-xl">
                                     <span class="text-gray-400 block text-[10px] font-semibold uppercase">Gender</span>
-                                    <span class="font-semibold text-gray-700 flex items-center gap-1 mt-0.5">{{ ucfirst($pet->gender) }}</span>
+                                    <span class="font-semibold text-gray-700 flex items-center gap-1 mt-0.5">
+                                        @if($pet->gender === 'male')
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-blue-500 shrink-0">
+                                                <path d="M0 0h16v16H0z" fill="none" />
+                                                <path fill="#1e2099" fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8a4 4 0 0 0 0-8" />
+                                            </svg>
+                                        @elseif($pet->gender === 'female')
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-pink-500 shrink-0">
+                                                <path d="M0 0h16v16H0z" fill="none" />
+                                                <path fill="#d42ec9" fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8a4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" />
+                                            </svg>
+                                        @endif
+                                        {{ ucfirst($pet->gender) }}
+                                    </span>
                                 </div>
                                 <div class="bg-gray-50 p-2.5 rounded-xl">
                                     <span class="text-gray-400 block text-[10px] font-semibold uppercase">Age</span>
