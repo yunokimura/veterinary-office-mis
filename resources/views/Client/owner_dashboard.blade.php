@@ -205,14 +205,14 @@
                     @foreach($pets as $pet)
                         @php
                             $imagePath = $pet->pet_image;
-                            if (!str_contains($imagePath, 'images/pets') && !str_contains($imagePath, 'http')) {
+                            if ($pet->pet_image && !str_contains($imagePath, 'images/pets')) {
                                 $imagePath = 'images/pets/' . basename($imagePath);
                             }
                         @endphp
                         <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition overflow-hidden group flex flex-col justify-between" data-name="{{ strtolower($pet->pet_name) }} {{ strtolower($pet->species) }} {{ strtolower($pet->breed) }}">
                             <div class="p-5 pb-4 border-b border-gray-100 flex items-start gap-3.5">
                                 <div class="relative">
-                                    @if($pet->pet_image)
+                                    @if($pet->pet_image && file_exists(public_path($imagePath)))
                                         <img src="{{ asset($imagePath) }}" alt="{{ $pet->pet_name }}" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-green-100 group-hover:ring-primary transition-all">
                                         <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary border-2 border-white rounded-full" title="Vaccinated"></span>
                                     @else
@@ -229,10 +229,7 @@
                                     </div>
                                     <p class="text-xs text-gray-500 font-medium">{{ $pet->breed }}</p>
                                     <p class="text-[11px] text-primary font-semibold mt-1 flex items-center gap-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.047A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                        </svg>
-                                        ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
+ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                     </p>
                                 </div>
                             </div>
