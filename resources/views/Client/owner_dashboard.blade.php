@@ -231,6 +231,22 @@
                                     <p class="text-[11px] text-primary font-semibold mt-1 flex items-center gap-1">
 ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                     </p>
+                                    @php
+                                        $isVaccinated = \App\Models\VaccinationReport::where('pet_id', $pet->pet_id)->exists();
+                                    @endphp
+                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full mt-0.5 -ml-1 text-xs font-semibold @if($isVaccinated)bg-green-50 text-green-700 @else bg-red-50 text-red-700 @endif">
+                                        @if($isVaccinated)
+                                            <svg class="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            <span>Anti-rabies Vaccinated</span>
+                                        @else
+                                            <svg class="w-3 h-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            <span>Not Vaccinated</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
@@ -273,7 +289,7 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                 <div class="bg-gray-50 p-2.5 rounded-xl">
                                     <span class="text-gray-400 block text-[10px] font-semibold uppercase">Weight</span>
                                     @if($pet->petInfo?->pet_weight)
-                                        <span class="font-semibold text-gray-700 mt-0.5 block">{{ $pet->petInfo->pet_weight }} kg</span>
+                                        <span class="font-semibold text-gray-700 mt-0.5 block">{{ $pet->petInfo->pet_weight }}</span>
                                     @else
                                         <span class="font-semibold text-gray-700 mt-0.5 block">-</span>
                                     @endif
@@ -383,9 +399,14 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
 
                             <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
                                 <a href="{{ route('adoption.form.edit', $application) }}" class="flex-1 py-2 px-3 bg-primary hover:bg-primary-dark text-white font-semibold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 23l-3-3m0 0l-3-3m3 3V7h3m3 0l3 3m-3 3l3 3" />
-                                    </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <g fill="none">
+                                        <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.34 22.19h19.32" />
+                                        <rect width="5.17" height="6.08" fill="#fff" opacity="0.2" rx="1" transform="rotate(135 7.642 8.558)scale(-1 1)" />
+                                        <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19.11 9.07l-4.16-4.16M6.27 21.24c.47-.14.71-.2.92-.33s.39-.3.74-.65L20.98 7.41a5 5 0 0 0 1.19-1.4a2 2 0 0 0 0-1.5A5 5 0 0 0 21 3.12a5 5 0 0 0-1.4-1.18a2 2 0 0 0-1.48 0c-.38.15-.72.49-1.4 1.17l-13 12.94c-.34.35-.52.53-.65.74c-.12.21-.2.45-.34.92l-.46 1.5c-.48 1.58-.73 2.37-.3 2.8c.42.42 1.2.18 2.79-.3z" />
+                                    </g>
+                                </svg>
                                     Edit Application
                                 </a>
                             </div>
