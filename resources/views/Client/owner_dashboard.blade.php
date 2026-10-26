@@ -352,7 +352,7 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
         $vaxSub = 'Lot #' . ($report->vaccine_batch_number ?? 'N/A');
     }
 @endphp
-<div class="col-span-2 flex flex-col gap-2 ml-3 px-3 py-2 rounded-full {{ $vaxIconBg }} inline-flex">
+<div class="col-span-2 flex flex-col gap-2 ml-3 px-3 py-2 rounded-lg {{ $vaxIconBg }} inline-flex">
     <div class="flex items-center gap-2.5">
         <div class="w-5 h-5 rounded-full {{ $vaxIconColor }} flex items-center justify-center shrink-0">
             @if($isVaccinated && !$needsBooster)
