@@ -316,7 +316,7 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                     <span class="font-semibold text-gray-700 mt-0.5 block">{{ $ageDisplay }}</span>
                                 </div>
                                 <div class="bg-gray-50 p-2.5 rounded-xl">
-                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Neutered/Spayed</span>
+                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">{{ $pet->gender === 'female' ? 'Spayed' : 'Neutered' }}</span>
                                     <span class="font-semibold {{ (($pet->petInfo?->is_neutered ?? '') === 'yes') ? 'text-primary' : 'text-amber-600' }} mt-0.5 block">{{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Yes' : 'No' }}</span>
                                 </div>
                                 <div class="bg-gray-50 p-2.5 rounded-xl">
