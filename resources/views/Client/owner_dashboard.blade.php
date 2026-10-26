@@ -247,7 +247,7 @@
                                         <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary border-2 border-white rounded-full" title="Vaccinated"></span>
                                     @endif
                                 </div>
-                                <div>
+    <div class="flex flex-col items-center gap-2">
                                     <div class="flex items-center gap-1.5">
                                         <h4 class="font-bold text-gray-900 text-base">{{ $pet->pet_name }}</h4>
                                         <span class="text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{{ ucfirst($pet->species) }}</span>
@@ -338,6 +338,8 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
         $vaxColor = 'bg-red-50 border border-red-200';
         $vaxIconBg = 'bg-red-100';
         $vaxIconColor = 'text-red-500';
+        $vaxTextColor = 'text-red-700';
+        $vaxSubColor = 'text-red-600';
         $vaxHeading = 'Not Vaccinated / No Record';
         $vaxSub = 'Anti-rabies vaccination needed';
         $vaxIcon = 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
@@ -345,15 +347,24 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
         $vaxColor = 'bg-green-50 border border-green-200';
         $vaxIconBg = 'bg-green-100';
         $vaxIconColor = 'text-green-600';
-        $vaxHeading = 'Vaccinated';
-        $vaxSub = 'Anti-rabies vaccination up to date';
+        $vaxTextColor = 'text-green-700';
+        $vaxSubColor = 'text-green-600';
+        $vaxHeading = 'Vaccinated Active';
+        $vaxSub = 'Tag #' . ($report->vaccine_batch_number ?? 'N/A');
         $vaxIcon = 'M5 13l4 4L19 7';
     }
 @endphp
-<div class="col-span-2 flex flex-col items-center gap-2 px-3 py-2 rounded-full {{ $vaxIconBg }} inline-flex justify-center">
-    <div>
-        <div class="text-xs font-bold text-red-700 leading-none whitespace-nowrap truncate">{{ $vaxHeading }}</div>
-        <div class="text-xs text-red-600 leading-none whitespace-nowrap truncate">{{ $vaxSub }}</div>
+<div class="col-span-2 flex flex-col gap-2 ml-3 px-3 py-2 rounded-full {{ $vaxIconBg }} inline-flex">
+    <div class="flex items-center gap-2.5">
+        <div class="w-5 h-5 rounded-full {{ $vaxIconColor }} flex items-center justify-center shrink-0">
+            <svg class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="{{ $vaxIcon }}" />
+            </svg>
+        </div>
+        <div class="flex flex-col gap-1">
+            <div class="text-xs font-bold {{ $vaxTextColor }} leading-none whitespace-nowrap truncate">{{ $vaxHeading }}</div>
+            <div class="text-xs {{ $vaxSubColor }} leading-none whitespace-nowrap truncate">{{ $vaxSub }}</div>
+        </div>
     </div>
 </div>
                             </div>
