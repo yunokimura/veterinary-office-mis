@@ -342,7 +342,6 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
         $vaxSubColor = 'text-red-600';
         $vaxHeading = 'Not Vaccinated / No Record';
         $vaxSub = 'Anti-rabies vaccination needed';
-        $vaxIcon = 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
     } else {
         $vaxColor = 'bg-green-50 border border-green-200';
         $vaxIconBg = 'bg-green-100';
@@ -350,16 +349,23 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
         $vaxTextColor = 'text-green-700';
         $vaxSubColor = 'text-green-600';
         $vaxHeading = 'Vaccinated Active';
-        $vaxSub = 'Tag #' . ($report->vaccine_batch_number ?? 'N/A');
-        $vaxIcon = 'M5 13l4 4L19 7';
+        $vaxSub = 'Lot #' . ($report->vaccine_batch_number ?? 'N/A');
     }
 @endphp
 <div class="col-span-2 flex flex-col gap-2 ml-3 px-3 py-2 rounded-full {{ $vaxIconBg }} inline-flex">
     <div class="flex items-center gap-2.5">
         <div class="w-5 h-5 rounded-full {{ $vaxIconColor }} flex items-center justify-center shrink-0">
-            <svg class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="{{ $vaxIcon }}" />
-            </svg>
+            @if($isVaccinated && !$needsBooster)
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11s11-4.925 11-11S18.075 1 12 1m4.768 9.14a1 1 0 1 0-1.536-1.28l-4.3 5.159l-2.225-2.226a1 1 0 0 0-1.414 1.414l3 3a1 1 0 0 0 1.475-.067z" clip-rule="evenodd" />
+                </svg>
+            @else
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h64v64H0z" fill="none" />
+                    <path d="M32 2C15.432 2 2 15.432 2 32s13.432 30 30 30s30-13.432 30-30S48.568 2 32 2m5 49.75H27v-24h10zm-5-29.5a5 5 0 1 1 0-10a5 5 0 0 1 0 10" />
+                </svg>
+            @endif
         </div>
         <div class="flex flex-col gap-1">
             <div class="text-xs font-bold {{ $vaxTextColor }} leading-none whitespace-nowrap truncate">{{ $vaxHeading }}</div>
