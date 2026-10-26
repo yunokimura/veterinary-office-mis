@@ -350,18 +350,10 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
         $vaxIcon = 'M5 13l4 4L19 7';
     }
 @endphp
-<div class="col-span-2 {{ $vaxColor }} p-5 rounded-2xl shadow-sm">
-    <span class="text-[10px] font-semibold text-red-500 uppercase block mb-2">Anti-Rabies Vaccination</span>
-    <div class="flex items-center gap-2 px-3 py-2 rounded-full {{ $vaxIconBg }} inline-flex">
-        <div class="w-5 h-5 rounded-full {{ $vaxIconColor }} flex items-center justify-center">
-            <svg class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="{{ $vaxIcon }}" />
-            </svg>
-        </div>
-        <div>
-            <div class="text-xs font-bold text-red-700 leading-none whitespace-nowrap truncate">{{ $vaxHeading }}</div>
-            <div class="text-xs text-red-600 leading-none whitespace-nowrap truncate">{{ $vaxSub }}</div>
-        </div>
+<div class="col-span-2 flex flex-col items-center gap-2 px-3 py-2 rounded-full {{ $vaxIconBg }} inline-flex justify-center">
+    <div>
+        <div class="text-xs font-bold text-red-700 leading-none whitespace-nowrap truncate">{{ $vaxHeading }}</div>
+        <div class="text-xs text-red-600 leading-none whitespace-nowrap truncate">{{ $vaxSub }}</div>
     </div>
 </div>
                             </div>
