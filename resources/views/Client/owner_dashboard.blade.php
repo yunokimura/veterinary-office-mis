@@ -406,10 +406,6 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
             ->with('pet')
             ->orderByDesc('scheduled_at')
             ->get();
-        $adoptionApplications = \App\Models\AdoptionApplication::where('user_id', auth()->id())
-            ->with('pet')
-            ->orderByDesc('appointment_date')
-            ->get();
 
         $appointments = collect();
         foreach ($vaccinationAppointments as $a) {
@@ -432,17 +428,6 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                 'scheduled_at' => $a->scheduled_at,
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->veterinarian ?? 'N/A',
-            ]);
-        }
-        foreach ($adoptionApplications as $a) {
-            $appointments->push((object) [
-                'id' => $a->id,
-                'type' => 'adoption',
-                'pet_name' => optional($a->pet)->pet_name ?? 'General Adoption',
-                'pet_breed' => optional($a->pet)->breed ?? '',
-                'scheduled_at' => $a->appointment_date ? \Carbon\Carbon::parse($a->appointment_date) : null,
-                'status' => $a->status,
-                'vet' => 'N/A',
             ]);
         }
         $appointments = $appointments->sortByDesc(function ($item) {
@@ -469,7 +454,6 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                         <option>All Types</option>
                         <option>Vaccination</option>
                         <option>Spay & Neuter</option>
-                        <option>Adoption</option>
                     </select>
                 </div>
             </div>
@@ -478,7 +462,7 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     @foreach($appointments as $appointment)
                         @php
-                            $typeLabel = $appointment->type === 'vaccination' ? 'Vaccination' : ($appointment->type === 'spay_neuter' ? 'Spay & Neuter' : 'Adoption Application');
+                            $typeLabel = $appointment->type === 'vaccination' ? 'Vaccination' : 'Spay & Neuter';
                             $typeColor = $appointment->type === 'vaccination' ? 'green' : ($appointment->type === 'spay_neuter' ? 'primary' : 'blue');
                             $statusLabel = ucfirst(str_replace('_', ' ', $appointment->status));
                             if (in_array($appointment->status, ['pending', 'pending_review'])) {
@@ -491,10 +475,9 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                 $statusColor = 'bg-gray-50 text-gray-700 border border-gray-200';
                             }
                             $scheduled = $appointment->scheduled_at ? \Carbon\Carbon::parse($appointment->scheduled_at)->format('M d, Y \a\t h:i A') : 'TBA';
-                            $actionUrl = $appointment->type === 'adoption' ? route('adoption.form.edit', $appointment->id) : url('/vaccination/form');
-                            $typeChipClass = $appointment->type === 'vaccination' ? 'bg-green-50 text-green-700 border border-green-200' : ($appointment->type === 'spay_neuter' ? 'bg-primary/10 text-primary border border-gray-200' : 'bg-blue-50 text-blue-700 border border-blue-200');
-                            $accentClass = $appointment->type === 'vaccination' ? 'bg-green-500' : ($appointment->type === 'spay_neuter' ? 'bg-primary' : 'bg-blue-500');
-                            $buttonClass = $appointment->type === 'vaccination' ? 'bg-green-500 hover:bg-green-600' : ($appointment->type === 'spay_neuter' ? 'bg-primary hover:bg-primary-dark' : 'bg-blue-500 hover:bg-blue-600');
+                            $typeChipClass = $appointment->type === 'vaccination' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-primary/10 text-primary border border-gray-200';
+                            $accentClass = $appointment->type === 'vaccination' ? 'bg-green-500' : 'bg-primary';
+                            $buttonClass = $appointment->type === 'vaccination' ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary-dark';
                         @endphp
                         <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between relative overflow-hidden group">
                             <div class="absolute top-0 right-0 w-2 h-full {{ $accentClass }}"></div>
@@ -508,13 +491,11 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                 <div class="flex items-center gap-1.5 mb-3">
                                     <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full {{ $typeChipClass }} text-[11px] font-bold">
                                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            @if($appointment->type === 'vaccination')
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            @elseif($appointment->type === 'spay_neuter')
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                            @else
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012 2h2a2 2 0 002 2m0 0l2 2m-2-2v12m-6-6l2 2" />
-                                            @endif
+                                    @if($appointment->type === 'vaccination')
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    @else
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    @endif
                                         </svg>
                                         {{ $typeLabel }}
                                     </span>
@@ -542,8 +523,8 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
                                 </p>
                             </div>
                             <div class="p-4 bg-gray-50 border-t border-gray-100">
-                                <a href="{{ $actionUrl }}" class="w-full py-2 {{ $buttonClass }} text-white text-center text-xs font-bold rounded-xl transition-colors">
-                                    {{ $appointment->type === 'adoption' ? 'Edit Application' : 'View Details' }}
+                                <a href="{{ url('/vaccination/form') }}" class="w-full py-2 {{ $buttonClass }} text-white text-center text-xs font-bold rounded-xl transition-colors">
+                                    View Details
                                 </a>
                             </div>
                         </div>
@@ -674,6 +655,4 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
 
     @include('Client.partials.footer')
 </body>
-</html>
-ody>
 </html>
