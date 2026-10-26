@@ -247,7 +247,7 @@
                                         <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary border-2 border-white rounded-full" title="Vaccinated"></span>
                                     @endif
                                 </div>
-    <div class="flex flex-col items-center gap-2">
+    <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <h4 class="font-bold text-gray-900 text-base">{{ $pet->pet_name }}</h4>
                                         <span class="text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{{ ucfirst($pet->species) }}</span>
