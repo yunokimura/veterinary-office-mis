@@ -95,22 +95,68 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
 </div>
 
 <!-- Appointment Details Modal -->
-<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="appointmentModalTitle">Appointment Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div id="appointmentModalBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]">
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Appointment Details</h2>
+                    <p class="text-xs text-slate-400">ID: <span id="appointmentModalId" class="font-mono font-semibold text-slate-600">#APT-2026-0010</span></p>
+                </div>
             </div>
-            <div class="modal-body" id="appointmentModalBody">
-                <div class="text-center py-4">
-                    <div class="spinner-border text-green-600" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+            <div class="flex items-center space-x-2">
+                <span id="appointmentModalStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                    Completed
+                </span>
+                <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div class="p-6 space-y-5 overflow-y-auto bg-white max-h-[calc(90vh-140px)]">
+            <div id="appointmentModalContent">
+                <div class="text-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+                    <p class="text-slate-500 text-sm">Loading appointment details...</p>
                 </div>
             </div>
         </div>
+
+        <!-- Modal Footer / Actions -->
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-2 w-full sm:w-auto">
+                <button onclick="window.print()" class="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg shadow-xs transition-colors flex items-center justify-center space-x-1.5">
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                    <span>Print</span>
+                </button>
+                <button onclick="toast('Downloading PDF summary...')" class="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg shadow-xs transition-colors flex items-center justify-center space-x-1.5">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Export</span>
+                </button>
+            </div>
+            <div class="flex items-center space-x-2 w-full sm:w-auto">
+                <button onclick="toggleModal(false)" class="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200/60 rounded-lg transition-colors">
+                    Close
+                </button>
+                <button onclick="toast('Opening reschedule dialog...')" class="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 rounded-lg shadow-sm transition-colors">
+                    Reschedule
+                </button>
+            </div>
+        </div>
     </div>
+</div>
+
+<!-- Toast Notification Container -->
+<div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl opacity-0 translate-y-2 transition-all duration-200 pointer-events-none flex items-center space-x-2 z-50">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMsg">Notification message</span>
 </div>
 
 <!-- Edit Appointment Modal -->
@@ -283,18 +329,19 @@ document.getElementById('appointmentsPagination').addEventListener('click', func
 });
 
 function viewAppointment(appointmentId) {
-    const modalEl = document.getElementById('appointmentModal');
-    const modalBody = document.getElementById('appointmentModalBody');
-    const modal = new bootstrap.Modal(modalEl);
+    const modalBackdrop = document.getElementById('appointmentModalBackdrop');
+    const modalContent = document.getElementById('appointmentModalContent');
 
-    modalBody.innerHTML = `
-        <div class="text-center py-4">
-            <div class="spinner-border text-green-600" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
+    modalContent.innerHTML = `
+        <div class="text-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+            <p class="text-slate-500 text-sm">Loading appointment details...</p>
         </div>
     `;
-    modal.show();
+    modalBackdrop.classList.remove('hidden');
+    setTimeout(() => {
+        modalBackdrop.classList.remove('opacity-0');
+    }, 10);
 
     fetch(`{{ route($routePrefix . '.vaccination-appointments.show-json', ':id') }}`.replace(':id', appointmentId))
         .then(response => response.json())
@@ -302,83 +349,178 @@ function viewAppointment(appointmentId) {
             if (data.success) {
                 displayAppointmentDetails(data.appointment);
             } else {
-                modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load appointment details.</div>';
+                modalContent.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load appointment details.</div>';
             }
         })
         .catch(() => {
-            modalBody.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load appointment details.</div>';
+            modalContent.innerHTML = '<div class="text-center text-red-600 py-4">Failed to load appointment details.</div>';
         });
 }
 
 function displayAppointmentDetails(appointment) {
-    const modalBody = document.getElementById('appointmentModalBody');
+    const modalBackdrop = document.getElementById('appointmentModalBackdrop');
+    const modalContent = document.getElementById('appointmentModalContent');
+    const modalIdEl = document.getElementById('appointmentModalId');
+    const modalStatusEl = document.getElementById('appointmentModalStatus');
 
     const statusBadgeClass = getStatusBadgeClasses(appointment.status);
+    const statusLabel = appointment.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-    modalBody.innerHTML = `
+    const paddedId = String(appointment.id).padStart(4, '0');
+    const appointmentDisplayId = 'APT-2026-' + paddedId;
+
+    if (modalIdEl) modalIdEl.textContent = '#' + appointmentDisplayId;
+
+    const rabiesValue = appointment.last_anti_rabies_date;
+    const rabiesDisplay = (!rabiesValue || rabiesValue === 'N/A' || rabiesValue === '') ? 'First Time/No History' : escapeHtml(rabiesValue);
+
+    const surgeryValue = appointment.recent_surgery;
+    const surgeryDisplay = surgeryValue ? 'Yes' : 'No';
+
+    modalContent.innerHTML = `
         <div class="space-y-3">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500">Appointment ID</p>
-                    <p class="text-lg font-semibold text-gray-800">#${escapeHtml(appointment.id)}</p>
+                    <p class="text-sm text-slate-500">Appointment ID</p>
+                    <p class="text-lg font-semibold text-slate-800">#${escapeHtml(appointment.id)}</p>
                 </div>
                 <div>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusBadgeClass}">
-                        ${escapeHtml(appointment.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))}
+                        ${escapeHtml(statusLabel)}
                     </span>
                 </div>
             </div>
-            <hr class="border-gray-100">
-            <div class="bg-gray-50 rounded-lg p-4">
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500">Scheduled At</p>
-                        <p class="font-medium text-gray-800 mt-1">Date: ${escapeHtml(appointment.scheduled_at_date || '')}</p>
-                        <p class="font-medium text-gray-800">Time: ${escapeHtml(appointment.scheduled_at_time || '')}</p>
+            <hr class="border-slate-100">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200/80 flex items-start space-x-3.5">
+                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-lg shrink-0">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Submitted At</p>
-                        <p class="font-medium text-gray-800 mt-1">Date: ${escapeHtml(appointment.created_at_date || '')}</p>
-                        <p class="font-medium text-gray-800">Time: ${escapeHtml(appointment.created_at_time || '')}</p>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Scheduled At</span>
+                        <p class="text-sm font-semibold text-slate-800 mt-0.5">${escapeHtml(appointment.scheduled_at_date || '')}</p>
+                        <p class="text-xs text-slate-500">${escapeHtml(appointment.scheduled_at_time || '')}</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Last Anti-Rabies Vaccination</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.last_anti_rabies_date)}</p>
+                <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200/80 flex items-start space-x-3.5">
+                    <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg shrink-0">
+                        <i data-lucide="file-check" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Recent Surgery</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.recent_surgery)}</p>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Submitted On</span>
+                        <p class="text-sm font-semibold text-slate-800 mt-0.5">${escapeHtml(appointment.created_at_date || '')}</p>
+                        <p class="text-xs text-slate-500">${escapeHtml(appointment.created_at_time || '')}</p>
                     </div>
                 </div>
             </div>
-            <hr class="border-gray-100">
-            <div class="bg-green-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Owner Information</h4>
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500">Owner Name</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.owner_name)}</p>
+            <div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/40">
+                <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Medical Summary</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
+                            <i data-lucide="syringe" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Anti-Rabies Vaccination</p>
+                            <p class="text-sm font-semibold text-slate-700">${rabiesDisplay}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Contact Number</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.owner_contact)}</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100">
+                            <i data-lucide="activity" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Recent Surgery</p>
+                            <p class="text-sm font-semibold text-slate-700">${surgeryDisplay}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Email</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.owner_email)}</p>
+            </div>
+            <div class="rounded-xl border border-emerald-100 bg-emerald-50/30 p-5">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-emerald-100/80">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="user" class="w-4 h-4 text-emerald-600"></i>
+                        <h3 class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Owner Information</h3>
                     </div>
-                    <div class="col-span-2">
-                        <p class="text-sm text-gray-500">Address</p>
-                        <p class="font-medium text-gray-800 mt-1">${escapeHtml(appointment.address)}</p>
+                    <span class="text-[11px] text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md font-medium">Verified Client</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span class="text-xs text-slate-400 block mb-0.5">Owner Name</span>
+                        <span class="font-semibold text-slate-800">${escapeHtml(appointment.owner_name)}</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block mb-0.5">Contact Number</span>
+                        <div class="flex items-center space-x-2">
+                            <a href="tel:${escapeHtml(appointment.owner_contact)}" class="font-semibold text-slate-800 hover:text-emerald-600 transition-colors">
+                                ${escapeHtml(appointment.owner_contact)}
+                            </a>
+                            <button onclick="copyToClipboard('${escapeHtml(appointment.owner_contact)}')" class="text-slate-400 hover:text-emerald-600 p-1 transition-colors" title="Copy Number">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <span class="text-xs text-slate-400 block mb-0.5">Email Address</span>
+                        <div class="flex items-center space-x-2">
+                            <a href="mailto:${escapeHtml(appointment.owner_email)}" class="font-semibold text-emerald-600 hover:underline">
+                                ${escapeHtml(appointment.owner_email)}
+                            </a>
+                            <button onclick="copyToClipboard('${escapeHtml(appointment.owner_email)}')" class="text-slate-400 hover:text-emerald-600 p-1 transition-colors" title="Copy Email">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2 pt-2 border-t border-emerald-100/80">
+                        <span class="text-xs text-slate-400 block mb-0.5">Complete Address</span>
+                        <div class="flex items-start space-x-1.5 text-slate-700">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 shrink-0 mt-0.5"></i>
+                            <span class="font-medium text-slate-700">${escapeHtml(appointment.address)}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
+
+    lucide.createIcons();
+}
+
+function toggleModal(show) {
+    const backdrop = document.getElementById('appointmentModalBackdrop');
+    if (show) {
+        backdrop.classList.remove('hidden');
+        setTimeout(() => {
+            backdrop.classList.remove('opacity-0');
+        }, 10);
+    } else {
+        backdrop.classList.add('opacity-0');
+        setTimeout(() => {
+            backdrop.classList.add('hidden');
+        }, 200);
+    }
+}
+
+function copyToClipboard(text) {
+    const tempInput = document.createElement('input');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    toast(`Copied "${text}" to clipboard!`);
+}
+
+function toast(message) {
+    const toastEl = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    toastMsg.innerText = message;
+    toastEl.classList.remove('opacity-0', 'translate-y-2');
+    toastEl.classList.add('opacity-100', 'translate-y-0');
+    setTimeout(() => {
+        toastEl.classList.remove('opacity-100', 'translate-y-0');
+        toastEl.classList.add('opacity-0', 'translate-y-2');
+    }, 3000);
 }
 
 function updateStatus(appointmentId, newStatus) {
@@ -555,4 +697,13 @@ function submitEditForm(event, appointmentId) {
 
 updateClearAppointmentFiltersVisibility();
 </script>
+
+@push('scripts')
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+    });
+</script>
+@endpush
 @endsection
