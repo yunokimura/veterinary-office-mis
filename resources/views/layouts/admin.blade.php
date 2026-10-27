@@ -36,7 +36,7 @@
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
 
         .sidebar {
-            width: 260px;
+            width: 280px;
             position: fixed;
             height: 100vh;
             top: 0;
@@ -46,7 +46,7 @@
         }
 
         main {
-            margin-left: 260px;
+            margin-left: 280px;
             min-height: 100vh;
         }
 
@@ -268,7 +268,7 @@
             <div class="sidebar-section-label">Reports</div>
 
             <div x-data="{ open: @json(request()->routeIs('admin.bite-reports.*') || request()->routeIs('admin.vaccination-reports.*') || request()->routeIs('admin.missing-pet-reports.*') || request()->routeIs('admin.adoption-reports.*') || request()->routeIs('admin.meat-inspection-reports.*') || request()->routeIs('admin.all-reports')) }">
-                <button @click="open = !open"
+                <button @click="open = !open" onclick="setTimeout(()=>{const nav=this.closest('.sidebar').querySelector('nav');nav.scrollTo({top:nav.scrollHeight,behavior:'smooth'});},50)"
                         class="nav-item w-full justify-between {{ request()->routeIs('admin.bite-reports.*') || request()->routeIs('admin.vaccination-reports.*') || request()->routeIs('admin.missing-pet-reports.*') || request()->routeIs('admin.adoption-reports.*') || request()->routeIs('admin.meat-inspection-reports.*') || request()->routeIs('admin.all-reports') ? 'active-nav' : '' }}">
                     <span class="flex items-center gap-2 whitespace-nowrap">
                         <i class="bi bi-file-earmark-bar-graph"></i><span>All Reports</span>
