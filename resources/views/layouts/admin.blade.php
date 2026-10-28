@@ -277,22 +277,19 @@
                        :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
                 </button>
                 <div x-show="open" x-cloak class="ml-4 mt-1 mb-3 space-y-3">
-                    <a href="{{ route('admin.bite-reports.index') }}"                         class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap">
+                    <a href="{{ route('admin.bite-reports.index') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.bite-reports.*') ? 'active-nav text-white bg-white/10' : '' }}">
                         <i class="bi bi-exclamation-triangle mr-2 text-xs"></i>Confirmed Rabies Reports
                     </a>
-                    <a href="{{ route('admin.vaccination-reports.index') }}"                         class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap">
+                    <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.vaccination-reports.*') ? 'active-nav text-white bg-white/10' : '' }}">
                         <i class="bi bi-shield-check mr-2 text-xs"></i>Anti-Rabies Vaccination
                     </a>
-                    <a href="{{ route('admin.missing-pet-reports.index') }}"                         class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap">
+                    <a href="{{ route('admin.missing-pet-reports.index') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.missing-pet-reports.*') ? 'active-nav text-white bg-white/10' : '' }}">
                         <i class="bi bi-search mr-2 text-xs"></i>Missing Pet Reports
                     </a>
-                    <a href="{{ route('admin.adoption-reports.index') }}"                         class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap">
+                    <a href="{{ route('admin.adoption-reports.index') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.adoption-reports.*') ? 'active-nav text-white bg-white/10' : '' }}">
                         <i class="bi bi-heart-fill mr-2 text-xs"></i>Adoption Reports
                     </a>
-                    <a href="{{ route('admin.meat-inspection-reports.index') }}"                         class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap">
-                        <i class="bi bi-clipboard-check mr-2 text-xs"></i>Meat Inspection
-                    </a>
-                    <a href="{{ route('admin.all-reports') }}"                         class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap">
+                    <a href="{{ route('admin.all-reports') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.all-reports') ? 'active-nav text-white bg-white/10' : '' }}">
                         <i class="bi bi-file-earmark-bar-graph mr-2 text-xs"></i>All Reports
                     </a>
                 </div>
