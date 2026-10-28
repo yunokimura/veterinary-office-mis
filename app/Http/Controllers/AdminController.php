@@ -515,7 +515,7 @@ class AdminController extends Controller
             ->get()
             ->map(fn ($admin) => [
                 'id' => $admin->id,
-                'name' => trim(($admin->user->name ?? '') . ' (' . ($admin->user->role_type === 'city_vet' ? 'City Veterinarian' : 'Assistant Veterinarian') . ')'),
+                'name' => trim(($admin->user->name ?? '') . ' (' . ($admin->user->role === 'city_vet' ? 'City Veterinarian' : 'Assistant Veterinarian') . ')'),
             ])
             ->values()
             ->all();
@@ -547,8 +547,6 @@ class AdminController extends Controller
         $appointment->update([
             'scheduled_at' => $validated['scheduled_at'],
             'status' => $validated['status'],
-            'last_anti_rabies_date' => $validated['last_anti_rabies_date'],
-            'recent_surgery' => $validated['recent_surgery'],
             'assigned_vet' => $validated['assigned_vet'],
         ]);
 

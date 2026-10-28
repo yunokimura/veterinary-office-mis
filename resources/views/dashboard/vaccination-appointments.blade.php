@@ -162,7 +162,9 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editAppointmentModalTitle">Edit Appointment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors" data-bs-dismiss="modal" aria-label="Close">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
             </div>
             <div class="modal-body" id="editAppointmentModalBody">
                 <div class="text-center py-4">
@@ -661,48 +663,61 @@ function editAppointment(appointmentId) {
 
         modalBody.innerHTML = `
             <form id="editAppointmentForm" onsubmit="submitEditForm(event, ${escapeHtml(a.id)})">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Scheduled At</label>
-                        <input type="datetime-local" name="scheduled_at" value="${escapeHtml(a.scheduled_at || '')}" required
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                <div class="space-y-5">
+                    <div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/40">
+                        <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Schedule &amp; Status</h3>
+                        <div class="flex gap-4">
+                            <div class="flex-1 flex items-start space-x-3">
+                                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                </div>
+                                <div class="w-full">
+                                    <p class="text-xs text-slate-400">Scheduled Date &amp; Time</p>
+                                    <input type="datetime-local" name="scheduled_at" value="${escapeHtml(a.scheduled_at || '')}" required
+                                           class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                </div>
+                            </div>
+                            <div class="flex-1 flex items-start space-x-3">
+                                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                </div>
+                                <div class="w-full">
+                                    <p class="text-xs text-slate-400">Appointment Status</p>
+                                    <select name="status" required
+                                            class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                        <option value="pending" ${a.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                        <option value="approved" ${a.status === 'approved' ? 'selected' : ''}>Approved</option>
+                                        <option value="completed" ${a.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                        <option value="cancelled" ${a.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                                        <option value="no_show" ${a.status === 'no_show' ? 'selected' : ''}>No Show</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <select name="status" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            <option value="pending" ${a.status === 'pending' ? 'selected' : ''}>Pending</option>
-                            <option value="approved" ${a.status === 'approved' ? 'selected' : ''}>Approved</option>
-                            <option value="completed" ${a.status === 'completed' ? 'selected' : ''}>Completed</option>
-                            <option value="cancelled" ${a.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-                            <option value="no_show" ${a.status === 'no_show' ? 'selected' : ''}>No Show</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Veterinarian</label>
-                        <select name="assigned_vet"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            <option value="">N/A</option>
-                            ${vetOptions}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Anti-Rabies Vaccination</label>
-                        <input type="date" name="last_anti_rabies_date" value="${escapeHtml(a.last_anti_rabies_date || '')}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Recent Surgery</label>
-                        <select name="recent_surgery" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            <option value="0" ${a.recent_surgery ? '' : 'selected'}>No</option>
-                            <option value="1" ${a.recent_surgery ? 'selected' : ''}>Yes</option>
-                        </select>
+                    <div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/40">
+                        <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Medical &amp; Veterinary Assignment</h3>
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.5 20.5v-13A2.5 2.5 0 0018 5h-11A2.5 2.5 0 004.5 4.5v13A2.5 2.5 0 007 21h10a2.5 2.5 0 002.5-2.5zM12 16a3 3 0 110-6 3 3 0 010 6z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Assigned Veterinarian</p>
+                                <select name="assigned_vet"
+                                        class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="">N/A</option>
+                                    ${vetOptions}
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
-                        <button type="button" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                            <i class="bi bi-check-lg me-1"></i> Save Changes
+                        <button type="button" class="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200/60 rounded-lg transition-colors" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 rounded-lg shadow-sm transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                            <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            Save Changes
                         </button>
                     </div>
                 </div>
@@ -722,8 +737,6 @@ function submitEditForm(event, appointmentId) {
     const data = {
         scheduled_at: formData.get('scheduled_at'),
         status: formData.get('status'),
-        last_anti_rabies_date: formData.get('last_anti_rabies_date') || null,
-        recent_surgery: formData.get('recent_surgery') === '1',
         assigned_vet: formData.get('assigned_vet') || null,
     };
 
