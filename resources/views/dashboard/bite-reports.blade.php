@@ -109,8 +109,11 @@
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <h5 class="font-bold text-slate-800 text-lg leading-tight">Report Details</h5>
-                    <p class="text-xs text-slate-500 leading-none mt-0.5" id="reportModalNumber"></p>
+                    <div class="flex items-center gap-2 mb-1">
+                        <h5 class="font-bold text-slate-800 text-lg leading-tight">Report Details</h5>
+                        <span id="reportModalNumber" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200 whitespace-nowrap">#RAB-2026-0006</span>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-none" id="reportModalSubmitted">Submitted at: --</p>
                 </div>
             </div>
             <button onclick="closeReportModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close">
@@ -126,6 +129,17 @@
                     <p class="text-slate-500 text-sm">Loading report details...</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+            <button onclick="window.print()" class="px-3 py-2 text-xs font-semibold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg shadow-xs transition-colors flex items-center justify-center space-x-1.5">
+                <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2zm3 4v1h-5v-1a2 2 0 002-2h0a2 2 0 00-2-2V7a2 2 0 002-2h0a2 2 0 002 2v1h-5v1a2 2 0 002-2h0a2 2 0 00-2-2H9a2 2 0 00-2 2v1H6a2 2 0 00-2 2v1a2 2 0 002 2h12a2 2 0 002-2v-1a2 2 0 00-2-2z" /></svg>
+                <span>Print</span>
+            </button>
+            <button onclick="closeReportModal()" class="px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200/60 rounded-lg transition-colors">
+                Done
+            </button>
         </div>
     </div>
 </div>
@@ -270,6 +284,7 @@ function openReportModal(reportId) {
         </div>
     `;
     document.getElementById('reportModalNumber').textContent = '';
+    document.getElementById('reportModalSubmitted').textContent = 'Submitted at: --';
     backdrop.classList.remove('hidden');
     setTimeout(() => {
         backdrop.classList.remove('opacity-0');
@@ -300,78 +315,91 @@ function closeReportModal() {
 function displayReportDetails(report) {
     const content = document.getElementById('reportDetailsModalContent');
     const numberEl = document.getElementById('reportModalNumber');
-    if (numberEl) numberEl.textContent = 'Report # ' + report.report_number;
+    if (numberEl) numberEl.textContent = report.report_number;
+
+    const submittedEl = document.getElementById('reportModalSubmitted');
+    if (submittedEl) submittedEl.textContent = 'Submitted at: ' + (report.created_at ? report.created_at : '--');
 
     const genderVal = report.animal_gender ? report.animal_gender.charAt(0).toUpperCase() + report.animal_gender.slice(1) : 'N/A';
 
     content.innerHTML = `
         <div class="p-3 space-y-4 overflow-y-auto max-h-[calc(100vh-200px)]">
-            <div class="border border-slate-200/80 rounded-xl p-3 bg-slate-50/40">
-                <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Incident Information</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex items-start space-x-3">
-                        <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div class="border border-slate-200/80 rounded-xl overflow-hidden bg-white">
+                <div class="bg-red-600 px-4 py-2.5 flex items-center gap-2 border-b border-red-500/50">
+                    <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.332-2.694-1.332-3.464 0L3.34 16c-.77 1.332.192 3 1.732 3z" /></svg>
+                    <h3 class="text-[11px] font-semibold text-white uppercase tracking-wider">Incident Information</h3>
+                </div>
+                <div class="p-3">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 bg-red-50 text-red-600 rounded-lg shrink-0 border border-red-100">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Incident Date</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.incident_date}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-xs text-slate-400">Incident Date</p>
-                            <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.incident_date}</p>
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 bg-red-50 text-red-600 rounded-lg shrink-0 border border-red-100">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-2.828-2.828a1.998 1.998 0 010-2.828l4.244-4.243a9 9 0 111.414 1.414z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Barangay</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.barangay || 'N/A'}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex items-start space-x-3">
-                        <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-2.828-2.828a1.998 1.998 0 010-2.828l4.244-4.243a9 9 0 111.414 1.414z" /></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400">Barangay</p>
-                            <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.barangay || 'N/A'}</p>
-                        </div>
+                    ${report.notes ? `
+                    <div class="mt-4 pt-3 border-t border-red-500/50">
+                        <p class="text-xs text-slate-400">Notes</p>
+                        <p class="text-sm font-semibold text-slate-800 mt-0.5 whitespace-pre-wrap">${report.notes}</p>
                     </div>
+                    ` : ''}
                 </div>
-                ${report.notes ? `
-                <div class="mt-4 pt-3 border-t border-slate-200/50">
-                    <p class="text-xs text-slate-400">Notes</p>
-                    <p class="text-sm font-semibold text-slate-800 mt-0.5 whitespace-pre-wrap">${report.notes}</p>
-                </div>
-                ` : ''}
             </div>
-            <div class="border border-slate-200/80 rounded-xl p-3 bg-slate-50/40">
-                <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Animal Information</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex items-start space-x-3">
-                        <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            <div class="border border-slate-200/80 rounded-xl overflow-hidden bg-white">
+                <div class="bg-purple-600 px-4 py-2.5 flex items-center gap-2 border-b border-purple-500/50">
+                    <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    <h3 class="text-[11px] font-semibold text-white uppercase tracking-wider">Animal Information</h3>
+                </div>
+                <div class="p-3">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Animal Type</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.animal_type || 'N/A'}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-xs text-slate-400">Animal Type</p>
-                            <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.animal_type || 'N/A'}</p>
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Animal Gender</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${genderVal}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-start space-x-3">
-                        <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Animal Status</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.animal_status || 'N/A'}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-xs text-slate-400">Animal Gender</p>
-                            <p class="text-sm font-semibold text-slate-800 mt-0.5">${genderVal}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3">
-                        <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400">Animal Status</p>
-                            <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.animal_status || 'N/A'}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3">
-                        <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400">Vaccination Status</p>
-                            <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.vaccination_status || 'N/A'}</p>
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Vaccination Status</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.vaccination_status || 'N/A'}</p>
+                            </div>
                         </div>
                     </div>
                 </div>

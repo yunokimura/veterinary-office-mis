@@ -252,6 +252,7 @@ class AdminController extends Controller
                 'animal_owner_name' => $report->animal_owner_name,
                 'animal_owner_contact' => $report->animal_owner_contact,
                 'notes' => $report->notes,
+                'created_at' => $report->created_at ? \Carbon\Carbon::parse($report->created_at)->format('M d, Y') : null,
             ]
         ]);
     }
