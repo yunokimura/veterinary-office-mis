@@ -103,7 +103,7 @@
 <div id="reportDetailsModalBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[1200] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
     <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]">
         <!-- Modal Header -->
-        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+        <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
             <div class="flex items-center space-x-3">
                 <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
@@ -119,7 +119,7 @@
         </div>
 
         <!-- Modal Content (Scrollable) -->
-        <div class="p-6 space-y-5 overflow-y-auto bg-white max-h-[calc(90vh-140px)]">
+        <div class="p-4 space-y-4 overflow-y-auto bg-white max-h-[calc(100vh-160px)]">
             <div id="reportDetailsModalContent">
                 <div class="text-center py-8">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
@@ -305,9 +305,9 @@ function displayReportDetails(report) {
     const genderVal = report.animal_gender ? report.animal_gender.charAt(0).toUpperCase() + report.animal_gender.slice(1) : 'N/A';
 
     content.innerHTML = `
-        <div class="p-6 space-y-5 overflow-y-auto max-h-[calc(100vh-200px)]">
-            <div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/40">
-                <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Incident Information</h3>
+        <div class="p-3 space-y-4 overflow-y-auto max-h-[calc(100vh-200px)]">
+            <div class="border border-slate-200/80 rounded-xl p-3 bg-slate-50/40">
+                <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Incident Information</h3>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex items-start space-x-3">
                         <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
@@ -329,14 +329,14 @@ function displayReportDetails(report) {
                     </div>
                 </div>
                 ${report.notes ? `
-                <div class="mt-5 pt-4 border-t border-slate-200/50">
+                <div class="mt-4 pt-3 border-t border-slate-200/50">
                     <p class="text-xs text-slate-400">Notes</p>
                     <p class="text-sm font-semibold text-slate-800 mt-0.5 whitespace-pre-wrap">${report.notes}</p>
                 </div>
                 ` : ''}
             </div>
-            <div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/40">
-                <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Animal Information</h3>
+            <div class="border border-slate-200/80 rounded-xl p-3 bg-slate-50/40">
+                <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Animal Information</h3>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex items-start space-x-3">
                         <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
@@ -367,7 +367,7 @@ function displayReportDetails(report) {
                     </div>
                     <div class="flex items-start space-x-3">
                         <div class="p-2 bg-slate-100 text-slate-600 rounded-lg shrink-0 border border-slate-200/50">
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         </div>
                         <div>
                             <p class="text-xs text-slate-400">Vaccination Status</p>
