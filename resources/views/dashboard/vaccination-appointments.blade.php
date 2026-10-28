@@ -109,10 +109,7 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <span id="appointmentModalStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-                    Completed
-                </span>
+                <span id="appointmentModalStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"></span>
                 <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -363,34 +360,26 @@ function displayAppointmentDetails(appointment) {
     const modalIdEl = document.getElementById('appointmentModalId');
     const modalStatusEl = document.getElementById('appointmentModalStatus');
 
-    const statusBadgeClass = getStatusBadgeClasses(appointment.status);
-    const statusLabel = appointment.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-
     const paddedId = String(appointment.id).padStart(4, '0');
     const appointmentDisplayId = 'APT-2026-' + paddedId;
 
     if (modalIdEl) modalIdEl.textContent = '#' + appointmentDisplayId;
 
+    const statusBadgeClass = getStatusBadgeClasses(appointment.status);
+    const statusLabel = appointment.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    if (modalStatusEl) {
+        modalStatusEl.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ' + statusBadgeClass;
+        modalStatusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-current mr-1.5 animate-pulse"></span>${escapeHtml(statusLabel)}`;
+    }
+
     const rabiesValue = appointment.last_anti_rabies_date;
     const rabiesDisplay = (!rabiesValue || rabiesValue === 'N/A' || rabiesValue === '') ? 'First Time/No History' : escapeHtml(rabiesValue);
 
     const surgeryValue = appointment.recent_surgery;
-    const surgeryDisplay = surgeryValue ? 'Yes' : 'No';
+    const surgeryDisplay = (surgeryValue === 1 || surgeryValue === '1' || surgeryValue === true) ? 'Yes' : 'No';
 
     modalContent.innerHTML = `
-        <div class="space-y-3">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-slate-500">Appointment ID</p>
-                    <p class="text-lg font-semibold text-slate-800">#${escapeHtml(appointment.id)}</p>
-                </div>
-                <div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusBadgeClass}">
-                        ${escapeHtml(statusLabel)}
-                    </span>
-                </div>
-            </div>
-            <hr class="border-slate-100">
+        <div class="space-y-5">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200/80 flex items-start space-x-3.5">
                     <div class="p-2.5 bg-blue-50 text-blue-600 rounded-lg shrink-0">
@@ -442,7 +431,7 @@ function displayAppointmentDetails(appointment) {
                         <i data-lucide="user" class="w-4 h-4 text-emerald-600"></i>
                         <h3 class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Owner Information</h3>
                     </div>
-                    <span class="text-[11px] text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md font-medium">Verified Client</span>
+                    <span class="text-[11px] text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md font-medium">Verified Pet Owner</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                     <div>
