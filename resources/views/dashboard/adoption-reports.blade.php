@@ -398,11 +398,20 @@ function displayReportDetails(report) {
                         </div>
                         <div class="flex items-start space-x-3">
                             <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Occupation</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.occupation}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 col-span-2">
+                            <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
                                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                             </div>
-                            <div class="col-span-2">
+                            <div>
                                 <p class="text-xs text-slate-400">Address</p>
-                                <p class="text-sm font-semibold text-slate-800 mt-0.5 whitespace-pre-wrap">${report.address}</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5 whitespace-pre-wrap">${report.address ? report.address.replace(/,/g, '<br>') : ''}</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
@@ -415,27 +424,18 @@ function displayReportDetails(report) {
                                     <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.marital_status}</p>
                                 </div>
                             </div>
+                            ${report.company !== 'N/A' ? `
                             <div class="flex items-start space-x-3">
                                 <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
-                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-slate-400">Occupation</p>
-                                    <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.occupation}</p>
+                                    <p class="text-xs text-slate-400">Company</p>
+                                    <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.company}</p>
                                 </div>
                             </div>
+                            ` : ''}
                         </div>
-                        ${report.company !== 'N/A' ? `
-                        <div class="flex items-start space-x-3">
-                            <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400">Company</p>
-                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.company}</p>
-                            </div>
-                        </div>
-                        ` : ''}
                     </div>
                 </div>
             </div>
@@ -459,16 +459,12 @@ function displayReportDetails(report) {
                             <div class="p-2 bg-amber-50 text-amber-600 rounded-lg shrink-0 border border-amber-100">
                                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></svg>
                             </div>
-                            <div class="flex items-start space-x-3">
-                                <div class="p-2 bg-amber-50 text-amber-600 rounded-lg shrink-0 border border-amber-100">
-                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></svg>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-slate-400">Species</p>
-                                    <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.pet_species}</p>
-                                </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Species</p>
+                                <p class="text-sm font-semibold text-slate-800 mt-0.5">${report.pet_species}</p>
                             </div>
-                            <div class="flex items-start space-x-3">
+                        </div>
+                        <div class="flex items-start space-x-3">
                                 <div class="p-2 bg-amber-50 text-amber-600 rounded-lg shrink-0 border border-amber-100">
                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                                 </div>
