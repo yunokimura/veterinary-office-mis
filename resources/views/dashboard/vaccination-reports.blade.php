@@ -111,7 +111,7 @@ $routePrefix = request()->routeIs('city-vet.*') ? 'city-vet' : (request()->route
         </div>
 
         <!-- Modal Content (Scrollable) -->
-        <div class="p-4 space-y-4 overflow-y-auto bg-white max-h-[calc(100vh-160px)]">
+        <div class="p-4 space-y-4 overflow-y-auto flex-1 bg-white">
             <div id="vaccinationDetailsModalContent">
                 <div class="text-center py-8">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
@@ -310,7 +310,7 @@ function displayVaccinationDetails(report) {
     if (submittedEl) submittedEl.textContent = 'Submitted at: ' + (report.created_at ? report.created_at : '--');
 
     content.innerHTML = `
-        <div class="p-3 space-y-4 overflow-y-auto max-h-[calc(100vh-200px)]">
+        <div class="p-3 space-y-4">
             <div class="border border-slate-200/80 rounded-xl overflow-hidden bg-white">
                 <div class="bg-emerald-600 px-4 py-2.5 flex items-center gap-2 border-b border-emerald-500/50">
                     <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
