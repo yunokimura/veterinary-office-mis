@@ -19,12 +19,12 @@
                 <td class="px-6 py-4 whitespace-nowrap text-gray-800">
                     <span class="inline-flex items-center gap-1">
                         <i class="bi bi-paw text-gray-400"></i>
-                        {{ $report->pet->pet_name ?? 'N/A' }}
+                        {{ $report->pet_name ?? 'N/A' }}
                     </span>
-                    @if($report->pet->gender ?? null)
-                        @if(strtolower($report->pet->gender) == 'male')
+                    @if($report->gender)
+                        @if(strtolower($report->gender) == 'male')
                             <i class="bi bi-gender-male text-blue-500 ml-1"></i>
-                        @elseif(strtolower($report->pet->gender) == 'female')
+                        @elseif(strtolower($report->gender) == 'female')
                             <i class="bi bi-gender-female text-pink-500 ml-1"></i>
                         @endif
                     @endif
@@ -57,12 +57,12 @@
                         </span>
                     @endif
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-700">{{ $report->owner_name ?? ($report->owner->name ?? 'N/A') }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-700">{{ $report->owner_name ?? 'N/A' }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ $report->scheduled_at ? \Carbon\Carbon::parse($report->scheduled_at)->format('M d, Y') : 'N/A' }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button type="button" class="p-1.5 text-blue-700 hover:bg-gray-100 rounded-full transition" title="View" onclick="openSpayModal({{ $report->id }})">
+                    <button type="button" class="p-1.5 text-blue-700 hover:bg-gray-100 rounded-full transition" title="View" onclick="openSpayNeuterModal({{ $report->id }})">
                         <i class="bi bi-eye text-lg"></i>
                     </button>
                 </td>
