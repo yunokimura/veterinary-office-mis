@@ -467,7 +467,7 @@ function displayAppointmentDetails(appointment) {
                                 <span class="text-xs text-slate-400 block">Species</span>
                                 <span class="font-medium text-slate-800">${getSpeciesLabel(appointment.pet_species)}</span>
                             </div>
-                            <div class="sm:col-span-2">
+                            <div>
                                 <span class="text-xs text-slate-400 block">Breed</span>
                                 <span class="font-medium text-slate-800">${escapeHtml(appointment.pet_breed || 'N/A')}</span>
                             </div>

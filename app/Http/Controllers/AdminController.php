@@ -347,7 +347,31 @@ class AdminController extends Controller
                 'pet_breed' => $appointment->pet ? ($appointment->pet->breed ?? 'N/A') : 'N/A',
                 'pet_age' => $appointment->pet ? ($appointment->pet->age ?? 'N/A') : 'N/A',
                 'pet_image_url' => $appointment->pet ? $appointment->pet->image_url : null,
-                'pet_additional_photos' => $appointment->pet ? (is_array($appointment->pet->additional_photos) ? $appointment->pet->additional_photos : (json_decode($appointment->pet->additional_photos ?? '[]', true) ?? [])) : [],
+                'pet_additional_photos' => $appointment->pet ? (function() use ($appointment) {
+                    $photos = is_array($appointment->pet->additional_photos) ? $appointment->pet->additional_photos : (json_decode($appointment->pet->additional_photos ?? '[]', true) ?? []);
+                    $resolved = array_map(function ($photo) {
+                        if (! $photo) return null;
+                        $path = ltrim($photo, '/');
+                        if (str_starts_with($photo, 'http://') || str_starts_with($photo, 'https://')) return $photo;
+                        if (file_exists(public_path($path))) return str_replace(' ', '%20', asset($path));
+                        if (file_exists(storage_path('app/public/'.$path))) return asset('storage/'.$path);
+                        foreach (['images/missing pets', 'images/adoption pets', 'images/pets', 'images'] as $directory) {
+                            $candidate = public_path($directory.'/'.$path);
+                            if (file_exists($candidate)) {
+                                return str_replace(' ', '%20', asset($directory.'/'.$path));
+                            }
+                            $baseName = pathinfo($path, PATHINFO_FILENAME);
+                            foreach (['jpeg', 'jpg', 'png', 'webp'] as $extension) {
+                                $alternative = $directory.'/'.$baseName.'.'.$extension;
+                                if (file_exists(public_path($alternative))) {
+                                    return str_replace(' ', '%20', asset($alternative));
+                                }
+                            }
+                        }
+                        return null;
+                    }, array_filter($photos));
+                    return array_values(array_filter($resolved));
+                })() : [],
             ]
         ]);
     }
