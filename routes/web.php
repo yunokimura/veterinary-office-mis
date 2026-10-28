@@ -615,8 +615,10 @@ Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet'])->prefix('
     // Spay/Neuter Reports
     Route::get('/reports', [SpayNeuterController::class, 'index'])->name('reports.index');
     Route::get('/reports/all', [SpayNeuterController::class, 'allReports'])->name('reports.all');
+    Route::get('/reports/filter', [SpayNeuterController::class, 'filterReports'])->name('reports.filter');
     Route::get('/reports/create', [SpayNeuterController::class, 'create'])->name('reports.create');
     Route::post('/reports', [SpayNeuterController::class, 'store'])->name('reports.store');
+    Route::get('/reports/{report}/json', [SpayNeuterController::class, 'showSpayNeuterReportJson'])->name('reports.show-json');
     Route::get('/reports/{report}', [SpayNeuterController::class, 'show'])->name('reports.show');
     Route::get('/reports/{report}/edit', [SpayNeuterController::class, 'edit'])->name('reports.edit');
     Route::put('/reports/{report}', [SpayNeuterController::class, 'update'])->name('reports.update');
