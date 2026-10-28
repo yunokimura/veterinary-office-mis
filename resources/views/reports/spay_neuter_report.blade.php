@@ -10,18 +10,6 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Page Header with Create Button -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-            <h2 class="text-lg font-semibold text-gray-800">All Spay/Neuter Reports</h2>
-            <p class="text-sm text-gray-500">Manage spay/neuter procedure records and KPI overview</p>
-        </div>
-        <a href="{{ route('spay-neuter.reports.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition shadow-sm">
-            <i class="bi bi-plus-lg"></i>
-            <span>New Report</span>
-        </a>
-    </div>
-
     <!-- KPI Cards -->
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">

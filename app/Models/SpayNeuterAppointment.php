@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -13,24 +15,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $address_id
  * @property int|null $barangay_id
  * @property int|null $pet_id
- * @property \Illuminate\Support\Carbon|null $scheduled_at
+ * @property Carbon|null $scheduled_at
  * @property string $status
  * @property string|null $procedure_type
  * @property float|null $weight
  * @property array|null $general_agreement
  * @property string|null $veterinarian
  * @property int|null $assigned_vet
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\User|null $user
- * @property-read \App\Models\PetOwner|null $owner
- * @property-read \App\Models\Address|null $address
- * @property-read \App\Models\Barangay|null $barangay
- * @property-read \App\Models\Pet|null $pet
- * @property-read \App\Models\Admin|null $assignedVet
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SpayNeuterReport> $spayNeuterReports
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read User|null $user
+ * @property-read PetOwner|null $owner
+ * @property-read Address|null $address
+ * @property-read Barangay|null $barangay
+ * @property-read Pet|null $pet
+ * @property-read Admin|null $assignedVet
+ * @property-read Collection<int, SpayNeuterReport> $spayNeuterReports
  * @property-read string $pet_name
  * @property-read string $owner_name
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment query()
@@ -49,7 +52,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment whereVeterinarian($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SpayNeuterAppointment whereWeight($value)
+ *
  * @property-read int|null $spay_neuter_reports_count
+ *
  * @mixin \Eloquent
  */
 class SpayNeuterAppointment extends Model
@@ -60,6 +65,16 @@ class SpayNeuterAppointment extends Model
      * @var string
      */
     protected $table = 'spay_neuter_appointments';
+
+    /**
+     * The default attributes for new model instances.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'assigned_vet' => 4,
+        'veterinarian' => 'Assistant Veterinarian',
+    ];
 
     /**
      * The attributes that are mass assignable.
