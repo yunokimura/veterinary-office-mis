@@ -188,6 +188,109 @@ class SpayNeuterController extends Controller
     }
 
     /**
+     * AJAX filter for all spay/neuter reports (JSON response for partial table update).
+     */
+    public function filterReports(Request $request)
+    {
+        $query = SpayNeuterReport::query()->with(['pet', 'owner', 'barangay']);
+
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->whereHas('pet', function ($p) use ($term) {
+                            $p->where('pet_name', 'like', "%{$term}%");
+                        })
+                            ->orWhereHas('owner', function ($o) use ($term) {
+                                $o->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$term}%"]);
+                            })
+                            ->orWhere('procedure_type', 'like', "%{$term}%")
+                            ->orWhere('status', 'like', "%{$term}%")
+                            ->orWhereHas('barangay', function ($b) use ($term) {
+                                $b->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('id', 'like', "%{$term}%");
+                    });
+                }
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('procedure_type')) {
+            $query->where('procedure_type', $request->procedure_type);
+        }
+        if ($request->filled('pet_type')) {
+            $query->whereHas('pet', function ($q) use ($request) {
+                $q->where('species', $request->pet_type);
+            });
+        }
+        if ($request->filled('start_date')) {
+            $query->whereDate('scheduled_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('scheduled_at', '<=', $request->end_date);
+        }
+
+        if (! Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'assistant_vet'])) {
+            $query->where('user_id', Auth::id());
+        }
+
+        $reports = $query->latest()->paginate(10);
+
+        try {
+            $html = view('reports.partials.spay-neuter-reports-table', compact('reports'))->render();
+        } catch (\Throwable $e) {
+            $html = '<tr><td colspan="7" class="px-6 py-8 text-center text-red-600">Error loading results. Please try again.</td></tr>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'pagination' => $reports->links()->render(),
+            'has_results' => $reports->count() > 0,
+        ]);
+    }
+
+    /**
+     * Show spay/neuter report details (JSON for modal).
+     */
+    public function showSpayNeuterReportJson(SpayNeuterReport $report)
+    {
+        $report->load(['pet.owner.barangay', 'barangay']);
+
+        $owner = $report->owner;
+        $pet = $report->pet;
+        $barangay = $report->barangay;
+
+        return response()->json([
+            'success' => true,
+            'report' => [
+                'id' => $report->id,
+                'report_number' => 'SN-' . str_pad($report->id, 5, '0', STR_PAD_LEFT),
+                'patient_name' => optional($owner)->full_name ?? 'N/A',
+                'patient_contact' => optional($owner)->phone_number ?? 'N/A',
+                'patient_address' => $report->owner_address ?? 'N/A',
+                'pet_name' => $report->pet_name,
+                'pet_species' => ucfirst($report->species ?? 'N/A'),
+                'pet_breed' => $pet?->breed ?? 'N/A',
+                'pet_age' => $report->pet_age ?? 'N/A',
+                'pet_gender' => ucfirst($report->gender ?? 'N/A'),
+                'procedure_type' => ucfirst($report->procedure_type),
+                'weight' => $report->weight,
+                'veterinarian' => $report->veterinarian ?? 'N/A',
+                'scheduled_at' => $report->scheduled_at ? \Carbon\Carbon::parse($report->scheduled_at)->format('M d, Y') : 'N/A',
+                'status' => $report->status,
+                'remarks' => $report->remarks,
+                'barangay' => optional($barangay)->barangay_name ?? $report->barangay_name ?? 'N/A',
+                'created_at' => $report->created_at ? \Carbon\Carbon::parse($report->created_at)->format('M d, Y') : null,
+            ]
+        ]);
+    }
+
+    /**
      * Show spay/neuter report details.
      */
     public function show(SpayNeuterReport $report)
