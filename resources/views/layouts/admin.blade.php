@@ -157,7 +157,7 @@
                     <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
                 </button>
                          <div x-show="open" @click.away="open = false"
-                              class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-slate-200 z-50 py-1"
+                         class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-slate-200 z-50 py-1"
                      style="display: none;">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
