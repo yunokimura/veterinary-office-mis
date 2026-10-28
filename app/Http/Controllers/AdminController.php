@@ -709,6 +709,7 @@ class AdminController extends Controller
                 'status' => $report->status,
                 'notes' => $report->notes,
                 'barangay' => optional($report->barangay)->barangay_name ?? 'N/A',
+                'created_at' => $report->created_at ? \Carbon\Carbon::parse($report->created_at)->format('M d, Y') : null,
             ]
         ]);
     }
