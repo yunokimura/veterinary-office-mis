@@ -382,16 +382,6 @@ function displayAppointmentDetails(appointment) {
         <div class="space-y-5">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200/80 flex items-start space-x-3.5">
-                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-lg shrink-0">
-                        <i data-lucide="clock" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Scheduled At</span>
-                        <p class="text-sm font-semibold text-slate-800 mt-0.5">${escapeHtml(appointment.scheduled_at_date || '')}</p>
-                        <p class="text-xs text-slate-500">${escapeHtml(appointment.scheduled_at_time || '')}</p>
-                    </div>
-                </div>
-                <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200/80 flex items-start space-x-3.5">
                     <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg shrink-0">
                         <i data-lucide="file-check" class="w-5 h-5"></i>
                     </div>
@@ -399,6 +389,16 @@ function displayAppointmentDetails(appointment) {
                         <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Submitted On</span>
                         <p class="text-sm font-semibold text-slate-800 mt-0.5">${escapeHtml(appointment.created_at_date || '')}</p>
                         <p class="text-xs text-slate-500">${escapeHtml(appointment.created_at_time || '')}</p>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200/80 flex items-start space-x-3.5">
+                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-lg shrink-0">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Scheduled At</span>
+                        <p class="text-sm font-semibold text-slate-800 mt-0.5">${escapeHtml(appointment.scheduled_at_date || '')}</p>
+                        <p class="text-xs text-slate-500">${escapeHtml(appointment.scheduled_at_time || '')}</p>
                     </div>
                 </div>
             </div>
