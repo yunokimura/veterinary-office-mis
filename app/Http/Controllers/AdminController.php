@@ -314,7 +314,7 @@ class AdminController extends Controller
      */
     public function showVaccinationAppointmentJson(VaccinationAppointment $appointment)
     {
-        $appointment->load(['address.barangay', 'pet']);
+        $appointment->load(['address.barangay', 'pet.petInfo']);
 
         $scheduledAt = \Carbon\Carbon::parse($appointment->scheduled_at);
         $createdAt = \Carbon\Carbon::parse($appointment->created_at);
@@ -342,6 +342,12 @@ class AdminController extends Controller
                 'submitted_by' => $appointment->user->name ?? 'N/A',
                 'assigned_vet_name' => $appointment->assigned_vet_name,
                 'vaccine_lot_number' => $appointment->vaccine_lot_number,
+                'pet_name' => $appointment->pet ? ($appointment->pet->pet_name ?? 'N/A') : 'N/A',
+                'pet_species' => $appointment->pet ? ($appointment->pet->species ?? 'N/A') : 'N/A',
+                'pet_breed' => $appointment->pet ? ($appointment->pet->breed ?? 'N/A') : 'N/A',
+                'pet_age' => $appointment->pet ? ($appointment->pet->age ?? 'N/A') : 'N/A',
+                'pet_image_url' => $appointment->pet ? $appointment->pet->image_url : null,
+                'pet_additional_photos' => $appointment->pet ? (is_array($appointment->pet->additional_photos) ? $appointment->pet->additional_photos : (json_decode($appointment->pet->additional_photos ?? '[]', true) ?? [])) : [],
             ]
         ]);
     }

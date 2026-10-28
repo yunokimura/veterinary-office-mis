@@ -411,16 +411,7 @@ function displayAppointmentDetails(appointment) {
                         </div>
                         <div>
                             <p class="text-xs text-slate-400">Assigned Veterinarian</p>
-                            <p class="text-sm font-semibold text-slate-700">${escapeHtml(appointment.assigned_vet_name || 'City Veterinarian/Maria Santos')}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
-                            <i data-lucide="tag" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400">Vaccine Lot #</p>
-                            <p class="text-sm font-semibold text-slate-700">${escapeHtml(appointment.vaccine_lot_number || 'G64884')}</p>
+                            <p class="text-sm font-semibold text-slate-700">${escapeHtml(appointment.assigned_vet_name || 'Maria Santos')}</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-3">
@@ -433,12 +424,68 @@ function displayAppointmentDetails(appointment) {
                         </div>
                     </div>
                     <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
+                            <i data-lucide="tag" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Vaccine Lot #</p>
+                            <p class="text-sm font-semibold text-slate-700">${escapeHtml(appointment.vaccine_lot_number || 'G64884')}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100">
                             <i data-lucide="activity" class="w-4 h-4"></i>
                         </div>
                         <div>
                             <p class="text-xs text-slate-400">Recent Surgery</p>
                             <p class="text-sm font-semibold text-slate-700">${surgeryDisplay}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pet Information -->
+            <div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/40">
+                <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Pet Information</h3>
+                <div class="flex flex-col sm:flex-row gap-6 items-start">
+                    <div class="flex-shrink-0">
+                        <div class="relative group">
+                            <img src="${appointment.pet_image_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(appointment.pet_name) + '&background=random'}" 
+                                 alt="Pet Profile" 
+                                 class="w-24 h-24 rounded-full object-cover border-2 border-slate-200 bg-slate-100">
+                            <div class="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-emerald-500 transition-colors"></div>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-800 text-center mt-2 text-truncate">${escapeHtml(appointment.pet_name || 'N/A')}</p>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <span class="text-xs text-slate-400 block">Pet ID</span>
+                                <span class="font-medium text-slate-800">#${escapeHtml(appointment.id)}</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400 block">Species</span>
+                                <span class="font-medium text-slate-800">${getSpeciesLabel(appointment.pet_species)}</span>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <span class="text-xs text-slate-400 block">Breed</span>
+                                <span class="font-medium text-slate-800">${escapeHtml(appointment.pet_breed || 'N/A')}</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400 block">Age</span>
+                                <span class="font-medium text-slate-800">${appointment.pet_age !== 'N/A' && appointment.pet_age !== null ? appointment.pet_age + ' years' : 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 sm:order-last">
+                        <div class="flex gap-2">
+                            ${(() => {
+                                const photos = appointment.pet_additional_photos;
+                                const arr = typeof photos === 'string' ? (JSON.parse(photos || '[]') || []) : (Array.isArray(photos) ? photos : []);
+                                return arr.slice(0, 3).map(photo => `
+                                    <img src="${photo}" alt="Pet Photo" class="w-16 h-16 rounded-xl object-cover border border-slate-200 bg-slate-100">
+                                `).join('');
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -528,6 +575,14 @@ function toast(message) {
         toastEl.classList.remove('opacity-100', 'translate-y-0');
         toastEl.classList.add('opacity-0', 'translate-y-2');
     }, 3000);
+}
+
+function getSpeciesLabel(species) {
+    if (!species) return 'N/A';
+    const s = String(species).toLowerCase();
+    if (s === 'cat') return 'Cat/Feline';
+    if (s === 'dog') return 'Dog/Canine';
+    return escapeHtml(species);
 }
 
 function updateStatus(appointmentId, newStatus) {
