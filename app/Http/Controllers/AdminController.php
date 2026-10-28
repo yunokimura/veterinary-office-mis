@@ -341,6 +341,7 @@ class AdminController extends Controller
                 ) : 'N/A',
                 'submitted_by' => $appointment->user->name ?? 'N/A',
                 'assigned_vet_name' => $appointment->assigned_vet_name,
+                'vaccine_lot_number' => $appointment->vaccine_lot_number,
             ]
         ]);
     }

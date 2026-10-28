@@ -406,6 +406,24 @@ function displayAppointmentDetails(appointment) {
                 <h3 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Medical Summary</h3>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Assigned Veterinarian</p>
+                            <p class="text-sm font-semibold text-slate-700">${escapeHtml(appointment.assigned_vet_name || 'City Veterinarian/Maria Santos')}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
+                            <i data-lucide="tag" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Vaccine Lot #</p>
+                            <p class="text-sm font-semibold text-slate-700">${escapeHtml(appointment.vaccine_lot_number || 'G64884')}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
                             <i data-lucide="syringe" class="w-4 h-4"></i>
                         </div>

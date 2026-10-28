@@ -58,6 +58,10 @@ class VaccinationAppointment extends Model
 {
     protected $table = 'vaccination_appointments';
 
+    protected $attributes = [
+        'assigned_vet' => 2,
+    ];
+
     protected $fillable = [
         'user_id',
         'owner_id',
@@ -123,6 +127,6 @@ class VaccinationAppointment extends Model
             return trim($this->assignedVet->user->name);
         }
 
-        return 'N/A';
+        return 'Maria Santos';
     }
 }
