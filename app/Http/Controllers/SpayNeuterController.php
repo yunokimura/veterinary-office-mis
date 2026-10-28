@@ -135,6 +135,59 @@ class SpayNeuterController extends Controller
     }
 
     /**
+     * List all spay/neuter reports with KPI summary cards.
+     */
+    public function allReports(Request $request)
+    {
+        $query = SpayNeuterReport::query()->with(['pet', 'owner', 'barangay']);
+
+        // Filter by status
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by procedure type
+        if ($request->has('procedure_type') && $request->procedure_type) {
+            $query->where('procedure_type', $request->procedure_type);
+        }
+
+        // Filter by pet type/species
+        if ($request->has('pet_type') && $request->pet_type) {
+            $query->whereHas('pet', function ($q) use ($request) {
+                $q->where('species', $request->pet_type);
+            });
+        }
+
+        // Filter by date range (scheduled_at)
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('scheduled_at', '>=', $request->start_date);
+        }
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('scheduled_at', '<=', $request->end_date);
+        }
+
+        // Non-admin users can only see their own reports
+        if (! Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'assistant_vet'])) {
+            $query->where('user_id', Auth::id());
+        }
+
+        $totalReports = $query->count();
+        $completed = $query->where('status', 'completed')->count();
+        $scheduled = $query->where('status', 'scheduled')->count();
+        $pending = $query->whereIn('status', ['pending', 'cancelled'])->count();
+
+        $reports = $query->latest()->paginate(10)->appends(request()->query());
+
+        return view('reports.spay_neuter_report', compact(
+            'reports',
+            'totalReports',
+            'completed',
+            'scheduled',
+            'pending'
+        ));
+    }
+
+    /**
      * Show spay/neuter report details.
      */
     public function show(SpayNeuterReport $report)

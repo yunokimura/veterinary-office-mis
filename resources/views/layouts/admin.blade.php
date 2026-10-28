@@ -267,9 +267,9 @@
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Reports</div>
 
-            <div x-data="{ open: @json(request()->routeIs('admin.bite-reports.*') || request()->routeIs('admin.vaccination-reports.*') || request()->routeIs('admin.missing-pet-reports.*') || request()->routeIs('admin.adoption-reports.*') || request()->routeIs('admin.meat-inspection-reports.*') || request()->routeIs('admin.all-reports')) }">
+            <div x-data="{ open: @json(request()->routeIs('admin.bite-reports.*') || request()->routeIs('admin.vaccination-reports.*') || request()->routeIs('admin.missing-pet-reports.*') || request()->routeIs('admin.adoption-reports.*') || request()->routeIs('admin.meat-inspection-reports.*') || request()->routeIs('admin.all-reports') || request()->routeIs('spay-neuter.reports.all')) }">
                 <button @click="open = !open" onclick="setTimeout(()=>{const nav=this.closest('.sidebar').querySelector('nav');nav.scrollTo({top:nav.scrollHeight,behavior:'smooth'});},50)"
-                        class="nav-item w-full justify-between {{ request()->routeIs('admin.bite-reports.*') || request()->routeIs('admin.vaccination-reports.*') || request()->routeIs('admin.missing-pet-reports.*') || request()->routeIs('admin.adoption-reports.*') || request()->routeIs('admin.meat-inspection-reports.*') || request()->routeIs('admin.all-reports') ? 'active-nav' : '' }}">
+                        class="nav-item w-full justify-between {{ request()->routeIs('admin.bite-reports.*') || request()->routeIs('admin.vaccination-reports.*') || request()->routeIs('admin.missing-pet-reports.*') || request()->routeIs('admin.adoption-reports.*') || request()->routeIs('admin.meat-inspection-reports.*') || request()->routeIs('admin.all-reports') || request()->routeIs('spay-neuter.reports.all') ? 'active-nav' : '' }}">
                     <span class="flex items-center gap-2 whitespace-nowrap">
                         <i class="bi bi-file-earmark-bar-graph"></i><span>All Reports</span>
                     </span>
@@ -281,7 +281,16 @@
                         <i class="bi bi-exclamation-triangle mr-2 text-xs"></i>Confirmed Rabies Reports
                     </a>
                     <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.vaccination-reports.*') ? 'active-nav text-white bg-white/10' : '' }}">
-                        <i class="bi bi-shield-check mr-2 text-xs"></i>Anti-Rabies Vaccination
+                        <span class="flex items-start gap-2">
+                                <i class="bi bi-shield-check text-xs mt-0.5"></i>
+                                <div class="leading-tight">
+                                    <span class="text-xs font-medium whitespace-nowrap">Anti-Rabies Vaccination</span>
+                                    <span class="block text-xs mt-0.5">Reports</span>
+                                </div>
+                            </span>
+                    </a>
+                    <a href="{{ route('spay-neuter.reports.all') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('spay-neuter.reports.all') ? 'active-nav text-white bg-white/10' : '' }}">
+                        <i class="bi bi-heart-pulse mr-2 text-xs"></i>Spay/Neuter (Kapon) Reports
                     </a>
                     <a href="{{ route('admin.missing-pet-reports.index') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.missing-pet-reports.*') ? 'active-nav text-white bg-white/10' : '' }}">
                         <i class="bi bi-search mr-2 text-xs"></i>Missing Pet Reports
