@@ -100,6 +100,15 @@
 </div>
 
 <!-- Report Details Modal -->
+<style>
+    #reportDetailsModal .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+    }
+    #reportDetailsModal {
+        z-index: 1060;
+    }
+</style>
 <div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
