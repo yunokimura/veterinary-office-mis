@@ -320,10 +320,10 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('admin_asst'))
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Admin Assistant</div>
+            <div class="sidebar-section-label">Management</div>
 
             <a href="{{ route('admin-asst.pet-registrations.index') }}" class="nav-item {{ request()->routeIs('admin-asst.pet-registrations.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-paw"></i><span>Pet Registrations</span>
+                <i class="bi bi-paw"></i><span>Pet Management</span>
             </a>
             <a href="{{ route('admin-asst.adoption-applications.index') }}" class="nav-item {{ request()->routeIs('admin-asst.adoption-applications.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-heart-fill"></i><span>Adoption Applications</span>
