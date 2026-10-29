@@ -173,7 +173,7 @@ class SpayNeuterController extends Controller
      */
     public function allReports(Request $request)
     {
-        $query = SpayNeuterReport::query()->with(['pet', 'owner', 'barangay']);
+        $query = SpayNeuterAppointment::query()->with(['pet', 'owner', 'barangay']);
 
         // Filter by status
         if ($request->has('status') && $request->status) {
@@ -226,7 +226,7 @@ class SpayNeuterController extends Controller
      */
     public function filterReports(Request $request)
     {
-        $query = SpayNeuterReport::query()->with(['pet', 'owner', 'barangay']);
+        $query = SpayNeuterAppointment::query()->with(['pet', 'owner', 'barangay']);
 
         if ($request->filled('search')) {
             $terms = array_values(array_filter(explode(' ', $request->search)));
