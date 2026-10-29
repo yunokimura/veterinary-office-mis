@@ -99,6 +99,29 @@ class SpayNeuterController extends Controller
     {
         $query = SpayNeuterReport::query()->with(['pet', 'owner', 'barangay']);
 
+        // Search filter (pet name, owner name, procedure type, status, barangay)
+        if ($request->filled('search')) {
+            $terms = array_values(array_filter(explode(' ', $request->search)));
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($sub) use ($term) {
+                        $sub->whereHas('pet', function ($p) use ($term) {
+                            $p->where('pet_name', 'like', "%{$term}%");
+                        })
+                            ->orWhereHas('owner', function ($o) use ($term) {
+                                $o->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$term}%"]);
+                            })
+                            ->orWhere('procedure_type', 'like', "%{$term}%")
+                            ->orWhere('status', 'like', "%{$term}%")
+                            ->orWhereHas('barangay', function ($b) use ($term) {
+                                $b->where('barangay_name', 'like', "%{$term}%");
+                            })
+                            ->orWhere('id', 'like', "%{$term}%");
+                    });
+                }
+            });
+        }
+
         // Filter by status
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
@@ -129,9 +152,19 @@ class SpayNeuterController extends Controller
             $query->where('user_id', Auth::id());
         }
 
-        $reports = $query->latest()->paginate(10);
+        // KPI stats from filtered query
+        $stats = [
+            'total' => $query->count(),
+            'pending' => $query->where('status', 'pending')->count(),
+            'scheduled' => $query->where('status', 'scheduled')->count(),
+            'completed' => $query->where('status', 'completed')->count(),
+            'cancelled' => $query->where('status', 'cancelled')->count(),
+            'today' => $query->whereDate('scheduled_at', today())->count(),
+        ];
 
-        return view('reports.spay_neuter_index', compact('reports'));
+        $reports = $query->latest()->paginate(10)->appends(request()->query());
+
+        return view('reports.spay_neuter_index', compact('reports', 'stats'));
     }
 
     /**
