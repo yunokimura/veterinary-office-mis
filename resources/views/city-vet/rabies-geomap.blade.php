@@ -1560,9 +1560,6 @@ function renderTopBarangays(data) {
         const row = document.createElement('div');
         row.className = 'flex items-center gap-3 px-3 py-2.5 border border-slate-200 rounded-xl bg-white hover:bg-indigo-50 hover:border-indigo-200 transition-colors cursor-pointer';
         row.onclick = () => {
-            if (hasCoords && typeof map !== 'undefined') {
-                map.setView([lat, lng], 15);
-            }
             closeTopBarangaysModal();
         };
 
@@ -1590,12 +1587,21 @@ function renderTopBarangays(data) {
 
     list.classList.remove('hidden');
     empty.classList.add('hidden');
+
+    if (topBarangaysCurrentLimit === 10) {
+        setTimeout(() => {
+            const list = document.getElementById('topBarangaysList');
+            if (list) {
+                list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+            }
+        }, 50);
+    }
 }
 
 function highlightTopBarangayOnMap(lat, lng) {
-    if (typeof map === 'undefined' || !map || !lat || !lng) return;
-    map.setView([lat, lng], 15);
-    map.invalidateSize();
+    if (!window.map || !lat || !lng) return;
+    window.map.setView([lat, lng], 15);
+    window.map.invalidateSize();
 }
 </script>
 @endpush
