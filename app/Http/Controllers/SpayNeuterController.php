@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barangay;
 use App\Models\Pet;
+use App\Models\SpayNeuterAppointment;
 use App\Models\SpayNeuterReport;
 use App\Services\NotificationService;
 use App\Services\VeterinarianRotationService;
@@ -97,7 +98,7 @@ class SpayNeuterController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SpayNeuterReport::query()->with(['pet', 'owner', 'barangay']);
+        $query = SpayNeuterAppointment::query()->with(['pet', 'owner', 'barangay']);
 
         // Search filter (pet name, owner name, procedure type, status, barangay)
         if ($request->filled('search')) {
