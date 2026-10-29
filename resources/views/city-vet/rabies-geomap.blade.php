@@ -1304,7 +1304,7 @@ function submitNewReport(e) {
         headers['X-CSRF-TOKEN'] = token.getAttribute('content');
     }
 
-    fetch('{{ route('rabies-geomap.store') }}', {
+    fetch('{{ route('city-vet.rabies-geomap.store') }}', {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(data),
