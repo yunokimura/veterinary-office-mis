@@ -367,6 +367,7 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    @yield('topbar-actions')
                     <!-- Notifications -->
                     @php
                         $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->latest()->take(10)->get();

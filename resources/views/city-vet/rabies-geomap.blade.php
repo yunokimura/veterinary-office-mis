@@ -19,6 +19,13 @@
     $criticalCount = collect($heatmapData)->where('count', '>', 20)->count();
 @endphp
 
+@section('topbar-actions')
+    <a href="{{ route('city-vet.rabies-geomap') }}" class="inline-flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm transition border border-red-500/50">
+        <i class="bi bi-plus-lg"></i>
+        <span>New Report</span>
+    </a>
+@endsection
+
 @section('content')
     <div class="geomap-wrapper">
 
