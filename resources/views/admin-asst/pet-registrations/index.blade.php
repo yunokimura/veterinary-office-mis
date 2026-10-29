@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <!-- Registered -->
+    <!-- Owned -->
     <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
         <div class="h-10 flex items-center mb-2">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
@@ -49,22 +49,22 @@
         <div class="flex-1 flex flex-col justify-between">
             <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
                 <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $registeredCount }}</span>
-                <span class="text-xs font-medium text-slate-500">Registered</span>
+                <span class="text-xs font-medium text-slate-500">Owned</span>
             </div>
         </div>
     </div>
 
-    <!-- Pending -->
+    <!-- For Adoption -->
     <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
         <div class="h-10 flex items-center mb-2">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
-                Pending
+                For Adoption
             </span>
         </div>
         <div class="flex-1 flex flex-col justify-between">
             <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
-                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $pendingCount }}</span>
-                <span class="text-xs font-medium text-slate-500">Pending</span>
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $forAdoptionCount }}</span>
+                <span class="text-xs font-medium text-slate-500">Available</span>
             </div>
         </div>
     </div>

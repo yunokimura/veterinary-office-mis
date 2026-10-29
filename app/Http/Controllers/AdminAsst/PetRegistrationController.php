@@ -47,15 +47,15 @@ class PetRegistrationController extends Controller
         $barangays = Barangay::orderBy('barangay_name')->get();
 
         $totalCount = Pet::count();
-        $registeredCount = Pet::where('pet_status', 'registered')->count();
-        $pendingCount = Pet::where('pet_status', 'pending')->count();
+        $registeredCount = Pet::where('pet_status', 'owned')->count();
+        $forAdoptionCount = Pet::where('pet_status', 'for adoption')->count();
 
         return view('admin-asst.pet-registrations.index', compact(
             'pets',
             'barangays',
             'totalCount',
             'registeredCount',
-            'pendingCount'
+            'forAdoptionCount'
         ));
     }
 
