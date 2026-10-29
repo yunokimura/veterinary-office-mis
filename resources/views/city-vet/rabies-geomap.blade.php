@@ -1560,11 +1560,8 @@ function renderTopBarangays(data) {
         const row = document.createElement('div');
         row.className = 'flex items-center gap-3 px-3 py-2.5 border border-slate-200 rounded-xl bg-white hover:bg-indigo-50 hover:border-indigo-200 transition-colors cursor-pointer';
         row.onclick = () => {
-            if (hasCoords) {
+            if (hasCoords && typeof map !== 'undefined') {
                 map.setView([lat, lng], 15);
-                if (typeof highlightFeature === 'function' && barangayLayer) {
-                    // Trigger highlight via tooltip is handled by Leaflet hover; just pan
-                }
             }
             closeTopBarangaysModal();
         };
@@ -1596,7 +1593,7 @@ function renderTopBarangays(data) {
 }
 
 function highlightTopBarangayOnMap(lat, lng) {
-    if (!map || !lat || !lng) return;
+    if (typeof map === 'undefined' || !map || !lat || !lng) return;
     map.setView([lat, lng], 15);
     map.invalidateSize();
 }
