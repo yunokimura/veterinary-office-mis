@@ -31,7 +31,7 @@ class InventoryController extends Controller
             });
         }
 
-        $items = $query->orderBy('item_name')->paginate(15);
+        $items = $query->orderBy('item_name')->paginate(7);
 
         $lowStockCount = InventoryControl::lowStock()->count();
 
