@@ -144,6 +144,21 @@ class NotificationService
         );
     }
 
+    public static function inventoryExpiring(array $items): void
+    {
+        $count = count($items);
+        $names = collect($items)->map(fn ($item) => "{$item->item_name} (expires {$item->expiry_date})")->implode(', ');
+
+        self::notifyMultipleRoles(
+            [User::ROLE_CITY_VET, User::ROLE_ASSISTANT_VET],
+            'Inventory Expiry Alert',
+            "{$count} item(s) expiring soon: {$names}",
+            'inventory',
+            null,
+            'high'
+        );
+    }
+
     public static function impoundCreated(?int $impoundId = null): void
     {
         self::notifyMultipleRoles(
