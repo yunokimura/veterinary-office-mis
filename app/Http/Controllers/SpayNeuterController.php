@@ -354,8 +354,8 @@ class SpayNeuterController extends Controller
         $this->authorizeReport($report);
 
         $validated = $request->validate([
-            'pet_id' => 'required|exists:pets,pet_id',
-            'procedure_type' => 'required|string|in:spay,neuter',
+            'pet_id' => 'nullable|exists:pets,pet_id',
+            'procedure_type' => 'nullable|string|in:spay,neuter',
             'scheduled_at' => 'nullable|date',
             'veterinarian' => 'nullable|in:City Veterinarian,Assistant Veterinarian',
             'weight' => 'nullable|numeric|min:0',
@@ -363,25 +363,41 @@ class SpayNeuterController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
-        // Re-derive owner_id and barangay_id from the selected pet
-        $pet = Pet::with('owner')->findOrFail($validated['pet_id']);
-        $owner = $pet->owner;
-        if (! $owner) {
-            return redirect()->back()->with('error', 'Selected pet has no owner.')->withInput();
+        // Re-derive owner_id and barangay_id from the selected pet only if pet_id is provided
+        if ($request->filled('pet_id')) {
+            $pet = Pet::with('owner')->findOrFail($validated['pet_id']);
+            $owner = $pet->owner;
+            if (! $owner) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json(['success' => false, 'message' => 'Selected pet has no owner.'], 422);
+                }
+                return redirect()->back()->with('error', 'Selected pet has no owner.')->withInput();
+            }
+
+            $barangay = null;
+            if ($owner->barangay) {
+                $barangay = Barangay::firstOrCreate(
+                    ['barangay_name' => $owner->barangay],
+                    ['city' => 'Dasmariñas City', 'province' => 'Cavite', 'status' => 'active']
+                );
+            }
+
+            $validated['owner_id'] = $owner->owner_id;
+            $validated['barangay_id'] = $barangay?->barangay_id;
         }
 
-        $barangay = null;
-        if ($owner->barangay) {
-            $barangay = Barangay::firstOrCreate(
-                ['barangay_name' => $owner->barangay],
-                ['city' => 'Dasmariñas City', 'province' => 'Cavite', 'status' => 'active']
-            );
+        // Remove null fields so they are not overwritten
+        foreach ($validated as $key => $value) {
+            if ($value === null) {
+                unset($validated[$key]);
+            }
         }
-
-        $validated['owner_id'] = $owner->owner_id;
-        $validated['barangay_id'] = $barangay?->barangay_id;
 
         $report->update($validated);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Spay/Neuter report updated successfully!']);
+        }
 
         return redirect()->route('spay-neuter.reports.index')
             ->with('success', 'Spay/Neuter report updated successfully!');
