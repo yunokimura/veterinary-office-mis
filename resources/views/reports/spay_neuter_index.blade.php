@@ -2,180 +2,162 @@
 
 @section('title', 'Spay/Neuter Appointments')
 @section('header', 'Spay/Neuter Appointments')
-@section('subheader', 'Kapon Appointment Records')
+@section('subheader', 'Manage Spay/Neuter appointment schedules')
 
 @section('content')
 <div class="space-y-6">
-    <!-- Page Header with Create Button -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-            <h2 class="text-lg font-semibold text-gray-800">All Appointments</h2>
-            <p class="text-sm text-gray-500">Manage spay/neuter appointments and records</p>
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Total Appointments</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($stats['total']) }}</p>
+            </div>
         </div>
-        <a href="{{ route('spay-neuter.reports.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition shadow-sm">
-            <i class="bi bi-plus-lg"></i>
-            <span>New Appointment</span>
-        </a>
-    </div>
-
-    <!-- Filters Card -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div class="p-4 md:p-6">
-            <form method="GET" action="{{ route('spay-neuter.reports.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                    <select name="status" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        <option value="">All Status</option>
-                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="scheduled" {{ request('status') == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Procedure</label>
-                    <select name="procedure_type" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        <option value="">All Procedures</option>
-                        <option value="spay" {{ request('procedure_type') == 'spay' ? 'selected' : '' }}>Spay</option>
-                        <option value="neuter" {{ request('procedure_type') == 'neuter' ? 'selected' : '' }}>Neuter</option>
-                        <option value="both" {{ request('procedure_type') == 'both' ? 'selected' : '' }}>Both</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Pet Type</label>
-                    <select name="pet_type" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                        <option value="">All Pets</option>
-                        <option value="dog" {{ request('pet_type') == 'dog' ? 'selected' : '' }}>Dog</option>
-                        <option value="cat" {{ request('pet_type') == 'cat' ? 'selected' : '' }}>Cat</option>
-                        <option value="other" {{ request('pet_type') == 'other' ? 'selected' : '' }}>Other</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Start Date</label>
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">End Date</label>
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
-                </div>
-                <div class="flex items-end gap-2 lg:col-span-5">
-                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">
-                        <i class="bi bi-funnel"></i>
-                        <span>Filter</span>
-                    </button>
-                    <a href="{{ route('spay-neuter.reports.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition">
-                        <i class="bi bi-x-circle"></i>
-                        <span>Clear</span>
-                    </a>
-                </div>
-            </form>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Pending</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($stats['pending']) }}</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Scheduled</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($stats['scheduled']) }}</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Completed</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($stats['completed']) }}</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Cancelled</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($stats['cancelled']) }}</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow">
+            <div>
+                <p class="text-xs font-medium text-gray-500">Today</p>
+                <p class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($stats['today']) }}</p>
+            </div>
         </div>
     </div>
 
     <!-- Appointments Table Card -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-gray-50 border-b border-gray-100">
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Owner Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Pet Type</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Procedure</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($reports as $report)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-4 py-3 text-gray-900 font-medium whitespace-nowrap">{{ $report->procedure_date->format('M d, Y') }}</td>
-                        <td class="px-4 py-3 text-gray-700">{{ $report->owner_name }}</td>
-                        <td class="px-4 py-3">
-                            <span class="inline-flex items-center gap-1 text-gray-700">
-                                @if($report->pet_type == 'dog')
-                                    <i class="bi bi-paw text-gray-400"></i>
-                                @elseif($report->pet_type == 'cat')
-                                    <i class="bi bi-paw text-gray-400"></i>
-                                @endif
-                                {{ ucfirst($report->pet_type) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            @if($report->procedure_type == 'spay')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-                                Spay (F)
-                            </span>
-                            @elseif($report->procedure_type == 'neuter')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                Neuter (M)
-                            </span>
-                            @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Both
-                            </span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3">
-                            @if($report->status == 'completed')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
-                                Completed
-                            </span>
-                            @elseif($report->status == 'scheduled')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
-                                Scheduled
-                            </span>
-                            @elseif($report->status == 'cancelled')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></span>
-                                Cancelled
-                            </span>
-                            @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5"></span>
-                                Pending
-                            </span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 text-right whitespace-nowrap">
-                            <div class="inline-flex items-center gap-1">
-                                <a href="{{ route('spay-neuter.reports.show', $report->id) }}" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="View">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                <a href="{{ route('spay-neuter.reports.edit', $report->id) }}" class="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <form action="{{ route('spay-neuter.reports.destroy', $report->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this appointment?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-4 py-12 text-center">
-                            <div class="flex flex-col items-center gap-2">
-                                <i class="bi bi-calendar-x text-4xl text-gray-300"></i>
-                                <p class="text-gray-500 font-medium">No appointments found</p>
-                                <p class="text-gray-400 text-sm">Try adjusting your filters or create a new appointment.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">Spay/Neuter Appointments</h3>
+                <p class="text-sm text-gray-500">Search and filter spay/neuter appointments</p>
+            </div>
         </div>
-        @if($reports->hasPages())
-        <div class="px-4 py-3 border-t border-gray-100">
-            {{ $reports->appends(request()->query())->links('pagination::tailwind') }}
+
+        <!-- Search & Filters -->
+        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+            <div class="relative w-96">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="spayNeuterSearchInput" value="{{ request('search') }}" placeholder="Search pet, owner, vet, status..."
+                       class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+            </div>
+            <div class="flex gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">From Date</label>
+                    <input type="date" id="dateFrom" value="{{ request('date_from') }}"
+                           class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">To Date</label>
+                    <input type="date" id="dateTo" value="{{ request('date_to') }}"
+                           class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm">
+                </div>
+            </div>
+            <button type="button" id="clearSpayNeuterFiltersBtn" onclick="clearSpayNeuterFilters()"
+                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap hidden">
+                <i class="bi bi-x-circle mr-1"></i>Clear Filters
+            </button>
         </div>
-        @endif
+
+        <div id="spayNeuterTableContainer">
+            @include('reports.partials.spay-neuter-reports-table')
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200" id="spayNeuterPagination">
+            {{ $reports->links() }}
+        </div>
+        <div id="spayNeuterLoading" class="hidden px-6 py-4 border-t border-gray-200 text-center text-gray-500">
+            <span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-green-600 mr-2"></span>
+            Loading...
+        </div>
+        <div id="spayNeuterEmptyState" class="hidden p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-calendar-x text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">No Appointments Found</h3>
+            <p class="text-gray-500">Try adjusting your search or filter criteria.</p>
+        </div>
     </div>
 </div>
+
+<!-- Spay/Neuter Appointment Details Modal -->
+<div id="spayNeuterDetailsModalBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[1200] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]">
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <i class="bi bi-heart-pulse w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Appointment Details</h2>
+                    <p class="text-xs text-slate-400">ID: <span id="spayNeuterModalId" class="font-mono font-semibold text-slate-600">#SN-2026-0010</span></p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span id="spayNeuterModalStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"></span>
+                <button onclick="closeSpayNeuterModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <i class="bi bi-x w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div class="p-6 space-y-5 overflow-y-auto bg-white max-h-[calc(90vh-140px)]">
+            <div id="spayNeuterModalContent">
+                <div class="text-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+                    <p class="text-slate-500 text-sm">Loading appointment details...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer / Actions -->
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-2 w-full sm:w-auto">
+                <button onclick="window.print()" class="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg shadow-xs transition-colors flex items-center justify-center space-x-1.5">
+                    <i class="bi bi-printer w-3.5 h-3.5"></i>
+                    <span>Print</span>
+                </button>
+            </div>
+            <div class="flex items-center space-x-2 w-full sm:w-auto">
+                <button onclick="closeSpayNeuterModal()" class="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200/60 rounded-lg transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+    });
+</script>
+@endpush
+
 @endsection
