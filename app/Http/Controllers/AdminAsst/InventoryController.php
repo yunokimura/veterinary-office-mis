@@ -8,6 +8,7 @@ use App\Models\InventoryMovement;
 use App\Models\Barangay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class InventoryController extends Controller
 {
@@ -34,6 +35,12 @@ class InventoryController extends Controller
 
         $lowStockCount = InventoryControl::lowStock()->count();
 
+        $totalItems = InventoryControl::count();
+        $categoryCount = InventoryControl::distinct('category')->count('category');
+        $outOfStockCount = InventoryControl::where('status', 'out_of_stock')->count();
+        $totalValue = (float) InventoryControl::sum(DB::raw('COALESCE(quantity, 0) * COALESCE(unit_cost, 0)'));
+        $avgCost = (float) InventoryControl::avg('unit_cost');
+
         $barangays = Barangay::orderBy('barangay_name')->get();
 
         if ($request->ajax() || $request->wantsJson()) {
@@ -51,7 +58,7 @@ class InventoryController extends Controller
             ]);
         }
 
-        return view('admin-asst.inventory.index', compact('items', 'lowStockCount', 'barangays'));
+        return view('admin-asst.inventory.index', compact('items', 'lowStockCount', 'totalItems', 'categoryCount', 'outOfStockCount', 'totalValue', 'avgCost', 'barangays'));
     }
 
     public function create()

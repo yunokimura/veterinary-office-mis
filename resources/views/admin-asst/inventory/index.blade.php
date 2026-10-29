@@ -6,6 +6,71 @@
 
 @section('content')
 <div class="space-y-6">
+    <!-- KPI Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+
+        <!-- Card 1: Total Tracked Items -->
+        <div class="bg-white rounded-xl shadow-sm p-3 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-8 flex items-center mb-2">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Total Tracked Items
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-2 border-b border-slate-100">
+                    <span class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $totalItems }}</span>
+                    <span class="text-[10px] font-medium text-slate-500">Items tracked</span>
+                </div>
+                <div class="pt-2 grid grid-cols-2 gap-1">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-semibold bg-slate-50 text-slate-700 border border-slate-200/60 flex items-center justify-between">
+                        <span>Categories:</span> <span class="font-bold">{{ $categoryCount }}</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Low Stock Items -->
+        <div class="bg-white rounded-xl shadow-sm p-3 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-8 flex items-center mb-2">
+                <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider leading-tight">
+                    Low Stock Items
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-2 border-b border-slate-100">
+                    <span class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $lowStockCount }}</span>
+                    <span class="text-[10px] font-medium text-slate-500">Below minimum</span>
+                </div>
+                <div class="pt-2 grid grid-cols-2 gap-1">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-semibold bg-red-50 text-red-700 border border-red-200/60 flex items-center justify-between">
+                        <span>Out of Stock:</span> <span class="font-bold">{{ $outOfStockCount }}</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Total Inventory Value -->
+        <div class="bg-white rounded-xl shadow-sm p-3 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-8 flex items-center mb-2">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider leading-tight">
+                    Total Inventory Value
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-2 border-b border-slate-100">
+                    <span class="text-3xl font-extrabold text-slate-900 tracking-tight">₱{{ number_format($totalValue, 2) }}</span>
+                    <span class="text-[10px] font-medium text-slate-500">Updated today</span>
+                </div>
+                <div class="pt-2 grid grid-cols-2 gap-1">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 flex items-center justify-between">
+                        <span>Avg Cost:</span> <span class="font-bold">₱{{ number_format($avgCost, 2) }}</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <!-- Header + Actions -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
@@ -16,14 +81,14 @@
                 </div>
                 <div class="flex gap-2">
                     <a href="{{ route('admin-asst.inventory.low-stock') }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition shadow-sm hover:shadow-md">
-                        <i class="bi bi-exclamation-triangle text-lg"></i>
-                        <span class="font-medium">Low Stock ({{ $lowStockCount }})</span>
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition shadow-sm hover:shadow-md">
+                        <i class="bi bi-exclamation-triangle text-base"></i>
+                        <span class="text-sm font-medium">Low Stock ({{ $lowStockCount }})</span>
                     </a>
                     <a href="{{ route('admin-asst.inventory.create') }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-sm hover:shadow-md">
-                        <i class="bi bi-plus-circle text-lg"></i>
-                        <span class="font-medium">Add Item</span>
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-sm hover:shadow-md">
+                        <i class="bi bi-plus-circle text-base"></i>
+                        <span class="text-sm font-medium">Add Item</span>
                     </a>
                 </div>
             </div>
