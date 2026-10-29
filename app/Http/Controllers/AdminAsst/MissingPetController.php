@@ -29,6 +29,21 @@ class MissingPetController extends Controller
         $shelterIntakeCount = MissingPetsReport::where('status', 'resolved - shelter intake')->count();
         $totalCount = MissingPetsReport::count();
 
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('admin-asst.missing-pets._table', compact('missingPets'))->render();
+            $links = $missingPets->withQueryString()->links();
+            $pagination = $links instanceof \Illuminate\Contracts\Support\Htmlable
+                ? $links->toHtml()
+                : (string) $links;
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'pagination' => $pagination,
+                'has_results' => $missingPets->count() > 0,
+            ]);
+        }
+
         return view('admin-asst.missing-pets.index', compact(
             'missingPets',
             'pendingReviewCount',
