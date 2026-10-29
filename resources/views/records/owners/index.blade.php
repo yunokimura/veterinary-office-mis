@@ -19,42 +19,48 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <!-- Total Owners -->
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 hover:shadow-md transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Total Owners</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $totalOwners }}</p>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-people text-blue-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Total Owners
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $totalOwners }}</span>
+                    <span class="text-xs font-medium text-slate-500">Owners</span>
                 </div>
             </div>
         </div>
 
         <!-- With Pets -->
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500 hover:shadow-md transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">With Pets</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $ownersWithPets }}</p>
-                </div>
-                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-paw text-emerald-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    With Pets
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $ownersWithPets }}</span>
+                    <span class="text-xs font-medium text-slate-500">With Pets</span>
                 </div>
             </div>
         </div>
 
         <!-- Without Pets -->
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500 hover:shadow-md transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Without Pets</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $ownersWithoutPets }}</p>
-                </div>
-                <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-person-x text-amber-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Without Pets
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $ownersWithoutPets }}</span>
+                    <span class="text-xs font-medium text-slate-500">Without Pets</span>
                 </div>
             </div>
         </div>

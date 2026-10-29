@@ -6,80 +6,64 @@
 
 @section('content')
 <!-- Stats Cards -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
     <!-- New Pet Registrations Today -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-emerald-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">New Pet Registrations Today</p>
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+        <div class="h-10 flex items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                New Pet Registrations Today
+            </span>
         </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $newPetRegistrationsToday }}</p>
-            <p class="text-xs text-gray-500">
-                @if($newPetRegistrationsTrend == 'up')
-                    <span class="text-green-600 font-medium">↑ Up from yesterday</span>
-                @elseif($newPetRegistrationsTrend == 'down')
-                    <span class="text-red-600 font-medium">↓ Down from yesterday</span>
-                @else
-                    <span class="text-gray-600">→ Same as yesterday</span>
-                @endif
-            </p>
+        <div class="flex-1 flex flex-col justify-between">
+            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $newPetRegistrationsToday }}</span>
+                <span class="text-xs font-medium text-slate-500">Registrations</span>
+            </div>
         </div>
     </div>
 
     <!-- Pending Adoption Applications -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-pink-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Pending Adoption Applications</p>
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+        <div class="h-10 flex items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                Pending Adoption Applications
+            </span>
         </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $pendingAdoptions }}</p>
-            <p class="text-xs text-gray-500">
-                @if($pendingAdoptionsTrend == 'up')
-                    <span class="text-green-600 font-medium">↑ Up from last week</span>
-                @elseif($pendingAdoptionsTrend == 'down')
-                    <span class="text-red-600 font-medium">↓ Down from last week</span>
-                @else
-                    <span class="text-gray-600">→ Same as last week</span>
-                @endif
-            </p>
+        <div class="flex-1 flex flex-col justify-between">
+            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $pendingAdoptions }}</span>
+                <span class="text-xs font-medium text-slate-500">Pending</span>
+            </div>
         </div>
     </div>
 
     <!-- Active Missing Pet Cases -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-orange-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">Active Missing Pet Cases</p>
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+        <div class="h-10 flex items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                Active Missing Pet Cases
+            </span>
         </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $activeMissingPets }}</p>
-            <p class="text-xs text-gray-500">
-                @if($activeMissingPetsTrend == 'up')
-                    <span class="text-red-600 font-medium">↑ Up from last week</span>
-                @elseif($activeMissingPetsTrend == 'down')
-                    <span class="text-green-600 font-medium">↓ Down from last week</span>
-                @else
-                    <span class="text-gray-600">→ Same as last week</span>
-                @endif
-            </p>
+        <div class="flex-1 flex flex-col justify-between">
+            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $activeMissingPets }}</span>
+                <span class="text-xs font-medium text-slate-500">Active Cases</span>
+            </div>
         </div>
     </div>
 
     <!-- New Pet Owners This Week -->
-    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 border-l-4 border-blue-500 hover:shadow-md transition h-full flex flex-col justify-between">
-        <div>
-            <p class="text-xs md:text-sm font-medium text-gray-500 mb-2">New Pet Owners This Week</p>
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+        <div class="h-10 flex items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                New Pet Owners This Week
+            </span>
         </div>
-        <div>
-            <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{{ $newPetOwnersThisWeek }}</p>
-            <p class="text-xs text-gray-500">
-                @if($newPetOwnersTrend == 'up')
-                    <span class="text-green-600 font-medium">↑ Up from last week</span>
-                @elseif($newPetOwnersTrend == 'down')
-                    <span class="text-red-600 font-medium">↓ Down from last week</span>
-                @else
-                    <span class="text-gray-600">→ Same as last week</span>
-                @endif
-            </p>
+        <div class="flex-1 flex flex-col justify-between">
+            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $newPetOwnersThisWeek }}</span>
+                <span class="text-xs font-medium text-slate-500">Owners</span>
+            </div>
         </div>
     </div>
 </div>

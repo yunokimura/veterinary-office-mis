@@ -18,55 +18,63 @@
 </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <!-- Pending -->
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500 hover:shadow-md transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Pending</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $pendingReviewCount }}</p>
-                </div>
-                <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-clock text-amber-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Pending
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $pendingReviewCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Pending</span>
                 </div>
             </div>
         </div>
 
         <!-- Approved -->
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500 hover:shadow-md transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Approved</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $approvedCount }}</p>
-                </div>
-                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-check-circle text-emerald-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Approved
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $approvedCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Approved</span>
                 </div>
             </div>
         </div>
 
         <!-- Adopted -->
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 hover:shadow-md transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Adopted</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $adoptedCount }}</p>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-heart text-blue-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Adopted
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $adoptedCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Adopted</span>
                 </div>
             </div>
         </div>
 
         <!-- Rejected -->
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500 hover:shadow-md transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm font-medium text-gray-500 mb-1">Rejected</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">{{ $rejectedCount }}</p>
-                </div>
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="bi bi-x-circle text-red-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Rejected
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $rejectedCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Rejected</span>
                 </div>
             </div>
         </div>

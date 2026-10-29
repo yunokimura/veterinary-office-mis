@@ -20,48 +20,56 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-yellow-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 mb-1">Pending Review</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $pendingReviewCount }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <i class="bi bi-clock text-yellow-600 text-xl"></i>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Pending Review
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $pendingReviewCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Pending Review</span>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 mb-1">Approved</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $approvedCount }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="bi bi-check-circle text-green-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Approved
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $approvedCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Approved</span>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 mb-1">Reunited</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $reunitedCount }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <i class="bi bi-heart text-blue-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Reunited
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $reunitedCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Reunited</span>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-red-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 mb-1">Total Reports</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $totalCount }}</h3>
-                </div>
-                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                    <i class="bi bi-exclamation-triangle text-red-600 text-xl"></i>
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Total Reports
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $totalCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Reports</span>
                 </div>
             </div>
         </div>
