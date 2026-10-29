@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SpayNeuterAppointment;
 use App\Models\SpayNeuterReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class AssistantVetController extends Controller
         ];
 
         // Recent kapon reports
-        $recentKapon = SpayNeuterReport::with(['pet', 'owner', 'barangay'])
+        $recentKapon = SpayNeuterAppointment::with(['pet', 'owner', 'barangay'])
             ->latest()
             ->take(5)
             ->get();

@@ -17,14 +17,40 @@
     }
 @endphp
 
-<!-- Welcome Banner -->
-<div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-6 border border-gray-200">
-    <h2 class="text-xl md:text-2xl font-bold mb-2 text-gray-800">
-        {{ $greeting }}, {{ auth()->user()->name ?? 'Assistant Veterinarian' }}!
-    </h2>
-    <p class="text-sm md:text-base text-gray-600">
-        Monitor and manage Spay/Neuter (Kapon) appointments
-    </p>
+<!-- ==============================
+     QUICK ACTIONS
+     ============================== -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="{{ route('spay-neuter.reports.create') }}" class="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-plus-circle text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">New Kapon</span>
+        </a>
+
+        <a href="{{ route('spay-neuter.reports.index') }}" class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-list-check text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Kapon Records</span>
+        </a>
+
+        <a href="{{ route('spay-neuter.reports.create') }}" class="flex flex-col items-center p-4 bg-pink-50 hover:bg-pink-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-pink-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-gender-female text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">New Spay</span>
+        </a>
+
+        <a href="{{ route('spay-neuter.reports.create') }}" class="flex flex-col items-center p-4 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-gender-male text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">New Neuter</span>
+        </a>
+    </div>
 </div>
 
 <!-- ==============================
@@ -164,42 +190,6 @@
                 @endforelse
             </tbody>
         </table>
-    </div>
-</div>
-
-<!-- ==============================
-     QUICK ACTIONS
-     ============================== -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <a href="{{ route('spay-neuter.reports.create') }}" class="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-plus-circle text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">New Kapon</span>
-        </a>
-
-        <a href="{{ route('spay-neuter.reports.index') }}" class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-list-check text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Kapon Records</span>
-        </a>
-
-        <a href="{{ route('spay-neuter.reports.create') }}" class="flex flex-col items-center p-4 bg-pink-50 hover:bg-pink-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-pink-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-gender-female text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">New Spay</span>
-        </a>
-
-        <a href="{{ route('spay-neuter.reports.create') }}" class="flex flex-col items-center p-4 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-gender-male text-white text-xl"></i>
-            </div>
-            <span class="text-sm font-medium text-gray-700">New Neuter</span>
-        </a>
     </div>
 </div>
 
