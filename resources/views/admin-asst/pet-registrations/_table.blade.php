@@ -15,7 +15,7 @@
         @forelse($pets as $pet)
         <tr class="hover:bg-gray-50">
             <td class="px-4 py-4 text-gray-600">
-                <span class="font-medium text-gray-900">{{ $pet->name }}</span>
+                <span class="font-medium text-gray-900">{{ $pet->pet_name }}</span>
             </td>
             <td class="px-4 py-4 text-gray-600">
                 <span class="inline-flex items-center gap-1.5 text-xs text-gray-700">
@@ -43,7 +43,10 @@
             </td>
             <td class="px-4 py-4 text-sm text-gray-700">{{ $pet->breed }}</td>
             <td class="px-4 py-4">
-                <span class="text-sm {{ $pet->userOwner ? 'text-gray-900' : 'text-gray-400' }}">{{ $pet->userOwner ? $pet->userOwner->name : 'N/A' }}</span>
+                @php
+                    $ownerName = $pet->owner ? $pet->owner->first_name . ' ' . $pet->owner->last_name : null;
+                @endphp
+                <span class="text-sm {{ $ownerName ? 'text-gray-900' : 'text-gray-400' }}">{{ $ownerName ?? 'N/A' }}</span>
             </td>
             <td class="px-4 py-4">
                 @php
@@ -54,11 +57,11 @@
                         'registered' => 'bg-emerald-50 text-emerald-600 border border-emerald-100',
                     ];
                 @endphp
-                <span class="px-2.5 py-0.5 text-xs rounded-full border {{ $petStatusColors[strtolower($pet->pet_status ?? 'registered')] ?? 'bg-gray-50 text-gray-600 border border-gray-100' }}">
+                <span class="px-2.5 py-0.5 text-xs rounded-full border whitespace-nowrap {{ $petStatusColors[strtolower($pet->pet_status ?? 'registered')] ?? 'bg-gray-50 text-gray-600 border border-gray-100' }}">
                     {{ ucwords(str_replace('_', ' ', $pet->pet_status ?? 'Registered')) }}
                 </span>
             </td>
-            <td class="px-4 py-4 text-sm text-gray-400">{{ $pet->created_at->format('M d, Y') }}</td>
+            <td class="px-4 py-4 text-sm text-gray-400">{{ optional($pet->created_at)->format('M d, Y') ?? 'N/A' }}</td>
             <td class="px-4 py-4 text-right">
                 <div class="flex items-center justify-end gap-2">
                     <a href="{{ route('admin-asst.pet-registrations.show', $pet) }}" 

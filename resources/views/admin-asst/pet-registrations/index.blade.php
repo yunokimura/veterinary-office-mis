@@ -98,17 +98,6 @@
                         <option value="other" {{ request('species') == 'other' ? 'selected' : '' }}>Other</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Barangay</label>
-                    <select name="barangay_id" id="petRegistrationBarangay" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
-                        <option value="">All Barangays</option>
-                        @foreach($barangays as $barangay)
-                            <option value="{{ $barangay->barangay_id }}" {{ request('barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>
-                                {{ $barangay->barangay_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
             </div>
             <button type="button" id="clearPetRegistrationFiltersBtn" onclick="clearPetRegistrationFilters()"
                     class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap hidden">
@@ -147,7 +136,6 @@ function getPetRegistrationFilterParams() {
         search: document.getElementById('petRegistrationSearchInput').value,
         status: document.getElementById('petRegistrationStatus').value,
         species: document.getElementById('petRegistrationSpecies').value,
-        barangay_id: document.getElementById('petRegistrationBarangay').value,
     };
 }
 
@@ -215,8 +203,7 @@ function updateClearPetRegistrationFiltersVisibility() {
 
     const hasFilters = (searchInput && searchInput.value.trim() !== '') ||
                        (statusSelect && statusSelect.value !== '') ||
-                       (speciesSelect && speciesSelect.value !== '') ||
-                       (barangaySelect && barangaySelect.value !== '');
+                       (speciesSelect && speciesSelect.value !== '');
 
     if (clearBtn) {
         if (hasFilters) {
@@ -241,11 +228,6 @@ document.getElementById('petRegistrationStatus').addEventListener('change', () =
 });
 
 document.getElementById('petRegistrationSpecies').addEventListener('change', () => {
-    updateClearPetRegistrationFiltersVisibility();
-    applyPetRegistrationFilters();
-});
-
-document.getElementById('petRegistrationBarangay').addEventListener('change', () => {
     updateClearPetRegistrationFiltersVisibility();
     applyPetRegistrationFilters();
 });

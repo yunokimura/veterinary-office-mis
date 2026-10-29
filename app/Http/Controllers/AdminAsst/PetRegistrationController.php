@@ -52,7 +52,10 @@ class PetRegistrationController extends Controller
 
         if ($request->ajax() || $request->wantsJson()) {
             $html = view('admin-asst.pet-registrations._table', compact('pets'))->render();
-            $pagination = $pets->withQueryString()->links()->toHtml();
+            $links = $pets->withQueryString()->links();
+            $pagination = $links instanceof \Illuminate\Contracts\Support\Htmlable
+                ? $links->toHtml()
+                : (string) $links;
 
             return response()->json([
                 'success' => true,
