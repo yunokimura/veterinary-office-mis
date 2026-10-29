@@ -231,6 +231,21 @@ class RecordsController extends Controller
         $ownersWithPets = User::role('pet_owner')->has('pets')->count();
         $ownersWithoutPets = $totalOwners - $ownersWithPets;
 
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('records.owners._table', compact('owners'))->render();
+            $links = $owners->withQueryString()->links();
+            $pagination = $links instanceof \Illuminate\Contracts\Support\Htmlable
+                ? $links->toHtml()
+                : (string) $links;
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'pagination' => $pagination,
+                'has_results' => $owners->count() > 0,
+            ]);
+        }
+
         return view('records.owners.index', compact('owners', 'search', 'totalOwners', 'ownersWithPets', 'ownersWithoutPets'));
     }
 
