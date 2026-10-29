@@ -108,6 +108,12 @@
                 <span>Anti-Rabies Vaccination</span>
             </button>
 
+            {{-- Top Barangays Button --}}
+            <button id="btnTopBarangays" class="layer-toggle-btn" onclick="openTopBarangaysModal()">
+                <i class="bi bi-list-ol"></i>
+                <span>Top Barangays</span>
+            </button>
+
             {{-- Filter Button --}}
             <div class="geomap-filter-controls" x-data="{ filterOpen: false }">
                 <button @click="filterOpen = !filterOpen" class="filter-toggle-btn">
@@ -405,6 +411,77 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Top Barangays Modal --}}
+    <div id="topBarangaysModalBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[1200] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-indigo-100 text-indigo-600 rounded-lg">
+                        <i class="bi bi-list-ol w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h5 class="font-bold text-slate-800 text-lg leading-tight">Top Barangays</h5>
+                        <p class="text-xs text-slate-500 leading-none" id="topBarangaysModalSubtitle">Confirmed Rabies Cases</p>
+                    </div>
+                </div>
+                <button onclick="closeTopBarangaysModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-4 space-y-4 overflow-y-auto flex-1 bg-white">
+                <!-- Type Tabs: Rabies Cases | Vaccination Coverage -->
+                <div class="flex gap-2 bg-slate-100 p-1 rounded-lg">
+                    <button onclick="setTopBarangaysType('rabies')" id="topBarangaysTypeRabies" class="flex-1 py-2 px-3 text-sm font-medium rounded-md text-indigo-600 bg-white shadow-sm transition-colors">
+                        Rabies Cases
+                    </button>
+                    <button onclick="setTopBarangaysType('vaccination')" id="topBarangaysTypeVaccination" class="flex-1 py-2 px-3 text-sm font-medium rounded-md text-slate-600 hover:text-slate-700 transition-colors">
+                        Vaccination Coverage
+                    </button>
+                </div>
+
+                <!-- Count Toggle: Top 5 | Top 10 -->
+                <div class="flex gap-2 bg-slate-100 p-1 rounded-lg">
+                    <button onclick="setTopBarangaysLimit(5)" id="topBarangaysLimit5" class="flex-1 py-2 px-3 text-sm font-medium rounded-md text-indigo-600 bg-white shadow-sm transition-colors">
+                        Top 5
+                    </button>
+                    <button onclick="setTopBarangaysLimit(10)" id="topBarangaysLimit10" class="flex-1 py-2 px-3 text-sm font-medium rounded-md text-slate-600 hover:text-slate-700 transition-colors">
+                        Top 10
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div id="topBarangaysLoading" class="text-center py-8 hidden">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p class="text-slate-500 text-sm">Loading top barangays...</p>
+                </div>
+
+                <!-- Top Barangays List -->
+                <div id="topBarangaysList" class="space-y-2">
+                    <!-- Rows injected here via JS -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="topBarangaysEmpty" class="hidden text-center py-8">
+                    <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-geo-alt text-slate-400 text-xl"></i>
+                    </div>
+                    <p class="text-sm text-slate-500">No barangays found for the selected filters.</p>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+                <span class="text-xs text-slate-400" id="topBarangaysFilterLabel"></span>
+                <button onclick="closeTopBarangaysModal()" class="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors">
+                    Done
+                </button>
             </div>
         </div>
     </div>
@@ -1323,6 +1400,205 @@ function submitNewReport(e) {
         console.error('Error submitting report:', error);
         alert('Failed to submit report. Please try again.');
     });
+}
+
+// Top Barangays Modal JS
+let topBarangaysCurrentType = 'rabies';
+let topBarangaysCurrentLimit = 5;
+let topBarangaysCurrentFilters = {};
+
+function openTopBarangaysModal() {
+    const backdrop = document.getElementById('topBarangaysModalBackdrop');
+    const list = document.getElementById('topBarangaysList');
+    const empty = document.getElementById('topBarangaysEmpty');
+    const loading = document.getElementById('topBarangaysLoading');
+
+    list.innerHTML = '';
+    list.classList.add('hidden');
+    empty.classList.add('hidden');
+    loading.classList.remove('hidden');
+
+    backdrop.classList.remove('hidden');
+    setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+    }, 10);
+
+    loadTopBarangays();
+}
+
+function closeTopBarangaysModal() {
+    const backdrop = document.getElementById('topBarangaysModalBackdrop');
+    backdrop.classList.add('opacity-0');
+    setTimeout(() => {
+        backdrop.classList.add('hidden');
+    }, 200);
+}
+
+function setTopBarangaysType(type) {
+    topBarangaysCurrentType = type;
+    document.getElementById('topBarangaysTypeRabies').classList.toggle('text-indigo-600', type === 'rabies');
+    document.getElementById('topBarangaysTypeRabies').classList.toggle('bg-white', type === 'rabies');
+    document.getElementById('topBarangaysTypeRabies').classList.toggle('shadow-sm', type === 'rabies');
+    document.getElementById('topBarangaysTypeRabies').classList.toggle('text-slate-600', type !== 'rabies');
+    document.getElementById('topBarangaysTypeRabies').classList.toggle('hover:text-slate-700', type !== 'rabies');
+
+    document.getElementById('topBarangaysTypeVaccination').classList.toggle('text-indigo-600', type === 'vaccination');
+    document.getElementById('topBarangaysTypeVaccination').classList.toggle('bg-white', type === 'vaccination');
+    document.getElementById('topBarangaysTypeVaccination').classList.toggle('shadow-sm', type === 'vaccination');
+    document.getElementById('topBarangaysTypeVaccination').classList.toggle('text-slate-600', type !== 'vaccination');
+    document.getElementById('topBarangaysTypeVaccination').classList.toggle('hover:text-slate-700', type !== 'vaccination');
+
+    document.getElementById('topBarangaysModalSubtitle').textContent = type === 'rabies' ? 'Confirmed Rabies Cases' : 'Vaccination Coverage';
+
+    loadTopBarangays();
+}
+
+function setTopBarangaysLimit(limit) {
+    topBarangaysCurrentLimit = limit;
+    document.getElementById('topBarangaysLimit5').classList.toggle('text-indigo-600', limit === 5);
+    document.getElementById('topBarangaysLimit5').classList.toggle('bg-white', limit === 5);
+    document.getElementById('topBarangaysLimit5').classList.toggle('shadow-sm', limit === 5);
+    document.getElementById('topBarangaysLimit5').classList.toggle('text-slate-600', limit !== 5);
+    document.getElementById('topBarangaysLimit5').classList.toggle('hover:text-slate-700', limit !== 5);
+
+    document.getElementById('topBarangaysLimit10').classList.toggle('text-indigo-600', limit === 10);
+    document.getElementById('topBarangaysLimit10').classList.toggle('bg-white', limit === 10);
+    document.getElementById('topBarangaysLimit10').classList.toggle('shadow-sm', limit === 10);
+    document.getElementById('topBarangaysLimit10').classList.toggle('text-slate-600', limit !== 10);
+    document.getElementById('topBarangaysLimit10').classList.toggle('hover:text-slate-700', limit !== 10);
+
+    loadTopBarangays();
+}
+
+function getSeverityChip(count, type) {
+    let severity, color, bgColor;
+    if (type === 'vaccination') {
+        if (count > 20) { severity = 'Excellent'; color = '#166534'; bgColor = '#dcfce7'; }
+        else if (count > 10) { severity = 'Good'; color = '#15803d'; bgColor = '#bbf7d0'; }
+        else if (count > 5) { severity = 'Fair'; color = '#22c55e'; bgColor = '#86efac'; }
+        else if (count > 0) { severity = 'Low'; color = '#86efac'; bgColor = '#d1fae5'; }
+        else { severity = 'None'; color = '#94a3b8'; bgColor = '#f1f5f9'; }
+    } else {
+        if (count > 20) { severity = 'Critical'; color = '#dc2626'; bgColor = '#fee2e2'; }
+        else if (count > 10) { severity = 'High'; color = '#ea580c'; bgColor = '#fed7aa'; }
+        else if (count > 5) { severity = 'Moderate'; color = '#eab308'; bgColor = '#fef3c7'; }
+        else if (count > 0) { severity = 'Low'; color = '#fde68a'; bgColor = '#fef9c3'; }
+        else { severity = 'No Cases'; color = '#94a3b8'; bgColor = '#f1f5f9'; }
+    }
+    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border" style="background:${bgColor};color:${color};border-color:${color}">${severity}</span>`;
+}
+
+function loadTopBarangays() {
+    const params = new URLSearchParams();
+    params.append('year', document.getElementById('filterYear')?.value || new Date().getFullYear());
+    params.append('month', document.getElementById('filterMonth')?.value || '');
+    params.append('week', document.getElementById('filterWeek')?.value || '');
+    params.append('date_from', document.getElementById('filterDateFrom')?.value || '');
+    params.append('date_to', document.getElementById('filterDateTo')?.value || '');
+    params.append('type', topBarangaysCurrentType);
+    params.append('limit', topBarangaysCurrentLimit);
+
+    const token = document.querySelector('meta[name="csrf-token"]');
+    const headers = {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+    };
+    if (token) {
+        headers['X-CSRF-TOKEN'] = token.getAttribute('content');
+    }
+
+    fetch('{{ route('city-vet.rabies-geomap.top-barangays') }}?' + params.toString(), {
+        headers: headers,
+    })
+    .then(response => response.json())
+    .then(data => {
+        renderTopBarangays(data);
+    })
+    .catch(error => {
+        console.error('Error loading top barangays:', error);
+        document.getElementById('topBarangaysLoading').classList.add('hidden');
+        document.getElementById('topBarangaysEmpty').classList.remove('hidden');
+    });
+}
+
+function renderTopBarangays(data) {
+    const loading = document.getElementById('topBarangaysLoading');
+    const list = document.getElementById('topBarangaysList');
+    const empty = document.getElementById('topBarangaysEmpty');
+
+    loading.classList.add('hidden');
+
+    if (!data || data.length === 0) {
+        list.classList.add('hidden');
+        empty.classList.remove('hidden');
+        return;
+    }
+
+    // Build filter label for footer
+    const year = document.getElementById('filterYear')?.value || new Date().getFullYear();
+    const monthEl = document.getElementById('filterMonth');
+    const weekEl = document.getElementById('filterWeek');
+    const fromEl = document.getElementById('filterDateFrom');
+    const toEl = document.getElementById('filterDateTo');
+
+    let filterLabel = year;
+    if (fromEl?.value && toEl?.value) filterLabel = fromEl.value + ' to ' + toEl.value;
+    else if (monthEl?.value && weekEl?.value) filterLabel = 'Week ' + weekEl.value + ', Month ' + monthEl.value + ', ' + year;
+    else if (monthEl?.value) filterLabel = 'Month ' + monthEl.value + ', ' + year;
+    else if (weekEl?.value) filterLabel = 'Week ' + weekEl.value + ', ' + year;
+    document.getElementById('topBarangaysFilterLabel').textContent = filterLabel;
+
+    list.innerHTML = '';
+    data.forEach((item, index) => {
+        const rank = index + 1;
+        const rankColor = rank === 1 ? '#dc2626' : rank === 2 ? '#ea580c' : rank === 3 ? '#eab308' : '#64748b';
+        const chip = getSeverityChip(item.count, topBarangaysCurrentType);
+        const lat = item.latitude;
+        const lng = item.longitude;
+        const hasCoords = lat && lng;
+
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-3 px-3 py-2.5 border border-slate-200 rounded-xl bg-white hover:bg-indigo-50 hover:border-indigo-200 transition-colors cursor-pointer';
+        row.onclick = () => {
+            if (hasCoords) {
+                map.setView([lat, lng], 15);
+                if (typeof highlightFeature === 'function' && barangayLayer) {
+                    // Trigger highlight via tooltip is handled by Leaflet hover; just pan
+                }
+            }
+            closeTopBarangaysModal();
+        };
+
+        row.innerHTML = `
+            <div class="flex items-center justify-center w-6">
+                <span class="text-xs font-bold" style="color:${rankColor}">#${rank}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-slate-800 truncate" title="${item.barangay_name}">${item.barangay_name}</p>
+                <p class="text-[10px] text-slate-500 truncate">Barangay ID: ${item.barangay_id}</p>
+            </div>
+            <div class="text-right hidden sm:block">
+                <p class="text-sm font-bold text-slate-800">${item.count}</p>
+                <p class="text-[10px] text-slate-400">${topBarangaysCurrentType === 'vaccination' ? 'doses' : 'cases'}</p>
+            </div>
+            <div class="flex items-center gap-2 hidden sm:block">
+                ${chip}
+            </div>
+            <div class="w-8 flex items-center justify-end text-[10px] text-slate-400">
+                ${hasCoords ? '<i class="bi bi-geo-alt"></i>' : '<i class="bi bi-slash-circle opacity-30"></i>'}
+            </div>
+        `;
+        list.appendChild(row);
+    });
+
+    list.classList.remove('hidden');
+    empty.classList.add('hidden');
+}
+
+function highlightTopBarangayOnMap(lat, lng) {
+    if (!map || !lat || !lng) return;
+    map.setView([lat, lng], 15);
+    map.invalidateSize();
 }
 </script>
 @endpush

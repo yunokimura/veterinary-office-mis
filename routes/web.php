@@ -380,6 +380,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     Route::get('/rabies-geomap', [CityVetController::class, 'geomap'])->name('rabies-geomap');
     Route::get('/rabies-geomap/data', [CityVetController::class, 'geomapData'])->name('rabies-geomap.data');
     Route::post('/rabies-geomap/report', [CityVetController::class, 'storeRabiesReport'])->name('rabies-geomap.store');
+    Route::get('/rabies-geomap/top-barangays', [CityVetController::class, 'topBarangays'])->name('rabies-geomap.top-barangays');
 
     // All Reports
     Route::get('/all-reports', [AdminController::class, 'allReports'])->name('all-reports');

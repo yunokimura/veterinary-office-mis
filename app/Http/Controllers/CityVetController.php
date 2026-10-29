@@ -455,6 +455,68 @@ class CityVetController extends Controller
     }
 
     /**
+     * Get top barangays by rabies cases or vaccination coverage (AJAX).
+     */
+    public function topBarangays(Request $request)
+    {
+        $year = (int) ($request->year ?? date('Y'));
+        $month = $request->month ? (int) $request->month : null;
+        $week = $request->week ? (int) $request->week : null;
+        $dateFrom = $request->date_from ?: null;
+        $dateTo = $request->date_to ?: null;
+        $type = $request->type ?? 'rabies'; // 'rabies' or 'vaccination'
+        $limit = (int) ($request->limit ?? 10);
+
+        if ($type === 'vaccination') {
+            $query = VaccinationReport::whereYear('vaccination_date', $year)
+                ->whereNotNull('barangay_id')
+                ->where('barangay_id', '!=', 0)
+                ->where('barangay_id', '!=', '');
+        } else {
+            $query = BiteRabiesReport::whereYear('incident_date', $year)
+                ->whereNotNull('barangay_id')
+                ->where('barangay_id', '!=', '');
+        }
+
+        if ($dateFrom) {
+            $query->where($type === 'vaccination' ? 'vaccination_date' : 'incident_date', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $query->where($type === 'vaccination' ? 'vaccination_date' : 'incident_date', '<=', $dateTo);
+        }
+        if ($month) {
+            $query->whereMonth($type === 'vaccination' ? 'vaccination_date' : 'incident_date', $month);
+        }
+        if ($week) {
+            $query->whereRaw('WEEK(' . ($type === 'vaccination' ? 'vaccination_date' : 'incident_date') . ', 1) = ?', [$week]);
+        }
+
+        $byBarangay = $query
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->orderByDesc('count')
+            ->limit($limit)
+            ->get();
+
+        $barangays = Barangay::whereIn('barangay_id', $byBarangay->pluck('barangay_id'))
+            ->get()
+            ->keyBy('barangay_id');
+
+        return $byBarangay->map(function ($item) use ($barangays) {
+            $brgy = $barangays->get($item->barangay_id);
+            $count = (int) $item->count;
+
+            return [
+                'barangay_id' => $item->barangay_id,
+                'barangay_name' => $brgy?->barangay_name ?? 'Unknown',
+                'count' => $count,
+                'latitude' => $brgy ? (float) $brgy->latitude : null,
+                'longitude' => $brgy ? (float) $brgy->longitude : null,
+            ];
+        })->values()->toArray();
+    }
+
+    /**
      * Get heatmap data for rabies cases.
      */
     private function getHeatmapData(int $year): array
