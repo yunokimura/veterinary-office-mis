@@ -5,218 +5,277 @@
 @section('subheader', 'Manage and review pet registration records')
 
 @section('content')
-<!-- Page Header with Action Button -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h2 class="text-xl md:text-2xl font-bold text-gray-800">
-                <i class="bi bi-paw text-emerald-600 me-2"></i>Pet Registrations
-            </h2>
-            <p class="text-sm text-gray-600 mt-1">View and manage all pet registration records</p>
+<div class="space-y-6">
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+        <!-- Total Pets -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Total Pets
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $totalCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Pets</span>
+                </div>
+            </div>
         </div>
-        <a href="{{ route('admin-asst.pet-registrations.create') }}" 
-           class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-sm hover:shadow-md">
-            <i class="bi bi-plus-circle text-lg"></i>
-            <span class="font-medium">New Registration</span>
-        </a>
-    </div>
-</div>
 
-<!-- Statistics Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-    <!-- Total Pets -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
-        <div class="h-10 flex items-center mb-2">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
-                Total Pets
-            </span>
+        <!-- Owned -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    Registered
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $registeredCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Owned</span>
+                </div>
+            </div>
         </div>
-        <div class="flex-1 flex flex-col justify-between">
-            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
-                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $totalCount }}</span>
-                <span class="text-xs font-medium text-slate-500">Pets</span>
+
+        <!-- For Adoption -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
+            <div class="h-10 flex items-center mb-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
+                    For Adoption
+                </span>
+            </div>
+            <div class="flex-1 flex flex-col justify-between">
+                <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
+                    <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $forAdoptionCount }}</span>
+                    <span class="text-xs font-medium text-slate-500">Available</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Owned -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
-        <div class="h-10 flex items-center mb-2">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
-                Registered
-            </span>
-        </div>
-        <div class="flex-1 flex flex-col justify-between">
-            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
-                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $registeredCount }}</span>
-                <span class="text-xs font-medium text-slate-500">Owned</span>
+    <!-- Pet List Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">Pet Registrations</h3>
+                    <p class="text-sm text-gray-500">View and manage all pet registration records</p>
+                </div>
+                <a href="{{ route('admin-asst.pet-registrations.create') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-sm hover:shadow-md">
+                    <i class="bi bi-plus-circle text-lg"></i>
+                    <span class="font-medium">New Registration</span>
+                </a>
             </div>
         </div>
-    </div>
 
-    <!-- For Adoption -->
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex flex-col justify-between h-full">
-        <div class="h-10 flex items-center mb-2">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider leading-tight">
-                For Adoption
-            </span>
-        </div>
-        <div class="flex-1 flex flex-col justify-between">
-            <div class="flex items-baseline space-x-2 pb-3 border-b border-slate-100">
-                <span class="text-4xl font-extrabold text-slate-900 tracking-tight">{{ $forAdoptionCount }}</span>
-                <span class="text-xs font-medium text-slate-500">Available</span>
+        <!-- Search & Filters -->
+        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+            <div class="relative w-96">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="petRegistrationSearchInput" value="{{ request('search') }}" placeholder="Search pet, owner..."
+                       class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Filters -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-    <div class="flex items-center gap-2 mb-4">
-        <i class="bi bi-funnel text-gray-600"></i>
-        <h3 class="text-base font-semibold text-gray-800">Filters</h3>
-    </div>
-    <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1.5">Search</label>
-            <input type="text" name="search" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" placeholder="Pet name or owner..." value="{{ request('search') }}">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1.5">Status</label>
-            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
-                <option value="">All Status</option>
-                <option value="registered" {{ request('status') == 'registered' ? 'selected' : '' }}>Registered</option>
-                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1.5">Species</label>
-            <select name="species" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
-                <option value="">All Species</option>
-                <option value="dog" {{ request('species') == 'dog' ? 'selected' : '' }}>Dog</option>
-                <option value="cat" {{ request('species') == 'cat' ? 'selected' : '' }}>Cat</option>
-                <option value="bird" {{ request('species') == 'bird' ? 'selected' : '' }}>Bird</option>
-                <option value="other" {{ request('species') == 'other' ? 'selected' : '' }}>Other</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1.5">Barangay</label>
-            <select name="barangay_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
-                <option value="">All Barangays</option>
-                @foreach($barangays as $barangay)
-                    <option value="{{ $barangay->barangay_id }}" {{ request('barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>
-                        {{ $barangay->barangay_name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="lg:col-span-4 flex items-center gap-2">
-            <button type="submit" class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition text-sm font-medium whitespace-nowrap">
-                <i class="bi bi-funnel me-1"></i>Filter
+            <div class="flex gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                    <select name="status" id="petRegistrationStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                        <option value="">All Status</option>
+                        <option value="registered" {{ request('status') == 'registered' ? 'selected' : '' }}>Registered</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Species</label>
+                    <select name="species" id="petRegistrationSpecies" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                        <option value="">All Species</option>
+                        <option value="dog" {{ request('species') == 'dog' ? 'selected' : '' }}>Dog</option>
+                        <option value="cat" {{ request('species') == 'cat' ? 'selected' : '' }}>Cat</option>
+                        <option value="bird" {{ request('species') == 'bird' ? 'selected' : '' }}>Bird</option>
+                        <option value="other" {{ request('species') == 'other' ? 'selected' : '' }}>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Barangay</label>
+                    <select name="barangay_id" id="petRegistrationBarangay" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                        <option value="">All Barangays</option>
+                        @foreach($barangays as $barangay)
+                            <option value="{{ $barangay->barangay_id }}" {{ request('barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>
+                                {{ $barangay->barangay_name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <button type="button" id="clearPetRegistrationFiltersBtn" onclick="clearPetRegistrationFilters()"
+                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap hidden">
+                <i class="bi bi-x-circle mr-1"></i>Clear Filters
             </button>
-            <a href="{{ route('admin-asst.pet-registrations.index') }}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-medium whitespace-nowrap">
-                Clear
-            </a>
         </div>
-    </form>
+
+        <div id="petRegistrationTableContainer">
+            @include('admin-asst.pet-registrations._table', ['pets' => $pets])
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200" id="petRegistrationPagination">
+            <div class="flex items-center justify-center">
+                {{ $pets->withQueryString()->links() }}
+            </div>
+        </div>
+        <div id="petRegistrationLoading" class="hidden px-6 py-4 border-t border-gray-200 text-center text-gray-500">
+            <span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-emerald-600 mr-2"></span>
+            Loading...
+        </div>
+        <div id="petRegistrationEmptyState" class="hidden p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-inbox text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">No Pet Registrations Found</h3>
+            <p class="text-gray-500">Try adjusting your search or filter criteria.</p>
+        </div>
+    </div>
 </div>
 
-<!-- Pet List -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full">
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Pet Name</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Species</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Gender</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Breed</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Owner</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Registered</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse($pets as $pet)
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="px-4 py-3">
-                        <span class="font-medium text-gray-900">{{ $pet->name }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
-                            {{ ucfirst($pet->species) }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3">
-                        @if($pet->gender == 'male')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                <i class="bi bi-gender-male me-1"></i>Male
-                            </span>
-                        @elseif($pet->gender == 'female')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-                                <i class="bi bi-gender-female me-1"></i>Female
-                            </span>
-                        @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                Unknown
-                            </span>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-700">{{ $pet->breed }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-700">{{ $pet->userOwner ? $pet->userOwner->name : 'N/A' }}</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                            <i class="bi bi-check-circle me-1"></i>Registered
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-600">{{ $pet->created_at->format('M d, Y') }}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center justify-end gap-2">
-                            <a href="{{ route('admin-asst.pet-registrations.show', $pet) }}" 
-                               class="inline-flex items-center justify-center w-8 h-8 bg-cyan-100 text-cyan-700 rounded-lg hover:bg-cyan-200 transition"
-                               title="View">
-                                <i class="bi bi-eye text-sm"></i>
-                            </a>
-                            <a href="{{ route('admin-asst.pet-registrations.edit', $pet) }}" 
-                               class="inline-flex items-center justify-center w-8 h-8 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition"
-                               title="Edit">
-                                <i class="bi bi-pencil text-sm"></i>
-                            </a>
-                            <form action="{{ route('admin-asst.pet-registrations.destroy', $pet) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this record?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" 
-                                        class="inline-flex items-center justify-center w-8 h-8 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
-                                        title="Delete">
-                                    <i class="bi bi-trash text-sm"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="8" class="px-4 py-12">
-                        <div class="text-center">
-                            <i class="bi bi-inbox text-gray-300 text-4xl mb-3 block"></i>
-                            <p class="text-gray-500 font-medium">No pet registrations found</p>
-                            <p class="text-xs text-gray-400 mt-1">Try adjusting your filters or add a new registration</p>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    
-    <!-- Pagination -->
-    @if($pets->hasPages())
-    <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">
-        <div class="flex items-center justify-center">
-            {{ $pets->withQueryString()->links() }}
-        </div>
-    </div>
-    @endif
-</div>
+<script>
+let petRegistrationSearchDebounce;
+const petRegistrationFilterUrl = '{{ route('admin-asst.pet-registrations.index') }}';
+
+function getPetRegistrationFilterParams() {
+    return {
+        search: document.getElementById('petRegistrationSearchInput').value,
+        status: document.getElementById('petRegistrationStatus').value,
+        species: document.getElementById('petRegistrationSpecies').value,
+        barangay_id: document.getElementById('petRegistrationBarangay').value,
+    };
+}
+
+function applyPetRegistrationFilters() {
+    const params = getPetRegistrationFilterParams();
+    const tableContainer = document.getElementById('petRegistrationTableContainer');
+    const paginationContainer = document.getElementById('petRegistrationPagination');
+    const loadingEl = document.getElementById('petRegistrationLoading');
+    const emptyState = document.getElementById('petRegistrationEmptyState');
+
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    if (tableContainer) tableContainer.style.opacity = '0.3';
+    if (paginationContainer) paginationContainer.style.opacity = '0.3';
+
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.append(key, value);
+    });
+
+    fetch(`${petRegistrationFilterUrl}?${query.toString()}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (tableContainer) {
+                tableContainer.innerHTML = data.html;
+                tableContainer.style.opacity = '1';
+            }
+            if (paginationContainer) {
+                paginationContainer.innerHTML = data.pagination;
+                paginationContainer.style.opacity = '1';
+            }
+            if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error filtering pet registrations:', error);
+        if (tableContainer) tableContainer.style.opacity = '1';
+        if (paginationContainer) paginationContainer.style.opacity = '1';
+    })
+    .finally(() => {
+        if (loadingEl) loadingEl.classList.add('hidden');
+    });
+}
+
+function clearPetRegistrationFilters() {
+    document.getElementById('petRegistrationSearchInput').value = '';
+    document.getElementById('petRegistrationStatus').value = '';
+    document.getElementById('petRegistrationSpecies').value = '';
+    document.getElementById('petRegistrationBarangay').value = '';
+    updateClearPetRegistrationFiltersVisibility();
+    applyPetRegistrationFilters();
+}
+
+function updateClearPetRegistrationFiltersVisibility() {
+    const searchInput = document.getElementById('petRegistrationSearchInput');
+    const statusSelect = document.getElementById('petRegistrationStatus');
+    const speciesSelect = document.getElementById('petRegistrationSpecies');
+    const barangaySelect = document.getElementById('petRegistrationBarangay');
+    const clearBtn = document.getElementById('clearPetRegistrationFiltersBtn');
+
+    const hasFilters = (searchInput && searchInput.value.trim() !== '') ||
+                       (statusSelect && statusSelect.value !== '') ||
+                       (speciesSelect && speciesSelect.value !== '') ||
+                       (barangaySelect && barangaySelect.value !== '');
+
+    if (clearBtn) {
+        if (hasFilters) {
+            clearBtn.classList.remove('hidden');
+        } else {
+            clearBtn.classList.add('hidden');
+        }
+    }
+}
+
+document.getElementById('petRegistrationSearchInput').addEventListener('input', () => {
+    clearTimeout(petRegistrationSearchDebounce);
+    petRegistrationSearchDebounce = setTimeout(() => {
+        updateClearPetRegistrationFiltersVisibility();
+        applyPetRegistrationFilters();
+    }, 300);
+});
+
+document.getElementById('petRegistrationStatus').addEventListener('change', () => {
+    updateClearPetRegistrationFiltersVisibility();
+    applyPetRegistrationFilters();
+});
+
+document.getElementById('petRegistrationSpecies').addEventListener('change', () => {
+    updateClearPetRegistrationFiltersVisibility();
+    applyPetRegistrationFilters();
+});
+
+document.getElementById('petRegistrationBarangay').addEventListener('change', () => {
+    updateClearPetRegistrationFiltersVisibility();
+    applyPetRegistrationFilters();
+});
+
+document.getElementById('petRegistrationPagination').addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    e.preventDefault();
+    const url = new URL(link.href);
+    const query = url.searchParams.toString();
+
+    fetch(`${petRegistrationFilterUrl}?${query}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('petRegistrationTableContainer').innerHTML = data.html;
+            document.getElementById('petRegistrationPagination').innerHTML = data.pagination;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading pet registrations page:', error);
+    });
+});
+
+updateClearPetRegistrationFiltersVisibility();
+</script>
 @endsection

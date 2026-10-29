@@ -50,6 +50,18 @@ class PetRegistrationController extends Controller
         $registeredCount = Pet::where('pet_status', 'owned')->count();
         $forAdoptionCount = Pet::where('pet_status', 'for adoption')->count();
 
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('admin-asst.pet-registrations._table', compact('pets'))->render();
+            $pagination = $pets->withQueryString()->links()->toHtml();
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'pagination' => $pagination,
+                'has_results' => $pets->count() > 0,
+            ]);
+        }
+
         return view('admin-asst.pet-registrations.index', compact(
             'pets',
             'barangays',
