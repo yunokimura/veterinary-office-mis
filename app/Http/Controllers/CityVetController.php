@@ -390,6 +390,9 @@ class CityVetController extends Controller
         // Get top hotspots
         $hotspots = $this->getHotspots($year);
 
+        // Barangays for new report modal dropdown
+        $barangays = Barangay::orderBy('barangay_name')->get();
+
         return view('city-vet.rabies-geomap', compact(
             'user',
             'heatmapData',
@@ -397,8 +400,58 @@ class CityVetController extends Controller
             'caseTypeBreakdown',
             'monthlyTimeline',
             'yearComparison',
-            'hotspots'
+            'hotspots',
+            'barangays'
         ));
+    }
+
+    /**
+     * Store a new rabies bite report from the geomap modal (AJAX).
+     */
+    public function storeRabiesReport(Request $request)
+    {
+        $validated = $request->validate([
+            'incident_date' => 'required|date',
+            'barangay_id' => 'required|exists:barangays,barangay_id',
+            'exact_location' => 'nullable|string|max:500',
+            'animal_type' => 'required|in:dog,cat,others',
+            'animal_name' => 'nullable|string|max:255',
+            'animal_gender' => 'nullable|in:male,female',
+            'animal_status' => 'required|in:owned,stray',
+            'vaccination_status' => 'nullable|in:vaccinated,unvaccinated,unknown',
+            'animal_owner_name' => 'nullable|string|max:255',
+            'animal_owner_contact' => 'nullable|string|max:20',
+            'notes' => 'nullable|string',
+        ]);
+
+        $barangay = Barangay::where('barangay_id', $validated['barangay_id'])->first();
+
+        $report = BiteRabiesReport::create([
+            'report_number' => BiteRabiesReport::generateReportNumber(),
+            'date_reported' => now()->toDateString(),
+            'barangay_id' => $validated['barangay_id'],
+            'incident_date' => \Carbon\Carbon::parse($validated['incident_date'])->toDateString(),
+            'exact_location' => $validated['exact_location'] ?? null,
+            'animal_type' => $validated['animal_type'],
+            'animal_name' => $validated['animal_name'] ?? null,
+            'animal_gender' => $validated['animal_gender'] ?? null,
+            'animal_status' => $validated['animal_status'],
+            'vaccination_status' => $validated['vaccination_status'] ?? 'unknown',
+            'animal_owner_name' => $validated['animal_owner_name'] ?? null,
+            'animal_owner_contact' => $validated['animal_owner_contact'] ?? null,
+            'notes' => $validated['notes'] ?? '',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'report' => [
+                'id' => $report->id,
+                'report_number' => $report->report_number,
+                'barangay' => $barangay?->barangay_name ?? 'N/A',
+                'incident_date' => \Carbon\Carbon::parse($report->incident_date)->format('M d, Y'),
+            ],
+            'message' => 'Rabies bite report submitted successfully.',
+        ]);
     }
 
     /**

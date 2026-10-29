@@ -20,10 +20,10 @@
 @endphp
 
 @section('topbar-actions')
-    <a href="{{ route('city-vet.rabies-geomap') }}" class="inline-flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm transition border border-red-500/50">
+    <button type="button" onclick="openNewReportModal()" class="inline-flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm transition border border-red-500/50">
         <i class="bi bi-plus-lg"></i>
         <span>New Report</span>
-    </a>
+    </button>
 @endsection
 
 @section('content')
@@ -192,6 +192,219 @@
                     <p class="text-xs text-red-600" id="errorMessage">Please refresh the page.</p>
                 </div>
                 <button onclick="location.reload()" class="px-2.5 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-md text-xs font-medium transition">Retry</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- New Report Modal --}}
+    <div id="newReportModalBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[1200] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-red-100 text-red-600 rounded-lg">
+                        <i class="bi bi-file-earmark-plus w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h5 class="font-bold text-slate-800 text-lg leading-tight">New Report</h5>
+                        <p class="text-xs text-slate-500 leading-none">Record a rabies bite incident</p>
+                    </div>
+                </div>
+                <button onclick="closeNewReportModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-4 space-y-4 overflow-y-auto flex-1 bg-white">
+                <form id="newReportForm" onsubmit="submitNewReport(event)">
+                    @csrf
+
+                    {{-- Section 1: Incident Information (red) --}}
+                    <div class="border border-slate-200/80 rounded-xl overflow-hidden bg-white">
+                        <div class="bg-red-600 px-4 py-2.5 flex items-center gap-2 border-b border-red-500/50">
+                            <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.332-2.694-1.332-3.464 0L3.34 16c-.77 1.332.192 3 1.732 3z" /></svg>
+                            <h3 class="text-[11px] font-semibold text-white uppercase tracking-wider">Incident Information</h3>
+                        </div>
+                        <div class="p-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-red-50 text-red-600 rounded-lg shrink-0 border border-red-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Report Number</label>
+                                        <input type="text" name="report_number" id="modalReportNumber" readonly
+                                            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 font-mono">
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-red-50 text-red-600 rounded-lg shrink-0 border border-red-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Incident Date <span class="text-red-500">*</span></label>
+                                        <input type="date" name="incident_date" id="modalIncidentDate" required
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none text-sm">
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-red-50 text-red-600 rounded-lg shrink-0 border border-red-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-2.828-2.828a1.998 1.998 0 010-2.828l4.244-4.243a9 9 0 111.414 1.414z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Barangay <span class="text-red-500">*</span></label>
+                                        <select name="barangay_id" id="modalBarangayId" required
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none text-sm">
+                                            <option value="">Select barangay</option>
+                                            @foreach($barangays as $brgy)
+                                                <option value="{{ $brgy->barangay_id }}">{{ $brgy->barangay_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 md:col-span-2">
+                                    <div class="p-2 bg-red-50 text-red-600 rounded-lg shrink-0 border border-red-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Exact Location</label>
+                                        <input type="text" name="exact_location" id="modalExactLocation" placeholder="Specific location description"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Section 2: Animal Information (purple) --}}
+                    <div class="border border-slate-200/80 rounded-xl overflow-hidden bg-white">
+                        <div class="bg-purple-600 px-4 py-2.5 flex items-center gap-2 border-b border-purple-500/50">
+                            <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            <h3 class="text-[11px] font-semibold text-white uppercase tracking-wider">Animal Information</h3>
+                        </div>
+                        <div class="p-3">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Animal Type <span class="text-red-500">*</span></label>
+                                        <select name="animal_type" id="modalAnimalType" required
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm">
+                                            <option value="">Select animal</option>
+                                            <option value="dog">Dog</option>
+                                            <option value="cat">Cat</option>
+                                            <option value="others">Others</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Animal Name</label>
+                                        <input type="text" name="animal_name" id="modalAnimalName" placeholder="Pet name"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm">
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Animal Gender</label>
+                                        <select name="animal_gender" id="modalAnimalGender"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm">
+                                            <option value="">Select gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Animal Status <span class="text-red-500">*</span></label>
+                                        <select name="animal_status" id="modalAnimalStatus" required
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm">
+                                            <option value="">Select status</option>
+                                            <option value="owned">Owned</option>
+                                            <option value="stray">Stray</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0 border border-purple-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Vaccination Status</label>
+                                        <select name="vaccination_status" id="modalVaccinationStatus"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm">
+                                            <option value="">Select status</option>
+                                            <option value="vaccinated">Vaccinated</option>
+                                            <option value="unvaccinated">Unvaccinated</option>
+                                            <option value="unknown">Unknown</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Section 3: Owner Information (indigo) --}}
+                    <div class="border border-slate-200/80 rounded-xl overflow-hidden bg-white">
+                        <div class="bg-indigo-600 px-4 py-2.5 flex items-center gap-2 border-b border-indigo-500/50">
+                            <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            <h3 class="text-[11px] font-semibold text-white uppercase tracking-wider">Owner Information</h3>
+                        </div>
+                        <div class="p-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Owner Name</label>
+                                        <input type="text" name="animal_owner_name" id="modalOwnerName" placeholder="Owner full name"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm">
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 border border-indigo-100">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /></svg>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-400 font-medium mb-1">Owner Contact</label>
+                                        <input type="tel" name="animal_owner_contact" id="modalOwnerContact" placeholder="Phone number"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-t border-indigo-100">
+                                <label class="block text-xs text-slate-400 font-medium mb-1">Notes</label>
+                                <textarea name="notes" id="modalNotes" rows="2" placeholder="Additional notes or observations"
+                                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Form Actions --}}
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="closeNewReportModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm transition-colors">
+                            Submit Report
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1040,5 +1253,76 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     resetControl.addTo(map);
 });
+</script>
+
+<script>
+function openNewReportModal() {
+    const backdrop = document.getElementById('newReportModalBackdrop');
+    const form = document.getElementById('newReportForm');
+
+    // Reset form
+    form.reset();
+
+    // Auto-generate report number
+    const year = new Date().getFullYear();
+    document.getElementById('modalReportNumber').value = 'BR-' + year + '-00000';
+
+    // Set default incident date to today
+    document.getElementById('modalIncidentDate').valueAsDate = new Date();
+
+    backdrop.classList.remove('hidden');
+    setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+    }, 10);
+}
+
+function closeNewReportModal() {
+    const backdrop = document.getElementById('newReportModalBackdrop');
+    backdrop.classList.add('opacity-0');
+    setTimeout(() => {
+        backdrop.classList.add('hidden');
+    }, 200);
+}
+
+function submitNewReport(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    const data = {};
+    formData.forEach((value, key) => {
+        if (value !== '') data[key] = value;
+    });
+
+    // Ensure CSRF token is included (Laravel expects X-XSRF-TOKEN or X-CSRF-TOKEN)
+    const token = document.querySelector('meta[name="csrf-token"]');
+    const headers = {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+    };
+    if (token) {
+        headers['X-CSRF-TOKEN'] = token.getAttribute('content');
+    }
+
+    fetch('{{ route('rabies-geomap.store') }}', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            closeNewReportModal();
+            // Refresh page so the new case appears on the map
+            setTimeout(() => location.reload(), 300);
+        } else {
+            alert(result.message || 'Failed to submit report.');
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting report:', error);
+        alert('Failed to submit report. Please try again.');
+    });
+}
 </script>
 @endpush
