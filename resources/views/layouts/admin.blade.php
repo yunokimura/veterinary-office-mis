@@ -334,6 +334,9 @@
             <a href="{{ route('admin-asst.owners.index') }}" class="nav-item {{ request()->routeIs('admin-asst.owners.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-people"></i><span>Pet Owners</span>
             </a>
+            <a href="{{ route('admin-asst.inventory.index') }}" class="nav-item {{ request()->routeIs('admin-asst.inventory.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-box"></i><span>Inventory Management</span>
+            </a>
 
             @elseif(auth()->check() && auth()->user()->hasRole('meat_inspector'))
             <div class="sidebar-divider"></div>

@@ -34,7 +34,24 @@ class InventoryController extends Controller
 
         $lowStockCount = InventoryControl::lowStock()->count();
 
-        return view('admin-asst.inventory.index', compact('items', 'lowStockCount'));
+        $barangays = Barangay::orderBy('barangay_name')->get();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('admin-asst.inventory._table', compact('items'))->render();
+            $links = $items->withQueryString()->links();
+            $pagination = $links instanceof \Illuminate\Contracts\Support\Htmlable
+                ? $links->toHtml()
+                : (string) $links;
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'pagination' => $pagination,
+                'has_results' => $items->count() > 0,
+            ]);
+        }
+
+        return view('admin-asst.inventory.index', compact('items', 'lowStockCount', 'barangays'));
     }
 
     public function create()
