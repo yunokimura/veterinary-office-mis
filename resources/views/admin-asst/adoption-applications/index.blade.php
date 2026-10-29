@@ -5,18 +5,7 @@
 @section('subheader', 'Manage and review adoption applications')
 
 @section('content')
-<!-- Page Header with Action Button -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h2 class="text-xl md:text-2xl font-bold text-gray-800">
-                <i class="bi bi-heart text-emerald-600 me-2"></i>Adoption Applications
-            </h2>
-            <p class="text-sm text-gray-600 mt-1">View and manage all adoption applications</p>
-        </div>
-    </div>
-</div>
-
+<div class="space-y-6">
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <!-- Pending -->
@@ -80,136 +69,191 @@
         </div>
     </div>
 
-<!-- Filters -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-    <div class="flex items-center gap-2 mb-4">
-        <i class="bi bi-funnel text-gray-600"></i>
-        <h3 class="text-base font-semibold text-gray-800">Filters</h3>
-    </div>
-    <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1.5">Status</label>
-                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
-                <option value="">All Status</option>
-                <option value="pending_review" {{ request('status') == 'pending_review' ? 'selected' : '' }}>Pending Review</option>
-                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
-                <option value="adopted" {{ request('status') == 'adopted' ? 'selected' : '' }}>Adopted</option>
-                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-            </select>
+    <!-- Applications List Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">Adoption Applications</h3>
+                    <p class="text-sm text-gray-500">View and manage all adoption applications</p>
+                </div>
+                <a href="{{ route('admin-asst.adoption-applications.index') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-sm hover:shadow-md">
+                    <i class="bi bi-plus-circle text-lg"></i>
+                    <span class="font-medium">New Application</span>
+                </a>
+            </div>
         </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1.5">Search</label>
-            <input type="text" name="search" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" placeholder="Name, email, or mobile..." value="{{ request('search') }}">
-        </div>
-        <div class="lg:col-span-2 flex items-end gap-2">
-            <button type="submit" class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition text-sm font-medium whitespace-nowrap">
-                <i class="bi bi-funnel me-1"></i>Filter
+
+        <!-- Search & Filters -->
+        <div class="px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row gap-3 items-end">
+            <div class="relative w-96">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="adoptionApplicationSearchInput" value="{{ request('search') }}" placeholder="Search name, email, or mobile..."
+                       class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+            </div>
+            <div class="flex gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                    <select name="status" id="adoptionApplicationStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                        <option value="">All Status</option>
+                        <option value="pending_review" {{ request('status') == 'pending_review' ? 'selected' : '' }}>Pending Review</option>
+                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="adopted" {{ request('status') == 'adopted' ? 'selected' : '' }}>Adopted</option>
+                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" id="clearAdoptionApplicationFiltersBtn" onclick="clearAdoptionApplicationFilters()"
+                    class="px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap hidden">
+                <i class="bi bi-x-circle mr-1"></i>Clear Filters
             </button>
-            <a href="{{ route('admin-asst.adoption-applications.index') }}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-medium whitespace-nowrap">
-                Clear
-            </a>
         </div>
-    </form>
+
+        <div id="adoptionApplicationTableContainer">
+            @include('admin-asst.adoption-applications._table', ['applications' => $applications])
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200" id="adoptionApplicationPagination">
+            <div class="flex items-center justify-center">
+                {{ $applications->withQueryString()->links() }}
+            </div>
+        </div>
+        <div id="adoptionApplicationLoading" class="hidden px-6 py-4 border-t border-gray-200 text-center text-gray-500">
+            <span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-emerald-600 mr-2"></span>
+            Loading...
+        </div>
+        <div id="adoptionApplicationEmptyState" class="hidden p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-inbox text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">No Adoption Applications Found</h3>
+            <p class="text-gray-500">Try adjusting your search or filter criteria.</p>
+        </div>
+    </div>
 </div>
 
-<!-- Applications List -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full">
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Applicant</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Contact</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Address</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Rejection Reason</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Submitted</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse($applications as $application)
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="px-4 py-3 whitespace-nowrap">
-                        <span class="font-medium text-gray-900">{{ $application->first_name }} {{ $application->last_name }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <div class="text-sm text-gray-700">{{ $application->email }}</div>
-                        <div class="text-xs text-gray-500">{{ $application->mobile_number }}</div>
-                    </td>
-                    <td class="px-4 py-3">
-                        <small class="text-sm text-gray-600">{{ $application->blk_lot_ph }}, {{ $application->street }}, {{ $application->barangay }}</small>
-                    </td>
-                    <td class="px-4 py-3">
-                        @switch($application->status)
-                            @case('pending')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    <i class="bi bi-clock me-1"></i>Pending
-                                </span>
-                                @break
-                            @case('approved')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    <i class="bi bi-check-circle me-1"></i>Approved
-                                </span>
-                                @break
-                            @case('rejected')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                    <i class="bi bi-x-circle me-1"></i>Rejected
-                                </span>
-                                @break
-                            @case('adopted')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                    <i class="bi bi-heart me-1"></i>Adopted
-                                </span>
-                                @break
-                            @default
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    {{ ucfirst($application->status) }}
-                                </span>
-                        @endswitch
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-600">
-                        @if($application->status == 'rejected' && $application->rejection_reason)
-                            <span title="{{ $application->rejection_reason }}" class="text-danger cursor-help">
-                                <i class="bi bi-info-circle me-1"></i>Provided
-                            </span>
-                        @else
-                            <span class="text-gray-400">-</span>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-600">{{ $application->created_at->format('M d, Y') }}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center justify-end gap-2">
-                            <a href="{{ route('admin-asst.adoption-applications.show', $application) }}" 
-                               class="inline-flex items-center justify-center w-8 h-8 bg-cyan-100 text-cyan-700 rounded-lg hover:bg-cyan-200 transition"
-                               title="View">
-                                <i class="bi bi-eye text-sm"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="7" class="px-4 py-12">
-                        <div class="text-center">
-                            <i class="bi bi-inbox text-gray-300 text-4xl mb-3 block"></i>
-                            <p class="text-gray-500 font-medium">No adoption applications found</p>
-                            <p class="text-xs text-gray-400 mt-1">Try adjusting your filters</p>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    
-    <!-- Pagination -->
-    @if($applications->hasPages())
-    <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">
-        <div class="flex items-center justify-center">
-            {{ $applications->withQueryString()->links() }}
-        </div>
-    </div>
-    @endif
-</div>
+<script>
+let adoptionApplicationSearchDebounce;
+const adoptionApplicationFilterUrl = '{{ route('admin-asst.adoption-applications.index') }}';
+
+function getAdoptionApplicationFilterParams() {
+    return {
+        search: document.getElementById('adoptionApplicationSearchInput').value,
+        status: document.getElementById('adoptionApplicationStatus').value,
+    };
+}
+
+function applyAdoptionApplicationFilters() {
+    const params = getAdoptionApplicationFilterParams();
+    const tableContainer = document.getElementById('adoptionApplicationTableContainer');
+    const paginationContainer = document.getElementById('adoptionApplicationPagination');
+    const loadingEl = document.getElementById('adoptionApplicationLoading');
+    const emptyState = document.getElementById('adoptionApplicationEmptyState');
+
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    if (tableContainer) tableContainer.style.opacity = '0.3';
+    if (paginationContainer) paginationContainer.style.opacity = '0.3';
+
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.append(key, value);
+    });
+
+    fetch(`${adoptionApplicationFilterUrl}?${query.toString()}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (tableContainer) {
+                tableContainer.innerHTML = data.html;
+                tableContainer.style.opacity = '1';
+            }
+            if (paginationContainer) {
+                paginationContainer.innerHTML = data.pagination;
+                paginationContainer.style.opacity = '1';
+            }
+            if (emptyState) emptyState.style.display = data.has_results ? 'none' : 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error filtering adoption applications:', error);
+        if (tableContainer) tableContainer.style.opacity = '1';
+        if (paginationContainer) paginationContainer.style.opacity = '1';
+    })
+    .finally(() => {
+        if (loadingEl) loadingEl.classList.add('hidden');
+    });
+}
+
+function clearAdoptionApplicationFilters() {
+    document.getElementById('adoptionApplicationSearchInput').value = '';
+    document.getElementById('adoptionApplicationStatus').value = '';
+    updateClearAdoptionApplicationFiltersVisibility();
+    applyAdoptionApplicationFilters();
+}
+
+function updateClearAdoptionApplicationFiltersVisibility() {
+    const searchInput = document.getElementById('adoptionApplicationSearchInput');
+    const statusSelect = document.getElementById('adoptionApplicationStatus');
+    const clearBtn = document.getElementById('clearAdoptionApplicationFiltersBtn');
+
+    const hasFilters = (searchInput && searchInput.value.trim() !== '') ||
+                       (statusSelect && statusSelect.value !== '');
+
+    if (clearBtn) {
+        if (hasFilters) {
+            clearBtn.classList.remove('hidden');
+        } else {
+            clearBtn.classList.add('hidden');
+        }
+    }
+}
+
+document.getElementById('adoptionApplicationSearchInput').addEventListener('input', () => {
+    clearTimeout(adoptionApplicationSearchDebounce);
+    adoptionApplicationSearchDebounce = setTimeout(() => {
+        updateClearAdoptionApplicationFiltersVisibility();
+        applyAdoptionApplicationFilters();
+    }, 300);
+});
+
+document.getElementById('adoptionApplicationStatus').addEventListener('change', () => {
+    updateClearAdoptionApplicationFiltersVisibility();
+    applyAdoptionApplicationFilters();
+});
+
+document.getElementById('adoptionApplicationPagination').addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    e.preventDefault();
+    const url = new URL(link.href);
+    const query = url.searchParams.toString();
+
+    fetch(`${adoptionApplicationFilterUrl}?${query}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('adoptionApplicationTableContainer').innerHTML = data.html;
+            document.getElementById('adoptionApplicationPagination').innerHTML = data.pagination;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading adoption applications page:', error);
+    });
+});
+
+updateClearAdoptionApplicationFiltersVisibility();
+</script>
 @endsection

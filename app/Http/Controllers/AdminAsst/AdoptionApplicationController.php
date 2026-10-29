@@ -37,6 +37,21 @@ class AdoptionApplicationController extends Controller
         $rejectedCount = AdoptionApplication::where('status', 'rejected')->count();
         $adoptedCount = AdoptionApplication::where('status', 'adopted')->count();
 
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('admin-asst.adoption-applications._table', compact('applications'))->render();
+            $links = $applications->withQueryString()->links();
+            $pagination = $links instanceof \Illuminate\Contracts\Support\Htmlable
+                ? $links->toHtml()
+                : (string) $links;
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'pagination' => $pagination,
+                'has_results' => $applications->count() > 0,
+            ]);
+        }
+
         return view('admin-asst.adoption-applications.index', compact(
             'applications',
             'pendingReviewCount',
