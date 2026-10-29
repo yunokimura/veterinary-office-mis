@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->date('expiry_date')->nullable();
             $table->foreignId('barangay_id')->nullable()->references('barangay_id')->on('barangays')->onDelete('set null');
-            $table->enum('status', ['Active', 'Inactive', 'Out of Stock'])->default('Active');
+            $table->enum('status', ['active', 'inactive', 'out_of_stock'])->default('active');
             $table->foreignId('created_by')->nullable()->constrained('admin_users')->onDelete('set null');
             $table->timestamps();
             

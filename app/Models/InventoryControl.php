@@ -98,6 +98,16 @@ class InventoryControl extends Model
         return $this->quantity <= $this->minimum_stock;
     }
 
+    public function isActive()
+    {
+        return $this->status === 'active';
+    }
+
+    public function isOutOfStock()
+    {
+        return $this->status === 'out_of_stock';
+    }
+
     public function scopeByCategory($query, $value)
     {
         return $query->where('category', $value);

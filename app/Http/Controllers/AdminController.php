@@ -21,6 +21,7 @@ use App\Models\SystemLog;
 use App\Models\MissingPetsReport;
 use App\Models\AdoptionApplication;
 use App\Models\Admin;
+use App\Services\InventoryService;
 
 class AdminController extends Controller
 {
@@ -437,6 +438,8 @@ class AdminController extends Controller
     {
         $request->validate([
             'status' => 'required|in:pending,approved,completed,cancelled,no_show',
+            'inventory_control_id' => 'nullable|exists:inventory_controls,id',
+            'quantity_deducted' => 'nullable|integer|min:1',
         ]);
 
         $appointment->update(['status' => $request->status]);
@@ -469,8 +472,8 @@ class AdminController extends Controller
                 ]);
             }
 
-            DB::transaction(function () use ($appointment, $owner, $address, $barangay, $pet) {
-                VaccinationReport::create([
+            DB::transaction(function () use ($appointment, $owner, $address, $barangay, $pet, $request) {
+                $report = VaccinationReport::create([
                     'vaccination_appointment_id' => $appointment->id,
                     'pet_id' => $pet->pet_id,
                     'barangay_id' => $barangay?->barangay_id,
@@ -490,8 +493,11 @@ class AdminController extends Controller
                     'observations' => null,
                     'notes' => null,
                     'administered_by' => Auth::id(),
-                    'inventory_control_id' => null,
+                    'inventory_control_id' => $request->inventory_control_id,
+                    'quantity_deducted' => $request->quantity_deducted ?? 1,
                 ]);
+
+                (new InventoryService())->deductForVaccination($report);
             });
         }
 
@@ -543,6 +549,8 @@ class AdminController extends Controller
             'last_anti_rabies_date' => 'nullable|date',
             'recent_surgery' => 'required|boolean',
             'assigned_vet' => 'nullable|exists:admins,id',
+            'inventory_control_id' => 'nullable|exists:inventory_controls,id',
+            'quantity_deducted' => 'nullable|integer|min:1',
         ]);
 
         $appointment->update([
@@ -559,8 +567,8 @@ class AdminController extends Controller
             $pet = Pet::withTrashed()->find($appointment->pet_id);
 
             if ($pet) {
-                DB::transaction(function () use ($appointment, $owner, $address, $barangay, $pet) {
-                    VaccinationReport::create([
+                DB::transaction(function () use ($appointment, $owner, $address, $barangay, $pet, $validated) {
+                    $report = VaccinationReport::create([
                         'vaccination_appointment_id' => $appointment->id,
                         'pet_id' => $pet->pet_id,
                         'barangay_id' => $barangay?->barangay_id,
@@ -580,8 +588,11 @@ class AdminController extends Controller
                         'observations' => null,
                         'notes' => null,
                         'administered_by' => Auth::id(),
-                        'inventory_control_id' => null,
+                        'inventory_control_id' => $validated['inventory_control_id'],
+                        'quantity_deducted' => $validated['quantity_deducted'] ?? 1,
                     ]);
+
+                    (new InventoryService())->deductForVaccination($report);
                 });
             }
         }

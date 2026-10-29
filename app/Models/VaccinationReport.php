@@ -97,6 +97,7 @@ class VaccinationReport extends Model
         'notes',
         'administered_by',
         'inventory_control_id',
+        'quantity_deducted',
         'not_vaccinated',
         'vaccination_records',
         'anti_rabies_details',

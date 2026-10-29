@@ -58,6 +58,7 @@ class InventoryMovement extends Model
         'reference_number',
         'performed_by',
         'target_barangay_id',
+        'vaccination_report_id',
     ];
 
     protected $casts = [
