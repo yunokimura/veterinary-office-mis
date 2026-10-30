@@ -264,22 +264,26 @@
                                             $ageDisplay = $pet->petInfo->pet_age;
                                         }
                                     }
+                                    $petInfoNeutered = (($pet->petInfo?->is_neutered ?? '') === 'yes');
+                                    $hasCompletedKapon = \App\Models\SpayNeuterAppointment::where('pet_id', $pet->pet_id)
+                                        ->where('status', 'completed')
+                                        ->exists();
+                                    $isNeutered = $petInfoNeutered || $hasCompletedKapon;
                                 @endphp
                                 <div class="grid grid-cols-2 gap-2 my-4 p-2.5 bg-slate-50 rounded-xl text-xs">
-                                    <!-- Gender & Age -->
-                                    <div class="col-span-2">
+                                    <!-- Gender & Age | Weight -->
+                                    <div>
                                         <span class="text-slate-400 block text-[10px] uppercase font-bold">Gender & Age</span>
                                         <span class="font-semibold text-slate-700">{{ ucfirst($pet->gender) }}, {{ $ageDisplay }}</span>
                                     </div>
-                                    <!-- Weight -->
-                                    <div class="col-span-2">
+                                    <div>
                                         <span class="text-slate-400 block text-[10px] uppercase font-bold">Weight</span>
                                         <span class="font-semibold text-slate-700">{{ $pet->petInfo?->pet_weight ?? '-' }}</span>
                                     </div>
                                     <!-- Spayed / Neuter -->
                                     <div class="col-span-2">
                                         <span class="text-slate-400 block text-[10px] uppercase font-bold">{{ $pet->gender === 'female' ? 'Spayed' : 'Neuter' }}</span>
-                                        <span class="font-semibold text-slate-700">{{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Yes' : 'No' }}</span>
+                                        <span class="font-semibold text-slate-700">{{ $isNeutered ? 'Yes' : 'No' }}</span>
                                     </div>
                                 </div>
 

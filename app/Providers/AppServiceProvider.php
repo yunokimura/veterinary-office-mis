@@ -7,6 +7,7 @@ use App\Models\Organization;
 use App\Models\PetOwner;
 use App\Models\User;
 use App\Observers\AdoptionApplicationObserver;
+use App\Observers\SpayNeuterAppointmentObserver;
 use App\Policies\UserPolicy;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
@@ -55,5 +56,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \App\Models\AdoptionApplication::observe(AdoptionApplicationObserver::class);
+        \App\Models\SpayNeuterAppointment::observe(SpayNeuterAppointmentObserver::class);
     }
 }
