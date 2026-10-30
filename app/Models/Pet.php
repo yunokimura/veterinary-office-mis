@@ -162,6 +162,11 @@ class Pet extends Model
         return $this->hasMany(MedicalRecord::class, 'pet_id');
     }
 
+    public function vaccinationReports(): HasMany
+    {
+        return $this->hasMany(VaccinationReport::class, 'pet_id', 'pet_id');
+    }
+
     public function missingReport(): HasMany
     {
         return $this->hasMany(MissingPetsReport::class, 'pet_id', 'pet_id');

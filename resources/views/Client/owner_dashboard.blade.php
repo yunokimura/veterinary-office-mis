@@ -200,14 +200,11 @@
             </div>
 
             @php
-                $pets = \App\Models\Pet::where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
+                $pets = \App\Models\Pet::with(['petInfo', 'vaccinationReports'])->where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
             @endphp
             
             @if($pets->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6" id="petsGrid">
-                    @php
-                        $vaccinationReports = \App\Models\VaccinationReport::whereIn('pet_id', $pets->pluck('pet_id'))->get()->keyBy('pet_id');
-                    @endphp
                     @foreach($pets as $pet)
                         @php
                             $imagePath = $pet->pet_image;
@@ -290,7 +287,7 @@
 
                                 <!-- Anti-Rabies Badge -->
                                 @php
-                                    $report = $vaccinationReports->get($pet->pet_id);
+                                    $report = $pet->vaccinationReports->first();
                                     $hasReport = $report !== null;
                                     $isVaccinated = $hasReport && !$report->not_vaccinated && $report->status === 'completed';
                                     $nextVaccinationDate = $report->next_vaccination_date ?? null;
@@ -321,7 +318,7 @@
                             </div>
 
                             <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
-                                <button class="text-xs font-bold text-dasma-700 hover:text-dasma-800 flex items-center space-x-1">
+                                <button class="text-xs font-bold text-dasma-700 hover:text-dasma-800 flex items-center space-x-1" onclick="showPetProfile({{ $pet->pet_id }})">
                                     <span>View Profile</span>
                                     <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </button>
@@ -602,8 +599,227 @@
     </section>
 
     @include('Client.partials.footer')
+
+    <!-- View Profile Modal -->
+    <div id="petProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-6 border-b border-slate-200">
+                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="paw-print" class="w-5 h-5 text-dasma-700"></i>
+                    Pet Profile
+                </h3>
+                <button onclick="closePetProfile()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex border-b border-slate-200">
+                <button onclick="switchPetTab('overview')" id="petTabOverview" class="px-6 py-4 text-sm font-semibold text-dasma-700 border-b-2 border-dasma-700">Overview</button>
+                <button onclick="switchPetTab('health')" id="petTabHealth" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200">Health & Vaccination</button>
+                <button onclick="switchPetTab('spay')" id="petTabSpay" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200">Spay / Neuter</button>
+                <button onclick="switchPetTab('details')" id="petTabDetails" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200">Details & Traits</button>
+            </div>
+
+            <!-- Tab Panels -->
+            <div class="p-6">
+                <!-- Overview -->
+                <div id="petPanelOverview" class="space-y-4">
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-32 h-32 rounded-2xl overflow-hidden shadow-sm border border-slate-200 flex-shrink-0">
+                            <img id="petProfileImage" src="" alt="" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h2 id="petProfileName" class="text-2xl font-bold text-slate-900 leading-tight">Pet Name</h2>
+                            <p class="flex items-center gap-2 text-slate-500 text-sm mt-1">
+                                <span id="petProfileBreed" class="font-medium">Breed</span> • <span id="petProfileSpecies" class="font-medium">Species</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Gender</p>
+                            <p id="petProfileGender" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Age</p>
+                            <p id="petProfileAge" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Weight</p>
+                            <p id="petProfileWeight" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">PET ID</p>
+                            <p id="petProfilePetId" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Color</p>
+                            <p id="petProfileColor" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Microchip</p>
+                            <p id="petProfileMicrochip" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Status</p>
+                            <p id="petProfileStatus" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Registered</p>
+                            <p id="petProfileRegistered" class="font-semibold text-slate-700">-</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-xl p-4">
+                        <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Owner</p>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span id="petProfileOwner" class="font-semibold text-slate-700">-</span>
+                            <span class="text-slate-400 text-[10px]">•</span>
+                            <span id="petProfileBarangay" class="text-slate-500">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health & Vaccination -->
+                <div id="petPanelHealth" class="hidden space-y-4">
+                    <div class="flex items-start gap-3">
+                        <div id="petProfileVaxBadge" class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                            <i data-lucide="alert-circle" class="w-5 h-5 text-red-600"></i>
+                        </div>
+                        <div>
+                            <h3 id="petProfileVaxStatus" class="text-lg font-bold text-slate-900">Not Vaccinated / No Record</h3>
+                            <p class="text-slate-500 text-sm mt-0.5">Anti-rabies vaccination status</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Vaccine Brand</p>
+                            <p id="petProfileVaxBrand" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Batch / Lot</p>
+                            <p id="petProfileVaxBatch" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Vaccination Date</p>
+                            <p id="petProfileVaxDate" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Next Due</p>
+                            <p id="petProfileVaxNext" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Type</p>
+                            <p id="petProfileVaxType" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Weight</p>
+                            <p id="petProfileVaxWeight" class="font-semibold text-slate-700">-</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-xl p-4">
+                        <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Notes</p>
+                        <p id="petProfileVaxNotes" class="text-sm text-slate-700">-</p>
+                    </div>
+                </div>
+
+                <!-- Spay / Neuter -->
+                <div id="petPanelSpay" class="hidden space-y-4">
+                    <div class="flex items-center gap-4">
+                        <span id="petProfileSpayBadge" class="px-3 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px]">No</span>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Spayed / Neutered</h3>
+                            <p class="text-slate-500 text-sm mt-0.5">Sterilization status</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Status</p>
+                            <p id="petProfileSpayStatus" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Procedure</p>
+                            <p id="petProfileSpayProc" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Date</p>
+                            <p id="petProfileSpayDate" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Veterinarian</p>
+                            <p id="petProfileSpayVet" class="font-semibold text-slate-700">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details & Traits -->
+                <div id="petPanelDetails" class="hidden space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Eye Color</p>
+                            <p id="petProfileEyeColor" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Crossbreed</p>
+                            <p id="petProfileCrossbreed" class="font-semibold text-slate-700">-</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3 col-span-2 sm:col-span-2">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Body Mark Details</p>
+                            <p id="petProfileBodyMark" class="font-semibold text-slate-700">-</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 rounded-xl p-3" id="petProfileTrainingSection">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Training</p>
+                            <div id="petProfileTraining" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3" id="petProfileInsuranceSection">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Insurance</p>
+                            <div id="petProfileInsurance" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3" id="petProfileBehaviorSection">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Behavior</p>
+                            <div id="petProfileBehavior" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3" id="petProfileLikesSection">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Likes</p>
+                            <div id="petProfileLikes" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3" id="petProfileDislikesSection">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Dislikes</p>
+                            <div id="petProfileDislikes" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3" id="petProfileDietSection">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Diet</p>
+                            <div id="petProfileDiet" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3" id="petProfileAllergySection">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Allergy</p>
+                            <div id="petProfileAllergy" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex gap-3 p-6 border-t border-slate-200 bg-slate-50">
+                <a id="petProfileEditLink" href="#" class="flex-1 bg-primary text-white text-center py-3 rounded-lg font-medium text-xs sm:text-base hover:bg-primary-light transition-colors">Edit Pet</a>
+                <button onclick="closePetProfile()" class="flex-1 border border-slate-300 text-gray-700 py-3 rounded-lg font-medium text-xs sm:text-base hover:bg-slate-100 transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+
+        const petsData = @json($pets);
 
         function filterPets() {
             const input = document.getElementById('petSearch').value.toLowerCase();
@@ -619,6 +835,155 @@
                 }
             });
         }
+
+        // View Profile Modal
+        function showPetProfile(petId) {
+            const pet = petsData.find(p => p.pet_id === petId);
+            if (!pet) return;
+
+            const petInfo = pet.petInfo || {};
+            const vaccinationReports = pet.vaccinationReports || [];
+            const report = vaccinationReports.length > 0 ? vaccinationReports[0] : null;
+
+            // Overview tab
+            document.getElementById('petProfileName').textContent = pet.pet_name;
+            document.getElementById('petProfileBreed').textContent = pet.breed || '-';
+            document.getElementById('petProfileSpecies').textContent = pet.species || '-';
+            document.getElementById('petProfileGender').textContent = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : '-';
+            document.getElementById('petProfileAge').textContent = petInfo.pet_age || pet.age || '-';
+            document.getElementById('petProfileWeight').textContent = petInfo.pet_weight || '-';
+            document.getElementById('petProfilePetId').textContent = 'PET-' + String(pet.pet_id).padStart(4, '0');
+            document.getElementById('petProfileColor').textContent = pet.color || '-';
+            document.getElementById('petProfileMicrochip').textContent = pet.microchip_number || '-';
+            document.getElementById('petProfileStatus').textContent = pet.pet_status ? pet.pet_status.charAt(0).toUpperCase() + pet.pet_status.slice(1) : '-';
+            document.getElementById('petProfileOwner').textContent = pet.owner ? (pet.owner.first_name + ' ' + pet.owner.last_name) : '-';
+            document.getElementById('petProfileBarangay').textContent = pet.barangay ? pet.barangay.barangay_name : '-';
+            document.getElementById('petProfileRegistered').textContent = pet.created_at ? new Date(pet.created_at).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) : '-';
+
+            const modalImg = document.getElementById('petProfileImage');
+            if (pet.pet_image) {
+                let imgPath = pet.pet_image;
+                if (!imgPath.startsWith('http') && !imgPath.includes('images/pets')) {
+                    imgPath = 'images/pets/' + imgPath.split('/').pop();
+                }
+                modalImg.src = '{{ asset('') }}' + imgPath;
+            } else {
+                modalImg.src = '{{ asset('images/pet.png') }}';
+            }
+
+            // Health & Vaccination tab
+            const vaxStatusEl = document.getElementById('petProfileVaxStatus');
+            const vaxBadge = document.getElementById('petProfileVaxBadge');
+            const vaxBrandEl = document.getElementById('petProfileVaxBrand');
+            const vaxBatchEl = document.getElementById('petProfileVaxBatch');
+            const vaxDateEl = document.getElementById('petProfileVaxDate');
+            const vaxNextEl = document.getElementById('petProfileVaxNext');
+            const vaxTypeEl = document.getElementById('petProfileVaxType');
+            const vaxWeightEl = document.getElementById('petProfileVaxWeight');
+            const vaxNotesEl = document.getElementById('petProfileVaxNotes');
+
+            if (report && report.status === 'completed' && !report.not_vaccinated) {
+                vaxStatusEl.textContent = 'Vaccinated Active';
+                vaxBadge.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 text-green-700 font-semibold text-[11px] border border-green-200';
+                vaxBadge.innerHTML = '<i data-lucide="check-circle-2" class="w-3 h-3"></i> Vaccinated Active';
+            } else {
+                vaxStatusEl.textContent = 'Not Vaccinated / No Record';
+                vaxBadge.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px] border border-red-200';
+                vaxBadge.innerHTML = '<i data-lucide="alert-circle" class="w-3 h-3"></i> Vaccination Needed';
+            }
+            vaxBrandEl.textContent = report ? (report.vaccine_brand || '-') : '-';
+            vaxBatchEl.textContent = report ? ('Lot #' + (report.vaccine_batch_number || 'N/A')) : '-';
+            vaxDateEl.textContent = report && report.vaccination_date ? new Date(report.vaccination_date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '-';
+            vaxNextEl.textContent = report && report.next_vaccination_date ? new Date(report.next_vaccination_date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '-';
+            vaxTypeEl.textContent = report ? (report.vaccination_type || '-') : '-';
+            vaxWeightEl.textContent = report ? (report.weight ? report.weight + ' kg' : '-') : '-';
+            vaxNotesEl.textContent = report ? (report.notes || '-') : '-';
+
+            // Spay / Neuter tab
+            const spayStatusEl = document.getElementById('petProfileSpayStatus');
+            const spayBadge = document.getElementById('petProfileSpayBadge');
+            const spayProcEl = document.getElementById('petProfileSpayProc');
+            const spayDateEl = document.getElementById('petProfileSpayDate');
+            const spayVetEl = document.getElementById('petProfileSpayVet');
+
+            const kaponReports = pet.spayNeuterReports || [];
+            const completedKapon = kaponReports.find(r => r.status === 'completed');
+            const petInfoNeutered = (petInfo.is_neutered === 'yes');
+            const isNeutered = petInfoNeutered || !!completedKapon;
+
+            spayStatusEl.textContent = isNeutered ? 'Yes' : 'No';
+            spayBadge.className = isNeutered ? 'px-2 py-1 rounded-full bg-green-50 text-green-700 font-semibold text-[11px]' : 'px-2 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px]';
+            spayBadge.textContent = isNeutered ? 'Yes' : 'No';
+            spayProcEl.textContent = completedKapon ? (completedKapon.procedure_type ? completedKapon.procedure_type.charAt(0).toUpperCase() + completedKapon.procedure_type.slice(1) : '-') : '-';
+            spayDateEl.textContent = completedKapon && completedKapon.scheduled_at ? new Date(completedKapon.scheduled_at).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '-';
+            spayVetEl.textContent = completedKapon ? (completedKapon.veterinarian || '-') : '-';
+
+            // Details & Traits tab
+            document.getElementById('petProfileEyeColor').textContent = petInfo.eye_color || '-';
+            document.getElementById('petProfileCrossbreed').textContent = petInfo.is_crossbreed === 'yes' ? 'Yes' : 'No';
+            document.getElementById('petProfileBodyMark').textContent = pet.body_mark_details || '-';
+
+            // Array chips
+            const renderChips = (containerId, items, colorClass) => {
+                const container = document.getElementById(containerId);
+                const section = container.parentElement;
+                if (items && items.length > 0) {
+                    const chips = items.map(i => '<span class="' + colorClass + ' px-2.5 py-1 rounded-full text-xs">' + i + '</span>').join('');
+                    container.innerHTML = chips;
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            };
+
+            const parseArray = (val) => {
+                if (!val) return null;
+                if (typeof val === 'string') {
+                    try { return JSON.parse(val); } catch (e) { return null; }
+                }
+                return Array.isArray(val) ? val : null;
+            };
+
+            renderChips('petProfileTraining', parseArray(petInfo.training), 'bg-blue-100 text-blue-800 border border-blue-200');
+            renderChips('petProfileInsurance', parseArray(petInfo.insurance), 'bg-purple-100 text-purple-800 border border-purple-200');
+            renderChips('petProfileBehavior', parseArray(petInfo.behavior), 'bg-yellow-100 text-yellow-800 border border-yellow-200');
+            renderChips('petProfileLikes', parseArray(petInfo.likes), 'bg-green-100 text-green-800 border border-green-200');
+            renderChips('petProfileDislikes', parseArray(petInfo.dislikes), 'bg-red-100 text-red-800 border border-red-200');
+            renderChips('petProfileDiet', parseArray(petInfo.diet), 'bg-orange-100 text-orange-800 border border-orange-200');
+            renderChips('petProfileAllergy', parseArray(petInfo.allergy), 'bg-pink-100 text-pink-800 border border-pink-200');
+
+            // Edit link
+            document.getElementById('petProfileEditLink').href = '/owner/pets/' + pet.pet_id + '/edit';
+
+            // Show modal
+            document.getElementById('petProfileModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePetProfile() {
+            document.getElementById('petProfileModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchPetTab(tabId) {
+            document.querySelectorAll('[id^="petPanel"]').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('[id^="petTab"]').forEach(b => {
+                b.classList.remove('text-dasma-700', 'border-dasma-700', 'border-b-2');
+                b.classList.add('text-slate-500', 'border-transparent');
+            });
+            document.getElementById('petPanel' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.remove('hidden');
+            const tabBtn = document.getElementById('petTab' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
+            tabBtn.classList.remove('text-slate-500', 'border-transparent');
+            tabBtn.classList.add('text-dasma-700', 'border-dasma-700', 'border-b-2');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePetProfile();
+        });
+
+        document.getElementById('petProfileModal').addEventListener('click', function(e) {
+            if (e.target === this) closePetProfile();
+        });
     </script>
 </body>
 </html>
