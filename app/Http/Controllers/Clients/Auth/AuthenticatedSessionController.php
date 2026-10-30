@@ -54,11 +54,10 @@ class AuthenticatedSessionController extends Controller
                     ->with('success', 'Welcome back, Super Administrator '.$user->name.'!');
             } elseif ($user->hasRole('city_vet')) {
                 return redirect()->route('city-vet.dashboard')
-                    ->with('success', 'Welcome back, City Veterinarian '.$user->name.'!');
-            } elseif ($user->hasRole('admin_asst')) {
+                    ->with('success', 'Welcome back, ' . $user->name . '!');
             } elseif ($user->hasRole('assistant_vet')) {
                 return redirect()->route('assistant-vet.dashboard')
-                    ->with('success', 'Welcome back, Assistant Veterinarian '.$user->name.'!');
+                    ->with('success', 'Welcome back, ' . $user->name . '!');
             } elseif ($user->hasRole('meat_inspector')) {
                 return redirect()->route('meat-inspection.dashboard')
                     ->with('success', 'Welcome back, Meat Inspector '.$user->name.'!');
@@ -89,6 +88,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/home');
     }
 }

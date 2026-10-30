@@ -149,7 +149,13 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, 
             $this->last_name,
         ]);
 
-        return implode(' ', $parts);
+        $name = implode(' ', $parts);
+
+        if ($this->hasRole('city_vet') || $this->hasRole('assistant_vet')) {
+            $name = 'Dr. ' . $name;
+        }
+
+        return $name;
     }
 
     /**

@@ -55,13 +55,13 @@ class AuthenticatedSessionController extends Controller
                     ->with('success', 'Welcome back, Super Administrator ' . $user->name . '!');
             case 'city_vet':
                 return redirect()->intended('/city-vet/dashboard')
-                    ->with('success', 'Welcome back, City Veterinarian ' . $user->name . '!');
+                    ->with('success', 'Welcome back, ' . $user->name . '!');
             case 'admin_asst':
                 return redirect()->intended('/admin-asst/dashboard')
                     ->with('success', 'Welcome back, Administrative Assistant ' . $user->name . '!');
             case 'assistant_vet':
                 return redirect()->intended('/assistant-vet/dashboard')
-                    ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
+                    ->with('success', 'Welcome back, ' . $user->name . '!');
             case 'meat_inspector':
                 return redirect()->intended(route('meat-inspection.dashboard'))
                     ->with('success', 'Welcome back, Meat Inspector ' . $user->name . '!');
@@ -85,6 +85,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/home');
     }
 }
