@@ -200,7 +200,7 @@
             </div>
 
             @php
-                $pets = \App\Models\Pet::with(['petInfo', 'vaccinationReports', 'traits'])->where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
+                $pets = \App\Models\Pet::with(['petInfo', 'vaccinationReports', 'traits', 'owner'])->where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
             @endphp
             
             @if($pets->count() > 0)
@@ -602,7 +602,7 @@
 
     <!-- View Profile Modal -->
     <div id="petProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 sm:p-6">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] min-h-[70vh] flex flex-col">
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-slate-200 flex-shrink-0">
                 <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
@@ -655,15 +655,6 @@
                         <div class="bg-slate-50 rounded-xl p-3">
                             <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Status</p>
                             <p id="petProfileStatus" class="font-semibold text-slate-700">-</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Owner</p>
-                        <div class="flex items-center gap-2 text-sm">
-                            <span id="petProfileOwner" class="font-semibold text-slate-700">-</span>
-                            <span class="text-slate-400 text-[10px]">•</span>
-                            <span id="petProfileBarangay" class="text-slate-500">-</span>
                         </div>
                     </div>
                 </div>
@@ -795,8 +786,8 @@
 
             <!-- Footer -->
             <div class="flex gap-3 p-6 border-t border-slate-200 bg-slate-50 flex-shrink-0">
-                <a id="petProfileEditLink" href="#" class="flex-1 bg-primary text-white text-center py-3 rounded-lg font-medium text-xs sm:text-base hover:bg-primary-light transition-colors">Edit Pet</a>
-                <button onclick="closePetProfile()" class="flex-1 border border-slate-300 text-gray-700 py-3 rounded-lg font-medium text-xs sm:text-base hover:bg-slate-100 transition-colors">Close</button>
+                <button onclick="closePetProfile()" class="flex-1 border border-slate-300 text-gray-700 py-2 rounded-lg font-medium text-xs hover:bg-slate-100 transition-colors">Close</button>
+                <a id="petProfileEditLink" href="#" class="flex-1 bg-primary text-white text-center py-2 rounded-lg font-medium text-xs hover:bg-primary-light transition-colors">Edit Pet</a>
             </div>
         </div>
     </div>
@@ -830,17 +821,26 @@
             const vaccinationReports = pet.vaccinationReports || [];
             const report = vaccinationReports.length > 0 ? vaccinationReports[0] : null;
 
+            // Compute age from birthdate (matches old PHP logic)
+            function computeAge(birthdateStr) {
+                if (!birthdateStr) return '-';
+                const birth = new Date(birthdateStr);
+                const today = new Date();
+                let years = today.getFullYear() - birth.getFullYear();
+                const m = today.getMonth() - birth.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) years--;
+                return years <= 0 ? '< 1 yr' : (years === 1 ? '1 yr' : years + ' yrs');
+            }
+
             // Overview tab
             document.getElementById('petProfileName').textContent = pet.pet_name;
             document.getElementById('petProfileBreed').textContent = pet.breed || '-';
             document.getElementById('petProfileSpecies').textContent = pet.species || '-';
             document.getElementById('petProfileGender').textContent = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : '-';
-            document.getElementById('petProfileAge').textContent = petInfo.pet_age || '-';
+            document.getElementById('petProfileAge').textContent = petInfo.pet_age || computeAge(pet.birthdate) || '-';
             document.getElementById('petProfileWeight').textContent = petInfo.pet_weight || '-';
             document.getElementById('petProfilePetId').textContent = 'PET-' + String(pet.pet_id).padStart(4, '0');
             document.getElementById('petProfileStatus').textContent = pet.pet_status ? pet.pet_status.charAt(0).toUpperCase() + pet.pet_status.slice(1) : '-';
-            document.getElementById('petProfileOwner').textContent = pet.owner ? (pet.owner.first_name + ' ' + pet.owner.last_name) : '-';
-            document.getElementById('petProfileBarangay').textContent = pet.barangay ? pet.barangay.barangay_name : '-';
 
             const modalImg = document.getElementById('petProfileImage');
             if (pet.pet_image) {
@@ -899,8 +899,7 @@
             spayVetEl.textContent = completedKapon ? (completedKapon.veterinarian || '-') : '-';
 
             // Details & Traits tab
-            document.getElementById('petProfileEyeColor').textContent = petInfo.eye_color || '-';
-            document.getElementById('petProfileCrossbreed').textContent = petInfo.is_crossbreed === 'yes' ? 'Yes' : 'No';
+            document.getElementById('petProfileEyeColor').textContent = petInfo.eye_color || '-';            document.getElementById('petProfileCrossbreed').textContent = petInfo.is_crossbreed === 'yes' ? 'Yes' : 'No';
             document.getElementById('petProfileBodyMark').textContent = pet.body_mark_details || '-';
 
             // Array chips
