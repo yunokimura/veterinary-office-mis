@@ -214,8 +214,9 @@
                             if ($pet->pet_image && !str_contains($imagePath, 'images/pets')) {
                                 $imagePath = 'images/pets/' . basename($imagePath);
                             }
+                            $hoverBorderClass = $pet->gender === 'female' ? 'hover:border-pink-500' : 'hover:border-blue-500';
                         @endphp
-                        <div class="pet-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between" data-name="{{ strtolower($pet->pet_name) }}" data-species="{{ strtolower($pet->species) }}">
+                                <div class="pet-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all {{ $hoverBorderClass }} overflow-hidden flex flex-col justify-between" data-name="{{ strtolower($pet->pet_name) }}" data-species="{{ strtolower($pet->species) }}">
                             <div class="p-5">
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="flex items-center space-x-3">
