@@ -200,7 +200,7 @@
             </div>
 
             @php
-                $pets = \App\Models\Pet::with(['petInfo', 'vaccinationReports'])->where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
+                $pets = \App\Models\Pet::with(['petInfo', 'vaccinationReports', 'traits'])->where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
             @endphp
             
             @if($pets->count() > 0)
@@ -602,9 +602,9 @@
 
     <!-- View Profile Modal -->
     <div id="petProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 sm:p-6">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto flex flex-col">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
             <!-- Modal Header -->
-            <div class="flex justify-between items-center p-6 border-b border-slate-200">
+            <div class="flex justify-between items-center p-6 border-b border-slate-200 flex-shrink-0">
                 <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <i data-lucide="paw-print" class="w-5 h-5 text-dasma-700"></i>
                     Pet Profile
@@ -615,7 +615,7 @@
             </div>
 
             <!-- Tab Navigation -->
-            <div class="flex border-b border-slate-200">
+            <div class="flex border-b border-slate-200 flex-shrink-0">
                 <button onclick="switchPetTab('overview')" id="petTabOverview" class="px-6 py-4 text-sm font-semibold text-dasma-700 border-b-2 border-dasma-700">Overview</button>
                 <button onclick="switchPetTab('health')" id="petTabHealth" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200">Health & Vaccination</button>
                 <button onclick="switchPetTab('spay')" id="petTabSpay" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200">Spay / Neuter</button>
@@ -623,7 +623,7 @@
             </div>
 
             <!-- Tab Panels -->
-            <div class="p-6">
+            <div class="p-6 flex-1 min-h-[45vh] overflow-y-auto">
                 <!-- Overview -->
                 <div id="petPanelOverview" class="space-y-4">
                     <div class="flex items-center gap-4">
@@ -631,6 +631,7 @@
                             <img id="petProfileImage" src="" alt="" class="w-full h-full object-cover">
                         </div>
                         <div class="flex-1 min-w-0">
+                            <p id="petProfilePetId" class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">PET-0000</p>
                             <h2 id="petProfileName" class="text-2xl font-bold text-slate-900 leading-tight">Pet Name</h2>
                             <p class="flex items-center gap-2 text-slate-500 text-sm mt-1">
                                 <span id="petProfileBreed" class="font-medium">Breed</span> • <span id="petProfileSpecies" class="font-medium">Species</span>
@@ -652,24 +653,8 @@
                             <p id="petProfileWeight" class="font-semibold text-slate-700">-</p>
                         </div>
                         <div class="bg-slate-50 rounded-xl p-3">
-                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">PET ID</p>
-                            <p id="petProfilePetId" class="font-semibold text-slate-700">-</p>
-                        </div>
-                        <div class="bg-slate-50 rounded-xl p-3">
-                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Color</p>
-                            <p id="petProfileColor" class="font-semibold text-slate-700">-</p>
-                        </div>
-                        <div class="bg-slate-50 rounded-xl p-3">
-                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Microchip</p>
-                            <p id="petProfileMicrochip" class="font-semibold text-slate-700">-</p>
-                        </div>
-                        <div class="bg-slate-50 rounded-xl p-3">
                             <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Status</p>
                             <p id="petProfileStatus" class="font-semibold text-slate-700">-</p>
-                        </div>
-                        <div class="bg-slate-50 rounded-xl p-3">
-                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Registered</p>
-                            <p id="petProfileRegistered" class="font-semibold text-slate-700">-</p>
                         </div>
                     </div>
 
@@ -716,10 +701,6 @@
                             <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Type</p>
                             <p id="petProfileVaxType" class="font-semibold text-slate-700">-</p>
                         </div>
-                        <div class="bg-slate-50 rounded-xl p-3">
-                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Weight</p>
-                            <p id="petProfileVaxWeight" class="font-semibold text-slate-700">-</p>
-                        </div>
                     </div>
 
                     <div class="bg-slate-50 rounded-xl p-4">
@@ -731,7 +712,7 @@
                 <!-- Spay / Neuter -->
                 <div id="petPanelSpay" class="hidden space-y-4">
                     <div class="flex items-center gap-4">
-                        <span id="petProfileSpayBadge" class="px-3 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px]">No</span>
+                        <span id="petProfileSpayBadge" class="px-3 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px]">Intact</span>
                         <div>
                             <h3 class="text-lg font-bold text-slate-900">Spayed / Neutered</h3>
                             <p class="text-slate-500 text-sm mt-0.5">Sterilization status</p>
@@ -804,12 +785,16 @@
                             <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Allergy</p>
                             <div id="petProfileAllergy" class="flex flex-wrap gap-1.5"></div>
                         </div>
+                        <div class="bg-slate-50 rounded-xl p-3" id="petProfileTraitsSection">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-2">Traits</p>
+                            <div id="petProfileTraits" class="flex flex-wrap gap-1.5"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="flex gap-3 p-6 border-t border-slate-200 bg-slate-50">
+            <div class="flex gap-3 p-6 border-t border-slate-200 bg-slate-50 flex-shrink-0">
                 <a id="petProfileEditLink" href="#" class="flex-1 bg-primary text-white text-center py-3 rounded-lg font-medium text-xs sm:text-base hover:bg-primary-light transition-colors">Edit Pet</a>
                 <button onclick="closePetProfile()" class="flex-1 border border-slate-300 text-gray-700 py-3 rounded-lg font-medium text-xs sm:text-base hover:bg-slate-100 transition-colors">Close</button>
             </div>
@@ -850,15 +835,12 @@
             document.getElementById('petProfileBreed').textContent = pet.breed || '-';
             document.getElementById('petProfileSpecies').textContent = pet.species || '-';
             document.getElementById('petProfileGender').textContent = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : '-';
-            document.getElementById('petProfileAge').textContent = petInfo.pet_age || pet.age || '-';
+            document.getElementById('petProfileAge').textContent = petInfo.pet_age || '-';
             document.getElementById('petProfileWeight').textContent = petInfo.pet_weight || '-';
             document.getElementById('petProfilePetId').textContent = 'PET-' + String(pet.pet_id).padStart(4, '0');
-            document.getElementById('petProfileColor').textContent = pet.color || '-';
-            document.getElementById('petProfileMicrochip').textContent = pet.microchip_number || '-';
             document.getElementById('petProfileStatus').textContent = pet.pet_status ? pet.pet_status.charAt(0).toUpperCase() + pet.pet_status.slice(1) : '-';
             document.getElementById('petProfileOwner').textContent = pet.owner ? (pet.owner.first_name + ' ' + pet.owner.last_name) : '-';
             document.getElementById('petProfileBarangay').textContent = pet.barangay ? pet.barangay.barangay_name : '-';
-            document.getElementById('petProfileRegistered').textContent = pet.created_at ? new Date(pet.created_at).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) : '-';
 
             const modalImg = document.getElementById('petProfileImage');
             if (pet.pet_image) {
@@ -879,7 +861,6 @@
             const vaxDateEl = document.getElementById('petProfileVaxDate');
             const vaxNextEl = document.getElementById('petProfileVaxNext');
             const vaxTypeEl = document.getElementById('petProfileVaxType');
-            const vaxWeightEl = document.getElementById('petProfileVaxWeight');
             const vaxNotesEl = document.getElementById('petProfileVaxNotes');
 
             if (report && report.status === 'completed' && !report.not_vaccinated) {
@@ -896,7 +877,6 @@
             vaxDateEl.textContent = report && report.vaccination_date ? new Date(report.vaccination_date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '-';
             vaxNextEl.textContent = report && report.next_vaccination_date ? new Date(report.next_vaccination_date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '-';
             vaxTypeEl.textContent = report ? (report.vaccination_type || '-') : '-';
-            vaxWeightEl.textContent = report ? (report.weight ? report.weight + ' kg' : '-') : '-';
             vaxNotesEl.textContent = report ? (report.notes || '-') : '-';
 
             // Spay / Neuter tab
@@ -911,9 +891,9 @@
             const petInfoNeutered = (petInfo.is_neutered === 'yes');
             const isNeutered = petInfoNeutered || !!completedKapon;
 
-            spayStatusEl.textContent = isNeutered ? 'Yes' : 'No';
+            spayStatusEl.textContent = isNeutered ? 'Yes' : 'Intact';
             spayBadge.className = isNeutered ? 'px-2 py-1 rounded-full bg-green-50 text-green-700 font-semibold text-[11px]' : 'px-2 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px]';
-            spayBadge.textContent = isNeutered ? 'Yes' : 'No';
+            spayBadge.textContent = isNeutered ? 'Yes' : 'Intact';
             spayProcEl.textContent = completedKapon ? (completedKapon.procedure_type ? completedKapon.procedure_type.charAt(0).toUpperCase() + completedKapon.procedure_type.slice(1) : '-') : '-';
             spayDateEl.textContent = completedKapon && completedKapon.scheduled_at ? new Date(completedKapon.scheduled_at).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '-';
             spayVetEl.textContent = completedKapon ? (completedKapon.veterinarian || '-') : '-';
@@ -952,6 +932,9 @@
             renderChips('petProfileDiet', parseArray(petInfo.diet), 'bg-orange-100 text-orange-800 border border-orange-200');
             renderChips('petProfileAllergy', parseArray(petInfo.allergy), 'bg-pink-100 text-pink-800 border border-pink-200');
 
+            // Traits from pet_traits table
+            renderChips('petProfileTraits', pet.traits ? pet.traits.map(t => t.name) : [], 'bg-indigo-100 text-indigo-800 border border-indigo-200');
+
             // Edit link
             document.getElementById('petProfileEditLink').href = '/owner/pets/' + pet.pet_id + '/edit';
 
@@ -983,6 +966,11 @@
 
         document.getElementById('petProfileModal').addEventListener('click', function(e) {
             if (e.target === this) closePetProfile();
+        });
+    </script>
+</body>
+</html>
+e.target === this) closePetProfile();
         });
     </script>
 </body>
