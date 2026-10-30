@@ -662,12 +662,12 @@
                 <!-- Health & Vaccination -->
                 <div id="petPanelHealth" class="hidden space-y-4">
                     <div class="flex items-start gap-3">
-                        <div id="petProfileVaxBadge" class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
-                            <i data-lucide="alert-circle" class="w-5 h-5 text-red-600"></i>
-                        </div>
                         <div>
                             <h3 id="petProfileVaxStatus" class="text-lg font-bold text-slate-900">Not Vaccinated / No Record</h3>
                             <p class="text-slate-500 text-sm mt-0.5">Anti-rabies vaccination status</p>
+                        </div>
+                        <div id="petProfileVaxBadge" class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                            <i data-lucide="alert-circle" class="w-5 h-5 text-red-600"></i>
                         </div>
                     </div>
 
@@ -703,11 +703,11 @@
                 <!-- Spay / Neuter -->
                 <div id="petPanelSpay" class="hidden space-y-4">
                     <div class="flex items-center gap-4">
-                        <span id="petProfileSpayBadge" class="px-3 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px]">Intact</span>
                         <div>
                             <h3 class="text-lg font-bold text-slate-900">Spayed / Neutered</h3>
                             <p class="text-slate-500 text-sm mt-0.5">Sterilization status</p>
                         </div>
+                        <span id="petProfileSpayBadge" class="px-3 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px]">Intact</span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
