@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -25,6 +26,16 @@
                             DEFAULT: '#07A13F',
                             light: '#08b148',
                             dark: '#068c35',
+                        },
+                        dasma: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
                         }
                     }
                 }
@@ -164,31 +175,26 @@
         </div>
     </section>
 
-    <!-- My Pets Section -->
+    <!-- My Registered Pets Section -->
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
                 <div>
-                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        My Pets
-                    </h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Manage pet records, health histories, and vaccination tags</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" id="petSearch" placeholder="Filter pets..." class="pl-9 pr-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-36 sm:w-48">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="paw-print" class="w-6 h-6 text-dasma-700"></i>
+                        <h2 class="text-xl font-bold text-slate-900">My Registered Pets</h2>
                     </div>
-                    <a href="{{ url('/pet-registration/form') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-green-50 hover:bg-green-100 px-3.5 py-2 rounded-xl transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span>Add New Pet</span>
+                    <p class="text-xs sm:text-sm text-slate-500">Manage health records, vaccination tags, and profiles.</p>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <div class="relative flex-grow sm:w-64">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="petSearch" onkeyup="filterPets()" placeholder="Filter pets by name or ID..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-dasma-500 focus:border-transparent transition-all">
+                    </div>
+                    <a href="{{ url('/pet-registration/form') }}" class="bg-dasma-700 text-white hover:bg-dasma-800 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 shadow-sm">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Add Pet</span>
                     </a>
                 </div>
             </div>
@@ -198,7 +204,7 @@
             @endphp
             
             @if($pets->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" id="petGrid">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="petsGrid">
                     @php
                         $vaccinationReports = \App\Models\VaccinationReport::whereIn('pet_id', $pets->pluck('pet_id'))->get()->keyBy('pet_id');
                     @endphp
@@ -209,156 +215,105 @@
                                 $imagePath = 'images/pets/' . basename($imagePath);
                             }
                         @endphp
-                        <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition overflow-hidden group flex flex-col justify-between" data-name="{{ strtolower($pet->pet_name) }} {{ strtolower($pet->species) }} {{ strtolower($pet->breed) }}">
-                            <div class="p-5 pb-4 border-b border-gray-100 flex items-start gap-3.5">
-                                <div class="relative">
-                                    @if($pet->pet_image && file_exists(public_path($imagePath)))
-                                        <img src="{{ asset($imagePath) }}" alt="{{ $pet->pet_name }}" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-green-100 group-hover:ring-primary transition-all">
-                                        <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary border-2 border-white rounded-full" title="Vaccinated"></span>
-                                    @else
-                                        <div class="w-14 h-14 rounded-2xl bg-primary text-white font-extrabold text-xl flex items-center justify-center ring-2 ring-green-100 group-hover:ring-primary transition-all">
-                                            {{ substr($pet->pet_name, 0, 1) }}
-                                        </div>
-                                        <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary border-2 border-white rounded-full" title="Vaccinated"></span>
-                                    @endif
-                                </div>
-    <div class="flex flex-col gap-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <h4 class="font-bold text-gray-900 text-base">{{ $pet->pet_name }}</h4>
-                                        <span class="text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{{ ucfirst($pet->species) }}</span>
-                                    </div>
-                                    <p class="text-xs text-gray-500 font-medium">{{ $pet->breed }}</p>
-                                        <p class="text-[11px] text-primary font-semibold mt-1 flex items-center gap-1">
-ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
-                                        </p>
-                                    </div>
-                                </div>
-
-                            <div class="p-5 grid grid-cols-2 gap-3 text-xs">
-                                <div class="bg-gray-50 p-2.5 rounded-xl">
-                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Gender</span>
-                                    <span class="font-semibold text-gray-700 flex items-center gap-1 mt-0.5">
-                                        @if($pet->gender === 'male')
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-blue-500 shrink-0">
-                                                <path d="M0 0h16v16H0z" fill="none" />
-                                                <path fill="#1e2099" fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8a4 4 0 0 0 0-8" />
-                                            </svg>
-                                        @elseif($pet->gender === 'female')
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-pink-500 shrink-0">
-                                                <path d="M0 0h16v16H0z" fill="none" />
-                                                <path fill="#d42ec9" fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8a4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" />
-                                            </svg>
+                        <div class="pet-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between" data-name="{{ strtolower($pet->pet_name) }}" data-species="{{ strtolower($pet->species) }}">
+                            <div class="p-5">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex items-center space-x-3">
+                                        @if($pet->pet_image && file_exists(public_path($imagePath)))
+                                            <img src="{{ asset($imagePath) }}" alt="{{ $pet->pet_name }}" class="w-14 h-14 rounded-xl object-cover ring-2 ring-slate-100">
+                                        @else
+                                            <div class="w-14 h-14 rounded-xl bg-dasma-800 text-white font-bold flex items-center justify-center text-xl shadow-inner">
+                                                {{ substr($pet->pet_name, 0, 1) }}
+                                            </div>
                                         @endif
-                                        {{ ucfirst($pet->gender) }}
-                                    </span>
+                                        <div>
+                                            <div class="flex items-center space-x-1.5">
+                                                <h3 class="font-bold text-slate-900 text-lg">{{ $pet->pet_name }}</h3>
+                                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">{{ ucfirst($pet->species) }}</span>
+                                            </div>
+                                            <p class="text-xs text-slate-500 font-mono">{{ ucfirst($pet->breed) }} • <span class="text-slate-400">PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}</span></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="bg-gray-50 p-2.5 rounded-xl">
-                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Age</span>
-@php
-    $ageDisplay = 'Unknown';
-    if ($pet->birthdate) {
-        $birthDate = strtotime($pet->birthdate);
-        $today = time();
-        $diffInMonths = floor(($today - $birthDate) / 86400 / 30.44);
-        
-        $years = floor($diffInMonths / 12);
-        $months = $diffInMonths % 12;
-        
-        // If months are minimal (1-2 months), just display years for cleaner display
-        if ($months <= 2 && $years > 0) {
-            $yearStr = $years === 1 ? '1 yr' : $years . ' yrs';
-            $ageDisplay = $yearStr;
-        } else {
-            $yearStr = $years === 1 ? '1 yr' : $years . ' yrs';
-            $monthStr = $months === 1 ? '1 mos' : $months . ' mos';
-            
-            if ($years > 0 && $months > 0) {
-                $ageDisplay = "$yearStr $monthStr";
-            } elseif ($years > 0) {
-                $ageDisplay = $yearStr;
-            } else {
-                $ageDisplay = $monthStr;
-            }
-        }
-    } elseif ($pet->petInfo?->pet_age) {
-        // Only display pet_age as-is if it's already in the new "X yrs X mos" format
-        if (preg_match('/\d+\s+yrs\s+\d+\s+mos/', $pet->petInfo->pet_age) ||
-            preg_match('/\d+\s+yr\s+\d+\s+mos/', $pet->petInfo->pet_age)) {
-            $ageDisplay = $pet->petInfo->pet_age;
-        }
-    }
-@endphp
-                                    <span class="font-semibold text-gray-700 mt-0.5 block">{{ $ageDisplay }}</span>
-                                </div>
-                                <div class="bg-gray-50 p-2.5 rounded-xl">
-                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">{{ $pet->gender === 'female' ? 'Spayed' : 'Neutered' }}</span>
-                                    <span class="font-semibold {{ (($pet->petInfo?->is_neutered ?? '') === 'yes') ? 'text-primary' : 'text-amber-600' }} mt-0.5 block">{{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Yes' : 'No' }}</span>
-                                </div>
-                                <div class="bg-gray-50 p-2.5 rounded-xl">
-                                    <span class="text-gray-400 block text-[10px] font-semibold uppercase">Weight</span>
-                                    @if($pet->petInfo?->pet_weight)
-                                        <span class="font-semibold text-gray-700 mt-0.5 block">{{ $pet->petInfo->pet_weight }}</span>
-                                    @else
-                                        <span class="font-semibold text-gray-700 mt-0.5 block">-</span>
-                                    @endif
-                                </div>
-@php
-    $report = $vaccinationReports->get($pet->pet_id);
-    $hasReport = $report !== null;
-    $isVaccinated = $hasReport && !$report->not_vaccinated && $report->status === 'completed';
-    $nextVaccinationDate = $report->next_vaccination_date ?? null;
-    $needsBooster = $isVaccinated && $nextVaccinationDate !== null && $nextVaccinationDate->isPast();
 
-    if ($needsBooster || !$isVaccinated) {
-        $vaxColor = 'bg-red-50 border border-red-200';
-        $vaxIconBg = 'bg-red-100';
-        $vaxIconColor = 'text-red-500';
-        $vaxTextColor = 'text-red-700';
-        $vaxSubColor = 'text-red-600';
-        $vaxHeading = 'Not Vaccinated / No Record';
-        $vaxSub = 'Anti-rabies vaccination needed';
-    } else {
-        $vaxColor = 'bg-green-50 border border-green-200';
-        $vaxIconBg = 'bg-green-100';
-        $vaxIconColor = 'text-green-600';
-        $vaxTextColor = 'text-green-700';
-        $vaxSubColor = 'text-green-600';
-        $vaxHeading = 'Vaccinated Active';
-        $vaxSub = 'Lot #' . ($report->vaccine_batch_number ?? 'N/A');
-    }
-@endphp
-<div class="col-span-2 flex flex-col gap-2 ml-3 px-3 py-2 rounded-lg {{ $vaxIconBg }} inline-flex">
-    <div class="flex items-center gap-2.5">
-        <div class="w-5 h-5 rounded-full {{ $vaxIconColor }} flex items-center justify-center shrink-0">
-            @if($isVaccinated && !$needsBooster)
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11s11-4.925 11-11S18.075 1 12 1m4.768 9.14a1 1 0 1 0-1.536-1.28l-4.3 5.159l-2.225-2.226a1 1 0 0 0-1.414 1.414l3 3a1 1 0 0 0 1.475-.067z" clip-rule="evenodd" />
-                </svg>
-            @else
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0h64v64H0z" fill="none" />
-                    <path d="M32 2C15.432 2 2 15.432 2 32s13.432 30 30 30s30-13.432 30-30S48.568 2 32 2m5 49.75H27v-24h10zm-5-29.5a5 5 0 1 1 0-10a5 5 0 0 1 0 10" />
-                </svg>
-            @endif
-        </div>
-        <div class="flex flex-col gap-1">
-            <div class="text-xs font-bold {{ $vaxTextColor }} leading-none whitespace-nowrap truncate">{{ $vaxHeading }}</div>
-            <div class="text-xs {{ $vaxSubColor }} leading-none whitespace-nowrap truncate">{{ $vaxSub }}</div>
-        </div>
-    </div>
-</div>
+                                <!-- Stats Grid -->
+                                @php
+                                    $ageDisplay = 'Unknown';
+                                    if ($pet->birthdate) {
+                                        $birthDate = strtotime($pet->birthdate);
+                                        $today = time();
+                                        $diffInMonths = floor(($today - $birthDate) / 86400 / 30.44);
+                                        $years = floor($diffInMonths / 12);
+                                        $months = $diffInMonths % 12;
+                                        if ($months <= 2 && $years > 0) {
+                                            $ageDisplay = $years === 1 ? '1 yr' : $years . ' yrs';
+                                        } else {
+                                            $yearStr = $years === 1 ? '1 yr' : $years . ' yrs';
+                                            $monthStr = $months === 1 ? '1 mos' : $months . ' mos';
+                                            if ($years > 0 && $months > 0) {
+                                                $ageDisplay = "$yearStr $monthStr";
+                                            } elseif ($years > 0) {
+                                                $ageDisplay = $yearStr;
+                                            } else {
+                                                $ageDisplay = $monthStr;
+                                            }
+                                        }
+                                    } elseif ($pet->petInfo?->pet_age) {
+                                        if (preg_match('/\d+\s+yrs\s+\d+\s+mos/', $pet->petInfo->pet_age) ||
+                                            preg_match('/\d+\s+yr\s+\d+\s+mos/', $pet->petInfo->pet_age)) {
+                                            $ageDisplay = $pet->petInfo->pet_age;
+                                        }
+                                    }
+                                @endphp
+                                <div class="grid grid-cols-2 gap-2 my-4 p-2.5 bg-slate-50 rounded-xl text-xs">
+                                    <div>
+                                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Gender & Age</span>
+                                        <span class="font-semibold text-slate-700">{{ ucfirst($pet->gender) }}, {{ $ageDisplay }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Weight / Status</span>
+                                        <span class="font-semibold text-slate-700">{{ $pet->petInfo?->pet_weight ?? '-' }} • {{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Spayed / Neutered' : 'Intact' }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Anti-Rabies Badge -->
+                                @php
+                                    $report = $vaccinationReports->get($pet->pet_id);
+                                    $hasReport = $report !== null;
+                                    $isVaccinated = $hasReport && !$report->not_vaccinated && $report->status === 'completed';
+                                    $nextVaccinationDate = $report->next_vaccination_date ?? null;
+                                    $needsBooster = $isVaccinated && $nextVaccinationDate !== null && $nextVaccinationDate->isPast();
+                                    if ($needsBooster || !$isVaccinated) {
+                                        $vaxColor = 'bg-red-50 border border-red-200';
+                                        $vaxIconColor = 'text-red-500';
+                                        $vaxTextColor = 'text-red-700';
+                                        $vaxSubColor = 'text-red-600';
+                                        $vaxHeading = 'Not Vaccinated / No Record';
+                                        $vaxSub = 'Anti-rabies vaccination needed';
+                                    } else {
+                                        $vaxColor = 'bg-green-50 border border-green-200';
+                                        $vaxIconColor = 'text-green-600';
+                                        $vaxTextColor = 'text-green-700';
+                                        $vaxSubColor = 'text-green-600';
+                                        $vaxHeading = 'Vaccinated Active';
+                                        $vaxSub = 'Lot #' . ($report->vaccine_batch_number ?? 'N/A');
+                                    }
+                                @endphp
+                                <div class="p-3 {{ $vaxColor }} rounded-xl flex items-start space-x-2.5">
+                                    <i data-lucide="{{ $isVaccinated && !$needsBooster ? 'check-circle-2' : 'alert-circle' }}" class="w-5 h-5 {{ $vaxIconColor }} shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-xs font-bold {{ $vaxTextColor }}">{{ $vaxHeading }}</p>
+                                        <p class="text-[11px] {{ $vaxSubColor }} leading-tight mt-0.5">{{ $vaxSub }}</p>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="p-4 bg-gray-50/80 border-t border-gray-100 flex items-center gap-2">
-                                <button class="flex-1 py-2 bg-white hover:bg-green-50 border border-gray-200 hover:border-green-300 text-gray-700 hover:text-primary text-xs font-semibold rounded-xl transition text-center shadow-xs">
-                                    View Profile
+                            <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+                                <button class="text-xs font-bold text-dasma-700 hover:text-dasma-800 flex items-center space-x-1">
+                                    <span>View Profile</span>
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </button>
-                                <button class="p-2 text-gray-500 hover:text-primary hover:bg-white rounded-xl border border-transparent hover:border-gray-200 transition" title="Download Vaccine Passport">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </button>
+                                <span class="text-[10px] text-slate-400">Registered</span>
                             </div>
                         </div>
                     @endforeach
@@ -635,5 +590,23 @@ ID: PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}
     </section>
 
     @include('Client.partials.footer')
+    <script>
+        lucide.createIcons();
+
+        function filterPets() {
+            const input = document.getElementById('petSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.pet-card');
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                const species = card.getAttribute('data-species').toLowerCase();
+                if (name.includes(input) || species.includes(input)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
