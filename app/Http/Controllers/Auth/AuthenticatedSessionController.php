@@ -67,7 +67,7 @@ class AuthenticatedSessionController extends Controller
                     ->with('success', 'Welcome back, Meat Inspector ' . $user->name . '!');
             case 'pet_owner':
                 return redirect()->intended(route('owner.dashboard'))
-                    ->with('success', 'Welcome back, Pet Owner ' . $user->name . '!');
+                    ->with('success', 'Welcome back, ' . $user->name . '!');
             default:
                 Auth::logout();
                 return redirect()->route('login')->with('error', 'Invalid role. Please contact the system administrator.');

@@ -45,31 +45,6 @@
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50">
-    <!-- Success Modal -->
-    @if(session('success'))
-        <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Success!</h3>
-                    <p class="text-gray-600 mb-6">{{ session('success') }}</p>
-                    <button onclick="closeSuccessModal()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors">
-                        OK
-                    </button>
-                </div>
-            </div>
-        </div>
-        <script>
-            function closeSuccessModal() {
-                document.getElementById('successModal').classList.add('hidden');
-            }
-        </script>
-    @endif
-
     <!-- Flash Message Alert -->
     @if(session('success'))
         <div class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg" id="successAlert">
