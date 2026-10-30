@@ -327,19 +327,19 @@
                     <p class="text-slate-600 mt-2 max-w-2xl mx-auto">Compassionate community programs dedicated to pet adoption and reunited families.</p>
                 </div>
 
-                <!-- Card 4: Missing Pets -->
+                <!-- Card 4: Lost Pets -->
                 <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-rose-600 group-hover:text-white transition-colors">
                             <i class="fa-solid fa-heart-pulse"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Missing Pets</h3>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Lost Pets</h3>
                         <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                            Report a missing pet or browse our database to help reunite lost pets with their owners.
+                            Report a lost pet or browse our database to help reunite lost pets with their owners.
                         </p>
                     </div>
                     <a href="{{ url('/missing-pets') }}" class="w-full bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm">
-                        <span>Report Missing Pet</span>
+<span>Report Lost Pet</span>
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </a>
                 </div>
@@ -501,15 +501,15 @@
         </div>
     </section>
 
-    <!-- Missing Pets / Lost & Found Radar -->
-    <section id="missing-pets" class="py-20 bg-white">
+    <!-- Lost Pets / Lost & Found Radar -->
+    <section id="lost-pets" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-10">
                 <div class="inline-flex items-center space-x-2 bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Community Alert</span>
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900" id="missingPetsTitle">Missing Pets</h2>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900" id="missingPetsTitle">Lost Pets</h2>
                 <p class="text-slate-600 mt-2 tab-description" data-tab="missing">Help reunite lost pets with their families. If you have seen any of these pets, please contact us immediately.</p>
                 <p class="text-slate-600 mt-2 tab-description hidden" data-tab="adoption">Give these adorable pets a loving forever home. Browse our available pets for adoption and visit the shelter.</p>
             </div>
@@ -518,14 +518,14 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
                 <!-- Filter Tabs -->
                 <div class="flex items-center bg-slate-100 p-1 rounded-xl w-full sm:w-auto">
-                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-semibold bg-white text-slate-900 shadow-sm" data-filter="missing">Missing Pets</button>
+                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-semibold bg-white text-slate-900 shadow-sm" data-filter="missing">Lost Pets</button>
                     <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="adoption">Pets for Adoption</button>
                 </div>
 
                 <!-- Report Missing Pet CTA -->
                 <a href="{{ url('/missing-pets/form') }}" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center justify-center space-x-2 tab-cta" data-tab="missing">
                     <i class="fa-solid fa-bullhorn"></i>
-                    <span>Report Missing Pet</span>
+                    <span>Report Lost Pet</span>
                 </a>
                 <a href="{{ url('/adoption') ?? '#' }}" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2 tab-cta hidden" data-tab="adoption">
                     <i class="fa-solid fa-heart"></i>
@@ -534,7 +534,7 @@
             </div>
 
             <!-- Pet Cards Grid -->
-            <!-- Missing Pets Tab -->
+            <!-- Lost Pets Tab -->
             <div class="tab-content" data-tab="missing">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                     @forelse($missingPets as $pet)
@@ -567,7 +567,7 @@
                         </div>
                     </div>
                     @empty
-                    <p class="col-span-5 text-center text-slate-500">No missing pets found.</p>
+                    <p class="col-span-5 text-center text-slate-500">No lost pets found.</p>
                     @endforelse
                 </div>
             </div>
@@ -607,7 +607,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    View All Missing Pets
+                    View All Lost Pets
                 </a>
                 <a href="{{ url('/adoption') ?? '#' }}" class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link hidden" data-tab="adoption">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -618,6 +618,694 @@
             </div>
         </div>
     </section>
+
+    <!-- Confirmed Rabies Cases Geomap -->
+    <section id="rabies-geomap" class="py-20 bg-white border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center space-x-2 bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+                    <i class="fa-solid fa-virus"></i>
+                    <span>Public Health Advisory</span>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Confirmed Rabies Cases</h2>
+                <p class="text-slate-600 mt-2">Geospatial distribution of confirmed rabies cases by barangay in the City of Dasmariñas.</p>
+            </div>
+
+            <!-- Geomap wrapper (City Vet style, adapted for landing page section) -->
+            <div class="rabies-home-geomap-wrapper relative mt-20 min-h-[600px] lg:min-h-[700px] rounded-3xl overflow-hidden shadow-xl border border-slate-200 bg-slate-200">
+
+                <!-- Map container (fills wrapper) -->
+                <div id="rabies-home-map" class="rabies-home-map-container absolute inset-0 z-10" role="application" aria-label="Confirmed rabies cases geomap">
+                    <div class="rabies-home-loading absolute inset-0 z-[60] flex items-center justify-center bg-slate-50">
+                        <div class="text-center">
+                            <div class="inline-block animate-pulse w-10 h-10 bg-slate-200 rounded-full mb-3"></div>
+                            <p class="text-sm text-slate-400">Initializing map...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating: Left Column — Stats + Legend (top-left) -->
+                <div class="rabies-home-left-column absolute top-4 left-4 z-[1000] flex flex-col gap-4 pointer-events-none">
+                    <!-- Stats Pills -->
+                    <div class="rabies-home-stats pointer-events-none">
+                        <div class="rabies-home-stats-inner backdrop-blur bg-white/90 rounded-lg px-4 py-3 shadow-sm border border-gray-200/60 flex items-center gap-4 pointer-events-auto">
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-2 h-2 rounded-full bg-red-500" id="rabiesHomeStatTotalIcon"></div>
+                                <span class="text-[11px] text-slate-400 font-medium" id="rabiesHomeStatTotalLabel">Total Cases</span>
+                                <span class="text-base font-bold text-slate-800" id="rabiesHomeStatTotal">0</span>
+                            </div>
+                            <div class="w-px h-4 bg-slate-200"></div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-2 h-2 rounded-full bg-amber-500" id="rabiesHomeStatAffectedIcon"></div>
+                                <span class="text-[11px] text-slate-400 font-medium" id="rabiesHomeStatAffectedLabel">Affected</span>
+                                <span class="text-base font-bold text-amber-600" id="rabiesHomeStatAffected">0</span>
+                            </div>
+                            <div class="w-px h-4 bg-slate-200"></div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-2 h-2 rounded-full bg-rose-500" id="rabiesHomeStatCriticalIcon"></div>
+                                <span class="text-[11px] text-slate-400 font-medium" id="rabiesHomeStatCriticalLabel">Critical</span>
+                                <span class="text-base font-bold text-rose-600" id="rabiesHomeStatCritical">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legend Panel (below stats) -->
+                    <div class="rabies-home-legend pointer-events-none">
+                        <div class="simple-legend-card backdrop-blur bg-white/95 rounded-xl px-3 py-3 shadow-sm border border-gray-200 pointer-events-auto">
+                            <p class="simple-legend-title text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Severity Legend</p>
+                            <div class="simple-legend-items flex flex-col gap-2">
+                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('critical')">
+                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#dc2626;"></span>
+                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">Critical (20+)</span>
+                                </div>
+                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('high')">
+                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#ea580c;"></span>
+                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">High (11-19)</span>
+                                </div>
+                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('moderate')">
+                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#eab308;"></span>
+                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">Moderate (6-10)</span>
+                                </div>
+                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('low')">
+                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#fde68a;"></span>
+                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">Low (1-5)</span>
+                                </div>
+                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('none')">
+                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#cbd5e1;"></span>
+                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">No Cases</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating: View Changers + Filters (top-right column) -->
+                <div class="rabies-home-view-changers absolute top-4 right-4 z-[1000] flex flex-col gap-3 pointer-events-none">
+                    <button id="rabiesHomeBtnRabiesLayer" class="rabies-home-layer-toggle-btn bg-indigo-600 text-white border-indigo-600 shadow-[0_2px_8px_rgba(79,70,229,0.3)]" onclick="rabiesHomeSwitchLayer('rabies')">
+                        <i class="fa-solid fa-virus"></i>
+                        <span>Confirmed Rabies Cases</span>
+                    </button>
+                    <button id="rabiesHomeBtnVaccinationLayer" class="rabies-home-layer-toggle-btn" onclick="rabiesHomeSwitchLayer('vaccination')">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Anti-Rabies Vaccination</span>
+                    </button>
+                    <button id="rabiesHomeBtnTopBarangays" class="rabies-home-layer-toggle-btn" onclick="rabiesHomeOpenTopBarangaysModal()">
+                        <i class="fa-solid fa-list-ol"></i>
+                        <span>Top Barangays</span>
+                    </button>
+
+                    <!-- Filter Controls -->
+                    <div class="rabies-home-filter-controls relative">
+                        <button id="rabiesHomeFilterToggle" class="rabies-home-filter-toggle-btn flex items-center gap-2 px-3 py-2 bg-white/95 backdrop-blur border border-gray-200 rounded-lg shadow-sm text-slate-600 text-xs font-medium" onclick="rabiesHomeToggleFilter()">
+                            <i class="fa-solid fa-funnel"></i>
+                            <span>Filters</span>
+                            <i class="fa-solid fa-chevron-down text-[8px] opacity-40"></i>
+                        </button>
+
+                        <!-- Filter Panel -->
+                        <div id="rabiesHomeFilterPanel" class="rabies-home-filter-panel absolute right-0 mt-2 w-64 bg-white/97 backdrop-blur border border-gray-200 rounded-xl shadow-lg overflow-hidden hidden z-[1005]">
+                            <div class="p-3 space-y-3">
+                                <div>
+                                    <label class="rabies-home-filter-label block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Year</label>
+                                    <select id="rabiesHomeFilterYear" class="rabies-home-filter-select w-full px-2 py-1.5 bg-gray-50 border border-gray-200 rounded text-xs text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                        <option value="{{ date('Y') }}">{{ date('Y') }}</option>
+                                        <option value="{{ date('Y') - 1 }}">{{ date('Y') - 1 }}</option>
+                                        <option value="{{ date('Y') - 2 }}">{{ date('Y') - 2 }}</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="rabies-home-filter-label block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Month</label>
+                                    <select id="rabiesHomeFilterMonth" class="rabies-home-filter-select w-full px-2 py-1.5 bg-gray-50 border border-gray-200 rounded text-xs text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                        <option value="">All Months</option>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
+                                <div class="pt-2 border-t border-gray-100">
+                                    <button id="rabiesHomeClearFilter" class="rabies-home-filter-clear-btn w-full flex items-center justify-center gap-2 px-3 py-1.5 bg-red-50 border border-red-100 rounded text-red-600 text-xs font-medium" onclick="rabiesHomeClearFilters()">
+                                        <i class="fa-solid fa-x-circle"></i>
+                                        <span>Clear Filter</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Overlay -->
+                <div id="rabiesHomeMapLoading" class="rabies-home-loading-overlay absolute inset-0 z-[1004] bg-white/90 flex items-center justify-center hidden">
+                    <div class="text-center">
+                        <div class="inline-block animate-spin rounded-full h-10 w-10 border-3 border-indigo-500 border-t-transparent mb-2"></div>
+                        <p class="text-sm text-slate-500 font-medium">Loading map data...</p>
+                    </div>
+                </div>
+
+                <!-- Error -->
+                <div id="rabiesHomeMapError" class="rabies-home-error absolute top-4 left-1/2 -translate-x-1/2 z-[60] hidden">
+                    <div class="rabies-home-error-inner backdrop-blur bg-red-50/95 border border-red-200 rounded-lg px-4 py-3 shadow-sm flex items-center gap-3">
+                        <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-red-800" id="rabiesHomeErrorTitle">Error loading map</p>
+                            <p class="text-xs text-red-600" id="rabiesHomeErrorMessage">Please refresh the page.</p>
+                        </div>
+                        <button onclick="location.reload()" class="px-2.5 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-md text-xs font-medium transition">Retry</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Top Barangays Modal -->
+            <div id="rabiesHomeTopBarangaysModalBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[1200] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+                <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]">
+                    <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2.5 bg-indigo-100 text-indigo-600 rounded-lg">
+                                <i class="fa-solid fa-list-ol w-5 h-5"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h5 class="font-bold text-slate-800 text-lg leading-tight">Top Barangays</h5>
+                                <p class="text-xs text-slate-500 leading-none" id="rabiesHomeTopBarangaysModalSubtitle">Confirmed Rabies Cases</p>
+                            </div>
+                        </div>
+                        <button onclick="rabiesHomeCloseTopBarangaysModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close">
+                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+
+                    <div class="p-4 space-y-4 overflow-y-auto flex-1 bg-white">
+                        <div class="flex gap-2 bg-slate-100 p-1 rounded-lg">
+                            <button onclick="rabiesHomeSetTopBarangaysType('rabies')" id="rabiesHomeTopBarangaysTypeRabies" class="flex-1 py-2 px-3 text-xs font-medium rounded-md text-indigo-600 bg-white shadow-sm transition-colors">Rabies Cases</button>
+                            <button onclick="rabiesHomeSetTopBarangaysType('vaccination')" id="rabiesHomeTopBarangaysTypeVaccination" class="flex-1 py-2 px-3 text-xs font-medium rounded-md text-slate-600 hover:text-slate-700 transition-colors">Vaccination Coverage</button>
+                        </div>
+                        <div class="flex gap-2 bg-slate-100 p-1 rounded-lg">
+                            <button onclick="rabiesHomeSetTopBarangaysLimit(5)" id="rabiesHomeTopBarangaysLimit5" class="flex-1 py-2 px-3 text-xs font-medium rounded-md text-indigo-600 bg-white shadow-sm transition-colors">Top 5</button>
+                            <button onclick="rabiesHomeSetTopBarangaysLimit(10)" id="rabiesHomeTopBarangaysLimit10" class="flex-1 py-2 px-3 text-xs font-medium rounded-md text-slate-600 hover:text-slate-700 transition-colors">Top 10</button>
+                        </div>
+
+                        <div id="rabiesHomeTopBarangaysLoading" class="text-center py-8 hidden">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                            <p class="text-slate-500 text-sm">Loading top barangays...</p>
+                        </div>
+
+                        <div id="rabiesHomeTopBarangaysList" class="space-y-2"></div>
+                        <div id="rabiesHomeTopBarangaysEmpty" class="hidden text-center py-8">
+                            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fa-solid fa-geo-alt text-slate-400 text-xl"></i>
+                            </div>
+                            <p class="text-sm text-slate-500">No barangays found for the selected filters.</p>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+                        <span class="text-xs text-slate-400" id="rabiesHomeTopBarangaysFilterLabel"></span>
+                        <button onclick="rabiesHomeCloseTopBarangaysModal()" class="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        /* ========== Rabies Home Geomap (City Vet style, section-scoped) ========== */
+        .rabies-home-geomap-wrapper { position: relative; width: 100%; flex: 1; margin-top: 5rem; height: auto; min-height: 600px; overflow: hidden; }
+        @media (min-width: 1024px) { .rabies-home-geomap-wrapper { min-height: 700px; } }
+
+        .rabies-home-map-container { position: absolute; inset: 0; z-index: 10; }
+
+        .leaflet-container { height: 100% !important; width: 100% !important; font-family: 'Inter', system-ui, sans-serif; border-radius: 0; }
+        .leaflet-control { z-index: 25 !important; }
+        .leaflet-popup { z-index: 30 !important; }
+        .leaflet-tooltip { z-index: 30 !important; }
+        .leaflet-popup-content-wrapper { border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+        .leaflet-popup-content { margin: 14px; font-family: 'Inter', system-ui, sans-serif; }
+
+        .rabies-home-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: #f1f5f9; z-index: 0; }
+
+        .rabies-home-left-column { position: absolute; top: 1rem; left: 1rem; z-index: 20; pointer-events: none; display: flex; flex-direction: column; gap: 12px; }
+        .rabies-home-stats { pointer-events: none; }
+        .rabies-home-stats-inner { backdrop-filter: blur(12px); background: rgba(255,255,255,0.9); border-radius: 0.5rem; padding: 0.5rem 0.75rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 0.75rem; pointer-events: auto; }
+        .rabies-home-legend { pointer-events: none; }
+        .simple-legend-card { width: 180px; backdrop-filter: blur(12px); background: rgba(255,255,255,0.95); border-radius: 0.75rem; padding: 0.75rem 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.10); border: 1px solid #e2e8f0; pointer-events: auto; }
+        .simple-legend-items { display: flex; flex-direction: column; gap: 10px; }
+        .simple-legend-item { display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.15s ease; }
+        .simple-legend-item.severity-active { background: #e0e7ff; border-radius: 6px; padding: 4px 8px; }
+        .simple-legend-item:hover { background: #f8fafc; border-radius: 6px; padding: 4px 8px; }
+        .simple-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; box-shadow: inset 0 -1px 2px rgba(0,0,0,0.15); }
+        .simple-legend-text { font-size: 12px; font-weight: 500; color: #475569; }
+
+        .rabies-home-view-changers { position: absolute; top: 1rem; right: 1rem; z-index: 20; display: flex; flex-direction: column; gap: 8px; }
+        .rabies-home-layer-toggle-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border: 1.5px solid #e2e8f0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; color: #64748b; font-size: 12px; font-weight: 500; transition: all 0.2s; font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; width: 100%; justify-content: flex-start; }
+        .rabies-home-layer-toggle-btn:hover { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.12); border-color: #cbd5e1; }
+        .rabies-home-layer-toggle-btn i { font-size: 12px; }
+
+        .rabies-home-filter-controls { position: relative; }
+        .rabies-home-filter-toggle-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; color: #475569; font-size: 12px; font-weight: 500; transition: all 0.15s; font-family: 'Inter', system-ui, sans-serif; }
+        .rabies-home-filter-toggle-btn:hover { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+        .rabies-home-filter-panel { position: absolute; top: calc(100% + 8px); right: 0; background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 12px; width: 240px; max-height: calc(100vh - 200px); overflow-y: auto; z-index: 45; }
+        .rabies-home-filter-label { display: block; font-size: 10px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+        .rabies-home-filter-select { width: 100%; padding: 5px 8px; font-size: 11px; font-weight: 500; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; outline: none; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; }
+        .rabies-home-filter-select:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.15); }
+        .rabies-home-filter-clear-btn { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; font-size: 11px; font-weight: 500; color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-family: 'Inter', system-ui, sans-serif; }
+        .rabies-home-filter-clear-btn:hover { background: #fee2e2; border-color: #fca5a5; }
+
+        .rabies-home-loading-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; z-index: 48; }
+        .rabies-home-error { position: absolute; top: 4rem; left: 50%; transform: translateX(-50%); z-index: 55; }
+        .rabies-home-error-inner { backdrop-filter: blur(12px); background: rgba(254,242,242,0.95); border: 1px solid #fecaca; border-radius: 0.5rem; padding: 0.75rem 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 0.75rem; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .animate-spin { animation: spin 0.8s linear infinite; }
+
+        /* Reset view control */
+        .rabies-home-reset-control { position: absolute; bottom: 1rem; right: 1rem; z-index: 20; }
+        .rabies-home-reset-btn { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; background: white; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: 1px solid #e2e8f0; cursor: pointer; font-size: 16px; color: #334155; }
+        .rabies-home-reset-btn:hover { background: #f8fafc; }
+
+        @media (max-width: 768px) {
+            .rabies-home-geomap-wrapper { min-height: 500px; }
+            .rabies-home-left-column { top: 0.5rem; left: 0.5rem; }
+            .rabies-home-view-changers { top: 0.5rem; right: 0.5rem; }
+            .simple-legend-card { width: 160px; padding: 0.6rem 0.8rem; }
+            .rabies-home-view-changers .rabies-home-layer-toggle-btn span { display: none; }
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    /* ========== Rabies Home Geomap JS (City Vet style, view-only, no report) ========== */
+    document.addEventListener('DOMContentLoaded', function() {
+        var map, barangayLayer, outsideMaskLayer, cityBounds, geojsonData;
+        var filters = { year: new Date().getFullYear(), month: null, week: null, severity: null, date_from: null, date_to: null };
+        var currentLayer = 'rabies';
+
+        // --- Initialize Map ---
+        map = L.map('rabies-home-map', {
+            zoomControl: false,
+            minZoom: 12,
+            maxZoom: 18,
+            zoomSnap: 0.5,
+            worldCopyJump: false
+        }).setView([14.3270, 120.9370], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap',
+            maxZoom: 19
+        }).addTo(map);
+
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        // Reset view control (bottom-right)
+        var resetControl = L.control({ position: 'bottomright' });
+        resetControl.onAdd = function() {
+            var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+            div.innerHTML = '<button class="rabies-home-reset-btn" title="Reset view" style="padding:0;margin:0;">⟲</button>';
+            div.querySelector('button').onclick = function(e) {
+                e.preventDefault();
+                if (cityBounds) map.fitBounds(cityBounds);
+                else map.setView([14.3270, 120.9370], 12);
+            };
+            return div;
+        };
+        resetControl.addTo(map);
+
+        var loadingEl = document.querySelector('.rabies-home-loading');
+        if (loadingEl) loadingEl.style.display = 'none';
+
+        setTimeout(function() { map.invalidateSize(); }, 150);
+
+        // --- Color helpers ---
+        function getColor(cases) {
+            if (currentLayer === 'vaccination') {
+                return cases > 20 ? '#166534' : cases > 10 ? '#15803d' : cases > 5 ? '#22c55e' : cases > 0 ? '#86efac' : '#cbd5e1';
+            } else {
+                return cases > 20 ? '#dc2626' : cases > 10 ? '#ea580c' : cases > 5 ? '#eab308' : cases > 0 ? '#fde68a' : '#cbd5e1';
+            }
+        }
+        function getBorderColor(cases) { return cases > 0 ? '#1e293b' : '#94a3b8'; }
+        function style(feature) {
+            var c = feature.properties.cases || 0;
+            return { fillColor: getColor(c), weight: c > 0 ? 2.5 : 1.5, color: getBorderColor(c), fillOpacity: c > 0 ? 0.8 : 0.45, opacity: 1 };
+        }
+        function highlightFeature(e) {
+            var layer = e.target;
+            layer.setStyle({ weight: 4, color: '#4338ca', fillOpacity: 0.55 });
+            layer.bringToFront();
+        }
+        function resetHighlight(e) {
+            var c = e.target.feature.properties.cases || 0;
+            e.target.setStyle({ weight: c > 0 ? 2.5 : 1.5, color: getBorderColor(c), fillOpacity: c > 0 ? 0.8 : 0.45 });
+        }
+        function onEachFeature(feature, layer) {
+            var name = feature.properties.name || 'Unknown';
+            var cases = feature.properties.cases || 0;
+            var status, label;
+            if (currentLayer === 'vaccination') {
+                if (cases > 20) { status = 'Excellent'; label = 'High Coverage'; }
+                else if (cases > 10) { status = 'Good'; label = 'Moderate Coverage'; }
+                else if (cases > 5) { status = 'Fair'; label = 'Low Coverage'; }
+                else if (cases > 0) { status = 'Low'; label = 'Minimal'; }
+                else { status = 'None'; label = 'No Data'; }
+            } else {
+                if (cases > 20) { status = 'Critical'; label = 'Critical'; }
+                else if (cases > 10) { status = 'High'; label = 'High'; }
+                else if (cases > 5) { status = 'Moderate'; label = 'Moderate'; }
+                else if (cases > 0) { status = 'Low'; label = 'Low'; }
+                else { status = 'None'; label = 'No Cases'; }
+            }
+            layer.bindTooltip(
+                '<div style="font-family:Inter,system-ui;min-width:110px;">' +
+                '<div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:2px;">' + name + '</div>' +
+                '<div style="font-size:20px;font-weight:700;color:' + getColor(cases) + ';">' + cases + '</div>' +
+                '<div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-top:1px;">' + label + '</div>' +
+                '</div>', { direction: 'center', className: '', offset: [0, 0], pane: 'popupPane' }
+            );
+            layer.on({ mouseover: highlightFeature, mouseout: resetHighlight });
+        }
+
+        // --- Outside city mask ---
+        function createOutsideMask(bounds) {
+            var s = bounds.getSouth(), n = bounds.getNorth(), e = bounds.getEast(), w = bounds.getWest();
+            return L.polygon([
+                [[s-10, w-10], [s-10, e+10], [n+10, e+10], [n+10, w-10], [s-10, w-10]],
+                [[s, e], [n, e], [n, w], [s, w], [s, e]]
+            ], { fillColor: '#f1f5f9', fillOpacity: 0.7, color: 'transparent', weight: 0 });
+        }
+
+        // --- Normalize barangay name ---
+        function normalizeBarangayName(name) {
+            var n = name.toLowerCase().replace(/\s+/g, '').replace(/\(.*\)/, '');
+            n = n.replace(/iii$/, '3').replace(/ii$/, '2').replace(/iv$/, '4').replace(/v$/, '5').replace(/i$/, '1');
+            return n;
+        }
+
+        // --- Fetch boundary + barangays ---
+        fetch('/geojson/dasmarinas-city-boundary.geojson')
+            .then(function(r) { return r.json(); })
+            .then(function(boundary) {
+                var polys = { type: 'FeatureCollection', features: boundary.features.filter(function(f) { return f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'; }) };
+                L.geoJSON(polys, { fillColor: 'transparent', color: '#334155', weight: 2.5, opacity: 1 }).addTo(map);
+                cityBounds = L.geoJSON(polys).getBounds();
+                outsideMaskLayer = createOutsideMask(cityBounds).addTo(map);
+                map.setMaxBounds(cityBounds);
+                map.fitBounds(cityBounds);
+                map.on('drag', function() { map.panInsideBounds(cityBounds, { animate: false }); });
+            });
+
+        fetch('/geojson/barangays/dasmarinas-barangays.geojson')
+            .then(function(r) { return r.json(); })
+            .then(function(geojson) {
+                geojsonData = geojson;
+
+                // Use server-side data (passed from /home route, like City Vet pattern)
+                var heatmapData = @json($rabiesHeatmapData);
+                rabiesHomeUpdateMap(heatmapData);
+                rabiesHomeUpdateStats({ heatmapData: heatmapData });
+
+                // Hide loading overlays once data is rendered
+                var loadingOverlay = document.getElementById('rabiesHomeMapLoading');
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                var loadingEl = document.querySelector('.rabies-home-loading');
+                if (loadingEl) loadingEl.style.display = 'none';
+            })
+            .catch(function(err) {
+                console.error('GeoJSON Error:', err);
+                document.getElementById('rabiesHomeMapError').classList.remove('hidden');
+                var loadingOverlay = document.getElementById('rabiesHomeMapLoading');
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                var loadingEl = document.querySelector('.rabies-home-loading');
+                if (loadingEl) loadingEl.style.display = 'none';
+            });
+
+        // --- Layer switching ---
+        window.rabiesHomeSwitchLayer = function(layerType) {
+            currentLayer = layerType;
+            document.getElementById('rabiesHomeBtnRabiesLayer').classList.toggle('bg-indigo-600', layerType === 'rabies');
+            document.getElementById('rabiesHomeBtnRabiesLayer').classList.toggle('text-white', layerType === 'rabies');
+            document.getElementById('rabiesHomeBtnRabiesLayer').classList.toggle('border-indigo-600', layerType === 'rabies');
+            document.getElementById('rabiesHomeBtnRabiesLayer').classList.toggle('shadow-[0_2px_8px_rgba(79,70,229,0.3)]', layerType === 'rabies');
+            document.getElementById('rabiesHomeBtnVaccinationLayer').classList.toggle('bg-indigo-600', layerType === 'vaccination');
+            document.getElementById('rabiesHomeBtnVaccinationLayer').classList.toggle('text-white', layerType === 'vaccination');
+            document.getElementById('rabiesHomeBtnVaccinationLayer').classList.toggle('border-indigo-600', layerType === 'vaccination');
+            document.getElementById('rabiesHomeBtnVaccinationLayer').classList.toggle('shadow-[0_2px_8px_rgba(79,70,229,0.3)]', layerType === 'vaccination');
+            rabiesHomeUpdateLegend();
+            rabiesHomeUpdateStatsLabels();
+            rabiesHomeFetchFilteredData();
+        };
+
+        function rabiesHomeUpdateLegend() {
+            var items = document.querySelectorAll('.simple-legend-item');
+            if (currentLayer === 'vaccination') {
+                items[0].querySelector('.simple-legend-dot').style.background = '#166534';
+                items[0].querySelector('.simple-legend-text').textContent = 'Excellent (20+)';
+                items[1].querySelector('.simple-legend-dot').style.background = '#15803d';
+                items[1].querySelector('.simple-legend-text').textContent = 'Good (11-19)';
+                items[2].querySelector('.simple-legend-dot').style.background = '#22c55e';
+                items[2].querySelector('.simple-legend-text').textContent = 'Fair (6-10)';
+                items[3].querySelector('.simple-legend-dot').style.background = '#86efac';
+                items[3].querySelector('.simple-legend-text').textContent = 'Low (1-5)';
+                items[4].querySelector('.simple-legend-dot').style.background = '#cbd5e1';
+                items[4].querySelector('.simple-legend-text').textContent = 'No Vaccinations';
+            } else {
+                items[0].querySelector('.simple-legend-dot').style.background = '#dc2626';
+                items[0].querySelector('.simple-legend-text').textContent = 'Critical (20+)';
+                items[1].querySelector('.simple-legend-dot').style.background = '#ea580c';
+                items[1].querySelector('.simple-legend-text').textContent = 'High (11-19)';
+                items[2].querySelector('.simple-legend-dot').style.background = '#eab308';
+                items[2].querySelector('.simple-legend-text').textContent = 'Moderate (6-10)';
+                items[3].querySelector('.simple-legend-dot').style.background = '#fde68a';
+                items[3].querySelector('.simple-legend-text').textContent = 'Low (1-5)';
+                items[4].querySelector('.simple-legend-dot').style.background = '#cbd5e1';
+                items[4].querySelector('.simple-legend-text').textContent = 'No Cases';
+            }
+        }
+
+        function rabiesHomeUpdateStatsLabels() {
+            var totalLabel = document.getElementById('rabiesHomeStatTotalLabel');
+            var totalIcon = document.getElementById('rabiesHomeStatTotalIcon');
+            var affectedLabel = document.getElementById('rabiesHomeStatAffectedLabel');
+            var affectedIcon = document.getElementById('rabiesHomeStatAffectedIcon');
+            var criticalLabel = document.getElementById('rabiesHomeStatCriticalLabel');
+            var criticalIcon = document.getElementById('rabiesHomeStatCriticalIcon');
+            if (currentLayer === 'vaccination') {
+                totalLabel.textContent = 'Total Vaccinations';
+                totalIcon.className = 'w-2 h-2 rounded-full bg-green-600';
+                affectedLabel.textContent = 'Coverage Areas';
+                affectedIcon.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                criticalLabel.textContent = 'High Coverage';
+                criticalIcon.className = 'w-2 h-2 rounded-full bg-emerald-700';
+            } else {
+                totalLabel.textContent = 'Total Cases';
+                totalIcon.className = 'w-2 h-2 rounded-full bg-red-500';
+                affectedLabel.textContent = 'Affected';
+                affectedIcon.className = 'w-2 h-2 rounded-full bg-amber-500';
+                criticalLabel.textContent = 'Critical';
+                criticalIcon.className = 'w-2 h-2 rounded-full bg-rose-500';
+            }
+        }
+
+        // --- Filters ---
+        window.rabiesHomeToggleFilter = function() {
+            var panel = document.getElementById('rabiesHomeFilterPanel');
+            panel.classList.toggle('hidden');
+        };
+        window.rabiesHomeClearFilters = function() {
+            filters.month = null; filters.week = null; filters.severity = null; filters.date_from = null; filters.date_to = null;
+            document.getElementById('rabiesHomeFilterMonth').value = '';
+            rabiesHomeUpdateSeverityLegendUI();
+            rabiesHomeFetchFilteredData();
+            document.getElementById('rabiesHomeFilterPanel').classList.add('hidden');
+        };
+
+        window.rabiesHomeSetSeverityFilter = function(severity) {
+            if (filters.severity === severity) { filters.severity = null; }
+            else { filters.severity = severity; }
+            rabiesHomeUpdateSeverityLegendUI();
+            rabiesHomeFetchFilteredData();
+        };
+
+        function rabiesHomeUpdateSeverityLegendUI() {
+            document.querySelectorAll('.simple-legend-item').forEach(function(item) { item.classList.remove('severity-active'); });
+            if (filters.severity) {
+                var activeItem = document.querySelector('.simple-legend-item[onclick*="' + filters.severity + '"]');
+                if (activeItem) activeItem.classList.add('severity-active');
+            }
+        }
+
+        document.getElementById('rabiesHomeFilterYear')?.addEventListener('change', function() {
+            filters.year = parseInt(this.value);
+            rabiesHomeFetchFilteredData();
+        });
+        document.getElementById('rabiesHomeFilterMonth')?.addEventListener('change', function() {
+            filters.month = this.value ? parseInt(this.value) : null;
+            rabiesHomeFetchFilteredData();
+        });
+
+        // Date inputs (added dynamically if present)
+        document.getElementById('rabiesHomeFilterDateFrom')?.addEventListener('change', function() {
+            filters.date_from = this.value || null;
+            rabiesHomeFetchFilteredData();
+        });
+        document.getElementById('rabiesHomeFilterDateTo')?.addEventListener('change', function() {
+            filters.date_to = this.value || null;
+            rabiesHomeFetchFilteredData();
+        });
+
+        // --- Fetch filtered data ---
+        window.rabiesHomeFetchFilteredData = function() {
+            var loadingOverlay = document.getElementById('rabiesHomeMapLoading');
+            if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+
+            var params = new URLSearchParams();
+            params.append('year', filters.year);
+            params.append('type', currentLayer);
+            if (filters.month) params.append('month', filters.month);
+            if (filters.week) params.append('week', filters.week);
+            if (filters.date_from) params.append('date_from', filters.date_from);
+            if (filters.date_to) params.append('date_to', filters.date_to);
+            if (filters.severity) params.append('severity', filters.severity);
+
+            var baseUrl = '/public/rabies-heatmap-data';
+            fetch(baseUrl + '?' + params.toString())
+                .then(function(r) { if (!r.ok) throw new Error('Failed to load rabies data'); return r.json(); })
+                .then(function(data) {
+                    rabiesHomeUpdateMap(data.heatmapData);
+                    rabiesHomeUpdateStats(data);
+                    if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                })
+                .catch(function(err) {
+                    console.error('Data Error:', err);
+                    document.getElementById('rabiesHomeMapError').classList.remove('hidden');
+                    if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                });
+        };
+
+        function rabiesHomeUpdateMap(heatmapData) {
+            var caseData = {};
+            heatmapData.forEach(function(item) { caseData[normalizeBarangayName(item.name)] = item.count; });
+            if (!geojsonData || !geojsonData.features) return;
+            var copy = JSON.parse(JSON.stringify(geojsonData));
+            copy.features.forEach(function(f) {
+                var name = normalizeBarangayName(f.properties.name || '');
+                f.properties.cases = caseData[name] || 0;
+                f.properties.name = f.properties.name || 'Unknown';
+            });
+            var polygons = { type: 'FeatureCollection', features: copy.features.filter(function(f) { return f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'; }) };
+            if (barangayLayer) map.removeLayer(barangayLayer);
+            barangayLayer = L.geoJSON(polygons, { style: style, onEachFeature: onEachFeature, pointToLayer: function() { return null; } }).addTo(map);
+            barangayLayer.bringToFront();
+            map.eachLayer(function(l) { if (l instanceof L.TileLayer) l.bringToBack(); });
+        }
+
+        function rabiesHomeUpdateStats(data) {
+            var total = 0, affected = 0, highCount = 0;
+            data.heatmapData.forEach(function(item) {
+                total += item.count;
+                if (item.count > 0) affected++;
+                if (currentLayer === 'vaccination') { if (item.count > 10) highCount++; }
+                else { if (item.count > 20) highCount++; }
+            });
+            document.getElementById('rabiesHomeStatTotal').textContent = total;
+            document.getElementById('rabiesHomeStatAffected').textContent = affected;
+            document.getElementById('rabiesHomeStatCritical').textContent = highCount;
+        }
+
+        // --- Top Barangays Modal ---
+        var rabiesHomeTopBarangaysCurrentType = 'rabies';
+        var rabiesHomeTopBarangaysCurrentLimit = 5;
+
+        window.rabiesHomeOpenTopBarangaysModal = function() {
+            var backdrop = document.getElementById('rabiesHomeTopBarangaysModalBackdrop');
+            var list = document.getElementById('rabiesHomeTopBarangaysList');
+            var empty = document.getElementById('rabiesHomeTopBarangaysEmpty');
+            var loading = document.getElementById('rabiesHomeTopBarangaysLoading');
+            list.innerHTML = ''; list.classList.add('hidden'); empty.classList.add('hidden'); loading.classList.remove('hidden');
+            backdrop.classList.remove('hidden');
+            setTimeout(function() { backdrop.classList.remove('opacity-0'); }, 10);
+            rabiesHomeLoadTopBarangays();
+        };
+        window.rabiesHomeCloseTopBarangaysModal = function() {
+            var backdrop = document.getElementById('rabiesHomeTopBarangaysModalBackdrop');
+            backdrop.classList.add('opacity-0');
+            setTimeout(function() { backdrop.classList.add('hidden'); }, 200);
+        };
+        window.rabiesHomeSetTopBarangaysType = function(type) {
+            rabiesHomeTopBarangaysCurrentType = type;
+            document.getElementById('rabiesHomeTopBarangaysTypeRabies').classList.toggle('text-indigo-600', type === 'rabies');
+            document.getElementById('rabiesHomeTopBarangaysTypeRabies').classList.toggle('bg-white', type === 'rabies');
+            document.getElementById('rabiesHomeTopBarangaysTypeRabies').classList.toggle('shadow-sm', type === 'rabies');
+            document.getElementById('rabiesHomeTopBarangaysTypeVaccination').classList.toggle('text-indigo-600', type === 'vaccination');
+            document.getElementById('rabiesHomeTopBarangaysTypeVaccination').classList.toggle('bg-white', type === 'vaccination');
+            document.getElementById('rabiesHomeTopBarangaysTypeVaccination').classList.toggle('shadow-sm', type === 'vaccination');
+            document.getElementById('rabiesHomeTopBarangaysModalSubtitle').textContent = type === 'rabies' ? 'Confirmed Rabies Cases' : 'Vaccination Coverage';
+            rabiesHomeLoadTopBarangays();
+        };
+        window.rabiesHomeSetTopBarangaysLimit = function(limit) {
+            rabiesHomeTopBarangaysCurrentLimit = limit;
+            document.getElementById('rabiesHomeTopBarangaysLimit5').classList.toggle('text-indigo-600', limit === 5);
+            document.getElementById('rabiesHomeTopBarangaysLimit5').classList.toggle('bg-white', limit === 5);
+            document.getElementById('rabiesHomeTopBarangaysLimit5').classList.toggle('shadow-sm', limit === 5);
+            document.getElementById('rabiesHomeTopBarangaysLimit10').classList.toggle('text-indigo-600', limit === 10);
+            document.getElementById('rabiesHomeTopBarangaysLimit10').classList.toggle('bg-white', limit === 10);
+            document.getElementById('rabiesHomeTopBarangaysLimit10').classList.toggle('shadow-sm', limit === 10);
+            rabiesHomeLoadTopBarangays();
+        };
+
+        function rabiesHomeLoadTopBarangays() {
+            var params = new URLSearchParams();
+            params.append('year', document.getElementById('rabiesHomeFilterYear')?.value || new Date().getFullYear());
+            params.append('month', document.getElementById('rabiesHomeFilterMonth')?.value || '');
+            params.append('type', rabiesHomeTopBarangaysCurrentType);
+            params.append('limit', rabiesHomeTopBarangaysCurrentLimit);
+            fetch('{{ route('public.rabies-heatmap-data') }}?' + params.toString())
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    rabiesHomeRenderTopBarangays(data.heatmapData || []);
+                })
+                .catch(function(err) {
+                    console.error('Error loading top barangays:', err);
+                    document.getElementById('rabiesHomeTopBarangaysLoading').classList.add('hidden');
+                    document.getElementById('rabiesHomeTopBarangaysEmpty').classList.remove('hidden');
+                });
+        }
+
+        function rabiesHomeRenderTopBarangays(data) {
+            var loading = document.getElementById('rabiesHomeTopBarangaysLoading');
+            var list = document.getElementById('rabiesHomeTopBarangaysList');
+            var empty = document.getElementById('rabiesHomeTopBarangaysEmpty');
+            loading.classList.add('hidden');
+            if (!data || data.length === 0) { list.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+            var year = document.getElementById('rabiesHomeFilterYear')?.value || new Date().getFullYear();
+            document.getElementById('rabiesHomeTopBarangaysFilterLabel').textContent = year;
+            list.innerHTML = '';
+            data.forEach(function(item, index) {
+                var rank = index + 1;
+                var rankColor = rank === 1 ? '#dc2626' : rank === 2 ? '#ea580c' : rank === 3 ? '#eab308' : '#64748b';
+                var hasCoords = item.latitude && item.longitude;
+                var row = document.createElement('div');
+                row.className = 'flex items-center gap-3 px-3 py-2.5 border border-slate-200 rounded-xl bg-white hover:bg-indigo-50 hover:border-indigo-200 transition-colors cursor-pointer';
+                row.onclick = function() { rabiesHomeCloseTopBarangaysModal(); if (hasCoords && map) { map.setView([item.latitude, item.longitude], 15); map.invalidateSize(); } };
+                row.innerHTML = '<div class="flex items-center justify-center w-6"><span class="text-xs font-bold" style="color:' + rankColor + '">#' + rank + '</span></div>' +
+                    '<div class="flex-1 min-w-0"><p class="text-sm font-semibold text-slate-800 truncate" title="' + item.name + '">' + item.name + '</p><p class="text-[10px] text-slate-500 truncate">Barangay ID: ' + item.barangay_id + '</p></div>' +
+                    '<div class="text-right hidden sm:block"><p class="text-sm font-bold text-slate-800">' + item.count + '</p><p class="text-[10px] text-slate-400">' + (rabiesHomeTopBarangaysCurrentType === 'vaccination' ? 'doses' : 'cases') + '</p></div>' +
+                    '<div class="w-8 flex items-center justify-end text-[10px] text-slate-400">' + (hasCoords ? '<i class="fa-solid fa-location-dot"></i>' : '<i class="fa-solid fa-slash opacity-30"></i>') + '</div>';
+                list.appendChild(row);
+            });
+            list.classList.remove('hidden'); empty.classList.add('hidden');
+        }
+    });
+    </script>
 
     <!-- Interactive Map & Location Section -->
     <section id="location" class="py-20 bg-slate-50 border-t border-slate-100">
@@ -867,7 +1555,7 @@
                     // Update section title
                     const titleEl = document.getElementById('missingPetsTitle');
                     if (titleEl) {
-                        titleEl.textContent = filter === 'adoption' ? 'Adoption' : 'Missing Pets';
+                        titleEl.textContent = filter === 'adoption' ? 'Adoption' : 'Lost Pets';
                     }
                 }
             });
@@ -1083,3 +1771,7 @@
     </script>
 </body>
 </html>
+ </script>
+</body>
+</html>
+>

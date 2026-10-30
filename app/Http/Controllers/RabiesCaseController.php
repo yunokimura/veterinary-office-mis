@@ -660,6 +660,52 @@ class RabiesCaseController extends Controller
     }
 
     /**
+     * Public read-only rabies heatmap data for the /home landing page geomap.
+     * No authentication required. Returns aggregated case counts by barangay.
+     * API Endpoint: GET /public/rabies-heatmap-data
+     */
+    public function publicHeatmapData(Request $request)
+    {
+        $year = (int) ($request->year ?? date('Y'));
+
+        $byBarangay = RabiesCase::whereYear('incident_date', $year)
+            ->whereNotNull('barangay_id')
+            ->whereHas('barangay', function ($q) {
+                $q->where('city', 'dasmarinas');
+            })
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
+            ->get();
+
+        $barangays = Barangay::where('city', 'dasmarinas')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get();
+
+        $maxCount = $byBarangay->max('count') ?: 1;
+
+        $heatmapData = $barangays->map(function ($barangay) use ($byBarangay, $maxCount) {
+            $count = (int) ($byBarangay->firstWhere('barangay_id', $barangay->barangay_id)?->count ?? 0);
+
+            return [
+                'id' => 'rabies-' . $barangay->barangay_id,
+                'barangay_id' => $barangay->barangay_id,
+                'name' => $barangay->barangay_name,
+                'latitude' => (float) $barangay->latitude,
+                'longitude' => (float) $barangay->longitude,
+                'count' => $count,
+                'intensity' => round($count / $maxCount, 2),
+            ];
+        })->values()->toArray();
+
+        return response()->json([
+            'heatmapData' => $heatmapData,
+            'totalCases' => collect($heatmapData)->sum('count'),
+            'year' => $year,
+        ]);
+    }
+
+    /**
      * Get individual rabies incidents with coordinates for map markers
      * API Endpoint: GET /api/rabies/incidents
      */
