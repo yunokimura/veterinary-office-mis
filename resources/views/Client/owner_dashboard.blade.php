@@ -602,7 +602,7 @@
 
     <!-- View Profile Modal -->
     <div id="petProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 sm:p-6">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full min-h-[64vh] max-h-[64vh] flex flex-col">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] min-h-[70vh] flex flex-col">
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-slate-200 flex-shrink-0">
                 <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
