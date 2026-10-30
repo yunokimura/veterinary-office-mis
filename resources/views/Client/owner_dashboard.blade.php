@@ -661,7 +661,7 @@
 
                 <!-- Health & Vaccination -->
                 <div id="petPanelHealth" class="hidden space-y-4">
-                    <div class="flex items-start gap-3">
+                    <div class="flex items-center gap-3">
                         <div>
                             <h3 id="petProfileVaxStatus" class="text-lg font-bold text-slate-900">Not Vaccinated / No Record</h3>
                             <p class="text-slate-500 text-sm mt-0.5">Anti-rabies vaccination status</p>
