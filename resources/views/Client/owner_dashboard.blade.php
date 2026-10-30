@@ -204,7 +204,7 @@
             @endphp
             
             @if($pets->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="petsGrid">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6" id="petsGrid">
                     @php
                         $vaccinationReports = \App\Models\VaccinationReport::whereIn('pet_id', $pets->pluck('pet_id'))->get()->keyBy('pet_id');
                     @endphp
@@ -266,13 +266,20 @@
                                     }
                                 @endphp
                                 <div class="grid grid-cols-2 gap-2 my-4 p-2.5 bg-slate-50 rounded-xl text-xs">
-                                    <div>
+                                    <!-- Gender & Age -->
+                                    <div class="col-span-2">
                                         <span class="text-slate-400 block text-[10px] uppercase font-bold">Gender & Age</span>
                                         <span class="font-semibold text-slate-700">{{ ucfirst($pet->gender) }}, {{ $ageDisplay }}</span>
                                     </div>
-                                    <div>
-                                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Weight / Status</span>
-                                        <span class="font-semibold text-slate-700">{{ $pet->petInfo?->pet_weight ?? '-' }} • {{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Spayed / Neutered' : 'Intact' }}</span>
+                                    <!-- Weight -->
+                                    <div class="col-span-2">
+                                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Weight</span>
+                                        <span class="font-semibold text-slate-700">{{ $pet->petInfo?->pet_weight ?? '-' }}</span>
+                                    </div>
+                                    <!-- Spayed / Neuter -->
+                                    <div class="col-span-2">
+                                        <span class="text-slate-400 block text-[10px] uppercase font-bold">{{ $pet->gender === 'female' ? 'Spayed' : 'Neuter' }}</span>
+                                        <span class="font-semibold text-slate-700">{{ ($pet->petInfo?->is_neutered ?? '') === 'yes' ? 'Yes' : 'No' }}</span>
                                     </div>
                                 </div>
 
@@ -313,7 +320,7 @@
                                     <span>View Profile</span>
                                     <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                 </button>
-                                <span class="text-[10px] text-slate-400">Registered</span>
+                                <span class="text-[10px] text-slate-400">Updated {{ $pet->updated_at?->format('F Y') ?? date('F Y') }}</span>
                             </div>
                         </div>
                     @endforeach
