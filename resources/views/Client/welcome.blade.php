@@ -212,6 +212,10 @@
                 box-shadow: 0 10px 15px -3px rgba(234, 179, 8, 0.3);
             }
         }
+        /* Prevent scrollbar from clipping the modal's rounded corner */
+        ::-webkit-scrollbar-corner {
+            background: transparent;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50 text-slate-800">
@@ -1856,7 +1860,7 @@
                 </div>
                 <h3 class="text-2xl font-bold text-slate-900 mb-2">Explore Veterinary Services</h3>
                 <p class="text-slate-600 text-sm mb-6 leading-relaxed">
-                    Select a service below to view details or begin booking.
+                    Select a service below to view details.
                 </p>
 
                 <div class="space-y-3">
@@ -1932,8 +1936,8 @@
                 </div>
             </div>
 
-            <div class="border-t border-slate-100 text-center flex-shrink-0 p-6 sm:p-8">
-                <p class="text-sm text-slate-600 mb-3">Ready to make an appointment?</p>
+            <div class="border-t border-slate-100 flex items-center justify-between flex-shrink-0 px-6 sm:px-8 py-4">
+                <p class="text-sm text-slate-600 mb-0">Ready to make an appointment?</p>
                 <a href="#" onclick="closeExploreServicesModal(); openNotLoggedInModal();" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5 active:translate-y-0">
                     <span>Log In to Book Now</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
