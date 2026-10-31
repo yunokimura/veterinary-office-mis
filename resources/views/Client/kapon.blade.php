@@ -118,17 +118,10 @@
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
-                        @auth
-                            <a href="{{ url('/kapon/form') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                                <span>Book Your Pet</span>
-                                <i class="fa-solid fa-arrow-right text-sm text-white"></i>
-                            </a>
-                        @else
-                            <button onclick="showLoginPrompt()" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                                <span>Book Your Pet</span>
-                                <i class="fa-solid fa-arrow-right text-sm text-white"></i>
-                            </button>
-                        @endauth
+                        <button onclick="openNotLoggedInModal()" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                            <span>Book Your Pet</span>
+                            <i class="fa-solid fa-arrow-right text-sm text-white"></i>
+                        </button>
                         <a href="#faq" class="w-full sm:w-auto bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all flex items-center justify-center">
                             Kapon FAQ
                         </a>
@@ -500,60 +493,75 @@
 
     @include('Client.partials.footer')
 
-    <!-- Login Prompt Modal -->
-    <div id="loginPromptModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeLoginPrompt()"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Login Required
-                            </h3>
-                            <div class="mt-2">
-                                <p class="text-sm text-gray-500">
-                                    You need to be logged in to book a kapon appointment. Please login or register an account to continue.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Modal: Account Required (Guest Modal) -->
+    <div id="notLoggedInModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative transform transition-all">
+            <button onclick="closeNotLoggedInModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-user-lock text-xl"></i>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <a href="{{ route('login') }}" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-primary-light focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
-                        Login
-                    </a>
-                    <a href="{{ route('register') }}" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Register
-                    </a>
-                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" onclick="closeLoginPrompt()">
-                        Cancel
-                    </button>
+                <h3 class="text-2xl font-bold text-slate-900">Account Required</h3>
+                <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                    To book mobile clinic appointments, track your pet's vaccination records, and manage schedules in Dasmariñas City, please log in or create an account.
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                    <i class="fa-solid fa-check-circle text-emerald-600 w-5 h-5 flex-shrink-0"></i>
+                    <span class="text-sm text-slate-700">Access Pet Adoption, Spay/Neuter &amp; Vaccination services</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                    <i class="fa-solid fa-check-circle text-emerald-600 w-5 h-5 flex-shrink-0"></i>
+                    <span class="text-sm text-slate-700">Track &amp; manage your upcoming appointment schedule</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                    <i class="fa-solid fa-check-circle text-emerald-600 w-5 h-5 flex-shrink-0"></i>
+                    <span class="text-sm text-slate-700">Receive real-time updates on your booking status</span>
                 </div>
             </div>
+
+            <button onclick="window.location.href='{{ route('login') }}'" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all mt-2 flex items-center justify-center space-x-2">
+                <span>Log In to Book</span>
+                <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
+
+            <button onclick="window.location.href='{{ route('register') }}'" class="w-full bg-slate-50 text-slate-700 font-semibold py-3 rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors mt-2">
+                Create Account
+            </button>
+
+            <button onclick="closeNotLoggedInModal();" class="w-full text-sm text-emerald-600 font-medium hover:text-emerald-700 py-2 mt-4 transition-colors underline underline-offset-4">
+                Continue browsing services as Guest
+            </button>
         </div>
     </div>
 
     <script>
-        function showLoginPrompt() {
-            const loginPrompt = document.getElementById('loginPromptModal');
-            if (loginPrompt) {
-                loginPrompt.classList.remove('hidden');
-            }
+        function openNotLoggedInModal() {
+            document.getElementById('notLoggedInModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
-        function closeLoginPrompt() {
-            const loginPrompt = document.getElementById('loginPromptModal');
-            if (loginPrompt) {
-                loginPrompt.classList.add('hidden');
-            }
+        function closeNotLoggedInModal() {
+            document.getElementById('notLoggedInModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
         }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeNotLoggedInModal();
+            }
+        });
+
+        document.getElementById('notLoggedInModal')?.addEventListener('click', function(event) {
+            if (event.target === this) closeNotLoggedInModal();
+        });
 
         // FAQ Toggle
         function toggleFaq(button) {
