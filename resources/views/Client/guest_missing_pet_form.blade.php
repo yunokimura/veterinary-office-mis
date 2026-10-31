@@ -934,6 +934,7 @@
     (function() {
         const yearsSel = document.getElementById('petAgeYears');
         const monthsSel = document.getElementById('petAgeMonths');
+        if (!yearsSel || !monthsSel) return;
         for (let i = 0; i <= 40; i++) {
             const o = document.createElement('option');
             o.value = i;
