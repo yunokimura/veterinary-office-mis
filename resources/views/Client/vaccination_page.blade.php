@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -46,17 +47,18 @@
     @include('Client.partials.navbar')
 
      <!-- Hero Section -->
-    <section class="bg-[#066D33] min-h-[500px] flex items-center justify-center py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- Left Side: Title and Subtitle -->
-                <div>
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">Anti-Rabies Vaccination Services</h1>
-                    <p class="text-lg md:text-xl text-gray-200 max-w-xl mb-8">
+    <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.8) 0%, rgba(20, 83, 45, 0.8) 100%);">
+        <!-- Hero Content -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center md:text-left">
+            <div class="grid md:grid-cols-12 gap-8 items-center">
+                <!-- Left Side: Title, Subtitle, and Instructions -->
+                <div class="md:col-span-7 lg:col-span-6 space-y-6">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">Anti-Rabies Vaccination Services</h1>
+                    <p class="text-white text-base sm:text-lg max-w-2xl font-light leading-relaxed">
                         Protect your beloved pets with comprehensive vaccination services provided by Dasmariñas City Veterinary Services.
                     </p>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-                        <h2 class="text-xl font-semibold text-white mb-4">Why Vaccinate Your Pet?</h2>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                        <h2 class="text-xl font-bold text-white mb-4">Why Vaccinate Your Pet?</h2>
                         <div class="space-y-3">
                             <div class="flex items-start space-x-3">
                                 <span class="bg-white text-[#066D33] rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
@@ -72,25 +74,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-wrap gap-4 mt-8">
+                    <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
                         @auth
-                            <a href="{{ url('/vaccination/form') }}" class="bg-white text-[#066D33] px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors">
-                                Book Anti-Rabies Vaccination
+                            <a href="{{ url('/vaccination/form') }}" class="w-full sm:w-auto bg-white text-[#066D33] hover:bg-gray-100 font-bold px-8 py-4 rounded-xl shadow-lg shadow-black/20 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                <span>Book Anti-Rabies Vaccination</span>
+                                <i class="fa-solid fa-arrow-right text-sm"></i>
                             </a>
                         @else
-                            <button onclick="showLoginPrompt()" class="bg-white text-[#066D33] px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors">
-                                Book Anti-Rabies Vaccination
+                            <button onclick="showLoginPrompt()" class="w-full sm:w-auto bg-white text-[#066D33] hover:bg-gray-100 font-bold px-8 py-4 rounded-xl shadow-lg shadow-black/20 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                <span>Book Anti-Rabies Vaccination</span>
+                                <i class="fa-solid fa-arrow-right text-sm"></i>
                             </button>
                         @endauth
-                        <a href="#requirements" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-colors">
+                        <a href="#requirements" class="w-full sm:w-auto bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all flex items-center justify-center">
                             Requirements
                         </a>
                     </div>
                 </div>
                 <!-- Right Side: Hero Image -->
-                <div class="flex justify-center">
-                    <div class="w-full max-w-lg aspect-square rounded-2xl overflow-hidden shadow-xl border border-white/20">
-                        <img src="{{ asset('images/herosection/vaccine.jpg') }}" alt="Anti-Rabies Vaccination Services" class="w-full h-full object-cover">
+                <div class="md:col-span-5 lg:col-span-6">
+                    <div class="relative">
+                        <div class="rounded-2xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm">
+                            <img src="{{ asset('images/herosection/vaccine.jpg') }}" alt="Anti-Rabies Vaccination Services" class="w-full h-full aspect-square object-cover">
+                        </div>
                     </div>
                 </div>
             </div>

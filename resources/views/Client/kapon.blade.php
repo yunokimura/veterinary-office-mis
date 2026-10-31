@@ -90,7 +90,7 @@
     @endif
 
     <!-- Hero Section -->
-    <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, rgba(109, 40, 217, 0.9) 0%, rgba(76, 29, 149, 0.95) 100%);">
+    <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.8) 0%, rgba(20, 83, 45, 0.8) 100%);">
         <!-- Hero Content -->
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center md:text-left">
             <div class="grid md:grid-cols-12 gap-8 items-center">
@@ -104,29 +104,29 @@
                         <h2 class="text-xl font-bold text-white mb-4">Why Kapon?</h2>
                         <div class="space-y-3">
                             <div class="flex items-start space-x-3">
-                                <span class="bg-white text-violet-800 rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
+                                <span class="bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
                                 <p class="text-white">Prevents unwanted litters and reduces stray animal population</p>
                             </div>
                             <div class="flex items-start space-x-3">
-                                <span class="bg-white text-violet-800 rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
+                                <span class="bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
                                 <p class="text-white">Reduces risk of certain cancers and reproductive health issues</p>
                             </div>
                             <div class="flex items-start space-x-3">
-                                <span class="bg-white text-violet-800 rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
+                                <span class="bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
                                 <p class="text-white">Decreases aggressive behavior and roaming tendencies</p>
                             </div>
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
                         @auth
-                            <a href="{{ url('/kapon/form') }}" class="w-full sm:w-auto bg-white text-violet-800 hover:bg-violet-50 font-bold px-8 py-4 rounded-xl shadow-lg shadow-black/20 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                            <a href="{{ url('/kapon/form') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
                                 <span>Book Your Pet</span>
-                                <i class="fa-solid fa-arrow-right text-sm"></i>
+                                <i class="fa-solid fa-arrow-right text-sm text-white"></i>
                             </a>
                         @else
-                            <button onclick="showLoginPrompt()" class="w-full sm:w-auto bg-white text-violet-800 hover:bg-violet-50 font-bold px-8 py-4 rounded-xl shadow-lg shadow-black/20 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                            <button onclick="showLoginPrompt()" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
                                 <span>Book Your Pet</span>
-                                <i class="fa-solid fa-arrow-right text-sm"></i>
+                                <i class="fa-solid fa-arrow-right text-sm text-white"></i>
                             </button>
                         @endauth
                         <a href="#faq" class="w-full sm:w-auto bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all flex items-center justify-center">
@@ -135,9 +135,11 @@
                     </div>
                 </div>
                 <!-- Right Side: Hero Image -->
-                <div class="md:col-span-5 lg:col-span-6 flex justify-center">
-                    <div class="w-full max-w-lg rounded-2xl overflow-hidden shadow-xl">
-                        <img src="{{ asset('images/herosection/kapon.jpg') }}" alt="Kapon Services" class="w-full h-full aspect-square object-cover">
+                <div class="md:col-span-5 lg:col-span-6">
+                    <div class="relative">
+                        <div class="rounded-2xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm">
+                            <img src="{{ asset('images/herosection/kapon.jpg') }}" alt="Kapon Services" class="w-full h-full aspect-square object-cover">
+                        </div>
                     </div>
                 </div>
             </div>
