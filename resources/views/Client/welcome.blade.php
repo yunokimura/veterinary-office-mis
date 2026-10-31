@@ -469,7 +469,7 @@
                                 </p>
                             </div>
                             <div>
-                                <a href="#" onclick="openNewsModal('{{ $featuredAnnouncement->title }}', '{{ \Carbon\Carbon::parse($featuredAnnouncement->created_at)->format('M d, Y') }}', '{{ strtoupper($featuredAnnouncement->category) }}', '{{ $featuredAnnouncement->photo_path ? asset('storage/' . $featuredAnnouncement->photo_path) : 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=800&auto=format&fit=crop' }}', '{!! \Illuminate\Support\Str::limit(strip_tags($featuredAnnouncement->content), 200) !!}')"
+                                <a href="#" onclick="event.preventDefault(); openNewsModal('{{ $featuredAnnouncement->title }}', '{{ \Carbon\Carbon::parse($featuredAnnouncement->created_at)->format('M d, Y') }}', '{{ strtoupper($featuredAnnouncement->category) }}', '{{ $featuredAnnouncement->photo_path ? asset('storage/' . $featuredAnnouncement->photo_path) : 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=800&auto=format&fit=crop' }}', '{!! strip_tags($featuredAnnouncement->content) !!}')"
                                    class="inline-flex items-center font-semibold text-emerald-600 hover:text-emerald-700 text-sm group">
                                     Read Full Details
                                     <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -540,7 +540,7 @@
                                         </div>
                                     </div>
                                     <div class="px-5 pb-5">
-                                        <a href="#" onclick="openNewsModal('{{ $announcement->title }}', '{{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}', '{{ strtoupper($announcement->category) }}', '{{ $announcement->photo_path ? asset('storage/' . $announcement->photo_path) : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=600&auto=format&fit=crop' }}', '{!! \Illuminate\Support\Str::limit(strip_tags($announcement->content), 150) !!}')"
+                                        <a href="#" onclick="event.preventDefault(); openNewsModal('{{ $announcement->title }}', '{{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}', '{{ strtoupper($announcement->category) }}', '{{ $announcement->photo_path ? asset('storage/' . $announcement->photo_path) : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=600&auto=format&fit=crop' }}', '{!! strip_tags($announcement->content) !!}')"
                                            class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 inline-flex items-center group">
                                             Read More
                                             <span class="ml-1 group-hover:translate-x-1 transition">→</span>
@@ -2094,7 +2094,7 @@
 
             <div class="border-t border-slate-100 flex items-center justify-between flex-shrink-0 px-6 sm:px-8 py-4">
                 <p class="text-sm text-slate-600 mb-0">Ready to make an appointment?</p>
-                <a href="#" onclick="closeExploreServicesModal(); openNotLoggedInModal();" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5 active:translate-y-0">
+                <a href="#" onclick="event.preventDefault(); closeExploreServicesModal(); openNotLoggedInModal();" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5 active:translate-y-0">
                     <span>Log In to Book Now</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
