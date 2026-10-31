@@ -176,14 +176,83 @@ Route::get('/', function () {
 
 // Public API endpoint for welcome page rabies heatmap data
 // Mirrors the city-vet /rabies-geomap/data endpoint but is unauthenticated
+// Handles all filter parameters: year, type, month, week, date_from, date_to, severity
 Route::get('/public/rabies-heatmap-data', function () {
-    $year = request('year') ?? date('Y');
+    $year = (int) (request('year') ?? date('Y'));
+    $type = request('type') ?? 'rabies'; // 'rabies' or 'vaccination'
+    $month = request('month') ? (int) request('month') : null;
+    $week = request('week') ? (int) request('week') : null;
+    $dateFrom = request('date_from') ?: null;
+    $dateTo = request('date_to') ?: null;
+    $severity = request('severity') ?? null;
 
-    $rabiesHeatmapData = \App\Models\RabiesCase::whereYear('incident_date', $year)
+    // Debug: Check if data exists
+    $totalInDb = \App\Models\RabiesCase::whereYear('incident_date', $year)->count();
+    $withBarangay = \App\Models\RabiesCase::whereYear('incident_date', $year)
+        ->whereNotNull('barangay_id')->whereHas('barangay', function ($q) {
+            $q->where('city', 'dasmarinas');
+        })->count();
+
+    // Base query: rabies cases for the year, dasmarinas city only
+    $query = \App\Models\RabiesCase::whereYear('incident_date', $year)
         ->whereNotNull('barangay_id')
         ->whereHas('barangay', function ($q) {
             $q->where('city', 'dasmarinas');
-        })
+        });
+
+    // Apply type filter
+    if ($type === 'vaccination') {
+        // Vaccination data would need a different source/model
+        // For now, default to rabies data even when type=vaccination
+        // TODO: Implement vaccination heatmap data when available
+    }
+
+    // Apply month filter
+    if ($month) {
+        $query->whereMonth('incident_date', $month);
+    }
+
+    // Apply week filter
+    if ($week) {
+        $query->whereRaw("WEEK(incident_date) = $week");
+    }
+
+    // Apply date range filter
+    if ($dateFrom) {
+        $query->where('incident_date', '>=', $dateFrom);
+    }
+    if ($dateTo) {
+        $query->where('incident_date', '<=', $dateTo);
+    }
+
+    // Apply severity filter
+    if ($severity) {
+        if ($type === 'vaccination') {
+            // Vaccination severity thresholds
+            if ($severity === 'critical') {
+                $query->where('count', '>', 20);
+            } elseif ($severity === 'high') {
+                $query->where('count', '>', 10);
+            } elseif ($severity === 'moderate') {
+                $query->where('count', '>', 5);
+            } elseif ($severity === 'low') {
+                $query->where('count', '>', 0);
+            }
+        } else {
+            // Rabies severity thresholds
+            if ($severity === 'critical') {
+                $query->where('count', '>', 20);
+            } elseif ($severity === 'high') {
+                $query->where('count', '>', 10);
+            } elseif ($severity === 'moderate') {
+                $query->where('count', '>', 5);
+            } elseif ($severity === 'low') {
+                $query->where('count', '>', 0);
+            }
+        }
+    }
+
+    $rabiesHeatmapData = $query
         ->selectRaw('barangay_id, COUNT(*) as count')
         ->groupBy('barangay_id')
         ->get();
@@ -209,8 +278,21 @@ Route::get('/public/rabies-heatmap-data', function () {
         ];
     })->values()->toArray();
 
+    $totalCases = collect($rabiesHeatmapData)->sum('count');
+    $affected = collect($rabiesHeatmapData)->where('count', '>', 0)->count();
+    $critical = collect($rabiesHeatmapData)->where('count', '>', 20)->count();
+
     return response()->json([
         'heatmapData' => $rabiesHeatmapData,
+        'totalCases' => $totalCases,
+        'affected' => $affected,
+        'critical' => $critical,
+        'year' => $year,
+        'type' => $type,
+        'debug' => [
+            'total_in_db' => $totalInDb,
+            'with_barangay' => $withBarangay,
+        ],
     ]);
 })->name('public.rabies-heatmap-data');
 
