@@ -80,29 +80,29 @@
                         <h2 class="text-xl font-bold text-white mb-4">How to Adopt</h2>
                         <div class="space-y-3">
                             <div class="flex items-start space-x-3">
-                                <span class="bg-white text-[#066D33] rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
+                                <span class="bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
                                 <p class="text-white">Browse through our list of animals currently available for adoption</p>
                             </div>
                             <div class="flex items-start space-x-3">
-                                <span class="bg-white text-[#066D33] rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
+                                <span class="bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
                                 <p class="text-white">Read the requirements for adoption below</p>
                             </div>
                             <div class="flex items-start space-x-3">
-                                <span class="bg-white text-[#066D33] rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
+                                <span class="bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
                                 <p class="text-white">If you are qualified and interested, you may set an appointment with us to meet the animal</p>
                             </div>
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
                         @auth
-                            <a href="{{ url('/adoption/form') }}" class="w-full sm:w-auto bg-white text-[#066D33] hover:bg-slate-100 font-bold px-8 py-4 rounded-xl shadow-lg shadow-black/20 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                            <a href="{{ url('/adoption/form') }}" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                                 <span>Apply Now</span>
-                                <i class="fa-solid fa-arrow-right text-sm"></i>
+                                <i class="fa-solid fa-arrow-right text-sm text-white"></i>
                             </a>
                         @else
-                            <button onclick="showLoginPrompt()" class="w-full sm:w-auto bg-white text-[#066D33] hover:bg-slate-100 font-bold px-8 py-4 rounded-xl shadow-lg shadow-black/20 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                            <button onclick="showLoginPrompt()" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                                 <span>Apply Now</span>
-                                <i class="fa-solid fa-arrow-right text-sm"></i>
+                                <i class="fa-solid fa-arrow-right text-sm text-white"></i>
                             </button>
                         @endauth
                         <a href="#" class="w-full sm:w-auto bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all flex items-center justify-center">
