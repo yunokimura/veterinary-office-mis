@@ -255,6 +255,12 @@ Route::get('/home', function () {
         ->limit(5)
         ->get();
 
+    // Get found pets reports for the landing page
+    $foundPets = MissingPetsReport::where('report_type', 'found')
+        ->with(['pet', 'barangay'])
+        ->limit(5)
+        ->get();
+
     // Get active announcements for public
     $announcements = Announcement::where('is_active', true)
         ->where('status', 'Published')
@@ -299,7 +305,7 @@ Route::get('/home', function () {
         ];
     })->values()->toArray();
 
-    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayedNeuteredCount', 'reunitedCount', 'rehomedCount', 'rabiesHeatmapData'));
+    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'foundPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayedNeuteredCount', 'reunitedCount', 'rehomedCount', 'rabiesHeatmapData'));
 })->name('public.home');
 
 // ==============================
@@ -860,6 +866,12 @@ Route::get('/client', function () {
         ->limit(5)
         ->get();
 
+    // Get found pets reports for the landing page
+    $foundPets = MissingPetsReport::where('report_type', 'found')
+        ->with(['pet', 'barangay'])
+        ->limit(5)
+        ->get();
+
     $announcements = Announcement::where('is_active', true)
         ->where('status', 'Published')
         ->orderBy('created_at', 'desc')
@@ -903,7 +915,7 @@ Route::get('/client', function () {
         ];
     })->values()->toArray();
 
-    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayedNeuteredCount', 'reunitedCount', 'rehomedCount', 'rabiesHeatmapData'));
+    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'foundPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayedNeuteredCount', 'reunitedCount', 'rehomedCount', 'rabiesHeatmapData'));
 });
 
 // OTP Routes - Only for citizens/clients

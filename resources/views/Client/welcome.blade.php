@@ -672,6 +672,7 @@
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900" id="missingPetsTitle">Lost Pets</h2>
                 <p class="text-slate-600 mt-2 tab-description" data-tab="missing">Help reunite lost pets with their families. If you have seen any of these pets, please contact us immediately.</p>
                 <p class="text-slate-600 mt-2 tab-description hidden" data-tab="adoption">Give these adorable pets a loving forever home. Browse our available pets for adoption and visit the shelter.</p>
+                <p class="text-slate-600 mt-2 tab-description hidden" data-tab="found">Pets that have been found and are waiting to be reunited with their owners. If you recognize a pet, please contact us.</p>
             </div>
 
             <!-- Header Controls & Filters -->
@@ -680,6 +681,7 @@
                 <div class="flex items-center bg-slate-100 p-1 rounded-xl w-full sm:w-auto">
                     <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-semibold bg-white text-slate-900 shadow-sm" data-filter="missing">Lost Pets</button>
                     <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="adoption">Pets for Adoption</button>
+                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="found">Found Pets</button>
                 </div>
 
                 <!-- Report Missing Pet CTA -->
@@ -687,10 +689,14 @@
                     <i class="fa-solid fa-bullhorn"></i>
                     <span>Report Lost Pet</span>
                 </a>
-                <a href="{{ url('/adoption') ?? '#' }}" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2 tab-cta hidden" data-tab="adoption">
+                <a href="{{ url('/missing-pets/form') }}" class="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-amber-600/20 transition-all flex items-center justify-center space-x-2 tab-cta hidden" data-tab="found">
+                    <i class="fa-solid fa-paw"></i>
+                    <span>Report Found Pet</span>
+                </a>
+                <button onclick="openNotLoggedInModal()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2 tab-cta hidden" data-tab="adoption">
                     <i class="fa-solid fa-heart"></i>
                     <span>Adopt a Pet</span>
-                </a>
+                </button>
             </div>
 
             <!-- Pet Cards Grid -->
@@ -727,7 +733,7 @@
                         </div>
                     </div>
                     @empty
-                    <p class="col-span-5 text-center text-slate-500">No lost pets found.</p>
+                        @include('components.empty-state', ['title' => 'No Lost Pets', 'message' => 'No lost pets have been reported recently. Check back soon.'])
                     @endforelse
                 </div>
             </div>
@@ -757,7 +763,37 @@
                         </div>
                     </div>
                     @empty
-                    <p class="col-span-5 text-center text-slate-500">No pets currently available for adoption.</p>
+                        @include('components.empty-state', ['title' => 'No Pets for Adoption', 'message' => 'There are currently no pets available for adoption. Check back soon.'])
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Found Pets Tab -->
+            <div class="tab-content hidden" data-tab="found">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+                    @forelse($foundPets as $report)
+                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group">
+                        <div class="relative h-44 bg-slate-200 overflow-hidden">
+                            <img src="{{ $report->pet->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $report->reporter_display_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
+                            <span class="absolute top-2 right-2 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">Found</span>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-slate-900 text-lg">{{ $report->pet->pet_name ?? $report->breed ?? 'Found Pet' }}</h4>
+                            <p class="text-xs text-slate-500 font-medium">{{ $report->breed ?? 'Pet' }} • {{ $report->estimated_age ?? '?' }} yrs</p>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1">
+                                <p class="flex items-center">
+                                    <i class="fa-solid fa-location-dot text-amber-500 mr-1.5 w-3"></i>
+                                    {{ $report->barangay->barangay_name ?? 'N/A' }}
+                                </p>
+                                <p class="flex items-center">
+                                    <i class="fa-regular fa-clock text-slate-400 mr-1.5 w-3"></i>
+                                    {{ $report->created_at->format('M d, Y') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                        @include('components.empty-state', ['title' => 'No Found Pets', 'message' => 'No found pets have been reported recently. Check back soon.'])
                     @endforelse
                 </div>
             </div>
@@ -774,6 +810,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                     View All Adoption Pets
+                </a>
+                <a href="{{ url('/missing-pets') ?? '#' }}" class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link hidden" data-tab="found">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
+                    </svg>
+                    View All Found Pets
                 </a>
             </div>
         </div>
@@ -1703,7 +1745,7 @@
                 this.classList.add('bg-white', 'text-slate-900', 'shadow-sm', 'font-semibold');
 
                 // Show/hide content based on tab
-                if (filter === 'missing' || filter === 'adoption') {
+                if (filter === 'missing' || filter === 'adoption' || filter === 'found') {
                     document.querySelectorAll('.tab-content').forEach(content => {
                         content.classList.add('hidden');
                         if (content.getAttribute('data-tab') === filter) {
@@ -1735,7 +1777,7 @@
                     // Update section title
                     const titleEl = document.getElementById('missingPetsTitle');
                     if (titleEl) {
-                        titleEl.textContent = filter === 'adoption' ? 'Adoption' : 'Lost Pets';
+                        titleEl.textContent = filter === 'adoption' ? 'Adoption' : filter === 'found' ? 'Found Pets' : 'Lost Pets';
                     }
                 }
             });
