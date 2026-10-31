@@ -358,7 +358,7 @@
         <div class="lg:col-span-4 space-y-6">
             <div class="lg:sticky lg:top-20 space-y-6">
                 <!-- Owner's Information (Editable for guests) -->
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden" id="ownerInfoCard">
                     <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -375,7 +375,7 @@
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Contact Number <span class="text-red-500">*</span></label>
-                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" maxlength="11" inputmode="numeric" pattern="[0-9]*" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
+                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" maxlength="11" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Email Address <span class="text-red-500">*</span></label>
@@ -956,12 +956,19 @@
         return document.getElementById('guestMissingPetForm');
     }
 
+    function getPersistedInputs() {
+        const form = getForm();
+        const ownerInfo = document.getElementById('ownerInfoCard');
+        const inputs = [];
+        if (form) inputs.push(...form.querySelectorAll('input, select, textarea'));
+        if (ownerInfo) inputs.push(...ownerInfo.querySelectorAll('input, select, textarea'));
+        return inputs;
+    }
+
     function saveFormData() {
         try {
-            const form = getForm();
-            if (!form) return;
             const data = {};
-            form.querySelectorAll('input, select, textarea').forEach(input => {
+            getPersistedInputs().forEach(input => {
                 if (!input.name) return;
                 if (input.type === 'radio' || input.type === 'checkbox') {
                     if (!input.checked) return;
@@ -983,7 +990,7 @@
             if (!raw || !form) return;
             let data;
             try { data = JSON.parse(raw); } catch (e) { return; }
-            form.querySelectorAll('input, select, textarea').forEach(input => {
+            getPersistedInputs().forEach(input => {
                 if (!input.name || !(input.name in data)) return;
                 if (input.type === 'radio') {
                     input.checked = input.value === data[input.name];
