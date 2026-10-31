@@ -70,9 +70,9 @@ class GuestMissingPetReportController extends Controller
         }
 
         $validated = $request->validate([
-            'reporter_name' => 'nullable|string|max:255',
-            'reporter_contact' => 'required|string|max:255',
-            'reporter_email' => 'nullable|email|max:255',
+            'reporter_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]*$/',
+            'reporter_contact' => 'required|string|max:11|regex:/^[0-9]+$/',
+            'reporter_email' => 'required|email|max:255',
             'loaded_at' => 'nullable|integer',
 
             'pet_name' => 'required_if:report_type,missing|nullable|string|max:255',

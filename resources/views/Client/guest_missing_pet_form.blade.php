@@ -47,6 +47,11 @@
         <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm">
             {{ session('status') }}
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                localStorage.removeItem('guest_missing_pet_form_data');
+            });
+        </script>
     @endif
 
     <!-- Validation Errors -->
@@ -366,15 +371,15 @@
                     <div class="p-6 space-y-4">
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Reporter Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name">
+                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" maxlength="255" pattern="[A-Za-z\s]*" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '');" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Contact Number <span class="text-red-500">*</span></label>
-                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
+                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" maxlength="11" inputmode="numeric" pattern="[0-9]*" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">Email Address</label>
-                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com">
+                            <label class="block text-xs text-gray-500 mb-1">Email Address <span class="text-red-500">*</span></label>
+                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com" required>
                         </div>
                     </div>
                 </div>
@@ -943,13 +948,94 @@
         }
     })();
 
+    // --- Form auto-save on refresh ---
+    const FORM_STORAGE_KEY = 'guest_missing_pet_form_data';
+
+    function getForm() {
+        return document.getElementById('guestMissingPetForm');
+    }
+
+    function saveFormData() {
+        try {
+            const form = getForm();
+            if (!form) return;
+            const data = {};
+            form.querySelectorAll('input, select, textarea').forEach(input => {
+                if (!input.name) return;
+                if (input.type === 'radio' || input.type === 'checkbox') {
+                    if (!input.checked) return;
+                    data[input.name] = input.value;
+                } else if (input.type === 'file') {
+                    return;
+                } else {
+                    data[input.name] = input.value;
+                }
+            });
+            localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {}
+    }
+
+    function loadFormData() {
+        try {
+            const form = getForm();
+            const raw = localStorage.getItem(FORM_STORAGE_KEY);
+            if (!raw || !form) return;
+            let data;
+            try { data = JSON.parse(raw); } catch (e) { return; }
+            form.querySelectorAll('input, select, textarea').forEach(input => {
+                if (!input.name || !(input.name in data)) return;
+                if (input.type === 'radio') {
+                    input.checked = input.value === data[input.name];
+                } else if (input.type === 'checkbox') {
+                    input.checked = data[input.name] === 'on' || input.value === data[input.name];
+                } else if (input.type === 'file') {
+                    return;
+                } else {
+                    input.value = data[input.name];
+                }
+            });
+            form.querySelectorAll('input[type="radio"]').forEach(input => {
+                if (input.checked) input.dispatchEvent(new Event('change'));
+            });
+            form.querySelectorAll('select').forEach(select => select.dispatchEvent(new Event('change')));
+            if (typeof updateSelectedBreedDisplay === 'function') updateSelectedBreedDisplay();
+            if (typeof handleEyeColorChange === 'function') handleEyeColorChange();
+            if (typeof toggleNoCollarHarness === 'function') toggleNoCollarHarness();
+        } catch (e) {}
+    }
+
+    function initFormAutoSave() {
+        try {
+            const form = getForm();
+            if (!form) return;
+            form.addEventListener('input', saveFormData);
+            form.addEventListener('change', saveFormData);
+        } catch (e) {}
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-        handleEyeColorChange();
-        toggleBirthdate();
-        toggleWeightUnknown();
-        toggleNoCollarHarness();
-        document.getElementById('petWeight').addEventListener('input', updateWeightSuffix);
+        try {
+            loadFormData();
+        } catch (e) {}
+        try {
+            initFormAutoSave();
+        } catch (e) {}
+        try {
+            handleEyeColorChange();
+        } catch (e) {}
+        try {
+            toggleBirthdate();
+        } catch (e) {}
+        try {
+            toggleWeightUnknown();
+        } catch (e) {}
+        try {
+            toggleNoCollarHarness();
+        } catch (e) {}
+        try {
+            document.getElementById('petWeight').addEventListener('input', updateWeightSuffix);
+        } catch (e) {}
     });
 </script>
 
