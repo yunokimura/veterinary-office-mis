@@ -442,7 +442,7 @@
                 <div class="mb-10 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-0">
                         <!-- Image -->
-                        <div class="md:col-span-5 relative h-64 bg-gray-100">
+                        <div class="md:col-span-5 relative h-[397px] bg-gray-100">
                             <img
                                 src="{{ $featuredAnnouncement->photo_path ? asset('storage/' . $featuredAnnouncement->photo_path) : 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=800&auto=format&fit=crop' }}"
                                 alt="{{ $featuredAnnouncement->title }}"
