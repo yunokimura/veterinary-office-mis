@@ -256,7 +256,7 @@
                             <i class="fa-solid fa-arrow-right text-sm"></i>
                         </button>
                         <a href="{{ url('/about-us') }}" class="w-full sm:w-auto border-2 border-white/50 hover:bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-4 rounded-xl transition-all text-center">
-                            Explore Services
+                            Learn More About Us
                         </a>
                     </div>
                 </div>
