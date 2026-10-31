@@ -680,8 +680,8 @@
                 <!-- Filter Tabs -->
                 <div class="flex items-center bg-slate-100 p-1 rounded-xl w-full sm:w-auto">
                     <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-semibold bg-white text-slate-900 shadow-sm" data-filter="missing">Lost Pets</button>
-                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="adoption">Pets for Adoption</button>
                     <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="found">Found Pets</button>
+                    <button class="filter-tab flex-1 sm:flex-none px-5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900" data-filter="adoption">Pets for Adoption</button>
                 </div>
 
                 <!-- Report Missing Pet CTA -->
@@ -738,36 +738,6 @@
                 </div>
             </div>
 
-            <!-- Adoption Pets Tab -->
-            <div class="tab-content hidden" data-tab="adoption">
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-                    @forelse($adoptionPets as $pet)
-                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" onclick="showPetModal({{ $pet->pet_id }})">
-                        <div class="relative h-44 bg-slate-200 overflow-hidden">
-                            <img src="{{ $pet->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
-                            <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">For Adoption</span>
-                        </div>
-                        <div class="p-4">
-                            <h4 class="font-bold text-slate-900 text-lg">{{ $pet->pet_name }}</h4>
-                            <p class="text-xs text-slate-500 font-medium">{{ $pet->breed ?? $pet->species }} • {{ $pet->age }} yrs</p>
-                            <div class="mt-3 text-xs text-slate-600 space-y-1">
-                                <p class="flex items-center">
-                                    <i class="fa-solid fa-location-dot text-emerald-500 mr-1.5 w-3"></i>
-                                    {{ $pet->barangay->barangay_name ?? 'N/A' }}
-                                </p>
-                                <p class="flex items-center">
-                                    <i class="fa-regular fa-clock text-slate-400 mr-1.5 w-3"></i>
-                                    {{ $pet->created_at->format('M d, Y') }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    @empty
-                        @include('components.empty-state', ['title' => 'No Pets for Adoption', 'message' => 'There are currently no pets available for adoption. Check back soon.'])
-                    @endforelse
-                </div>
-            </div>
-
             <!-- Found Pets Tab -->
             <div class="tab-content hidden" data-tab="found">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
@@ -798,6 +768,36 @@
                 </div>
             </div>
 
+            <!-- Adoption Pets Tab -->
+            <div class="tab-content hidden" data-tab="adoption">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+                    @forelse($adoptionPets as $pet)
+                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" onclick="showPetModal({{ $pet->pet_id }})">
+                        <div class="relative h-44 bg-slate-200 overflow-hidden">
+                            <img src="{{ $pet->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
+                            <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">For Adoption</span>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-slate-900 text-lg">{{ $pet->pet_name }}</h4>
+                            <p class="text-xs text-slate-500 font-medium">{{ $pet->breed ?? $pet->species }} • {{ $pet->age }} yrs</p>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1">
+                                <p class="flex items-center">
+                                    <i class="fa-solid fa-location-dot text-emerald-500 mr-1.5 w-3"></i>
+                                    {{ $pet->barangay->barangay_name ?? 'N/A' }}
+                                </p>
+                                <p class="flex items-center">
+                                    <i class="fa-regular fa-clock text-slate-400 mr-1.5 w-3"></i>
+                                    {{ $pet->created_at->format('M d, Y') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                        @include('components.empty-state', ['title' => 'No Pets for Adoption', 'message' => 'There are currently no pets available for adoption. Check back soon.'])
+                    @endforelse
+                </div>
+            </div>
+
             <div class="text-center mt-10">
                 <a href="{{ url('/missing-pets') }}" class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link" data-tab="missing">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -805,17 +805,17 @@
                     </svg>
                     View All Lost Pets
                 </a>
-                <a href="{{ url('/adoption') ?? '#' }}" class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link hidden" data-tab="adoption">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                    View All Adoption Pets
-                </a>
                 <a href="{{ url('/missing-pets') ?? '#' }}" class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link hidden" data-tab="found">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
                     </svg>
                     View All Found Pets
+                </a>
+                <a href="{{ url('/adoption') ?? '#' }}" class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-md tab-link hidden" data-tab="adoption">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    View All Adoption Pets
                 </a>
             </div>
         </div>
