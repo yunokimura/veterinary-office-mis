@@ -89,7 +89,7 @@
                 id="email"
                 type="email" 
                 name="email"
-                placeholder="cityvet@vetmis.gov"
+                placeholder="example@gmail.com"
                 value="{{ old('email') }}"
                 class="w-full px-4 py-3 text-xs sm:text-sm rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition @error('email') border-red-500 @else @if($errors->has('email') || $errors->has('password')) border-red-500 @endif @enderror"
                 required
