@@ -247,11 +247,11 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
-                        <a href="{{ url('/pet-registration') }}" class="w-full sm:w-auto bg-white text-primary font-bold px-8 py-4 rounded-xl shadow-lg hover:opacity-90 hover:shadow-xl hover:-translate-y-0.5 transition-all transform flex items-center justify-center space-x-2">
+                        <button onclick="openNotLoggedInModal()" class="w-full sm:w-auto bg-white text-primary font-bold px-8 py-4 rounded-xl shadow-lg hover:opacity-90 hover:shadow-xl hover:-translate-y-0.5 transition-all transform flex items-center justify-center space-x-2">
                             <span>Book Veterinary Services</span>
                             <i class="fa-solid fa-arrow-right text-sm"></i>
-                        </a>
-                        <a href="#services" class="w-full sm:w-auto border-2 border-white/50 hover:bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-4 rounded-xl transition-all text-center">
+                        </button>
+                        <a href="{{ url('/about-us') }}" class="w-full sm:w-auto border-2 border-white/50 hover:bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-4 rounded-xl transition-all text-center">
                             Explore Services
                         </a>
                     </div>
@@ -1789,9 +1789,183 @@
             }
         });
     </script>
+
+    <!-- Modal: Account Required (Guest Modal 1) -->
+    <div id="notLoggedInModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative transform transition-all">
+            <button onclick="closeNotLoggedInModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-user-lock text-xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900">Account Required</h3>
+                <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                    To book mobile clinic appointments, track your pet's vaccination records, and manage schedules in Dasmariñas City, please log in or create an account.
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                    <i class="fa-solid fa-check-circle text-emerald-600 w-5 h-5 flex-shrink-0"></i>
+                    <span class="text-sm text-slate-700">Instant booking for Spay/Neuter &amp; Vaccinations</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                    <i class="fa-solid fa-check-circle text-emerald-600 w-5 h-5 flex-shrink-0"></i>
+                    <span class="text-sm text-slate-700">Digital Pet Passport &amp; Vaccination Certificate</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                    <i class="fa-solid fa-check-circle text-emerald-600 w-5 h-5 flex-shrink-0"></i>
+                    <span class="text-sm text-slate-700">SMS reminders when the mobile clinic is in your barangay</span>
+                </div>
+            </div>
+
+            <button onclick="window.location.href='{{ route('login') }}'" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all mt-2 flex items-center justify-center space-x-2">
+                <span>Log In to Book</span>
+                <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
+
+            <button onclick="window.location.href='{{ route('register') }}'" class="w-full bg-slate-50 text-slate-700 font-semibold py-3 rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors mt-2">
+                Create Free Account
+            </button>
+
+            <button onclick="openExploreServicesModal(); closeNotLoggedInModal();" class="w-full text-sm text-emerald-600 font-medium hover:text-emerald-700 py-2 mt-4 transition-colors underline underline-offset-4">
+                Continue browsing services as Guest
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal: Explore Veterinary Services (Guest Modal 2) -->
+    <div id="exploreServicesModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-white rounded-3xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl relative transform transition-all">
+            <button onclick="closeExploreServicesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="p-6 sm:p-8 flex-1 overflow-y-auto">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-tighter">
+                        <i class="fa-solid fa-user text-[10px]"></i> Guest View
+                    </span>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900 mb-2">Explore Veterinary Services</h3>
+                <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                    Select a service below to view details or begin booking.
+                </p>
+
+                <div class="space-y-3">
+                    <!-- Pet Registration -->
+                    <a href="{{ url('/pet-registration') }}" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-emerald-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-clipboard-list text-lg"></i>
+                            </div>
+                            <span class="font-semibold text-slate-800 text-sm">Pet Registration</span>
+                        </div>
+                        <span class="text-emerald-600 text-xs font-semibold">View Service <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+
+                    <!-- Spay & Neuter -->
+                    <a href="{{ url('/kapon') }}" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-blue-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-scissors text-lg"></i>
+                            </div>
+                            <span class="font-semibold text-slate-800 text-sm">Spay &amp; Neuter (<i>Kapon</i>)</span>
+                        </div>
+                        <span class="text-blue-600 text-xs font-semibold">View Service <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+
+                    <!-- Anti-Rabies Vaccination (FREE) -->
+                    <a href="{{ url('/vaccination') }}" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-purple-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-syringe text-lg"></i>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-slate-800 text-sm">Anti-Rabies Vaccination</span>
+                                <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full mt-1">FREE</span>
+                            </div>
+                        </div>
+                        <span class="text-purple-600 text-xs font-semibold">View Service <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+
+                    <!-- Lost & Found Pets -->
+                    <a href="{{ url('/missing-pets') }}" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-rose-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                            </div>
+                            <span class="font-semibold text-slate-800 text-sm">Lost &amp; Found Pets</span>
+                        </div>
+                        <span class="text-rose-600 text-xs font-semibold">View Service <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+
+                    <!-- Pet Adoption -->
+                    <a href="{{ url('/adoption') }}" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-amber-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-heart text-lg"></i>
+                            </div>
+                            <span class="font-semibold text-slate-800 text-sm">Pet Adoption</span>
+                        </div>
+                        <span class="text-amber-600 text-xs font-semibold">View Service <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                    <p class="text-sm text-slate-600 mb-3">Ready to make an appointment?</p>
+                    <a href="#" onclick="closeExploreServicesModal(); openNotLoggedInModal();" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5 active:translate-y-0">
+                        <span>Log In to Book Now</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Close modals on Escape or backdrop click -->
+    <script>
+        function openNotLoggedInModal() {
+            document.getElementById('notLoggedInModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNotLoggedInModal() {
+            document.getElementById('notLoggedInModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openExploreServicesModal() {
+            document.getElementById('exploreServicesModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeExploreServicesModal() {
+            document.getElementById('exploreServicesModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeNotLoggedInModal();
+                closeExploreServicesModal();
+            }
+        });
+
+        document.getElementById('notLoggedInModal')?.addEventListener('click', function(event) {
+            if (event.target === this) closeNotLoggedInModal();
+        });
+
+        document.getElementById('exploreServicesModal')?.addEventListener('click', function(event) {
+            if (event.target === this) closeExploreServicesModal();
+        });
+    </script>
 </body>
 </html>
- </script>
-</body>
-</html>
->
