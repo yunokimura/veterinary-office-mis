@@ -661,67 +661,6 @@
         });
     </script>
 
-    <!-- Featured Campaign Section -->
-    <section class="py-12 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-primary via-primary-dark to-slate-900 text-white shadow-2xl">
-                <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#22c55e_1px,transparent_1px)] [background-size:16px_16px]"></div>
-
-                <div class="relative z-10 grid lg:grid-cols-12 gap-8 p-8 sm:p-12 items-center">
-                    <div class="lg:col-span-7 space-y-6">
-                        <div class="inline-flex items-center space-x-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                            <i class="fa-solid fa-star"></i>
-                            <span>Featured Annual Campaign</span>
-                        </div>
-                        @php
-                            $featuredAnnouncement = $announcements->first();
-                        @endphp
-                        @if($featuredAnnouncement)
-                            <h2 class="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
-                                {{ $featuredAnnouncement->title }}
-                            </h2>
-                            <p class="text-slate-300 text-base leading-relaxed">
-                                {{ \Illuminate\Support\Str::limit(strip_tags($featuredAnnouncement->content), 180) }}
-                            </p>
-                            <div class="flex flex-wrap gap-4 pt-2">
-                                <a href="#" class="bg-primary hover:bg-primary-light text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
-                                    <span>See Program Details</span>
-                                    <i class="fa-solid fa-chevron-right text-xs"></i>
-                                </a>
-                            </div>
-                        @else
-                            <h2 class="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
-                                Barangay Veterinary Outreach Program
-                            </h2>
-                            <p class="text-slate-300 text-base leading-relaxed">
-                                Our team visited multiple barangays to provide free veterinary services, including pet check-ups, vaccinations, and health education for pet owners.
-                            </p>
-                            <div class="flex flex-wrap gap-4 pt-2">
-                                <a href="#" class="bg-primary hover:bg-primary-light text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
-                                    <span>See Program Details</span>
-                                    <i class="fa-solid fa-chevron-right text-xs"></i>
-                                </a>
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="lg:col-span-5">
-                        <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 group">
-                            @if($featuredAnnouncement && $featuredAnnouncement->photo_path)
-                                <img src="{{ asset('storage/' . $featuredAnnouncement->photo_path) }}" alt="Campaign Feature" class="w-full h-64 sm:h-80 object-cover transform group-hover:scale-105 transition-transform duration-500">
-                            @else
-                                <img src="{{ asset('images/recentcamp.jpg') }}" alt="Campaign Feature" class="w-full h-64 sm:h-80 object-cover transform group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/800x600/166534/ffffff?text=Dasmariñas+Pet+Clinic'">
-                            @endif
-                            <div class="absolute bottom-4 right-4 bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-semibold text-emerald-400 border border-emerald-500/30">
-                                Registration Open
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Lost Pets / Lost & Found Radar -->
     <section id="lost-pets" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
