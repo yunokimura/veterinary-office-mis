@@ -290,7 +290,7 @@
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Age:</span>
-                                    <span class="text-gray-700 font-medium">{{ $pet->petInfo?->pet_age ?? 'N/A' }}</span>
+                                    <span class="text-gray-700 font-medium">{{ $pet->petInfo?->pet_age_short ?? $pet->petInfo?->pet_age ?? 'N/A' }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Weight:</span>
@@ -514,6 +514,7 @@
                 'breed' => $pet->breed,
                 'gender' => $pet->gender,
                 'age' => $pet->petInfo?->pet_age,
+                'age_short' => $pet->petInfo?->pet_age_short,
                 'weight' => $pet->weight,
                 'color' => $pet->color,
                 'description' => $pet->notes,
@@ -786,7 +787,7 @@
                               <div class="space-y-2 text-sm">
                                   <div class="flex justify-between">
                                       <span class="text-gray-500">Age:</span>
-                                      <span class="text-gray-700 font-medium">${pet.age || 'N/A'}</span>
+                                      <span class="text-gray-700 font-medium">${pet.age_short || pet.age || 'N/A'}</span>
                                   </div>
                                   <div class="flex justify-between">
                                       <span class="text-gray-500">Weight:</span>
@@ -864,7 +865,7 @@
             document.getElementById('modalPetName').textContent = pet.pet_name;
             document.getElementById('modalPetSpecies').textContent = pet.species;
             document.getElementById('modalPetBreed').textContent = pet.breed || 'Breed not available';
-            document.getElementById('modalPetAge').textContent = pet.age || 'Age not available';
+            document.getElementById('modalPetAge').textContent = pet.age_short || pet.age || 'Age not available';
             document.getElementById('modalPetGender').textContent = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1).toLowerCase() : 'Not available';
              document.getElementById('modalPetWeight').textContent = pet.weight || 'Weight not available';
             document.getElementById('modalPetColor').textContent = pet.color || 'Color not available';

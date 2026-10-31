@@ -93,4 +93,15 @@ class PetInfo extends Model
 
         return $value;
     }
+
+    public function getPetAgeShortAttribute()
+    {
+        $age = $this->pet_age;
+
+        if (! $age) {
+            return null;
+        }
+
+        return str_replace(['years', 'months', 'year', 'month'], ['yrs', 'mos', 'yr', 'mos'], $age);
+    }
 }

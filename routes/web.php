@@ -1413,6 +1413,7 @@ Route::get('/missing-pets/paginate', function (Request $request) {
             'breed' => $pet->breed,
             'gender' => $pet->gender,
             'age' => $pet->petInfo?->pet_age,
+            'age_short' => $pet->petInfo?->pet_age_short,
             'weight' => $pet->weight,
             'color' => $pet->color,
             'description' => $pet->notes,
