@@ -113,65 +113,9 @@ Route::get('/', function () {
             return redirect()->route('login');
         }
     }
-    // Get missing pets for the landing page
-    $missingPets = Pet::where('pet_status', 'missing')
-        ->with(['missingReport' => function ($query) {
-            $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
-        }])
-        ->limit(5)
-        ->get();
 
-    // Get adoption pets for the landing page
-    $adoptionPets = Pet::availableForAdoption()
-        ->with(['barangay'])
-        ->limit(5)
-        ->get();
-
-    // Get active announcements for public
-    $announcements = Announcement::where('is_active', true)
-        ->where('status', 'Published')
-        ->orderBy('created_at', 'desc')
-        ->get();
-
-    // Dynamic stats
-    $vaccinationReportsCount = \App\Models\VaccinationReport::count();
-    $petsRegisteredCount = Pet::whereHas('owner')->count();
-    $spayedNeuteredCount = \App\Models\SpayNeuterReport::where('status', 'completed')->count();
-    $reunitedCount = \App\Models\MissingPetsReport::where('status', 'resolved - reunited')->count();
-    $rehomedCount = \App\Models\AdoptionApplication::where('status', 'adopted')->count();
-
-    // Rabies heatmap data for geomap (server-side, like City Vet page)
-    $rabiesHeatmapData = \App\Models\RabiesCase::whereYear('incident_date', date('Y'))
-        ->whereNotNull('barangay_id')
-        ->whereHas('barangay', function ($q) {
-            $q->where('city', 'dasmarinas');
-        })
-        ->selectRaw('barangay_id, COUNT(*) as count')
-        ->groupBy('barangay_id')
-        ->get();
-
-    $barangaysWithCoords = \App\Models\Barangay::where('city', 'dasmarinas')
-        ->whereNotNull('latitude')
-        ->whereNotNull('longitude')
-        ->get();
-
-    $maxCount = $rabiesHeatmapData->max('count') ?: 1;
-
-    $rabiesHeatmapData = $barangaysWithCoords->map(function ($barangay) use ($rabiesHeatmapData, $maxCount) {
-        $count = (int) ($rabiesHeatmapData->firstWhere('barangay_id', $barangay->barangay_id)?->count ?? 0);
-
-        return [
-            'id' => 'rabies-' . $barangay->barangay_id,
-            'barangay_id' => $barangay->barangay_id,
-            'name' => $barangay->barangay_name,
-            'latitude' => (float) $barangay->latitude,
-            'longitude' => (float) $barangay->longitude,
-            'count' => $count,
-            'intensity' => round($count / $maxCount, 2),
-        ];
-    })->values()->toArray();
-
-    return view('Client.welcome', compact('missingPets', 'adoptionPets', 'announcements', 'vaccinationReportsCount', 'petsRegisteredCount', 'spayedNeuteredCount', 'reunitedCount', 'rehomedCount', 'rabiesHeatmapData'));
+    // Guests land on the /home welcome page
+    return redirect()->route('public.home');
 })->name('landing');
 
 // Public API endpoint for welcome page rabies heatmap data
