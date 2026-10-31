@@ -1028,22 +1028,42 @@
             .then(function(geojson) {
                 geojsonData = geojson;
 
-                // Use server-side data (passed from /home route, like City Vet pattern)
-                var heatmapData = @json($rabiesHeatmapData);
-                rabiesHomeUpdateMap(heatmapData);
-                rabiesHomeUpdateStats({ heatmapData: heatmapData });
+                // Fetch heatmap data from public API endpoint (same pattern as city-vet /rabies-geomap/data)
+                fetch('{{ route('public.rabies-heatmap-data') }}')
+                    .then(function(r) { if (!r.ok) throw new Error('Failed to load rabies data'); return r.json(); })
+                    .then(function(data) {
+                        rabiesHomeUpdateMap(data.heatmapData);
+                        rabiesHomeUpdateStats({ heatmapData: data.heatmapData });
 
-                // Hide loading overlays once data is rendered
-                var loadingOverlay = document.getElementById('rabiesHomeMapLoading');
-                if (loadingOverlay) loadingOverlay.classList.add('hidden');
-                var loadingEl = document.querySelector('.rabies-home-loading');
-                if (loadingEl) loadingEl.style.display = 'none';
+                        // Hide loading overlays once data is rendered
+                        var loadingOverlay = document.getElementById('rabiesHomeMapLoading');
+                        if (loadingOverlay) {
+                            loadingOverlay.classList.add('hidden');
+                            loadingOverlay.style.display = 'none';
+                        }
+                        var loadingEl = document.querySelector('.rabies-home-loading');
+                        if (loadingEl) loadingEl.style.display = 'none';
+                    })
+                    .catch(function(err) {
+                        console.error('Data Error:', err);
+                        document.getElementById('rabiesHomeMapError').classList.remove('hidden');
+                        var loadingOverlay = document.getElementById('rabiesHomeMapLoading');
+                        if (loadingOverlay) {
+                            loadingOverlay.classList.add('hidden');
+                            loadingOverlay.style.display = 'none';
+                        }
+                        var loadingEl = document.querySelector('.rabies-home-loading');
+                        if (loadingEl) loadingEl.style.display = 'none';
+                    });
             })
             .catch(function(err) {
                 console.error('GeoJSON Error:', err);
                 document.getElementById('rabiesHomeMapError').classList.remove('hidden');
                 var loadingOverlay = document.getElementById('rabiesHomeMapLoading');
-                if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('hidden');
+                    loadingOverlay.style.display = 'none';
+                }
                 var loadingEl = document.querySelector('.rabies-home-loading');
                 if (loadingEl) loadingEl.style.display = 'none';
             });
