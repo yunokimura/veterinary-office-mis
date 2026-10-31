@@ -369,27 +369,27 @@
     </section>
 
     <!-- Stats Section -->
-    <section class="bg-primary py-10">
+    <section class="hero-gradient py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-5 gap-8 text-center">
                 <div>
-                    <span class="block text-4xl font-extrabold text-white">{{ number_format($petsRegisteredCount) }}{{ $petsRegisteredCount >= 10 ? '+' : '' }}</span>
+                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $petsRegisteredCount }}" data-suffix="{{ $petsRegisteredCount >= 10 ? '+' : '' }}">0</span>
                     <span class="text-lg font-bold text-white">Registered Pets</span>
                 </div>
                 <div>
-                    <span class="block text-4xl font-extrabold text-white">{{ number_format($vaccinationReportsCount) }}{{ $vaccinationReportsCount >= 10 ? '+' : '' }}</span>
+                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $vaccinationReportsCount }}" data-suffix="{{ $vaccinationReportsCount >= 10 ? '+' : '' }}">0</span>
                     <span class="text-lg font-bold text-white">Vaccinated Pets</span>
                 </div>
                 <div>
-                    <span class="block text-4xl font-extrabold text-white">{{ number_format($spayedNeuteredCount) }}{{ $spayedNeuteredCount >= 10 ? '+' : '' }}</span>
+                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $spayedNeuteredCount }}" data-suffix="{{ $spayedNeuteredCount >= 10 ? '+' : '' }}">0</span>
                     <span class="text-lg font-bold text-white">Spayed/Neutered</span>
                 </div>
                 <div>
-                    <span class="block text-4xl font-extrabold text-white">{{ number_format($reunitedCount) }}{{ $reunitedCount >= 10 ? '+' : '' }}</span>
+                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $reunitedCount }}" data-suffix="{{ $reunitedCount >= 10 ? '+' : '' }}">0</span>
                     <span class="text-lg font-bold text-white">Reunited</span>
                 </div>
                 <div>
-                    <span class="block text-4xl font-extrabold text-white">{{ number_format($rehomedCount) }}{{ $rehomedCount >= 10 ? '+' : '' }}</span>
+                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $rehomedCount }}" data-suffix="{{ $rehomedCount >= 10 ? '+' : '' }}">0</span>
                     <span class="text-lg font-bold text-white">Rehomed</span>
                 </div>
             </div>
@@ -1982,6 +1982,35 @@
         document.getElementById('exploreServicesModal')?.addEventListener('click', function(event) {
             if (event.target === this) closeExploreServicesModal();
         });
+
+        // Stat counter animation - animate on first view only
+        (function() {
+            const counters = document.querySelectorAll('.stat-counter');
+            if (!counters.length) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.dataset.animated) {
+                        entry.target.dataset.animated = 'true';
+                        const target = parseInt(entry.target.dataset.count);
+                        const suffix = entry.target.dataset.suffix || '';
+                        let current = 0;
+                        const increment = target / 100;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= target) {
+                                entry.target.textContent = target + suffix;
+                                clearInterval(timer);
+                            } else {
+                                entry.target.textContent = Math.floor(current) + suffix;
+                            }
+                        }, 20);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            counters.forEach(counter => observer.observe(counter));
+        })();
     </script>
 </body>
 </html>
