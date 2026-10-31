@@ -700,7 +700,7 @@
                 </div>
 
                 <!-- Floating: View Changers + Filters (top-right column) -->
-                <div class="rabies-home-view-changers absolute top-4 right-4 z-[1000] flex flex-col gap-3 pointer-events-none">
+                <div class="rabies-home-view-changers absolute top-4 right-4 z-[1000] flex flex-col gap-3">
                     <button id="rabiesHomeBtnRabiesLayer" class="rabies-home-layer-toggle-btn bg-indigo-600 text-white border-indigo-600 shadow-[0_2px_8px_rgba(79,70,229,0.3)]" onclick="rabiesHomeSwitchLayer('rabies')">
                         <i class="fa-solid fa-virus"></i>
                         <span>Confirmed Rabies Cases</span>
