@@ -280,13 +280,13 @@
                         <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                             <i class="fa-solid fa-id-card"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Register Pet</h3>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Pet Registration</h3>
                         <p class="text-slate-600 text-sm leading-relaxed mb-6">
                             Register your pet with the city to ensure proper identification and access to services.
                         </p>
                     </div>
                     <a href="{{ url('/pet-registration') }}" class="w-full bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm">
-                        <span>Register Now</span>
+                        <span>Learn More</span>
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </a>
                 </div>
@@ -303,7 +303,7 @@
                         </p>
                     </div>
                     <a href="{{ url('/kapon') }}" class="w-full bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm">
-                        <span>Book Spay/Neuter</span>
+                        <span>Learn More</span>
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </a>
                 </div>
@@ -337,9 +337,9 @@
                         <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-rose-600 group-hover:text-white transition-colors">
                             <i class="fa-solid fa-heart-pulse"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Lost Pets</h3>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Lost &amp; Found Pets</h3>
                         <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                            Report a lost pet or browse our database to help reunite lost pets with their owners.
+                            Report a lost pet or a found pet to help reunite lost pets with their owners.
                         </p>
                     </div>
                     <a href="{{ url('/missing-pets') }}" class="w-full bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm">
