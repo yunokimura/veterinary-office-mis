@@ -108,8 +108,13 @@
               <label class="block text-xs font-semibold text-gray-700 mb-1.5">
                 New Password <span class="text-red-500">*</span>
               </label>
-              <input id="password" type="password" name="password" required autocomplete="new-password" placeholder="Enter new password"
-                  class="w-full px-4 py-3 text-xs sm:text-sm rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition @error('password') border-red-500 @enderror">
+              <div class="relative">
+                <input id="password" type="password" name="password" required autocomplete="new-password" placeholder="Enter new password"
+                    class="w-full px-4 py-3 text-xs sm:text-sm rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition pr-10 @error('password') border-red-500 @enderror">
+                <button type="button" onclick="togglePassword('password', 'eye-icon-reset')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1">
+                  <i id="eye-icon-reset" class="fa-solid fa-eye text-xs"></i>
+                </button>
+              </div>
               @error('password')
                   <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
               @enderror
@@ -120,8 +125,13 @@
               <label class="block text-xs font-semibold text-gray-700 mb-1.5">
                 Confirm New Password <span class="text-red-500">*</span>
               </label>
-              <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm new password"
-                  class="w-full px-4 py-3 text-xs sm:text-sm rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition @error('password_confirmation') border-red-500 @enderror">
+              <div class="relative">
+                <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm new password"
+                    class="w-full px-4 py-3 text-xs sm:text-sm rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition pr-10 @error('password_confirmation') border-red-500 @enderror">
+                <button type="button" onclick="togglePassword('password_confirmation', 'eye-icon-reset-confirm')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1">
+                  <i id="eye-icon-reset-confirm" class="fa-solid fa-eye text-xs"></i>
+                </button>
+              </div>
               @error('password_confirmation')
                   <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
               @enderror
@@ -168,5 +178,22 @@
     </div>
   </footer>
 
+  <!-- Toggle password visibility -->
+  <script>
+    function togglePassword(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+  </script>
 </body>
 </html>
