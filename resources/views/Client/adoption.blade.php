@@ -332,10 +332,12 @@
                                 <span class="text-slate-500">Age:</span>
                                 <span class="text-slate-700 font-medium">
                                     @php
-                                        $age = $pet->age;
-                                        if ($age === null):
+                                        $shortAge = $pet->petInfo?->pet_age_short;
+                                        if ($shortAge):
+                                            $ageLabel = $shortAge;
+                                        elseif ($pet->age === null):
                                             $ageLabel = 'Age not available';
-                                        elseif ((int) $age === 0):
+                                        elseif ((int) $pet->age === 0):
                                             $ageLabel = '< 1 year';
                                             if ($pet->birthdate):
                                                 $months = (int) $pet->birthdate->diffInMonths(now());
@@ -343,10 +345,10 @@
                                                     ? $months . ' month' . ($months === 1 ? '' : 's') . ' old'
                                                     : 'Less than a month old';
                                             endif;
-                                        elseif ((int) $age === 1):
+                                        elseif ((int) $pet->age === 1):
                                             $ageLabel = '1 year';
                                         else:
-                                            $ageLabel = (int) $age . ' years';
+                                            $ageLabel = (int) $pet->age . ' years';
                                         endif;
                                     @endphp
                                     {{ $ageLabel }}
@@ -432,7 +434,7 @@
     </div>
 
     <script>
-        let adoptionPets = {!! json_encode($adoptionPets->map(function($pet) { return [ 'id' => $pet->pet_id, 'pet_name' => $pet->pet_name, 'species' => $pet->species, 'breed' => $pet->breed, 'gender' => $pet->gender, 'age' => $pet->age, 'date_of_birth' => $pet->date_of_birth, 'is_age_estimated' => $pet->is_age_estimated, 'weight' => $pet->weight, 'description' => $pet->description, 'traits' => $pet->traits->pluck('name')->toArray(), 'image' => asset(str_replace(' ', '%20', $pet->image)) ]; })) !!};
+        let adoptionPets = {!! json_encode($adoptionPets->map(function($pet) { return [ 'id' => $pet->pet_id, 'pet_name' => $pet->pet_name, 'species' => $pet->species, 'breed' => $pet->breed, 'gender' => $pet->gender, 'age' => $pet->age, 'age_short' => $pet->petInfo?->pet_age_short, 'date_of_birth' => $pet->date_of_birth, 'is_age_estimated' => $pet->is_age_estimated, 'weight' => $pet->weight, 'description' => $pet->description, 'traits' => $pet->traits->pluck('name')->toArray(), 'image' => asset(str_replace(' ', '%20', $pet->image)) ]; })) !!};
         let currentPage = {{ $adoptionPets->currentPage() }};
         let lastPage = {{ $adoptionPets->lastPage() }};
         let hasMorePages = {{ $adoptionPets->hasMorePages() ? 'true' : 'false' }};
@@ -882,7 +884,9 @@
 
                     // Format age with proper singular/plural
                     let ageDisplay = 'Age not available';
-                    if (pet.age !== null && pet.age !== undefined) {
+                    if (pet.age_short) {
+                        ageDisplay = pet.age_short;
+                    } else if (pet.age !== null && pet.age !== undefined) {
                         const ageNum = Number(pet.age);
                         if (ageNum === 0) {
                             ageDisplay = '< 1 year';
@@ -899,8 +903,6 @@
                             ageDisplay = ageNum + ' year';
                         } else if (!isNaN(ageNum) && ageNum > 1) {
                             ageDisplay = ageNum + ' years';
-                        } else {
-                            ageDisplay = 'Age not available';
                         }
                     }
 

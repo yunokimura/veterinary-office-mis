@@ -1296,6 +1296,7 @@ Route::get('/adoption/paginate', function (Request $request) {
             'date_of_birth' => $pet->date_of_birth,
             'is_age_estimated' => $pet->is_age_estimated,
             'age' => $pet->age,
+            'age_short' => $pet->petInfo?->pet_age_short,
         ];
     });
 

@@ -102,6 +102,25 @@ class PetInfo extends Model
             return null;
         }
 
-        return str_replace(['years', 'months', 'year', 'month'], ['yrs', 'mos', 'yr', 'mos'], $age);
+        preg_match('/(\d+)\s*year/', $age, $yearsMatch);
+        preg_match('/(\d+)\s*month/', $age, $monthsMatch);
+
+        $years = $yearsMatch[1] ?? null;
+        $months = $monthsMatch[1] ?? null;
+
+        if ($years !== null) {
+            $label = $years . 'yrs';
+            if ($months !== null && (int) $months > 0) {
+                $label .= ' ' . $months . ' mos';
+            }
+
+            return $label;
+        }
+
+        if ($months !== null) {
+            return $months . ' months';
+        }
+
+        return $age;
     }
 }
