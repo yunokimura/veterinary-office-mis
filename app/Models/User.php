@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -86,9 +87,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, $guard = null)
  * @mixin \Eloquent
  */
-class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, Authorizable
+class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, Authorizable, \Illuminate\Contracts\Auth\CanResetPassword
 {
-    use Authenticatable, HasRoles, Notifiable;
+    use Authenticatable, HasRoles, Notifiable, CanResetPassword;
 
     protected $guard_name = 'web';
 
