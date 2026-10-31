@@ -19,20 +19,28 @@
         </div>
     @endif
 
-    <div class="p-6 flex-1 flex flex-col justify-between">
-        <div>
-            <div class="text-xs text-slate-400 font-medium mb-2">
-                <i class="fa-regular fa-calendar mr-1"></i> {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
+        <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+                <div class="text-xs text-slate-400 font-medium mb-2">
+                    <i class="fa-regular fa-calendar mr-1"></i> {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 hover:text-primary transition-colors">
+                    {{ $announcement->title }}
+                </h3>
+                <p class="text-slate-600 text-sm line-clamp-3 mb-4">
+                    {{ \Illuminate\Support\Str::limit(strip_tags($announcement->content), 200) }}
+                </p>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 hover:text-primary transition-colors">
-                {{ $announcement->title }}
-            </h3>
-            <p class="text-slate-600 text-sm line-clamp-3 mb-4">
-                {{ \Illuminate\Support\Str::limit(strip_tags($announcement->content), 200) }}
-            </p>
+            @if(isset($useModal) && $useModal)
+                <a href="#" onclick="open{{ $modalType === 'featured' ? 'Featured' : '' }}AnnouncementModal({{ $announcement->id }})" class="inline-flex items-center text-primary font-semibold text-sm hover:underline mt-1">
+                    <span>Read More</span>
+                    <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                </a>
+            @else
+                <a href="{{ route('announcements.show', $announcement) }}" class="inline-flex items-center text-primary font-semibold text-sm hover:underline mt-1">
+                    <span>Read More</span>
+                    <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                </a>
+            @endif
         </div>
-        <a href="{{ route('announcements.show', $announcement) }}" class="inline-flex items-center text-primary font-semibold hover:underline text-sm">
-            Read More <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
-        </a>
-    </div>
 </article>

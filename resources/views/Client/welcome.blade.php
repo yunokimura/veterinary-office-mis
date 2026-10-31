@@ -216,6 +216,25 @@
         ::-webkit-scrollbar-corner {
             background: transparent;
         }
+        /* Styled scrollbar for announcements slider */
+        #announcementsSlider::-webkit-scrollbar {
+            height: 6px;
+        }
+        #announcementsSlider::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        #announcementsSlider::-webkit-scrollbar-thumb {
+            background: #059669;
+            border-radius: 3px;
+        }
+        #announcementsSlider::-webkit-scrollbar-thumb:hover {
+            background: #047857;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50 text-slate-800">
@@ -399,26 +418,141 @@
     <!-- Latest Updates & Programs Section -->
     <section id="updates" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
-                <div>
-                    <span class="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">Community News</span>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3">Latest Updates & Programs</h2>
-                </div>
-                <a href="#" class="mt-4 md:mt-0 font-semibold text-primary hover:text-primary-dark flex items-center space-x-1">
-                    <span>View all news</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                </a>
+            <!-- Section Header -->
+            <div class="mb-8">
+                <span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+                    Community News
+                </span>
+                <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">
+                    Latest Updates &amp; Programs
+                </h2>
+                <p class="text-gray-600 text-sm mt-1">
+                    Stay informed about upcoming mobile clinic schedules, free rabies drives, and pet care events.
+                </p>
             </div>
 
-            @include('components.announcement-modal')
+            @php
+                $featuredAnnouncement = $announcements->first();
+                $regularAnnouncements = $announcements->slice(1);
+                $totalCount = $announcements->count();
+            @endphp
 
-            @if($announcements && $announcements->count() > 0)
-                <div class="grid md:grid-cols-3 gap-8">
-                    @foreach($announcements->take(3) as $announcement)
-                        @include('components.campaign-card', ['announcement' => $announcement])
-                    @endforeach
+            @if($announcements && $totalCount > 0)
+                <!-- 1. FEATURED ANNOUNCEMENT -->
+                <div class="mb-10 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-0">
+                        <!-- Image -->
+                        <div class="md:col-span-5 relative h-36 md:h-auto bg-gray-100">
+                            <img
+                                src="{{ $featuredAnnouncement->photo_path ? asset('storage/' . $featuredAnnouncement->photo_path) : 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=800&auto=format&fit=crop' }}"
+                                alt="{{ $featuredAnnouncement->title }}"
+                                class="w-full h-full object-cover"
+                            />
+                            <span class="absolute top-4 left-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                                FEATURED
+                            </span>
+                        </div>
+                        <!-- Content -->
+                        <div class="md:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center text-xs text-gray-400 mb-2 font-medium">
+                                    <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    {{ \Carbon\Carbon::parse($featuredAnnouncement->created_at)->format('M d, Y') }}
+                                </div>
+                                <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 hover:text-emerald-600 transition leading-snug">
+                                    {{ $featuredAnnouncement->title }}
+                                </h3>
+                                <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($featuredAnnouncement->content), 150) }}
+                                </p>
+                            </div>
+                            <div>
+                                <a href="#" onclick="openNewsModal('{{ $featuredAnnouncement->title }}', '{{ \Carbon\Carbon::parse($featuredAnnouncement->created_at)->format('M d, Y') }}', '{{ strtoupper($featuredAnnouncement->category) }}', '{{ $featuredAnnouncement->photo_path ? asset('storage/' . $featuredAnnouncement->photo_path) : 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=800&auto=format&fit=crop' }}', '{!! \Illuminate\Support\Str::limit(strip_tags($featuredAnnouncement->content), 200) !!}')"
+                                   class="inline-flex items-center font-semibold text-emerald-600 hover:text-emerald-700 text-sm group">
+                                    Read Full Details
+                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- 2. ANNOUNCEMENTS CAROUSEL SLIDER -->
+                @if($regularAnnouncements->count() > 0)
+                    <div class="relative">
+                        <!-- Controls -->
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">More Recent Updates</h3>
+                            <div class="flex gap-2">
+                                <button
+                                    onclick="scrollCarousel(-1)"
+                                    class="p-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 hover:text-emerald-600 transition shadow-sm"
+                                    aria-label="Previous Slide"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                </button>
+                                <button
+                                    onclick="scrollCarousel(1)"
+                                    class="p-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 hover:text-emerald-600 transition shadow-sm"
+                                    aria-label="Next Slide"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Carousel Cards Container -->
+                        <div
+                            id="announcementsCarousel"
+                            class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 no-scrollbar"
+                            style="scrollbar-width: none; -ms-overflow-style: none;"
+                        >
+                            @foreach($regularAnnouncements as $announcement)
+                                <div class="min-w-[280px] sm:min-w-[320px] max-w-[360px] flex-shrink-0 snap-start bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                                    <div>
+                                        <div class="relative h-44 bg-gray-100 overflow-hidden">
+                                            <img src="{{ $announcement->photo_path ? asset('storage/' . $announcement->photo_path) : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=600&auto=format&fit=crop' }}"
+                                                 alt="{{ $announcement->title }}"
+                                                 class="w-full h-full object-cover">
+                                            <span class="absolute top-3 left-3 bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                                                {{ strtoupper($announcement->category) }}
+                                            </span>
+                                        </div>
+                                        <div class="p-5">
+                                            <div class="flex items-center text-xs text-gray-400 mb-2">
+                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
+                                            </div>
+                                            <h4 class="font-bold text-gray-900 text-base mb-2 line-clamp-2">
+                                                {{ $announcement->title }}
+                                            </h4>
+                                            <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed mb-4">
+                                                {{ \Illuminate\Support\Str::limit(strip_tags($announcement->content), 100) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="px-5 pb-5">
+                                        <a href="#" onclick="openNewsModal('{{ $announcement->title }}', '{{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}', '{{ strtoupper($announcement->category) }}', '{{ $announcement->photo_path ? asset('storage/' . $announcement->photo_path) : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=600&auto=format&fit=crop' }}', '{!! \Illuminate\Support\Str::limit(strip_tags($announcement->content), 150) !!}')"
+                                           class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 inline-flex items-center group">
+                                            Read More
+                                            <span class="ml-1 group-hover:translate-x-1 transition">→</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             @else
+                <!-- Empty State -->
                 <div class="flex justify-center">
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover max-w-2xl">
                         <div class="md:flex">
@@ -443,6 +577,89 @@
             @endif
         </div>
     </section>
+
+    <!-- ANNOUNCEMENT READ MORE MODAL -->
+    <div id="newsModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col max-h-[90vh]">
+            <!-- Modal Header Image -->
+            <div class="relative h-48 bg-gray-100">
+                <img id="newsModalImg" src="" alt="Announcement banner" class="w-full h-full object-cover">
+                <button
+                    onclick="closeNewsModal()"
+                    class="absolute top-3 right-3 bg-white/80 hover:bg-white text-gray-700 rounded-full p-2 backdrop-blur transition shadow-md"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <span id="newsModalCategory" class="absolute bottom-3 left-4 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                    CATEGORY
+                </span>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="flex items-center text-xs text-gray-400 mb-2 font-medium">
+                    <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span id="newsModalDate">Date</span>
+                </div>
+                <h3 id="newsModalTitle" class="text-xl font-bold text-gray-900 mb-4 leading-snug">
+                    Title
+                </h3>
+                <div id="newsModalBody" class="text-gray-600 text-sm leading-relaxed space-y-3">
+                    Body content...
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+                <button
+                    onclick="closeNewsModal()"
+                    class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-medium text-xs transition"
+                >
+                    Close Announcement
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Carousel & Reader Modal -->
+    <script>
+        // Scroll Horizontal Carousel
+        function scrollCarousel(direction) {
+            const carousel = document.getElementById('announcementsCarousel');
+            const scrollAmount = 340;
+            carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+
+        // Open Announcement Modal
+        function openNewsModal(title, date, category, imageSrc, bodyContent) {
+            document.getElementById('newsModalTitle').innerText = title;
+            document.getElementById('newsModalDate').innerText = date;
+            document.getElementById('newsModalCategory').innerText = category;
+            document.getElementById('newsModalCategory').className = 'absolute bottom-3 left-4 ' + (category === 'CAMPAIGN' ? 'bg-emerald-600' : 'bg-blue-600') + ' text-white text-xs font-bold px-3 py-1 rounded-full shadow';
+            document.getElementById('newsModalImg').src = imageSrc;
+            document.getElementById('newsModalBody').innerHTML = bodyContent;
+
+            document.getElementById('newsModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Announcement Modal
+        function closeNewsModal() {
+            document.getElementById('newsModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on outside backdrop click
+        document.getElementById('newsModal')?.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeNewsModal();
+            }
+        });
+    </script>
 
     <!-- Featured Campaign Section -->
     <section class="py-12 bg-slate-50">
@@ -2011,6 +2228,26 @@
 
             counters.forEach(counter => observer.observe(counter));
         })();
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeNotLoggedInModal();
+                closeExploreServicesModal();
+                closeNewsModal();
+            }
+        });
+
+        document.getElementById('notLoggedInModal')?.addEventListener('click', function(event) {
+            if (event.target === this) closeNotLoggedInModal();
+        });
+
+        document.getElementById('exploreServicesModal')?.addEventListener('click', function(event) {
+            if (event.target === this) closeExploreServicesModal();
+        });
+
+        document.getElementById('newsModal')?.addEventListener('click', function(event) {
+            if (event.target === this) closeNewsModal();
+        });
     </script>
 </body>
 </html>

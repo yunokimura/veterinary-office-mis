@@ -318,6 +318,7 @@ Route::get('/public/rabies-heatmap-data', [RabiesCaseController::class, 'publicH
 // ==============================
 Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.public.index');
 Route::get('/announcements/{announcement}', [AnnouncementController::class, 'publicShow'])->name('announcements.show');
+Route::get('/api/announcements/{announcement}', [AnnouncementController::class, 'publicShowJson'])->name('announcements.show.json');
 
 // ==============================
 // AUTHENTICATED NON-ADMIN ANNOUNCEMENTS (Barangay, Clinic, etc.)

@@ -266,6 +266,19 @@ class AnnouncementController extends Controller
         return view($view, compact('announcement'));
     }
 
+    public function publicShowJson(Announcement $announcement)
+    {
+        return response()->json([
+            'id' => $announcement->id,
+            'title' => $announcement->title,
+            'content' => $announcement->content,
+            'category' => $announcement->category,
+            'photo_path' => $announcement->photo_path,
+            'photo_url' => $announcement->photo_url,
+            'formatted_date' => \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y'),
+        ]);
+    }
+
     public function filter(Request $request)
     {
         $query = Announcement::with('createdBy');
