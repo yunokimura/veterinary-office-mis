@@ -380,50 +380,58 @@
     <!-- My Appointments Section -->
     @php
         $vaccinationAppointments = \App\Models\VaccinationAppointment::where('user_id', auth()->id())
-            ->with(['pet.owner', 'pet.petInfo', 'vaccinationReports'])
+            ->with(['pet.owner.address.barangay', 'pet.petInfo', 'vaccinationReports'])
             ->orderByDesc('scheduled_at')
             ->get();
         $spayNeuterAppointments = \App\Models\SpayNeuterAppointment::where('user_id', auth()->id())
-            ->with(['pet.owner', 'pet.petInfo'])
+            ->with(['pet.owner.address.barangay', 'pet.petInfo'])
             ->orderByDesc('scheduled_at')
             ->get();
 
         $appointments = collect();
         foreach ($vaccinationAppointments as $a) {
-            $owner = optional($a->pet)->owner;
-            $petInfo = optional($a->pet)->petInfo;
+            $pet = optional($a->pet);
+            $owner = optional($pet)->owner;
+            $petInfo = optional($pet)->petInfo;
+            $address = optional($owner)->address;
+            $barangay = optional($address)->barangay;
+            $user = optional($owner)->user;
             $lastRabies = optional($a->vaccinationReports)->last();
             $appointments->push((object) [
                 'id' => $a->id,
                 'type' => 'vaccination',
-                'pet_name' => optional($a->pet)->pet_name ?? 'N/A',
-                'pet_breed' => optional($a->pet)->breed ?? '',
-                'pet_id' => optional($a->pet)->pet_id ?? null,
+                'pet_name' => optional($pet)->pet_name ?? 'N/A',
+                'pet_breed' => optional($pet)->breed ?? '',
+                'pet_id' => optional($pet)->pet_id ?? null,
                 'scheduled_at' => $a->scheduled_at,
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->clinic_name ?? 'N/A',
                 'owner_name' => $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A',
-                'owner_address' => $owner?->address ?? 'N/A',
-                'owner_barangay' => $owner?->barangay ?? 'N/A',
+                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($address->city ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->name ?? ($user?->barangay?->name ?? 'N/A'),
                 'last_rabies_date' => $lastRabies?->vaccination_date ?? null,
                 'recent_surgery' => $lastRabies?->notes ?? 'None',
             ]);
         }
         foreach ($spayNeuterAppointments as $a) {
-            $owner = optional($a->pet)->owner;
-            $petInfo = optional($a->pet)->petInfo;
+            $pet = optional($a->pet);
+            $owner = optional($pet)->owner;
+            $petInfo = optional($pet)->petInfo;
+            $address = optional($owner)->address;
+            $barangay = optional($address)->barangay;
+            $user = optional($owner)->user;
             $appointments->push((object) [
                 'id' => $a->id,
                 'type' => 'spay_neuter',
-                'pet_name' => optional($a->pet)->pet_name ?? 'N/A',
-                'pet_breed' => optional($a->pet)->breed ?? '',
-                'pet_id' => optional($a->pet)->pet_id ?? null,
+                'pet_name' => optional($pet)->pet_name ?? 'N/A',
+                'pet_breed' => optional($pet)->breed ?? '',
+                'pet_id' => optional($pet)->pet_id ?? null,
                 'scheduled_at' => $a->scheduled_at,
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->veterinarian ?? 'N/A',
                 'owner_name' => $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A',
-                'owner_address' => $owner?->address ?? 'N/A',
-                'owner_barangay' => $owner?->barangay ?? 'N/A',
+                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($address->city ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->name ?? ($user?->barangay?->name ?? 'N/A'),
                 'procedure_type' => $a->procedure_type ?? 'N/A',
                 'weight' => $petInfo?->pet_weight ?? 'N/A',
             ]);
@@ -434,7 +442,7 @@
     @endphp
 
     @php
-        $applications = \App\Models\AdoptionApplication::with(['pet', 'user'])->where('user_id', auth()->id())
+        $applications = \App\Models\AdoptionApplication::with(['pet', 'user.petOwner.address.barangay'])->where('user_id', auth()->id())
             ->orderByDesc('created_at')
             ->get();
 
@@ -442,6 +450,9 @@
         foreach ($applications as $application) {
             $pet = optional($application->pet);
             $user = optional($application->user);
+            $petOwner = optional($user)->petOwner;
+            $address = optional($petOwner)->address;
+            $barangay = optional($address)->barangay;
             $adoptionData->push((object) [
                 'id' => $application->id,
                 'pet_name' => $pet->pet_name ?? 'Unspecified (General)',
@@ -452,8 +463,8 @@
                 'appointment_date' => $application->appointment_date ?? null,
                 'status' => $application->status ?? 'pending_review',
                 'owner_name' => $user ? ($user->first_name . ' ' . $user->last_name) : 'N/A',
-                'owner_address' => $user?->address ?? 'N/A',
-                'owner_barangay' => $user?->barangay ?? 'N/A',
+                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($address->city ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->name ?? 'N/A',
                 'adopted_before' => $application->adopted_before ?? 'N/A',
                 'alternate_contact' => $application->alternate_contact ?? 'N/A',
                 'questionnaire' => $application->questionnaire ?? 'N/A',
@@ -1025,7 +1036,7 @@
                         <div class="p-4 rounded-2xl bg-slate-50 ${statusBorder} border-t border-r border-b border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs font-mono text-slate-400 font-bold">App #${item.id}</span>
+                                    <span class="text-xs font-mono text-slate-400 font-bold">APP #${item.id}</span>
                                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
                                     <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-200 text-slate-700">${typeLabel}</span>
                                 </div>
@@ -1041,9 +1052,11 @@
                                 <button onclick="openItemModal(${itemJson}, 'appointment', 'view')" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold shadow-sm transition-colors whitespace-nowrap">
                                     View Details
                                 </button>
+                                ${!['completed', 'rejected', 'cancelled'].includes(item.status) ? `
                                 <button onclick="openItemModal(${itemJson}, 'appointment', 'edit')" class="px-2.5 py-1.5 bg-dasma-50 hover:bg-dasma-100 text-dasma-800 border border-dasma-200 rounded-xl text-xs font-semibold transition-colors">
                                     <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                                 </button>
+                                ` : ''}
                             </div>
                         </div>
                     `;
@@ -1116,7 +1129,7 @@
                 const cardHtml = `
                     <div class="p-4 rounded-2xl ${statusBg} border ${statusBorder} space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-mono font-bold text-slate-900">App #${item.id}</span>
+                            <span class="text-xs font-mono font-bold text-slate-900">ADPT-APP #${item.id}</span>
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
                         </div>
                         <div class="flex items-center justify-between text-xs">
@@ -1135,9 +1148,11 @@
                             <button onclick="openItemModal(${itemJson}, 'adoption', 'view')" class="flex-1 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center justify-center gap-1">
                                 <i data-lucide="eye" class="w-3.5 h-3.5"></i> View Summary
                             </button>
+                            ${!['approved', 'completed', 'rejected', 'cancelled'].includes(item.status) ? `
                             <button onclick="openItemModal(${itemJson}, 'adoption', 'edit')" class="flex-1 py-2 bg-dasma-50 hover:bg-dasma-100 border border-dasma-200 text-dasma-800 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1">
                                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
                             </button>
+                            ` : ''}
                         </div>
                     </div>
                 `;
@@ -1213,9 +1228,10 @@
             const apptDate = item.appointment_date ? new Date(item.appointment_date).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'TBA';
 
             document.getElementById('glassIcon').innerHTML = isAppt ? '<i data-lucide="calendar" class="w-5 h-5"></i>' : '<i data-lucide="heart" class="w-5 h-5"></i>';
-            document.getElementById('glassSubhead').innerText = `Centered Glass • ${isAppt ? 'Appointment' : 'Adoption Application'}`;
-            document.getElementById('glassTitle').innerText = `${item.id}: ${item.pet_name}`;
-            document.getElementById('glassIDTag').innerText = `Record Reference: ${item.id}`;
+            document.getElementById('glassSubhead').innerText = `${isAppt ? 'My Appointments' : 'My Adoption Applications'} • ${activeTabMode === 'view' ? 'View' : 'Edit'}`;
+            const idPrefix = activeItemType === 'appointment' ? 'APP #' : 'ADPT-APP #';
+            document.getElementById('glassTitle').innerText = `${idPrefix}${item.id}: ${item.pet_name}`;
+            document.getElementById('glassIDTag').innerText = `Record Reference: ${idPrefix}${item.id}`;
 
             document.getElementById('glassTabNavView').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTabMode === 'view' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`;
             document.getElementById('glassTabNavEdit').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTabMode === 'edit' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`;
@@ -1228,9 +1244,8 @@
                     content.innerHTML = `
                         <div class="p-4 rounded-2xl ${statusBorder} border-t border-r border-b border-slate-200/80 space-y-1">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-mono text-slate-400 font-bold">${item.id}</span>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-200 text-slate-700">${isVaccination ? 'Anti-Rabies Vaccination' : 'Spay & Neuter'}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
                             </div>
                         </div>
 
@@ -1277,7 +1292,6 @@
                     content.innerHTML = `
                         <div class="p-4 rounded-2xl ${statusBorder} border-t border-r border-b border-slate-200/80 space-y-1">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-mono text-slate-400 font-bold">${item.id}</span>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
                             </div>
                         </div>
