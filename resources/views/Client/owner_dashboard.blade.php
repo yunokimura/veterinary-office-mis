@@ -416,221 +416,105 @@
         })->values();
     @endphp
 
-    <!-- My Appointments Section -->
+    @php
+        $applications = \App\Models\AdoptionApplication::where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->get();
+    @endphp
+
+    <script>
+        const allAppointments = @json($appointments);
+        const allAdoptions = @json($applications);
+    </script>
+
+    <!-- Section Grid: Appointments & Adoption Applications -->
     <section class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        My Appointments
-                    </h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Track and manage your scheduled vaccination, spay/neuter, and adoption appointments</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-semibold text-gray-500">Type:</span>
-                    <select class="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary">
-                        <option>All Types</option>
-                        <option>Vaccination</option>
-                        <option>Spay & Neuter</option>
-                    </select>
-                </div>
-            </div>
-
-            @if($appointments->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    @foreach($appointments as $appointment)
-                        @php
-                            $typeLabel = $appointment->type === 'vaccination' ? 'Vaccination' : 'Spay & Neuter';
-                            $typeColor = $appointment->type === 'vaccination' ? 'green' : ($appointment->type === 'spay_neuter' ? 'primary' : 'blue');
-                            $statusLabel = ucfirst(str_replace('_', ' ', $appointment->status));
-                            if (in_array($appointment->status, ['pending', 'pending_review'])) {
-                                $statusColor = 'bg-amber-50 text-amber-700 border border-amber-200';
-                            } elseif (in_array($appointment->status, ['approved', 'completed'])) {
-                                $statusColor = 'bg-green-50 text-green-700 border border-green-200';
-                            } elseif (in_array($appointment->status, ['rejected', 'cancelled'])) {
-                                $statusColor = 'bg-red-50 text-red-700 border border-red-200';
-                            } else {
-                                $statusColor = 'bg-gray-50 text-gray-700 border border-gray-200';
-                            }
-                            $scheduled = $appointment->scheduled_at ? \Carbon\Carbon::parse($appointment->scheduled_at)->format('M d, Y \a\t h:i A') : 'TBA';
-                            $typeChipClass = $appointment->type === 'vaccination' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-primary/10 text-primary border border-gray-200';
-                            $accentClass = $appointment->type === 'vaccination' ? 'bg-green-500' : 'bg-primary';
-                            $buttonClass = $appointment->type === 'vaccination' ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary-dark';
-                        @endphp
-                        <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between relative overflow-hidden group">
-                            <div class="absolute top-0 right-0 w-2 h-full {{ $accentClass }}"></div>
-                            <div class="p-5">
-                                <div class="flex items-center justify-between gap-2 mb-3">
-                                    <span class="text-xs font-extrabold text-gray-900 tracking-wide uppercase">App #{{ $loop->iteration }}</span>
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full {{ $statusColor }} text-[11px] font-bold">
-                                        {{ $statusLabel }}
-                                    </span>
-                                </div>
-                                <div class="flex items-center gap-1.5 mb-3">
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full {{ $typeChipClass }} text-[11px] font-bold">
-                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    @if($appointment->type === 'vaccination')
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                    @else
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    @endif
-                                        </svg>
-                                        {{ $typeLabel }}
-                                    </span>
-                                </div>
-                                <p class="text-xs text-gray-500 font-medium mb-3 flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    {{ $appointment->pet_name }}
-                                    @if($appointment->pet_breed)
-                                        <span class="text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded ml-1">{{ ucfirst($appointment->pet_breed) }}</span>
-                                    @endif
-                                </p>
-                                <p class="text-xs text-gray-400 font-medium mb-3 flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    {{ $scheduled }}
-                                </p>
-                                <p class="text-xs text-gray-400 font-medium mb-4 flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20a7.1 7.1 0 00-.612-.036M12.5 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    {{ $appointment->vet }}
-                                </p>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Left Column: My Appointments (7 Cols) -->
+                <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <!-- Section Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-slate-100">
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="calendar" class="w-5 h-5 text-dasma-700"></i> My Appointments
+                                </h2>
+                                <p class="text-xs text-slate-500 mt-0.5">Track vaccination, spay/neuter (Kapon), and checkups.</p>
                             </div>
-                            <div class="p-4 bg-gray-50 border-t border-gray-100">
-                                <a href="{{ url('/vaccination/form') }}" class="w-full py-2 {{ $buttonClass }} text-white text-center text-xs font-bold rounded-xl transition-colors">
-                                    View Details
-                                </a>
+                            
+                            <!-- Filter dropdown -->
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="text-slate-400 font-medium">Type:</span>
+                                <select id="apptFilterSelect" onchange="onApptFilterChange(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-dasma-500">
+                                    <option value="all">All Types</option>
+                                    <option value="Vaccination">Vaccination</option>
+                                    <option value="Spay & Neuter">Spay & Neuter</option>
+                                </select>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="bg-gray-50 rounded-xl p-8 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p class="text-gray-600 mb-4">No appointments yet</p>
-                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                        <a href="{{ url('/vaccination/form') }}" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
-                            Schedule Vaccination
-                        </a>
-                        <a href="{{ url('/adoption') }}" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
-                            Apply for Adoption
-                        </a>
+
+                        <!-- Appointments Container (Dynamic via JS) -->
+                        <div id="appointmentsContainer" class="space-y-3 mt-5 min-h-[280px]">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Appointments Pagination Controls -->
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+                        <span id="apptPaginationInfo" class="font-medium">Showing 1-3 of 0 appointments</span>
+                        <div class="flex items-center gap-1.5">
+                            <button id="apptPrevBtn" onclick="changeApptPage(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
+                                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Prev
+                            </button>
+                            <div id="apptPageNumbers" class="flex items-center gap-1">
+                                <!-- Page numbers rendered by JS -->
+                            </div>
+                            <button id="apptNextBtn" onclick="changeApptPage(1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
+                                Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            @endif
-        </div>
-    </section>
 
-    <!-- My Adoption Applications Section -->
-    <section class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012 2h2a2 2 0 002 2m0 0l2 2m-2-2v12m-6-6l2 2" />
-                        </svg>
-                        My Adoption Applications
-                    </h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Track and manage your submitted city pet adoption requests</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-semibold text-gray-500">Status:</span>
-                    <select class="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary">
-                        <option>All Statuses</option>
-                        <option selected>Pending Review</option>
-                        <option>Approved</option>
-                        <option>Completed</option>
-                    </select>
+                <!-- Right Column: My Adoption Applications (5 Cols) -->
+                <div class="lg:col-span-5 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <!-- Section Header -->
+                        <div class="flex items-center justify-between pb-5 border-b border-slate-100">
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="heart" class="w-5 h-5 text-rose-500"></i> Adoption Requests
+                                </h2>
+                                <p class="text-xs text-slate-500 mt-0.5">Track your city shelter pet adoption process.</p>
+                            </div>
+                            <span id="adoptionBadge" class="px-2.5 py-1 bg-amber-100 text-amber-800 font-bold text-[10px] rounded-full uppercase tracking-wide">0 Total</span>
+                        </div>
+
+                        <!-- Adoption Applications Container (Dynamic via JS) -->
+                        <div id="adoptionContainer" class="space-y-3 mt-5 min-h-[280px]">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Adoption Pagination Controls -->
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+                        <span id="adoptionPaginationInfo" class="font-medium">Showing 1-2 of 0 applications</span>
+                        <div class="flex items-center gap-1.5">
+                            <button id="adoptionPrevBtn" onclick="changeAdoptionPage(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
+                                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Prev
+                            </button>
+                            <div id="adoptionPageNumbers" class="flex items-center gap-1">
+                                <!-- Page numbers rendered by JS -->
+                            </div>
+                            <button id="adoptionNextBtn" onclick="changeAdoptionPage(1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
+                                Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            @php
-                $applications = \App\Models\AdoptionApplication::where('user_id', auth()->id())
-                    ->orderByDesc('created_at')
-                    ->get();
-            @endphp
-            
-            @if($applications->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                    @foreach($applications as $application)
-                        <div class="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between relative overflow-hidden group">
-                            <div class="absolute top-0 right-0 w-2 h-full bg-amber-400"></div>
-                            <div>
-                                <div class="flex items-center justify-between gap-2 mb-3">
-                                    <span class="text-xs font-extrabold text-gray-900 tracking-wide uppercase">App #{{ $application->id }}</span>
-                                    @if($application->status === 'pending_review')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending Review
-                                        </span>
-                                    @elseif($application->status === 'approved')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-green-50 text-green-700 border border-green-200">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Approved
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Rejected
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <p class="text-xs text-gray-400 font-medium mb-4 flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    Submitted {{ $application->created_at->format('M d, Y') }}
-                                </p>
-
-                                <div class="space-y-2 text-xs border-t border-gray-100 pt-3 mb-4">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-500">Target Pet:</span>
-                                        <span class="font-bold text-gray-800">{{ $application->pet->pet_name ?? 'Unspecified (General)' }}</span>
-                                    </div>
-                                    @if($application->appointment_date)
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-500">Interview Date:</span>
-                                            <span class="font-semibold text-primary">{{ $application->appointment_date->format('M d, Y') }}</span>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
-                                <a href="{{ route('adoption.form.edit', $application) }}" class="flex-1 py-2 px-3 bg-primary hover:bg-primary-dark text-white font-semibold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                                    <path d="M0 0h24v24H0z" fill="none" />
-                                    <g fill="none">
-                                        <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.34 22.19h19.32" />
-                                        <rect width="5.17" height="6.08" fill="#fff" opacity="0.2" rx="1" transform="rotate(135 7.642 8.558)scale(-1 1)" />
-                                        <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19.11 9.07l-4.16-4.16M6.27 21.24c.47-.14.71-.2.92-.33s.39-.3.74-.65L20.98 7.41a5 5 0 0 0 1.19-1.4a2 2 0 0 0 0-1.5A5 5 0 0 0 21 3.12a5 5 0 0 0-1.4-1.18a2 2 0 0 0-1.48 0c-.38.15-.72.49-1.4 1.17l-13 12.94c-.34.35-.52.53-.65.74c-.12.21-.2.45-.34.92l-.46 1.5c-.48 1.58-.73 2.37-.3 2.8c.42.42 1.2.18 2.79-.3z" />
-                                    </g>
-                                </svg>
-                                    Edit Application
-                                </a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="bg-gray-50 rounded-xl p-8 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <p class="text-gray-600 mb-4">No adoption applications yet</p>
-                    <a href="{{ url('/adoption') }}" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
-                        Browse Pets for Adoption
-                    </a>
-                </div>
-            @endif
         </div>
     </section>
 
@@ -1005,11 +889,190 @@
         document.getElementById('petProfileModal').addEventListener('click', function(e) {
             if (e.target === this) closePetProfile();
         });
-    </script>
-</body>
-</html>
-e.target === this) closePetProfile();
-        });
+
+        // Appointments Pagination State
+        let currentApptPage = 1;
+        const apptsPerPage = 3;
+        let filteredAppointments = [...allAppointments];
+
+        // Adoption Pagination State
+        let currentAdoptionPage = 1;
+        const adoptionsPerPage = 2;
+
+        function renderAppointments() {
+            const container = document.getElementById('appointmentsContainer');
+            container.innerHTML = '';
+
+            const total = filteredAppointments.length;
+            const totalPages = Math.max(1, Math.ceil(total / apptsPerPage));
+            if (currentApptPage > totalPages) currentApptPage = totalPages;
+
+            const startIndex = (currentApptPage - 1) * apptsPerPage;
+            const endIndex = Math.min(startIndex + apptsPerPage, total);
+            const pageItems = filteredAppointments.slice(startIndex, endIndex);
+
+            if (pageItems.length === 0) {
+                container.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs">No appointments found matching filter.</div>';
+            } else {
+                pageItems.forEach(item => {
+                    const typeLabel = item.type === 'vaccination' ? 'Vaccination' : 'Spay & Neuter';
+                    const statusLabel = (item.status || 'pending').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+                    let statusBadge, statusBorder;
+                    if (['pending', 'pending_review'].includes(item.status)) {
+                        statusBadge = 'bg-amber-100 text-amber-800';
+                        statusBorder = 'border-l-amber-500';
+                    } else if (['approved', 'completed'].includes(item.status)) {
+                        statusBadge = 'bg-emerald-100 text-emerald-800';
+                        statusBorder = 'border-l-emerald-500';
+                    } else if (['rejected', 'cancelled'].includes(item.status)) {
+                        statusBadge = 'bg-rose-100 text-rose-800';
+                        statusBorder = 'border-l-rose-500';
+                    } else {
+                        statusBadge = 'bg-slate-100 text-slate-700';
+                        statusBorder = 'border-l-slate-500';
+                    }
+
+                    const scheduled = item.scheduled_at ? new Date(item.scheduled_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) + ' at ' + new Date(item.scheduled_at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }) : 'TBA';
+
+                    const cardHtml = `
+                        <div class="p-4 rounded-2xl bg-slate-50 ${statusBorder} border-t border-r border-b border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono text-slate-400 font-bold">App #${item.id}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-200 text-slate-700">${typeLabel}</span>
+                                </div>
+                                <div class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                    <span>${item.pet_name}</span> ${item.pet_breed ? '<span class="text-xs font-normal text-slate-500">(' + item.pet_breed + ')</span>' : ''}
+                                </div>
+                                <div class="text-xs text-slate-500 flex flex-wrap items-center gap-x-4 gap-y-1">
+                                    <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i> ${scheduled}</span>
+                                    <span class="flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i> ${item.vet || 'N/A'}</span>
+                                </div>
+                            </div>
+                            <a href="/vaccination/form" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold shadow-sm transition-colors whitespace-nowrap self-end sm:self-center">
+                                View Details
+                            </a>
+                        </div>
+                    `;
+                    container.innerHTML += cardHtml;
+                });
+            }
+
+            document.getElementById('apptPaginationInfo').innerText = total > 0 ? `Showing ${startIndex + 1}-${endIndex} of ${total} appointments` : '0 appointments';
+            document.getElementById('apptPrevBtn').disabled = currentApptPage === 1;
+            document.getElementById('apptNextBtn').disabled = currentApptPage === totalPages || total === 0;
+
+            const numContainer = document.getElementById('apptPageNumbers');
+            numContainer.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `w-7 h-7 rounded-lg text-xs font-semibold transition-colors ${i === currentApptPage ? 'bg-dasma-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`;
+                btn.innerText = i;
+                btn.onclick = () => { currentApptPage = i; renderAppointments(); };
+                numContainer.appendChild(btn);
+            }
+
+            lucide.createIcons();
+        }
+
+        function changeApptPage(delta) {
+            currentApptPage += delta;
+            renderAppointments();
+        }
+
+        function onApptFilterChange(type) {
+            if (type === 'all') {
+                filteredAppointments = [...allAppointments];
+            } else {
+                filteredAppointments = allAppointments.filter(a => a.type === type);
+            }
+            currentApptPage = 1;
+            renderAppointments();
+        }
+
+        function renderAdoptions() {
+            const container = document.getElementById('adoptionContainer');
+            container.innerHTML = '';
+
+            const total = allAdoptions.length;
+            const totalPages = Math.ceil(total / adoptionsPerPage);
+            const startIndex = (currentAdoptionPage - 1) * adoptionsPerPage;
+            const endIndex = Math.min(startIndex + adoptionsPerPage, total);
+            const pageItems = allAdoptions.slice(startIndex, endIndex);
+
+            pageItems.forEach(item => {
+                const isApproved = item.status === 'approved' || item.status === 'completed';
+                const statusLabel = (item.status || 'pending_review').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+                let statusBadge, statusBg, statusBorder;
+                if (item.status === 'pending_review') {
+                    statusBadge = 'bg-amber-100 text-amber-800';
+                    statusBg = 'bg-amber-50/50';
+                    statusBorder = 'border-amber-200/70';
+                } else if (isApproved) {
+                    statusBadge = 'bg-emerald-100 text-emerald-800';
+                    statusBg = 'bg-emerald-50/50';
+                    statusBorder = 'border-emerald-200/70';
+                } else {
+                    statusBadge = 'bg-rose-100 text-rose-800';
+                    statusBg = 'bg-rose-50/50';
+                    statusBorder = 'border-rose-200/70';
+                }
+
+                const cardHtml = `
+                    <div class="p-4 rounded-2xl ${statusBg} border ${statusBorder} space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono font-bold text-slate-900">App #${item.id}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block uppercase font-semibold">Target Pet</span>
+                                <span class="font-bold text-slate-800 text-sm">${item.pet?.pet_name || 'Unspecified (General)'}</span>
+                            </div>
+                            ${item.appointment_date ? `
+                                <div class="text-right">
+                                    <span class="text-[10px] text-slate-400 block uppercase font-semibold">Interview Date</span>
+                                    <span class="font-semibold text-dasma-700">${new Date(item.appointment_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <a href="/adoption/form/edit/${item.id}" class="w-full py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center justify-center gap-1">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit Application
+                        </a>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+
+            document.getElementById('adoptionBadge').innerText = total + ' Total';
+            document.getElementById('adoptionPaginationInfo').innerText = `Showing ${startIndex + 1}-${endIndex} of ${total} applications`;
+            document.getElementById('adoptionPrevBtn').disabled = currentAdoptionPage === 1;
+            document.getElementById('adoptionNextBtn').disabled = currentAdoptionPage === totalPages;
+
+            const numContainer = document.getElementById('adoptionPageNumbers');
+            numContainer.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `w-7 h-7 rounded-lg text-xs font-semibold transition-colors ${i === currentAdoptionPage ? 'bg-dasma-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`;
+                btn.innerText = i;
+                btn.onclick = () => { currentAdoptionPage = i; renderAdoptions(); };
+                numContainer.appendChild(btn);
+            }
+
+            lucide.createIcons();
+        }
+
+        function changeAdoptionPage(delta) {
+            currentAdoptionPage += delta;
+            renderAdoptions();
+        }
+
+        // Init on load
+        renderAppointments();
+        renderAdoptions();
     </script>
 </body>
 </html>
