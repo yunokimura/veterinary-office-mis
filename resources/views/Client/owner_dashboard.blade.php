@@ -105,71 +105,107 @@
 
     <!-- Quick Actions -->
     <section class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Register New Pet -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Quick Actions</h2>
+                <p class="text-sm text-gray-500 mt-1">Frequently used services and quick requests for your pets.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Action 1: Register New Pet -->
+                <div class="group relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+
+
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mb-4 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                             </svg>
                         </div>
-                        <h4 class="font-bold text-gray-900 text-base">Register New Pet</h4>
-                        <p class="text-xs text-gray-500 mt-1 mb-4">Register your pet with the city</p>
+                        <h3 class="text-lg font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors">Register New Pet</h3>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">Register your pet officially with the city for tracking and digital ID generation.</p>
                     </div>
-                    <a href="{{ url('/pet-registration/form') }}" class="w-full bg-primary text-white text-center text-xs font-bold py-2.5 rounded-lg hover:bg-primary-light transition-colors">
-                        Register Now
-                    </a>
+
+                    <div class="relative z-10 mt-6 pt-4 border-t border-gray-50">
+                        <a href="{{ url('/pet-registration/form') }}" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-xl transition-all shadow-md shadow-emerald-200 active:scale-95">
+                            <span>Register Now</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Appointments -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <!-- Action 2: Appointments -->
+                <div class="group relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+
+
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center mb-4 shadow-sm group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <h4 class="font-bold text-gray-900 text-base">Appointments</h4>
-                        <p class="text-xs text-gray-500 mt-1 mb-4">Manage your anti-rabies vaccination or spay/neuter appointments</p>
+                        <h3 class="text-lg font-semibold text-gray-900 group-hover:text-teal-700 transition-colors">Appointments</h3>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">Manage anti-rabies vaccination or spay/neuter clinic appointments.</p>
                     </div>
-                    <button class="w-full bg-secondary text-white text-center text-xs font-bold py-2.5 rounded-lg hover:bg-secondary-light transition-colors">
-                        Schedule Now
-                    </button>
+
+                    <div class="relative z-10 mt-6 pt-4 border-t border-gray-50">
+                        <button type="button" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-xl transition-all shadow-md shadow-teal-200 active:scale-95">
+                            <span>Schedule Now</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- View My Pets -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <!-- Action 3: My Pets -->
+                <div class="group relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+
+
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mb-4 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.684a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                             </svg>
                         </div>
-                        <h4 class="font-bold text-gray-900 text-base">My Pets</h4>
-                        <p class="text-xs text-gray-500 mt-1 mb-4">View and manage your registered pets</p>
+                        <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">My Pets</h3>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">View profiles, medical histories, and digital vaccination status tags.</p>
                     </div>
-                    <a href="{{ route('owner.pets') }}" class="w-full bg-primary text-white text-center text-xs font-bold py-2.5 rounded-lg hover:bg-primary-light transition-colors">
-                        View Pets
-                    </a>
+
+                    <div class="relative z-10 mt-6 pt-4 border-t border-gray-50">
+                        <a href="{{ route('owner.pets') }}" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-all shadow-md shadow-blue-200 active:scale-95">
+                            <span>View Pets</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Report Lost / Found -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 13l4 4m0 0l-4 4m4-4H15" />
+                <!-- Action 4: Report Lost / Found -->
+                <div class="group relative bg-white rounded-2xl p-6 border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+
+
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-rose-100 text-rose-700 rounded-xl flex items-center justify-center mb-4 shadow-sm group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                             </svg>
                         </div>
-                        <h4 class="font-bold text-gray-900 text-base">Report Lost / Found</h4>
-                        <p class="text-xs text-gray-500 mt-1 mb-4">Alert the City Veterinarian Office and local community if a pet is missing or found.</p>
+                        <h3 class="text-lg font-semibold text-gray-900 group-hover:text-rose-700 transition-colors">Report Lost / Found</h3>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">Alert the City Veterinarian Office and local community if a pet is missing.</p>
                     </div>
-                    <a href="{{ url('/lost-found/create') }}" class="w-full bg-red-600 text-white text-center text-xs font-bold py-2.5 rounded-lg hover:bg-red-700 transition-colors">
-                        Create Notice
-                    </a>
+
+                    <div class="relative z-10 mt-6 pt-4 border-t border-rose-50">
+                        <a href="{{ url('/lost-found/create') }}" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-xl transition-all shadow-md shadow-rose-200 active:scale-95">
+                            <span>Create Notice</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
