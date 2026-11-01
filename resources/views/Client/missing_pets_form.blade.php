@@ -472,8 +472,38 @@
         }
         return weight + ' kg';
     }
-    
+
+    const preselectPetRaw = @json($preselectPet ?? null);
+    const preselectPet = preselectPetRaw ? String(preselectPetRaw) : null;
+
     let selectedPets = [];
+
+    if (preselectPet) {
+        const pet = petsData.find(p => String(p.id) === preselectPet);
+        if (pet && !selectedPets.includes(preselectPet)) {
+            selectedPets.push(preselectPet);
+        }
+
+        const selectedPetsData = document.getElementById('selectedPetsData');
+        if (selectedPetsData) {
+            selectedPetsData.value = JSON.stringify(selectedPets);
+        }
+        const arrayContainer = document.getElementById('selectedPetsArrayContainer');
+        if (arrayContainer) {
+            arrayContainer.innerHTML = '';
+            selectedPets.forEach(petId => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'selected_pets[]';
+                input.value = petId;
+                arrayContainer.appendChild(input);
+            });
+        }
+
+        updateLeftPetInfoDisplay();
+        updateSidebarSelectedPets();
+    }
+
 
     function openPetModal() {
         if (petsData.length === 0) {

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - Dasmariñas City Veterinary Services</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -914,6 +915,228 @@
         </div>
     </div>
 
+    <!-- MARK AS DECEASED MODAL -->
+    <div id="deceasedModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="deceasedModalTitle" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/80 transition-opacity z-40" onclick="closeModal('deceasedModal')"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0 z-50">
+            <div class="relative z-50 transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-4 sm:w-full sm:max-w-md border border-slate-100">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-slate-200/60 text-slate-600 flex items-center justify-center">
+                            <i data-lucide="skull" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 id="deceasedModalTitle" class="text-lg font-semibold text-slate-900">Record Status Update</h3>
+                            <p class="text-xs text-slate-500">Updating record for <strong id="deceasedModalPetName" class="text-slate-700">Barnaby</strong> (<span id="deceasedModalPetIdTag" class="text-slate-700">#A-8942</span>)</p>
+                        </div>
+                    </div>
+                    <button onclick="closeModal('deceasedModal')" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200/50 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <form id="deceasedForm" onsubmit="handleDeceasedSubmit(event)" class="p-6 space-y-4">
+                    <input type="hidden" id="deceasedModalPetId" value="">
+
+                    <div class="p-3 bg-amber-50/60 border border-amber-200/60 rounded-xl text-xs text-amber-800 flex items-start gap-2.5">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5"></i>
+                        <span>This action will update the pet's status across all internal dashboards and stop automated care alerts.</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Date of Passing *</label>
+                            <input type="date" required id="dateOfPassing" class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-slate-400 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Primary Cause</label>
+                            <select class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-slate-400 focus:outline-none bg-white">
+                                <option value="">Select Reason...</option>
+                                <option value="natural">Natural Causes / Age</option>
+                                <option value="medical">Medical Condition / Illness</option>
+                                <option value="euthanasia">Euthanasia (Compassionate)</option>
+                                <option value="unknown">Unknown / Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Additional Circumstances / Notes</label>
+                        <textarea rows="3" placeholder="Optional notes for veterinary history..." class="w-full text-sm border border-slate-300 rounded-xl p-3 text-slate-700 focus:ring-2 focus:ring-slate-400 focus:outline-none"></textarea>
+                    </div>
+
+                    <div class="space-y-2 pt-1">
+                        <label class="flex items-center gap-2.5 cursor-pointer">
+                            <input type="checkbox" checked class="w-4 h-4 rounded text-slate-700 focus:ring-slate-400 border-slate-300">
+                            <span class="text-xs text-slate-600 font-medium">Archive active medical reminders and prescription schedules</span>
+                        </label>
+                        <label class="flex items-center gap-2.5 cursor-pointer">
+                            <input type="checkbox" checked class="w-4 h-4 rounded text-slate-700 focus:ring-slate-400 border-slate-300">
+                            <span class="text-xs text-slate-600 font-medium">Notify assigned foster caregiver / primary vet</span>
+                        </label>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            To confirm, please type <span id="deceasedConfirmName" class="select-none font-bold text-slate-900 uppercase">Barnaby</span> below:
+                        </label>
+                        <input type="text" id="confirmNameInput" placeholder="" oninput="validateDeceasedName()" class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-slate-400 focus:outline-none">
+                    </div>
+
+                    <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                        <button type="button" onclick="closeModal('deceasedModal')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition">
+                            Cancel
+                        </button>
+                        <button type="submit" id="submitDeceasedBtn" disabled class="px-4 py-2 text-sm font-medium text-white bg-slate-400 cursor-not-allowed rounded-xl transition shadow-sm">
+                            Confirm Status Change
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- PUT UP FOR ADOPTION MODAL -->
+    <div id="adoptionModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="adoptionModalTitle" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/80 transition-opacity z-40" onclick="closeModal('adoptionModal')"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0 z-50">
+            <div class="relative z-50 transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-4 sm:w-full sm:max-w-xl border border-slate-100">
+                <div class="bg-emerald-50/60 px-6 py-4 border-b border-emerald-100/60 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                            <i data-lucide="user-plus" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 id="adoptionModalTitle" class="text-lg font-semibold text-slate-900">List for Adoption</h3>
+                            <p class="text-xs text-emerald-700 font-medium">Step <span id="adoptionStepIndicator">1</span> of 2</p>
+                        </div>
+                    </div>
+                    <button onclick="closeModal('adoptionModal')" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200/50 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <input type="hidden" id="adoptionModalPetId" value="">
+
+                <!-- STEP 1: Medical & Traits Form -->
+                <div id="adoptionStep1" class="p-6 space-y-4">
+                    <div class="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200/80 rounded-xl">
+                        <img id="adoptionModalPetImage" src="" alt="Pet Profile" class="w-12 h-12 rounded-lg object-cover">
+                        <div>
+                            <div id="adoptionModalPetName" class="font-semibold text-slate-900 text-sm">Bella</div>
+                            <div id="adoptionModalPetMeta" class="text-xs text-slate-500">Golden Retriever Mix • 2 Yrs Old • Female</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5" id="adoptionModalPetIdTag">PET-0000</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Medical Readiness Checks</label>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span class="text-slate-700 font-medium">Spayed / Neutered</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span class="text-slate-700 font-medium">Vaccinations Current</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span class="text-slate-700 font-medium">Microchipped</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span class="text-slate-700 font-medium">Special Care Needs</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Good With Environment</label>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <label class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg cursor-pointer">
+                                <input type="checkbox" checked class="text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span>Other Dogs</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg cursor-pointer">
+                                <input type="checkbox" checked class="text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span>Cats</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg cursor-pointer">
+                                <input type="checkbox" class="text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span>Young Children</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Adoption Fee ($)</label>
+                            <input type="number" value="150" class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Current Location</label>
+                            <select class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
+                                <option>Main Shelter - Kennel A</option>
+                                <option>Foster Home - Smith</option>
+                                <option>Partner Vet Clinic</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                        <button type="button" onclick="closeModal('adoptionModal')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition">
+                            Cancel
+                        </button>
+                        <button type="button" onclick="goToAdoptionStep(2)" class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-sm flex items-center gap-1">
+                            <span>Next: Bio & Media</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Bio & Listing Options -->
+                <div id="adoptionStep2" class="p-6 space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Public Adoption Bio</label>
+                        <textarea rows="4" class="w-full text-sm border border-slate-300 rounded-xl p-3 text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Write an engaging description for prospective adopters..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Visibility Status</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex flex-col p-3 border border-emerald-500 bg-emerald-50/40 rounded-xl cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="listingStatus" value="published" checked class="text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-xs font-semibold text-slate-900">Publish Immediately</span>
+                                </div>
+                                <span class="text-[11px] text-slate-500 mt-1 pl-5">Visible on public adoption portal</span>
+                            </label>
+                            <label class="flex flex-col p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="listingStatus" value="draft" class="text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-xs font-semibold text-slate-900">Save as Internal Draft</span>
+                                </div>
+                                <span class="text-[11px] text-slate-500 mt-1 pl-5">Review required before publishing</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex items-center justify-between border-t border-slate-100">
+                        <button type="button" onclick="goToAdoptionStep(1)" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition flex items-center gap-1">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            <span>Back</span>
+                        </button>
+                        <button type="button" onclick="handleAdoptionSubmit()" class="px-5 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-sm">
+                            Publish Adoption Listing
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
 
@@ -946,16 +1169,44 @@
         });
 
         function markPetMissing(petId) {
-            document.getElementById('petMenu-' + petId).classList.add('hidden');
-            showToast('Marked pet #' + String(petId).padStart(4, '0') + ' as Missing.');
-        }
-
-        function markPetDeceased(petId) {
-            showToast('Marked pet #' + String(petId).padStart(4, '0') + ' as Deceased.');
+            window.location.href = '/missing-pets/form?preselect_pet=' + petId;
         }
 
         function putUpForAdoption(petId) {
-            showToast('Pet #' + String(petId).padStart(4, '0') + ' put up for Adoption.');
+            document.getElementById('petMenu-' + petId).classList.add('hidden');
+            document.getElementById('adoptionModalPetId').value = petId;
+            const pet = petsData.find(p => p.pet_id == petId);
+            if (pet) {
+                document.getElementById('adoptionModalPetName').textContent = pet.pet_name || 'Unknown';
+                document.getElementById('adoptionModalPetIdTag').textContent = 'PET-' + String(pet.pet_id).padStart(4, '0');
+                const img = document.getElementById('adoptionModalPetImage');
+                if (pet.pet_image) {
+                    let imgPath = pet.pet_image;
+                    if (!imgPath.startsWith('http') && !imgPath.includes('images/pets')) {
+                        imgPath = 'images/pets/' + imgPath.split('/').pop();
+                    }
+                    img.src = '{{ asset('') }}' + imgPath;
+                } else {
+                    img.src = '{{ asset('images/pet.png') }}';
+                }
+            }
+            document.getElementById('adoptionStep1').classList.remove('hidden');
+            document.getElementById('adoptionStep2').classList.add('hidden');
+            document.getElementById('adoptionStepIndicator').textContent = '1';
+            document.getElementById('adoptionModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function markPetDeceased(petId) {
+            document.getElementById('petMenu-' + petId).classList.add('hidden');
+            document.getElementById('deceasedModalPetId').value = petId;
+            const pet = petsData.find(p => p.pet_id == petId);
+            if (pet) {
+                document.getElementById('deceasedModalPetName').textContent = pet.pet_name || 'Unknown';
+                document.getElementById('deceasedModalPetIdTag').textContent = 'PET-' + String(pet.pet_id).padStart(4, '0');
+            }
+            document.getElementById('deceasedModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
         // View Profile Modal
@@ -1594,6 +1845,71 @@
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
+        }
+
+        // Deceased Modal Safeguard Validation
+        function validateDeceasedName() {
+            const expected = document.getElementById('deceasedModalPetName').textContent.trim().toLowerCase();
+            const input = document.getElementById('confirmNameInput').value.trim().toLowerCase();
+            const submitBtn = document.getElementById('submitDeceasedBtn');
+
+            if (input === expected) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-slate-400', 'cursor-not-allowed');
+                submitBtn.classList.add('bg-slate-800', 'hover:bg-slate-900');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('bg-slate-400', 'cursor-not-allowed');
+                submitBtn.classList.remove('bg-slate-800', 'hover:bg-slate-900');
+            }
+        }
+
+        function handleDeceasedSubmit(e) {
+            e.preventDefault();
+            closeModal('deceasedModal');
+            showToast('Pet marked as deceased. Record archived.');
+        }
+
+        // Adoption Modal Step Switcher
+        function goToAdoptionStep(step) {
+            const step1 = document.getElementById('adoptionStep1');
+            const step2 = document.getElementById('adoptionStep2');
+            const indicator = document.getElementById('adoptionStepIndicator');
+
+            if (step === 1) {
+                step1.classList.remove('hidden');
+                step2.classList.add('hidden');
+                indicator.textContent = '1';
+            } else {
+                step1.classList.add('hidden');
+                step2.classList.remove('hidden');
+                indicator.textContent = '2';
+            }
+        }
+
+        async function handleAdoptionSubmit() {
+            const petId = document.getElementById('adoptionModalPetId').value;
+            const token = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+
+            try {
+                const res = await fetch('/owner/pets/' + petId + '/submit-for-adoption', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    }
+                });
+                if (res.ok) {
+                    closeModal('adoptionModal');
+                    showToast('Pet submitted for adoption. Admin Assistant notified.');
+                    setTimeout(() => location.reload(), 800);
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    showToast(err.message || 'Failed to submit for adoption.');
+                }
+            } catch (err) {
+                showToast('Error submitting for adoption.');
+            }
         }
     </script>
 </body>

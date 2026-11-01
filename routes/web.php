@@ -1457,7 +1457,9 @@ Route::get('/missing-pets/form', function () {
     }])->first() : null;
     $pets = $petOwner ? $petOwner->pets->load('petInfo') : collect([]);
 
-    $petsArray = $pets->map(function ($pet) {
+    $preselectPet = request('preselect_pet');
+
+    $petsArray = $pets->map(function ($pet) use ($preselectPet) {
         return [
             'id' => $pet->pet_id,
             'name' => $pet->pet_name,
@@ -1474,12 +1476,13 @@ Route::get('/missing-pets/form', function () {
             'body_mark_image' => $pet->body_mark_image,
             'body_mark_image_url' => $pet->body_mark_image_url,
             'additional_photos' => $pet->additional_photos,
+            'preselected' => $preselectPet && (string)$pet->pet_id === (string)$preselectPet,
         ];
     })->toArray();
 
     $barangays = \App\Models\Barangay::orderBy('barangay_name')->get();
 
-    return view('Client.missing_pets_form', compact('user', 'petOwner', 'petsArray', 'barangays'));
+    return view('Client.missing_pets_form', compact('user', 'petOwner', 'petsArray', 'barangays', 'preselectPet'));
 })->middleware('auth')->name('missing-pets.form');
 
 Route::post('/missing-pets/report', [\App\Http\Controllers\Client\MissingPetReportController::class, 'store'])
