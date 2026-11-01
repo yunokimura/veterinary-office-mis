@@ -411,6 +411,7 @@
                 'owner_barangay' => $barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? ($user?->barangay?->barangay_name ?? 'N/A')),
                 'last_rabies_date' => $lastRabies?->vaccination_date ?? null,
                 'recent_surgery' => $lastRabies?->notes ?? 'None',
+                'additional_notes' => $lastRabies?->notes ?? ($a->notes ?? ''),
             ]);
         }
         foreach ($spayNeuterAppointments as $a) {
@@ -434,6 +435,7 @@
                 'owner_barangay' => $barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? ($user?->barangay?->barangay_name ?? 'N/A')),
                 'procedure_type' => $a->procedure_type ?? 'N/A',
                 'weight' => $petInfo?->pet_weight ?? 'N/A',
+                'additional_notes' => $a->notes ?? '',
             ]);
         }
         $appointments = $appointments->sortByDesc(function ($item) {
@@ -1295,6 +1297,14 @@
                                     <div class="flex justify-between"><span class="text-slate-500">Scheduled At:</span><span class="font-semibold text-slate-800">${scheduled}</span></div>
                                 </div>
                             </div>
+
+                            <!-- Additional Notes -->
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 col-span-2">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Additional Notes</span>
+                                <div class="space-y-1 text-xs">
+                                    <p class="font-semibold text-slate-800 break-words leading-tight">${item.additional_notes || 'No additional notes registered.'}</p>
+                                </div>
+                            </div>
                         </div>
                     `;
                 } else {
@@ -1345,15 +1355,24 @@
             } else {
                 // Edit mode - simple form
                 if (isAppt) {
+                    const apptDateTime = item.scheduled_at ? new Date(item.scheduled_at).toISOString().slice(0, 16) : '';
                     content.innerHTML = `
                         <div class="space-y-3 text-xs">
                             <div>
-                                <label class="block font-semibold text-slate-700 mb-1">Reschedule Date</label>
-                                <input id="glassInputDate" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
+                                <label class="block font-semibold text-slate-700 mb-1">Scheduled Date & Time</label>
+                                <input id="glassInputDateTime" type="datetime-local" value="${apptDateTime}" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
                             </div>
                             <div>
-                                <label class="block font-semibold text-slate-700 mb-1">Update Notes</label>
-                                <textarea id="glassInputNotes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium"></textarea>
+                                <label class="block font-semibold text-slate-700 mb-1">Service Type</label>
+                                <select id="glassInputServiceType" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
+                                    <option value="vaccination" ${item.type === 'vaccination' ? 'selected' : ''}>Anti-Rabies Vaccination</option>
+                                    <option value="spay_neuter" ${item.type === 'spay_neuter' ? 'selected' : ''}>Spay & Neuter</option>
+                                    <option value="consultation" ${item.type === 'consultation' ? 'selected' : ''}>Add Consultation</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Additional Notes / Special Instructions</label>
+                                <textarea id="glassInputNotes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">${item.additional_notes || ''}</textarea>
                             </div>
                         </div>
                     `;
@@ -1403,8 +1422,16 @@
                 return;
             }
             if (activeTabMode === 'edit') {
-                const dateVal = document.getElementById('glassInputDate')?.value;
-                if (dateVal) {
+                const dateTimeVal = document.getElementById('glassInputDateTime')?.value;
+                const serviceTypeVal = document.getElementById('glassInputServiceType')?.value;
+                const notesVal = document.getElementById('glassInputNotes')?.value;
+                const updatedFields = [];
+                if (dateTimeVal) updatedFields.push('Scheduled Date & Time');
+                if (serviceTypeVal) updatedFields.push('Service Type');
+                if (notesVal) updatedFields.push('Additional Notes');
+                if (updatedFields.length > 0) {
+                    showToast(`Updated: ${updatedFields.join(', ')}`);
+                } else {
                     showToast(`Updated record ${activeItemData.id}`);
                 }
             }
