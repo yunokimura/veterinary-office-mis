@@ -65,6 +65,26 @@
         </div>
     @endif
 
+    @if (session('success'))
+        <script>
+            function showSuccessModal() {
+                const successModal = document.getElementById('successModal');
+                if (successModal) {
+                    successModal.classList.remove('hidden');
+                }
+            }
+
+            function closeSuccessModal() {
+                const successModal = document.getElementById('successModal');
+                if (successModal) {
+                    successModal.classList.add('hidden');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', showSuccessModal);
+        </script>
+    @endif
+
     <!-- Validation Errors -->
     @if ($errors->any())
         <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -227,8 +247,9 @@
                         </div>
                     </div>
                 </div>
+            </form>
 
-                <!-- Back Link -->
+            <!-- Back Link -->
         </div>
 
         <!-- Right Sidebar -->
@@ -324,6 +345,40 @@
         </div>
     </div>
 </main>
+
+<!-- Success Modal -->
+<div id="successModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-slate-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeSuccessModal()"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">
+                            Report Submitted
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-slate-500">
+                                {{ session('success') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" onclick="closeSuccessModal()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-primary-light focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                    Okay
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Pet Selection Modal (outside form) -->
 <div id="petModal" class="fixed inset-0 z-50 hidden">
