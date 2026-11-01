@@ -433,7 +433,7 @@
                                 ?>
                                 <span class="text-white text-xs font-bold">{{ $initials }}</span>
                             </div>
-                            <span class="text-sm font-medium text-slate-600 hidden md:block">{{ auth()->user()->name ?? 'Admin' }}</span>
+                            <span class="text-sm font-medium text-slate-600 hidden md:block">{{ (auth()->user()->hasRole('city_vet') || auth()->user()->hasRole('assistant_vet') ? 'Dr. ' : '') . (auth()->user()->first_name ?? '') }} {{ auth()->user()->last_name ?? '' }}</span>
                             <i class="bi text-xs text-slate-400 hidden md:block"
                                :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
                         </button>
