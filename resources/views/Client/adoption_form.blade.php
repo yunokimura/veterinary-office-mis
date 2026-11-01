@@ -1216,7 +1216,7 @@
                             
                             <div class="space-y-6">
                                 <!-- Appointment Slot Picker -->
-                                <div id="scheduleInterviewField" class="mt-6 pt-6 border-t border-gray-200">
+                                <div id="scheduleInterviewField" class="pt-6">
                             <h4 class="text-md font-semibold text-gray-800 mb-4">Schedule Appointment</h4>
                             <p class="text-sm text-gray-500 mb-4">
                                 Select a date and time for your adoption appointment.

@@ -346,6 +346,22 @@
                                             <p class="text-xs text-slate-500 font-mono">{{ ucfirst($pet->breed) }} • <span class="text-slate-400">PET-{{ str_pad($pet->pet_id, 4, '0', STR_PAD_LEFT) }}</span></p>
                                         </div>
                                     </div>
+                                    <div class="relative group">
+                                        <button onclick="togglePetMenu({{ $pet->pet_id }})" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full p-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-dasma-500">
+                                            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                        </button>
+                                        <div id="petMenu-{{ $pet->pet_id }}" class="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg py-2 hidden z-50">
+                                            <button onclick="markPetMissing({{ $pet->pet_id }})" class="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-red-600 transition-colors flex items-center gap-2">
+                                                <i data-lucide="alert-triangle" class="w-4 h-4 text-red-500 shrink-0"></i> Report as Lost Pet
+                                            </button>
+                                            <button onclick="putUpForAdoption({{ $pet->pet_id }})" class="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors flex items-center gap-2">
+                                                <i data-lucide="user-plus" class="w-4 h-4 text-emerald-500 shrink-0"></i> Put up for Adoption
+                                            </button>
+                                            <button onclick="markPetDeceased({{ $pet->pet_id }})" class="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-red-600 transition-colors flex items-center gap-2">
+                                                <i data-lucide="skull" class="w-4 h-4 text-red-500 shrink-0"></i> Mark as Deceased
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Stats Grid -->
@@ -916,6 +932,30 @@
                     card.style.display = 'none';
                 }
             });
+        }
+
+        function togglePetMenu(petId) {
+            document.querySelectorAll('[id^="petMenu-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById('petMenu-' + petId).classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('[id^="petMenu-"]') && !e.target.closest('button[onclick^="togglePetMenu"]')) {
+                document.querySelectorAll('[id^="petMenu-"]').forEach(el => el.classList.add('hidden'));
+            }
+        });
+
+        function markPetMissing(petId) {
+            document.getElementById('petMenu-' + petId).classList.add('hidden');
+            showToast('Marked pet #' + String(petId).padStart(4, '0') + ' as Missing.');
+        }
+
+        function markPetDeceased(petId) {
+            showToast('Marked pet #' + String(petId).padStart(4, '0') + ' as Deceased.');
+        }
+
+        function putUpForAdoption(petId) {
+            showToast('Pet #' + String(petId).padStart(4, '0') + ' put up for Adoption.');
         }
 
         // View Profile Modal
