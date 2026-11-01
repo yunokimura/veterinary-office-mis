@@ -27,7 +27,7 @@ class AdoptionFormController extends Controller
             $query->with('barangay');
         }])->first();
 
-        $adoptionPets = Pet::where('source_module', 'adoption_pets')->get();
+        $adoptionPets = Pet::with('petInfo')->where('source_module', 'adoption_pets')->get();
 
         return view('Client.adoption_form', compact('user', 'petOwner', 'adoptionPets'));
     }

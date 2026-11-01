@@ -75,6 +75,18 @@
     $readonlyAttr = $isView ? ' readonly' : '';
     $disabledAttr = $isView ? ' disabled' : '';
 
+    $adoptionPetsData = isset($adoptionPets) ? $adoptionPets->map(function ($pet) {
+        return [
+            'pet_id' => $pet->pet_id,
+            'pet_name' => $pet->pet_name,
+            'species' => $pet->species,
+            'breed' => $pet->breed,
+            'gender' => $pet->gender,
+            'age' => $pet->petInfo?->pet_age_short ?? $pet->age,
+            'image' => $pet->image_url,
+        ];
+    }) : collect();
+
     $backwardCompatibilityMapping = [
         'building_type' => 'housing_type',
         'rent' => 'housing_ownership',
@@ -690,10 +702,10 @@
                     </div>
                 </div>
 
-                <script>
-                    // Pet data from server
-                    const adoptionPetsData = @json($adoptionPets);
-                    const assetBaseUrl = "{{ asset('') }}";
+                    <script>
+                        // Pet data from server
+                        const adoptionPetsData = @json($adoptionPetsData);
+                        const assetBaseUrl = "{{ asset('') }}";
                     
                     let selectedAdoptionPets = [];
 
@@ -840,7 +852,7 @@
                                         <div class="ml-3">
                                             <p class="font-semibold text-gray-900">${pet.pet_name || 'Unknown'}</p>
                                             <p class="text-xs text-gray-500">${speciesDisplay} • ${pet.breed || 'Unknown'}</p>
-                                            <p class="text-xs text-gray-600 mt-1">Gender: ${pet.gender || 'Unknown'} • Age: ${pet.age || 'Unknown'}</p>
+                                            <p class="text-xs text-gray-600 mt-1">Gender: ${pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : 'Unknown'} • Age: ${pet.age || 'Unknown'}</p>
                                         </div>
                                     </div>
                                     <button type="button" onclick="removeAdoptionPet(${pet.pet_id})" class="text-red-500 hover:text-red-700 p-1">
@@ -1586,7 +1598,7 @@
                                 <div class="ml-4 flex-1">
                                     <div class="font-semibold text-gray-900">${petData.pet_name}</div>
                                     <div class="text-xs text-gray-500">
-                                        <span class="capitalize">${petData.species}</span> · ${petData.gender} · ${petData.age}
+                                        <span class="capitalize">${petData.species}</span> · ${petData.gender ? petData.gender.charAt(0).toUpperCase() + petData.gender.slice(1) : 'Unknown'} · ${petData.age}
                                     </div>
                                 </div>
                                 <button type="button" onclick="removeAdoptionPet('${petId}')" class="text-red-500 hover:text-red-700 p-2">
