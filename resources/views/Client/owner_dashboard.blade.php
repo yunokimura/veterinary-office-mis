@@ -407,8 +407,8 @@
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->clinic_name ?? 'N/A',
                 'owner_name' => $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A',
-                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($address->city ?? '')) : 'N/A',
-                'owner_barangay' => $barangay?->name ?? ($user?->barangay?->name ?? 'N/A'),
+                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($barangay?->name ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->name ?? ($address?->barangay?->name ?? ($user?->barangay?->name ?? 'N/A')),
                 'last_rabies_date' => $lastRabies?->vaccination_date ?? null,
                 'recent_surgery' => $lastRabies?->notes ?? 'None',
             ]);
@@ -430,8 +430,8 @@
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->veterinarian ?? 'N/A',
                 'owner_name' => $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A',
-                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($address->city ?? '')) : 'N/A',
-                'owner_barangay' => $barangay?->name ?? ($user?->barangay?->name ?? 'N/A'),
+                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($barangay?->name ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->name ?? ($address?->barangay?->name ?? ($user?->barangay?->name ?? 'N/A')),
                 'procedure_type' => $a->procedure_type ?? 'N/A',
                 'weight' => $petInfo?->pet_weight ?? 'N/A',
             ]);
@@ -604,8 +604,8 @@
             <!-- Footer -->
             <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
                 <span class="text-slate-400 font-mono" id="glassIDTag">ID: #APP-000</span>
-                <div class="flex items-center gap-2">
-                    <button onclick="closeModal('glassModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl">Cancel</button>
+                <div id="glassFooterBtns" class="flex items-center gap-2">
+                    <button onclick="closeModal('glassModal')" id="glassCancelBtn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl">Cancel</button>
                     <button id="glassSaveBtn" onclick="saveGlassForm()" class="px-5 py-2 bg-dasma-700 hover:bg-dasma-800 text-white font-semibold rounded-xl shadow-sm">Save & Update</button>
                 </div>
             </div>
@@ -1227,14 +1227,24 @@
             const scheduled = item.scheduled_at ? new Date(item.scheduled_at).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'TBA';
             const apptDate = item.appointment_date ? new Date(item.appointment_date).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'TBA';
 
+            const isCompleted = ['completed', 'rejected', 'cancelled'].includes(item.status);
+
             document.getElementById('glassIcon').innerHTML = isAppt ? '<i data-lucide="calendar" class="w-5 h-5"></i>' : '<i data-lucide="heart" class="w-5 h-5"></i>';
             document.getElementById('glassSubhead').innerText = `${isAppt ? 'My Appointments' : 'My Adoption Applications'} • ${activeTabMode === 'view' ? 'View' : 'Edit'}`;
             const idPrefix = activeItemType === 'appointment' ? 'APP #' : 'ADPT-APP #';
             document.getElementById('glassTitle').innerText = `${idPrefix}${item.id}: ${item.pet_name}`;
             document.getElementById('glassIDTag').innerText = `Record Reference: ${idPrefix}${item.id}`;
 
+            // Force view mode when completed/rejected/cancelled and hide Edit tab
+            if (isCompleted) {
+                activeTabMode = 'view';
+                document.getElementById('glassTabNavEdit').classList.add('hidden');
+            } else {
+                document.getElementById('glassTabNavEdit').classList.remove('hidden');
+            }
+
             document.getElementById('glassTabNavView').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTabMode === 'view' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`;
-            document.getElementById('glassTabNavEdit').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTabMode === 'edit' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`;
+            document.getElementById('glassTabNavEdit').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTabMode === 'edit' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'} ${!isCompleted ? '' : 'hidden'}`;
 
             const content = document.getElementById('glassContent');
 
@@ -1363,6 +1373,21 @@
                 }
             }
 
+            // Update footer buttons based on status
+            const cancelBtn = document.getElementById('glassCancelBtn');
+            const saveBtn = document.getElementById('glassSaveBtn');
+            if (isCompleted) {
+                cancelBtn.classList.add('hidden');
+                saveBtn.textContent = 'Close';
+                saveBtn.className = 'px-5 py-2 bg-slate-500 hover:bg-slate-600 text-white font-semibold rounded-xl shadow-sm';
+                saveBtn.onclick = () => closeModal('glassModal');
+            } else {
+                cancelBtn.classList.remove('hidden');
+                saveBtn.textContent = 'Save & Update';
+                saveBtn.className = 'px-5 py-2 bg-dasma-700 hover:bg-dasma-800 text-white font-semibold rounded-xl shadow-sm';
+                saveBtn.onclick = saveGlassForm;
+            }
+
             lucide.createIcons();
         }
 
@@ -1372,6 +1397,11 @@
         }
 
         function saveGlassForm() {
+            if (activeItemData && ['completed', 'rejected', 'cancelled'].includes(activeItemData.status)) {
+                showToast('Cannot edit a completed or cancelled record.');
+                closeGlassModal();
+                return;
+            }
             if (activeTabMode === 'edit') {
                 const dateVal = document.getElementById('glassInputDate')?.value;
                 if (dateVal) {
