@@ -294,87 +294,24 @@
                 <label class="block text-xs font-semibold text-gray-700 mb-1.5">
                   Barangay <span class="text-red-500">*</span>
                 </label>
-                <select name="barangay" class="w-full px-4 py-3 text-xs sm:text-sm rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition appearance-none pr-10 @error('barangay') border-red-500 @enderror"
-                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23066D33%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px 12px;">
-                  <option value="">Select Barangay</option>
-                  <option value="Burol I" {{ old('barangay') == 'Burol I' ? 'selected' : '' }}>Burol I</option>
-                  <option value="Burol II" {{ old('barangay') == 'Burol II' ? 'selected' : '' }}>Burol II</option>
-                  <option value="Burol III" {{ old('barangay') == 'Burol III' ? 'selected' : '' }}>Burol III</option>
-                  <option value="Burol Main" {{ old('barangay') == 'Burol Main' ? 'selected' : '' }}>Burol Main</option>
-                  <option value="Datu Esmael (Bago-A-Ingud)" {{ old('barangay') == 'Datu Esmael (Bago-A-Ingud)' ? 'selected' : '' }}>Datu Esmael (Bago-A-Ingud)</option>
-                  <option value="Emmanuel Bergaod I" {{ old('barangay') == 'Emmanuel Bergaod I' ? 'selected' : '' }}>Emmanuel Bergaod I</option>
-                  <option value="Emmanuel Bergaod II" {{ old('barangay') == 'Emmanuel Bergaod II' ? 'selected' : '' }}>Emmanuel Bergaod II</option>
-                  <option value="Fatima I" {{ old('barangay') == 'Fatima I' ? 'selected' : '' }}>Fatima I</option>
-                  <option value="Fatima II" {{ old('barangay') == 'Fatima II' ? 'selected' : '' }}>Fatima II</option>
-                  <option value="Fatima III" {{ old('barangay') == 'Fatima III' ? 'selected' : '' }}>Fatima III</option>
-                  <option value="H-2 (Sta. Veronica)" {{ old('barangay') == 'H-2 (Sta. Veronica)' ? 'selected' : '' }}>H-2 (Sta. Veronica)</option>
-                  <option value="Langkaan I (Humayao)" {{ old('barangay') == 'Langkaan I (Humayao)' ? 'selected' : '' }}>Langkaan I (Humayao)</option>
-                  <option value="Langkaan II" {{ old('barangay') == 'Langkaan II' ? 'selected' : '' }}>Langkaan II</option>
-                  <option value="Luzviminda I" {{ old('barangay') == 'Luzviminda I' ? 'selected' : '' }}>Luzviminda I</option>
-                  <option value="Luzviminda II" {{ old('barangay') == 'Luzviminda II' ? 'selected' : '' }}>Luzviminda II</option>
-                  <option value="Paliparan I" {{ old('barangay') == 'Paliparan I' ? 'selected' : '' }}>Paliparan I</option>
-                  <option value="Paliparan II" {{ old('barangay') == 'Paliparan II' ? 'selected' : '' }}>Paliparan II</option>
-                  <option value="Paliparan III" {{ old('barangay') == 'Paliparan III' ? 'selected' : '' }}>Paliparan III</option>
-                  <option value="Sabang" {{ old('barangay') == 'Sabang' ? 'selected' : '' }}>Sabang</option>
-                  <option value="Saint Peter I" {{ old('barangay') == 'Saint Peter I' ? 'selected' : '' }}>Saint Peter I</option>
-                  <option value="Saint Peter II" {{ old('barangay') == 'Saint Peter II' ? 'selected' : '' }}>Saint Peter II</option>
-                  <option value="Salawag" {{ old('barangay') == 'Salawag' ? 'selected' : '' }}>Salawag</option>
-                  <option value="Salitran I" {{ old('barangay') == 'Salitran I' ? 'selected' : '' }}>Salitran I</option>
-                  <option value="Salitran II" {{ old('barangay') == 'Salitran II' ? 'selected' : '' }}>Salitran II</option>
-                  <option value="Salitran III" {{ old('barangay') == 'Salitran III' ? 'selected' : '' }}>Salitran III</option>
-                  <option value="Salitran IV" {{ old('barangay') == 'Salitran IV' ? 'selected' : '' }}>Salitran IV</option>
-                  <option value="Sampaloc I (Pala-Pala)" {{ old('barangay') == 'Sampaloc I (Pala-Pala)' ? 'selected' : '' }}>Sampaloc I (Pala-Pala)</option>
-                  <option value="Sampaloc II (Bucal/Malinta)" {{ old('barangay') == 'Sampaloc II (Bucal/Malinta)' ? 'selected' : '' }}>Sampaloc II (Bucal/Malinta)</option>
-                  <option value="Sampaloc III (Piela)" {{ old('barangay') == 'Sampaloc III (Piela)' ? 'selected' : '' }}>Sampaloc III (Piela)</option>
-                  <option value="Sampaloc IV (Talisayan/Bautista)" {{ old('barangay') == 'Sampaloc IV (Talisayan/Bautista)' ? 'selected' : '' }}>Sampaloc IV (Talisayan/Bautista)</option>
-                  <option value="Sampaloc V (New Era)" {{ old('barangay') == 'Sampaloc V (New Era)' ? 'selected' : '' }}>Sampaloc V (New Era)</option>
-                  <option value="San Augustin I" {{ old('barangay') == 'San Augustin I' ? 'selected' : '' }}>San Augustin I</option>
-                  <option value="San Augustin II (R. Tirona)" {{ old('barangay') == 'San Augustin II (R. Tirona)' ? 'selected' : '' }}>San Augustin II (R. Tirona)</option>
-                  <option value="San Augustin III" {{ old('barangay') == 'San Augustin III' ? 'selected' : '' }}>San Augustin III</option>
-                  <option value="San Andres I" {{ old('barangay') == 'San Andres I' ? 'selected' : '' }}>San Andres I</option>
-                  <option value="San Andres II" {{ old('barangay') == 'San Andres II' ? 'selected' : '' }}>San Andres II</option>
-                  <option value="San Antonio De Padua I" {{ old('barangay') == 'San Antonio De Padua I' ? 'selected' : '' }}>San Antonio De Padua I</option>
-                  <option value="San Antonio De Padua II" {{ old('barangay') == 'San Antonio De Padua II' ? 'selected' : '' }}>San Antonio De Padua II</option>
-                  <option value="San Dionisio" {{ old('barangay') == 'San Dionisio' ? 'selected' : '' }}>San Dionisio</option>
-                  <option value="San Esteban" {{ old('barangay') == 'San Esteban' ? 'selected' : '' }}>San Esteban</option>
-                  <option value="San Fransisco I" {{ old('barangay') == 'San Fransisco I' ? 'selected' : '' }}>San Fransisco I</option>
-                  <option value="San Fransisco II" {{ old('barangay') == 'San Fransisco II' ? 'selected' : '' }}>San Fransisco II</option>
-                  <option value="San Isidro Labrador I" {{ old('barangay') == 'San Isidro Labrador I' ? 'selected' : '' }}>San Isidro Labrador I</option>
-                  <option value="San Isidro Labrador II" {{ old('barangay') == 'San Isidro Labrador II' ? 'selected' : '' }}>San Isidro Labrador II</option>
-                  <option value="San Jose" {{ old('barangay') == 'San Jose' ? 'selected' : '' }}>San Jose</option>
-                  <option value="San Juan" {{ old('barangay') == 'San Juan' ? 'selected' : '' }}>San Juan</option>
-                  <option value="San Lorenzo Ruiz I" {{ old('barangay') == 'San Lorenzo Ruiz I' ? 'selected' : '' }}>San Lorenzo Ruiz I</option>
-                  <option value="San Lorenzo Ruiz II" {{ old('barangay') == 'San Lorenzo Ruiz II' ? 'selected' : '' }}>San Lorenzo Ruiz II</option>
-                  <option value="San Luis I" {{ old('barangay') == 'San Luis I' ? 'selected' : '' }}>San Luis I</option>
-                  <option value="San Luis II" {{ old('barangay') == 'San Luis II' ? 'selected' : '' }}>San Luis II</option>
-                  <option value="San Manuel I" {{ old('barangay') == 'San Manuel I' ? 'selected' : '' }}>San Manuel I</option>
-                  <option value="San Manuel II" {{ old('barangay') == 'San Manuel II' ? 'selected' : '' }}>San Manuel II</option>
-                  <option value="San Mateo" {{ old('barangay') == 'San Mateo' ? 'selected' : '' }}>San Mateo</option>
-                  <option value="San Miguel I" {{ old('barangay') == 'San Miguel I' ? 'selected' : '' }}>San Miguel I</option>
-                  <option value="San Miguel II" {{ old('barangay') == 'San Miguel II' ? 'selected' : '' }}>San Miguel II</option>
-                  <option value="San Nicolas I" {{ old('barangay') == 'San Nicolas I' ? 'selected' : '' }}>San Nicolas I</option>
-                  <option value="San Nicolas II" {{ old('barangay') == 'San Nicolas II' ? 'selected' : '' }}>San Nicolas II</option>
-                  <option value="San Roque" {{ old('barangay') == 'San Roque' ? 'selected' : '' }}>San Roque</option>
-                  <option value="San Simon" {{ old('barangay') == 'San Simon' ? 'selected' : '' }}>San Simon</option>
-                  <option value="Santa Cristina I" {{ old('barangay') == 'Santa Cristina I' ? 'selected' : '' }}>Santa Cristina I</option>
-                  <option value="Santa Cristina II" {{ old('barangay') == 'Santa Cristina II' ? 'selected' : '' }}>Santa Cristina II</option>
-                  <option value="Santa Cruz I" {{ old('barangay') == 'Santa Cruz I' ? 'selected' : '' }}>Santa Cruz I</option>
-                  <option value="Santa Cruz II" {{ old('barangay') == 'Santa Cruz II' ? 'selected' : '' }}>Santa Cruz II</option>
-                  <option value="Santa Fe" {{ old('barangay') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
-                  <option value="Santa Lucia" {{ old('barangay') == 'Santa Lucia' ? 'selected' : '' }}>Santa Lucia</option>
-                  <option value="Santa Maria" {{ old('barangay') == 'Santa Maria' ? 'selected' : '' }}>Santa Maria</option>
-                  <option value="Santo Cristo" {{ old('barangay') == 'Santo Cristo' ? 'selected' : '' }}>Santo Cristo</option>
-                  <option value="Santo Niño I" {{ old('barangay') == 'Santo Niño I' ? 'selected' : '' }}>Santo Niño I</option>
-                  <option value="Santo Niño II" {{ old('barangay') == 'Santo Niño II' ? 'selected' : '' }}>Santo Niño II</option>
-                  <option value="Victoria Reyes" {{ old('barangay') == 'Victoria Reyes' ? 'selected' : '' }}>Victoria Reyes</option>
-                  <option value="Zone I" {{ old('barangay') == 'Zone I' ? 'selected' : '' }}>Zone I</option>
-                  <option value="Zone I-A" {{ old('barangay') == 'Zone I-A' ? 'selected' : '' }}>Zone I-A</option>
-                  <option value="Zone II" {{ old('barangay') == 'Zone II' ? 'selected' : '' }}>Zone II</option>
-                  <option value="Zone III" {{ old('barangay') == 'Zone III' ? 'selected' : '' }}>Zone III</option>
-                  <option value="Zone IV" {{ old('barangay') == 'Zone IV' ? 'selected' : '' }}>Zone IV</option>
-                </select>
-                @error('barangay')
-                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @php
+                    $selectedBarangayName = old('barangay_id') && isset($barangays) ? (($b = $barangays->firstWhere('barangay_id', old('barangay_id'))) ? $b->barangay_name : null) : null;
+                @endphp
+                <div class="relative">
+                    <button type="button" id="barangayDisplay" class="w-full px-4 py-3 text-xs sm:text-sm bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-emerald-300 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent" onclick="openBarangayModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span id="selectedBarangayText" class="text-sm text-gray-700 truncate">{{ $selectedBarangayName ?? 'Select Barangay' }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 ml-auto pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+                <!-- Hidden input for barangay -->
+                <input type="hidden" id="barangayIdInput" name="barangay_id" value="{{ old('barangay_id') }}">
+                @error('barangay_id')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
               </div>
 
@@ -568,7 +505,181 @@
         strengthText.className = 'text-xs text-green-600';
       }
     }
+
+    // Barangay data from server
+    const barangaysData = @json($barangays);
+    let lastFocusedBarangayElement = null;
+
+    // Focus trap utility
+    function trapFocus(element) {
+      const focusableElements = element.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      element.addEventListener('keydown', function handleTab(e) {
+        if (e.key !== 'Tab') return;
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      });
+    }
+
+    // Open the barangay selector modal
+    function openBarangayModal() {
+      const modal = document.getElementById('barangayModal');
+      modal.classList.remove('hidden');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('role', 'dialog');
+      document.body.classList.add('overflow-hidden');
+
+      lastFocusedBarangayElement = document.activeElement;
+
+      document.getElementById('barangayModalSearch').value = '';
+      renderBarangayModal();
+
+      setTimeout(() => {
+        const searchInput = document.getElementById('barangayModalSearch');
+        if (searchInput) {
+          searchInput.focus();
+          trapFocus(modal);
+        }
+      }, 50);
+    }
+
+    // Close the barangay selector modal
+    function closeBarangayModal() {
+      const modal = document.getElementById('barangayModal');
+      modal.classList.add('hidden');
+      modal.removeAttribute('aria-modal');
+      modal.removeAttribute('role');
+      document.body.classList.remove('overflow-hidden');
+
+      if (lastFocusedBarangayElement && typeof lastFocusedBarangayElement.focus === 'function') {
+        lastFocusedBarangayElement.focus();
+      }
+      lastFocusedBarangayElement = null;
+    }
+
+    // Render the barangay list grouped alphabetically
+    function renderBarangayModal(filter = '') {
+      const search = filter.trim().toLowerCase();
+      const filtered = barangaysData.filter(b => String(b.barangay_name).toLowerCase().includes(search));
+      const list = document.getElementById('barangayModalList');
+      const empty = document.getElementById('barangayModalEmpty');
+
+      if (filtered.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      const groups = {};
+      filtered.forEach(b => {
+        const letter = String(b.barangay_name).charAt(0).toUpperCase();
+        if (!groups[letter]) groups[letter] = [];
+        groups[letter].push(b);
+      });
+
+      let html = '';
+      Object.keys(groups).sort().forEach(letter => {
+        html += `
+          <div class="mb-4">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-1.5">
+              <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 border border-emerald-200 rounded-md px-2 py-0.5">${letter}</span>
+            </div>
+            <div class="space-y-1 mt-1">`;
+        groups[letter].forEach(b => {
+          const selected = document.getElementById('barangayIdInput').value == b.barangay_id;
+          html += `
+              <button type="button" onclick="handleBarangaySelect(${b.barangay_id}, '${String(b.barangay_name).replace(/'/g, "\\'")}')"
+                      class="w-full flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors text-left ${selected ? 'bg-emerald-50 text-emerald-800 font-semibold' : 'text-gray-700 hover:bg-slate-50'}">
+                ${b.barangay_name}
+              </button>`;
+        });
+        html += `</div></div>`;
+      });
+
+      list.innerHTML = html;
+    }
+
+    // Filter the barangay list as the user types
+    function filterBarangayModal() {
+      renderBarangayModal(document.getElementById('barangayModalSearch').value);
+    }
+
+    // Handle barangay selection
+    function handleBarangaySelect(id, name) {
+      document.getElementById('barangayIdInput').value = id;
+      document.getElementById('selectedBarangayText').textContent = name;
+      closeBarangayModal();
+    }
   </script>
+
+  <!-- Barangay Selection Modal -->
+  <div id="barangayModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="barangayModalTitle">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeBarangayModal()"></div>
+    <div class="fixed inset-0 flex items-end sm:items-center sm:justify-center p-0 sm:p-4">
+      <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-md max-h-[92vh] sm:max-h-[85vh] overflow-hidden flex flex-col">
+        <!-- Modal Header -->
+        <div class="px-5 pt-5 pb-4 border-b border-gray-200">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 18h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2z" />
+              </svg>
+              <h3 id="barangayModalTitle" class="text-lg font-semibold text-gray-900">Select Barangay</h3>
+            </div>
+            <button type="button" onclick="closeBarangayModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-1.5 transition-colors" aria-label="Close barangay selector">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <!-- Search bar (auto-focused on open) -->
+          <div class="relative">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" id="barangayModalSearch" placeholder="Search barangay..." onkeyup="filterBarangayModal()"
+                   class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="flex-1 overflow-y-auto min-h-[360px]">
+          <div class="px-5 pt-4 pb-4">
+            <!-- Alphabetical List -->
+            <div id="barangayModalList"></div>
+
+            <!-- Empty search state -->
+            <div id="barangayModalEmpty" class="hidden text-center py-8">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <p class="text-xs text-gray-700">No barangays match your search.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-5 py-4 border-t border-gray-200 bg-gray-50">
+          <button type="button" onclick="closeBarangayModal()" class="w-full px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Form persistence across page refreshes -->
   <script>

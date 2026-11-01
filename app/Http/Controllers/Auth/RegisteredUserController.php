@@ -24,7 +24,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $barangays = Barangay::orderBy('barangay_name')->get();
+
+        return view('auth.register', compact('barangays'));
     }
 
     /**
@@ -51,7 +53,7 @@ class RegisteredUserController extends Controller
             'block_lot_phase_house_no_4' => ['nullable', 'string', 'max:50'],
             'street_name' => ['required', 'string', 'max:255'],
             'subdivision' => ['required', 'string', 'max:255'],
-            'barangay' => ['required', 'string', 'max:255'],
+            'barangay_id' => ['required', 'integer', 'exists:barangays,barangay_id'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'terms' => ['accepted'],
         ]);
@@ -109,7 +111,7 @@ class RegisteredUserController extends Controller
         ]);
 
         // Create address for the pet owner
-        $barangay = Barangay::where('barangay_name', $request->barangay)->first();
+        $barangay = Barangay::find($request->input('barangay_id'));
         $address = $petOwner->address()->create([
             'block_lot_phase' => $houseNo,
             'street' => $request->street_name,
