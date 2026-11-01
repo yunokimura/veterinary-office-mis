@@ -270,7 +270,7 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
-                        <button onclick="openNotLoggedInModal()" class="w-full sm:w-auto bg-white text-primary font-bold px-8 py-4 rounded-xl shadow-lg hover:opacity-90 hover:shadow-xl hover:-translate-y-0.5 transition-all transform flex items-center justify-center space-x-2">
+                        <button onclick="handleCtaClick()" class="w-full sm:w-auto bg-white text-primary font-bold px-8 py-4 rounded-xl shadow-lg hover:opacity-90 hover:shadow-xl hover:-translate-y-0.5 transition-all transform flex items-center justify-center space-x-2">
                             <span>Book Veterinary Services</span>
                             <i class="fa-solid fa-arrow-right text-sm"></i>
                         </button>
@@ -693,7 +693,7 @@
                     <i class="fa-solid fa-paw"></i>
                     <span>Report Found Pet</span>
                 </a>
-                <button onclick="openNotLoggedInModal()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2 tab-cta hidden" data-tab="adoption">
+                <button onclick="handleCtaClick()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2 tab-cta hidden" data-tab="adoption">
                     <i class="fa-solid fa-heart"></i>
                     <span>Adopt a Pet</span>
                 </button>
@@ -2136,8 +2136,111 @@
 
             <div class="border-t border-slate-100 flex items-center justify-between flex-shrink-0 px-6 sm:px-8 py-4">
                 <p class="text-sm text-slate-600 mb-0">Ready to make an appointment?</p>
-                <a href="#" onclick="event.preventDefault(); closeExploreServicesModal(); openNotLoggedInModal();" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5 active:translate-y-0">
+                <a href="#" onclick="event.preventDefault(); closeExploreServicesModal(); handleBookClick();" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5 active:translate-y-0">
                     <span>Log In to Book Now</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Book Veterinary Services (Authenticated User Modal) -->
+    <div id="authenticatedServicesModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl relative transform transition-all">
+            <button onclick="closeAuthenticatedServicesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="p-6 sm:p-8 flex-1 overflow-y-auto">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-tighter">
+                        <i class="fa-solid fa-user-check text-[10px]"></i> Logged In View
+                    </span>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900 mb-2">Book Veterinary Services</h3>
+                <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                    Select a service below to book an appointment.
+                </p>
+
+                <div class="space-y-3">
+                    <!-- Pet Registration -->
+                    <a href="{{ route('pet.registration.form') }}" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-emerald-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors flex-shrink-0">
+                                <i class="fa-solid fa-clipboard-list text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="font-semibold text-slate-800 text-sm block">Pet Registration</span>
+                                <p class="text-[10px] text-slate-500 mt-0.5 leading-tight">Register your pet to get a digital pet ID and manage their appointments.</p>
+                            </div>
+                        </div>
+                        <span class="text-emerald-600 text-xs font-semibold whitespace-nowrap">Book Now <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+
+                    <!-- Spay & Neuter -->
+                    <a href="/kapon/form" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-blue-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors flex-shrink-0">
+                                <i class="fa-solid fa-scissors text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="font-semibold text-slate-800 text-sm block">Spay &amp; Neuter (<i>Kapon</i>)</span>
+                                <p class="text-[10px] text-slate-500 mt-0.5 leading-tight">Free or affordable surgery to keep your pet healthy and prevent unwanted litters.</p>
+                            </div>
+                        </div>
+                        <span class="text-blue-600 text-xs font-semibold whitespace-nowrap">Book Now <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+
+                    <!-- Anti-Rabies Vaccination -->
+                    <a href="/vaccination/form" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-purple-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors flex-shrink-0">
+                                <i class="fa-solid fa-syringe text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="font-semibold text-slate-800 text-sm block">Anti-Rabies Vaccination</span>
+                                <p class="text-[10px] text-slate-500 mt-0.5 leading-tight">Free anti-rabies shots to keep your pet protected and safe at local mobile clinic visits.</p>
+                            </div>
+                        </div>
+                        <span class="text-purple-600 text-xs font-semibold whitespace-nowrap">Book Now <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+
+                    <!-- Lost & Found Pets -->
+                    <a href="{{ url('/missing-pets/form') }}" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-rose-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-colors flex-shrink-0">
+                                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="font-semibold text-slate-800 text-sm block">Lost &amp; Found Pets</span>
+                                <p class="text-[10px] text-slate-500 mt-0.5 leading-tight">Report a missing pet or search city records to help bring lost pets back home.</p>
+                            </div>
+                        </div>
+                        <span class="text-rose-600 text-xs font-semibold whitespace-nowrap">Book Now <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+
+                    <!-- Pet Adoption -->
+                    <a href="{{ route('adoption.form') }}" class="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-amber-200 transition-colors text-left group">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors flex-shrink-0">
+                                <i class="fa-solid fa-heart text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="font-semibold text-slate-800 text-sm block">Pet Adoption</span>
+                                <p class="text-[10px] text-slate-500 mt-0.5 leading-tight">Welcome a healthy, rescued dog or cat into your family through city adoption drives.</p>
+                            </div>
+                        </div>
+                        <span class="text-amber-600 text-xs font-semibold whitespace-nowrap">Book Now <i class="fa-solid fa-arrow-right ml-0.5 text-[10px]"></i></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-100 flex items-center justify-between flex-shrink-0 px-6 sm:px-8 py-4">
+                <p class="text-sm text-slate-600 mb-0">Already booked an appointment?</p>
+                <a href="{{ route('owner.dashboard') }}" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5 active:translate-y-0">
+                    <span>Go to Dashboard</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
             </div>
@@ -2146,6 +2249,24 @@
 
     <!-- Close modals on Escape or backdrop click -->
     <script>
+        const isAuthenticated = @js(auth()->check());
+
+        function handleCtaClick() {
+            if (isAuthenticated) {
+                openAuthenticatedServicesModal();
+            } else {
+                openNotLoggedInModal();
+            }
+        }
+
+        function handleBookClick() {
+            if (isAuthenticated) {
+                closeAuthenticatedServicesModal();
+            } else {
+                openNotLoggedInModal();
+            }
+        }
+
         function openNotLoggedInModal() {
             document.getElementById('notLoggedInModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -2166,10 +2287,21 @@
             document.body.style.overflow = 'auto';
         }
 
+        function openAuthenticatedServicesModal() {
+            document.getElementById('authenticatedServicesModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAuthenticatedServicesModal() {
+            document.getElementById('authenticatedServicesModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeNotLoggedInModal();
                 closeExploreServicesModal();
+                closeAuthenticatedServicesModal();
             }
         });
 
@@ -2179,6 +2311,10 @@
 
         document.getElementById('exploreServicesModal')?.addEventListener('click', function(event) {
             if (event.target === this) closeExploreServicesModal();
+        });
+
+        document.getElementById('authenticatedServicesModal')?.addEventListener('click', function(event) {
+            if (event.target === this) closeAuthenticatedServicesModal();
         });
 
         // Stat counter animation - animate on first view only

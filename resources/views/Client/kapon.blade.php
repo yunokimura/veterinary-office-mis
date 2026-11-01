@@ -118,7 +118,7 @@
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
-                        <button onclick="openNotLoggedInModal()" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                        <button onclick="handleCtaClick()" class="w-full sm:w-auto bg-primary hover:bg-primary-light text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
                             <span>Book Your Pet</span>
                             <i class="fa-solid fa-arrow-right text-sm text-white"></i>
                         </button>
@@ -543,6 +543,16 @@
     </div>
 
     <script>
+        const isAuthenticated = @js(auth()->check());
+
+        function handleCtaClick() {
+            if (isAuthenticated) {
+                window.location.href = '/kapon/form';
+            } else {
+                openNotLoggedInModal();
+            }
+        }
+
         function openNotLoggedInModal() {
             document.getElementById('notLoggedInModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';

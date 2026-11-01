@@ -6,6 +6,8 @@
             || request()->is('pet-registration*')
             || request()->is('kapon*')
             || request()->is('vaccination*');
+        $lostFoundActive = request()->is('missing-pets*')
+            || request()->is('found-pets*');
     @endphp
 
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
@@ -48,7 +50,25 @@
                             </a>
                         </div>
                     </div>
-                    <a href="{{ url('/missing-pets') }}" class="{{ request()->is('missing-pets*') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors">Lost &amp; Found Pets</a>
+                    <div class="relative">
+                        <button id="lostFoundDropdownBtn" class="{{ $lostFoundActive ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors inline-flex items-center space-x-1">
+                            <span>Lost &amp; Found Pets</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div id="lostFoundDropdown" class="hidden absolute top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            <a href="{{ url('/missing-pets') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <span>Page Overview</span>
+                            </a>
+                            <a href="{{ route('missing-pets.form') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <span>Report Lost Pet</span>
+                            </a>
+                            <a href="{{ route('found-pets.form') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <span>Report Found Pet</span>
+                            </a>
+                        </div>
+                    </div>
                     <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors">Adoption</a>
                 </nav>
 
@@ -183,7 +203,25 @@
                     </a>
                 </div>
             </div>
-            <a href="{{ url('/missing-pets') }}" class="{{ request()->is('missing-pets*') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Lost &amp; Found Pets</a>
+            <div>
+                <button id="mobileLostFoundBtn" class="w-full text-left py-2 px-3 rounded-lg {{ $lostFoundActive ? 'text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base inline-flex items-center justify-between">
+                    <span>Lost &amp; Found Pets</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div id="mobileLostFoundMenu" class="hidden pl-4 space-y-1">
+                    <a href="{{ url('/missing-pets') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <span>Page Overview</span>
+                    </a>
+                    <a href="{{ route('missing-pets.form') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <span>Report Lost Pet</span>
+                    </a>
+                    <a href="{{ route('found-pets.form') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <span>Report Found Pet</span>
+                    </a>
+                </div>
+            </div>
             <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Adoption</a>
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 @auth
@@ -289,9 +327,34 @@
             });
         }
 
+        // Lost & Found Pets dropdown toggles
+        const lostFoundDropdownBtn = document.getElementById('lostFoundDropdownBtn');
+        const lostFoundDropdown = document.getElementById('lostFoundDropdown');
+        const mobileLostFoundBtn = document.getElementById('mobileLostFoundBtn');
+        const mobileLostFoundMenu = document.getElementById('mobileLostFoundMenu');
+
+        if (lostFoundDropdownBtn && lostFoundDropdown) {
+            lostFoundDropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                lostFoundDropdown.classList.toggle('hidden');
+            });
+        }
+
+        if (mobileLostFoundBtn && mobileLostFoundMenu) {
+            mobileLostFoundBtn.addEventListener('click', function() {
+                mobileLostFoundMenu.classList.toggle('hidden');
+            });
+        }
+
         document.addEventListener('click', function(e) {
             if (servicesDropdown && !servicesDropdownBtn.contains(e.target) && !servicesDropdown.contains(e.target)) {
                 servicesDropdown.classList.add('hidden');
+            }
+            if (lostFoundDropdown && !lostFoundDropdownBtn.contains(e.target) && !lostFoundDropdown.contains(e.target)) {
+                lostFoundDropdown.classList.add('hidden');
+            }
+            if (mobileLostFoundMenu && !mobileLostFoundBtn.contains(e.target) && !mobileLostFoundMenu.contains(e.target)) {
+                mobileLostFoundMenu.classList.add('hidden');
             }
         });
 
