@@ -144,6 +144,7 @@
                         <!-- Hidden inputs carried over for form submission -->
                         <input type="hidden" name="physical_marks[body_marks]" id="hmBodyMarks" value="">
                         <input type="hidden" name="physical_marks[eye_color]" id="hmEyeColor" value="">
+                        <input type="hidden" name="physical_marks[collar_harness]" id="hmCollarHarness" value="">
                         <input type="hidden" name="physical_marks[body_marks_photo]" id="hmBodyMarkImage" value="">
                     </div>
                 </div>
