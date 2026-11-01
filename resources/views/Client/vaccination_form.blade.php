@@ -1193,17 +1193,13 @@
                 if (!card) return;
                 
                 const historyContainer = document.getElementById('petMedicalHistoryContainer');
-                const hasPrevious = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][has_previous_vaccine]"]:checked`) : null;
                 const rabiesDate = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
                 const surgeryRadio = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][recent_surgery]"]:checked`) : null;
-                const previousFields = document.getElementById('previousVaccineFields_' + petId);
                 const surgeryContainer = document.getElementById('surgeryDateContainer_' + petId);
                 
                 state[petId] = {
-                    has_previous_vaccine: hasPrevious ? hasPrevious.value : null,
                     last_anti_rabies_date: rabiesDate ? rabiesDate.value : null,
                     recent_surgery: surgeryRadio ? surgeryRadio.value : null,
-                    previous_fields_visible: previousFields ? !previousFields.classList.contains('hidden') : false,
                     surgery_container_visible: surgeryContainer ? !surgeryContainer.classList.contains('hidden') : false
                 };
             });
@@ -1216,24 +1212,14 @@
                 if (!cardState) return;
                 
                 const historyContainer = document.getElementById('petMedicalHistoryContainer');
-                const hasPrevious = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][has_previous_vaccine]"][value="${cardState.has_previous_vaccine}"]`) : null;
                 const rabiesDate = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][last_anti_rabies_date]"]`) : null;
                 const surgeryRadio = historyContainer ? historyContainer.querySelector(`input[name="pet_medical_history[${petId}][recent_surgery]"][value="${cardState.recent_surgery}"]`) : null;
-                const previousFields = document.getElementById('previousVaccineFields_' + petId);
                 const surgeryContainer = document.getElementById('surgeryDateContainer_' + petId);
                 
-                if (hasPrevious) hasPrevious.checked = true;
                 if (rabiesDate && cardState.last_anti_rabies_date) {
                     rabiesDate.value = cardState.last_anti_rabies_date;
                 }
                 if (surgeryRadio) surgeryRadio.checked = true;
-                if (previousFields) {
-                    if (cardState.previous_fields_visible) {
-                        previousFields.classList.remove('hidden');
-                    } else {
-                        previousFields.classList.add('hidden');
-                    }
-                }
                 if (surgeryContainer) {
                     if (cardState.surgery_container_visible) {
                         surgeryContainer.classList.remove('hidden');
@@ -1371,75 +1357,8 @@
                         </div>
 
                         <div id="medicalContent_${pet.id}" class="p-5">
-                            <div class="mb-5">
-                                <label class="block text-sm font-medium text-gray-700 mb-3">Has ${pet.name || 'this pet'} received an anti-rabies vaccine before? <span class="text-red-500">*</span></label>
-                                <div class="flex space-x-6">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_medical_history[${pet.id}][has_previous_vaccine]" value="yes" 
-                                               class="h-5 w-5" onchange="togglePreviousVaccineFields(this, ${pet.id})">
-                                        <span class="ml-3 text-gray-700 font-medium">Yes, has received before</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="pet_medical_history[${pet.id}][has_previous_vaccine]" value="no" 
-                                               class="h-5 w-5" onchange="togglePreviousVaccineFields(this, ${pet.id})">
-                                        <span class="ml-3 text-gray-700 font-medium">No history / First time</span>
-                                    </label>
-                                </div>
 
-                                <div id="previousVaccineFields_${pet.id}" class="hidden mt-4">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Date of Last Anti-Rabies Vaccination <span class="text-red-500">*</span></label>
-                                            <div class="relative">
-                                            <input type="date" name="pet_medical_history[${pet.id}][last_anti_rabies_date]" 
-                                                   max="${antiRabiesMaxDate}" min="${antiRabiesMinDateStr}"
-                                                   onchange="formatDateDisplay(this, 'antiRabiesDateDisplay_${pet.id}'); validateRabiesDateOnChange('${pet.id}')"
-                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                            </div>
-                                            <p id="antiRabiesDateDisplay_${pet.id}" class="text-xs text-gray-500 mt-1"></p>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Clinic/Facility Where Administered <span class="text-gray-400 font-normal">(Optional)</span></label>
-                                            <input type="text" name="pet_medical_history[${pet.id}][clinic_name]" placeholder="Dasmariñas City Vet, Private Clinic, or Barangay Drive"
-                                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                            <p class="text-xs text-gray-500 mt-1">Leave blank if you don't remember the exact clinic name.</p>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Vaccination Certificate <span class="text-gray-400 font-normal">(Optional)</span></label>
-                                            <div class="relative">
-                                                <select name="pet_medical_history[${pet.id}][vaccination_certificate]" onchange="toggleVaccineLotUpload(this, ${pet.id})" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none appearance-none">
-                                                    <option value="">Select status</option>
-                                                    <option value="available">Available (Will bring to appointment)</option>
-                                                    <option value="digital">Digital Photo / Copy Available</option>
-                                                    <option value="unavailable">No card / Lost or Unavailable</option>
-                                                </select>
-                                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <div id="vaccineLotUpload_${pet.id}" class="hidden mt-3">
-                                                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Vaccination Card Photo / PDF</label>
-                                                <input type="file" name="pet_medical_history[${pet.id}][vaccination_certificate_file]" accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-light">
-                                                <p class="text-xs text-gray-500 mt-1">JPG, PNG, or PDF up to 5MB.</p>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Vaccine Lot / Batch Number <span class="text-gray-400 font-normal">(Optional)</span></label>
-                                             <input type="text" name="pet_medical_history[${pet.id}][vaccine_lot_number]" placeholder="e.g., G64884"
-                                                    maxlength="6"
-                                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                            <p class="text-xs text-gray-500 mt-1">Found in the Vaccination Certificate</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="border-t border-gray-100 pt-4">
+                            <div class="pt-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-3">Did ${pet.name || 'this pet'} undergo any surgery in the last two (2) weeks? <span class="text-red-500">*</span></label>
                                 <div class="flex space-x-6">
                                     <label class="inline-flex items-center cursor-pointer">
@@ -1483,25 +1402,6 @@
             } else {
                 content.classList.add('hidden');
                 arrow.classList.remove('rotate-180');
-            }
-        }
-
-        function togglePreviousVaccineFields(radio, petId) {
-            const fieldsContainer = document.getElementById('previousVaccineFields_' + petId);
-            if (radio.value === 'yes') {
-                fieldsContainer.classList.remove('hidden');
-            } else {
-                fieldsContainer.classList.add('hidden');
-            }
-        }
-
-        function toggleVaccineLotUpload(select, petId) {
-            const uploadContainer = document.getElementById('vaccineLotUpload_' + petId);
-            if (!uploadContainer) return;
-            if (select.value === 'digital') {
-                uploadContainer.classList.remove('hidden');
-            } else {
-                uploadContainer.classList.add('hidden');
             }
         }
 
@@ -1959,17 +1859,6 @@
             afterFieldRestore: function () {
                 // Sync the conditional medical-history fields for every card
                 selectedPets.forEach(function (petId) {
-                    const previousRadio = document.querySelector('input[name="pet_medical_history[' + petId + '][has_previous_vaccine]"]:checked');
-                    if (previousRadio) togglePreviousVaccineFields(previousRadio, petId);
-
-                    const certificateSelect = document.querySelector('select[name="pet_medical_history[' + petId + '][vaccination_certificate]"]');
-                    if (certificateSelect) toggleVaccineLotUpload(certificateSelect, petId);
-
-                    const rabiesDateInput = document.querySelector('input[name="pet_medical_history[' + petId + '][last_anti_rabies_date]"]');
-                    if (rabiesDateInput && rabiesDateInput.value) {
-                        formatDateDisplay(rabiesDateInput, 'antiRabiesDateDisplay_' + petId);
-                    }
-
                     // Re-apply eligibility (e.g. surgery in the last 2 weeks)
                     // without re-showing the surgery warning modal
                     updatePetEligibilityState(petId);

@@ -1585,7 +1585,6 @@ Route::post('/vaccination/form', function (Request $request) {
         'appointment_date' => 'required|date|after_or_equal:today',
         'appointment_time' => 'required',
         'pet_medical_history' => 'required|array',
-        'pet_medical_history.*.has_previous_vaccine' => 'required|in:yes,no',
         'pet_medical_history.*.last_anti_rabies_date' => 'nullable|date',
         'pet_medical_history.*.clinic_name' => 'nullable|string|max:255',
         'pet_medical_history.*.vaccination_certificate' => 'nullable|string|max:255',
