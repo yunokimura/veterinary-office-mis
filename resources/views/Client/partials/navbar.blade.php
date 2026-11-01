@@ -59,12 +59,15 @@
                         </button>
                         <div id="lostFoundDropdown" class="hidden absolute top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                             <a href="{{ url('/missing-pets') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <i class="fa-solid fa-magnifying-glass text-rose-500 w-4"></i>
                                 <span>Page Overview</span>
                             </a>
                             <a href="{{ route('missing-pets.form') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <i class="fa-solid fa-bullhorn text-emerald-500 w-4"></i>
                                 <span>Report Lost Pet</span>
                             </a>
                             <a href="{{ route('found-pets.form') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <i class="fa-solid fa-paw text-amber-500 w-4"></i>
                                 <span>Report Found Pet</span>
                             </a>
                         </div>
@@ -212,12 +215,15 @@
                 </button>
                 <div id="mobileLostFoundMenu" class="hidden pl-4 space-y-1">
                     <a href="{{ url('/missing-pets') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <i class="fa-solid fa-magnifying-glass text-rose-500 w-4"></i>
                         <span>Page Overview</span>
                     </a>
                     <a href="{{ route('missing-pets.form') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <i class="fa-solid fa-bullhorn text-emerald-500 w-4"></i>
                         <span>Report Lost Pet</span>
                     </a>
                     <a href="{{ route('found-pets.form') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                        <i class="fa-solid fa-paw text-amber-500 w-4"></i>
                         <span>Report Found Pet</span>
                     </a>
                 </div>
@@ -317,12 +323,18 @@
         if (servicesDropdownBtn && servicesDropdown) {
             servicesDropdownBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
+                if (lostFoundDropdown && !lostFoundDropdown.classList.contains('hidden')) {
+                    lostFoundDropdown.classList.add('hidden');
+                }
                 servicesDropdown.classList.toggle('hidden');
             });
         }
 
         if (mobileServicesBtn && mobileServicesMenu) {
             mobileServicesBtn.addEventListener('click', function() {
+                if (mobileLostFoundMenu && !mobileLostFoundMenu.classList.contains('hidden')) {
+                    mobileLostFoundMenu.classList.add('hidden');
+                }
                 mobileServicesMenu.classList.toggle('hidden');
             });
         }
@@ -336,12 +348,18 @@
         if (lostFoundDropdownBtn && lostFoundDropdown) {
             lostFoundDropdownBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
+                if (servicesDropdown && !servicesDropdown.classList.contains('hidden')) {
+                    servicesDropdown.classList.add('hidden');
+                }
                 lostFoundDropdown.classList.toggle('hidden');
             });
         }
 
         if (mobileLostFoundBtn && mobileLostFoundMenu) {
             mobileLostFoundBtn.addEventListener('click', function() {
+                if (mobileServicesMenu && !mobileServicesMenu.classList.contains('hidden')) {
+                    mobileServicesMenu.classList.add('hidden');
+                }
                 mobileLostFoundMenu.classList.toggle('hidden');
             });
         }
