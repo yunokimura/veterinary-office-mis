@@ -444,7 +444,7 @@
     @endphp
 
     @php
-        $applications = \App\Models\AdoptionApplication::with(['pet', 'user.petOwner.address.barangay'])->where('user_id', auth()->id())
+        $applications = \App\Models\AdoptionApplication::with(['pet', 'user', 'address.barangay'])->where('user_id', auth()->id())
             ->orderByDesc('created_at')
             ->get();
 
@@ -452,9 +452,19 @@
         foreach ($applications as $application) {
             $pet = optional($application->pet);
             $user = optional($application->user);
-            $petOwner = optional($user)->petOwner;
-            $address = optional($petOwner)->address;
+            $address = optional($application->address);
             $barangay = optional($address)->barangay;
+
+            $adoptedBeforeRaw = optional($application)->adopted_before;
+            if (is_array($adoptedBeforeRaw)) {
+                $adoptedBefore = implode(', ', array_filter(array_map(fn($v) => trim((string) $v), $adoptedBeforeRaw))) ?: 'N/A';
+            } elseif (is_object($adoptedBeforeRaw)) {
+                $adoptedBefore = implode(', ', array_filter(array_map(fn($v) => trim((string) $v), (array) $adoptedBeforeRaw))) ?: 'N/A';
+            } else {
+                $adoptedBefore = (string) ($adoptedBeforeRaw ?: '');
+            }
+            $adoptedBeforeDisplay = strtolower(trim($adoptedBefore)) === 'no' ? 'No' : ($adoptedBefore ?: 'N/A');
+
             $adoptionData->push((object) [
                 'id' => $application->id,
                 'pet_name' => $pet->pet_name ?? 'Unspecified (General)',
@@ -465,11 +475,9 @@
                 'appointment_date' => $application->appointment_date ?? null,
                 'status' => $application->status ?? 'pending_review',
                 'owner_name' => $user ? ($user->first_name . ' ' . $user->last_name) : 'N/A',
-                'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($barangay?->name ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
-                'owner_barangay' => $barangay?->name ?? ($address?->barangay?->name ?? 'N/A'),
-                'adopted_before' => $application->adopted_before ?? 'N/A',
-                'alternate_contact' => $application->alternate_contact ?? 'N/A',
-                'questionnaire' => $application->questionnaire ?? 'N/A',
+                'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ', ' . ($address->barangay?->barangay_name ?? $application->barangay ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
+                'owner_barangay' => $address?->barangay?->barangay_name ?? $application->barangay ?: 'N/A',
+                'adopted_before' => $adoptedBeforeDisplay,
                 'valid_id' => $application->valid_id ?? 'N/A',
             ]);
         }
@@ -1343,8 +1351,6 @@
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Adoption Details</span>
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between"><span class="text-slate-500">Adopted Before:</span><span class="font-semibold text-slate-800">${item.adopted_before}</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-500">Alternate Contact:</span><span class="font-semibold text-slate-800">${item.alternate_contact}</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-500">Questionnaire:</span><span class="font-semibold text-slate-800">${item.questionnaire}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Valid ID:</span><span class="font-semibold text-slate-800">${item.valid_id}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Appointment Date & Time:</span><span class="font-semibold text-slate-800">${apptDate}</span></div>
                                 </div>
