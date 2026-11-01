@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-thin-rounded/css/uicons-thin-rounded.css">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/formPersistence.js') }}"></script>
 
     <script>
         tailwind.config = {
@@ -1885,6 +1886,92 @@
 
         return true;
     }
+
+    // --- Form draft persistence + step retention (this page only) ---
+    (function () {
+        var pendingStep = null;
+        window.FormPersistence.init('adoption-form', {
+            form: '#adoptionForm',
+            userId: {{ auth()->id() ?? 'null' }},
+            skipRestore: {{ $errors->any() ? 'true' : 'false' }},
+            custom: {
+                save: function () {
+                    return {
+                        selectedAdoptionPets: Array.isArray(selectedAdoptionPets) ? selectedAdoptionPets : [],
+                        currentStep: currentStep || 1
+                    };
+                },
+                restore: function (o) {
+                    if (Array.isArray(o.selectedAdoptionPets)) {
+                        selectedAdoptionPets = o.selectedAdoptionPets;
+                    }
+                    if (o.currentStep && !isNaN(o.currentStep)) {
+                        pendingStep = parseInt(o.currentStep);
+                    }
+                    if (typeof confirmAdoptionPetSelection === 'function') {
+                        confirmAdoptionPetSelection();
+                    }
+                    if (typeof updateAdoptionSelectedCount === 'function') {
+                        updateAdoptionSelectedCount();
+                    }
+                }
+            },
+            afterFieldRestore: function () {
+                var step = (pendingStep !== null ? pendingStep : (currentStep || 1));
+                if (step < 1) step = 1; if (step > 5) step = 5;
+
+                document.querySelectorAll('.form-part').forEach(function (part) {
+                    part.classList.add('hidden');
+                });
+                var target = document.getElementById('part' + step);
+                if (target) target.classList.remove('hidden');
+
+                var pb = document.getElementById('progressBar');
+                if (pb) pb.style.width = ((step / 5) * 100) + '%';
+
+                var txt = document.getElementById('stepIndicatorText');
+                var labels = ['', 'Step 1 of 5 — Alternate Contact', 'Step 2 of 5 — Adoption Questionnaire', 'Step 3 of 5 — Home Photos', 'Step 4 of 5 — Upload Valid ID', 'Step 5 of 5 — Appointment Setup'];
+                if (txt) txt.textContent = labels[step] || labels[1];
+
+                var checkIcon = '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>';
+                for (var i = 1; i <= 5; i++) {
+                    var circle = document.querySelector('[data-step="' + i + '"].step-circle');
+                    var stepItem = circle ? circle.closest('.step-item') : null;
+                    var title = stepItem ? stepItem.querySelector('.step-title') : null;
+                    var subtitle = stepItem ? stepItem.querySelector('.step-subtitle') : null;
+                    if (i === step) {
+                        circle.classList.remove('border-gray-300', 'text-gray-400', 'bg-emerald-100', 'text-emerald-700', 'bg-white', 'border-slate-300', 'ring-emerald-300');
+                        circle.classList.add('border-emerald-600', 'bg-emerald-600', 'text-white', 'ring-2', 'ring-emerald-300', 'ring-offset-1');
+                        circle.innerHTML = String(i);
+                        if (title) { title.classList.remove('text-emerald-700', 'text-slate-500'); title.classList.add('text-emerald-900'); }
+                        if (subtitle) { subtitle.classList.remove('text-slate-400', 'text-gray-700'); subtitle.classList.add('text-emerald-600'); }
+                    } else if (i < step) {
+                        circle.classList.remove('border-gray-300', 'text-gray-400', 'bg-emerald-600', 'text-white', 'bg-white', 'border-slate-300', 'ring-2', 'ring-white', 'ring-emerald-300', 'ring-offset-1');
+                        circle.classList.add('border-emerald-600', 'bg-emerald-100', 'text-emerald-700');
+                        circle.innerHTML = checkIcon;
+                        if (title) { title.classList.remove('text-emerald-900', 'text-slate-500'); title.classList.add('text-emerald-700'); }
+                        if (subtitle) { subtitle.classList.remove('text-emerald-600', 'text-gray-700'); subtitle.classList.add('text-slate-400'); }
+                    } else {
+                        circle.classList.remove('border-emerald-600', 'bg-emerald-600', 'text-white', 'bg-emerald-100', 'text-emerald-700', 'ring-2', 'ring-white', 'ring-emerald-300', 'ring-offset-1');
+                        circle.classList.add('border-gray-300', 'text-gray-400', 'bg-white');
+                        circle.innerHTML = String(i);
+                        if (title) { title.classList.remove('text-emerald-900', 'text-emerald-700'); title.classList.add('text-slate-500'); }
+                        if (subtitle) { subtitle.classList.remove('text-emerald-600', 'text-emerald-700'); subtitle.classList.add('text-slate-400', 'text-gray-700'); }
+                    }
+                }
+                document.querySelectorAll('.step-item').forEach(function (item) {
+                    var itemStep = parseInt(item.getAttribute('data-step'));
+                    if (itemStep > step + 1) {
+                        item.classList.add('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        item.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                });
+                currentStep = step;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    })();
 </script>
 
     @include('Client.partials.footer')
