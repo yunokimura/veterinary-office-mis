@@ -1431,6 +1431,14 @@
                     unknownAllergyRadio.closest('label').classList.add('opacity-50', 'cursor-not-allowed');
                 }
             } else {
+                const myselfRadio = caregiverSection ? caregiverSection.querySelector('input[type="radio"][value="Myself"]') : null;
+                if (myselfRadio) {
+                    myselfRadio.checked = false;
+                }
+                const yesAgreementRadio = agreementSection ? agreementSection.querySelector('input[type="radio"][value="Yes"]') : null;
+                if (yesAgreementRadio) {
+                    yesAgreementRadio.checked = false;
+                }
                 otherCheckboxes.forEach(cb => {
                     cb.disabled = false;
                     cb.closest('label').classList.remove('opacity-50', 'cursor-not-allowed');
