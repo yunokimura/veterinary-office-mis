@@ -825,6 +825,7 @@
         
         let selectedPets = [];
         let ineligiblePets = {};
+        let bookedPets = {};
 
         function applyIneligibleStateToSelectionCard(petId, reason) {
             const card = document.querySelector(`#petSelectionList .pet-selection-card[data-pet-id="${petId}"]`);
@@ -885,6 +886,77 @@
             });
         }
 
+        function applyBookedStateToSelectionCard(petId, message) {
+            const card = document.querySelector(`#petSelectionList .pet-selection-card[data-pet-id="${petId}"]`);
+            if (!card) return;
+
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            if (checkbox) {
+                checkbox.disabled = true;
+                checkbox.checked = false;
+            }
+
+            card.style.opacity = '';
+            card.style.backgroundColor = '#e2e8f0';
+            card.style.borderColor = '#94a3b8';
+            card.style.position = 'relative';
+            card.style.paddingTop = '0';
+            card.style.pointerEvents = 'none';
+            card.classList.add('cursor-not-allowed');
+
+            let badge = card.querySelector('.booked-badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'booked-badge absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 shadow-sm whitespace-nowrap z-10';
+                badge.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>';
+                card.appendChild(badge);
+            }
+            if (badge) {
+                badge.textContent = message;
+                badge.title = message;
+            }
+
+            // Also gray out the pet name text
+            const nameEl = card.querySelector('.pet-name');
+            if (nameEl) {
+                nameEl.style.color = '#94a3b8';
+            }
+        }
+
+        function removeBookedStateFromSelectionCard(petId) {
+            const card = document.querySelector(`#petSelectionList .pet-selection-card[data-pet-id="${petId}"]`);
+            if (!card) return;
+
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            if (checkbox) {
+                checkbox.disabled = false;
+            }
+
+            card.style.opacity = '';
+            card.style.backgroundColor = '';
+            card.style.borderColor = '';
+            card.style.position = '';
+            card.style.paddingTop = '';
+            card.style.pointerEvents = '';
+            card.classList.remove('cursor-not-allowed');
+
+            const badge = card.querySelector('.booked-badge');
+            if (badge) {
+                badge.remove();
+            }
+
+            const nameEl = card.querySelector('.pet-name');
+            if (nameEl) {
+                nameEl.style.color = '';
+            }
+        }
+
+        function refreshModalBookedStates() {
+            Object.keys(bookedPets).forEach(petId => {
+                applyBookedStateToSelectionCard(petId, bookedPets[petId]);
+            });
+        }
+
         function openPetModal() {
             // Check if user has no pets registered
             if (petsData.length === 0) {
@@ -919,6 +991,7 @@
             });
 
             refreshModalIneligibleStates();
+            refreshModalBookedStates();
         }
 
         function closePetModal() {
@@ -957,7 +1030,12 @@
                 if (data.already_booked) {
                     // Uncheck the checkbox
                     checkbox.checked = false;
-                    
+
+                    // Gray out the pet card and show appointment badge
+                    const petId = String(checkbox.value);
+                    bookedPets[petId] = `${data.pet_name} already has an appointment at ${data.scheduled_date} ${data.scheduled_time}.`;
+                    applyBookedStateToSelectionCard(petId, bookedPets[petId]);
+
                     // Show warning modal
                     showAlreadyBookedModal(data);
                     return;
