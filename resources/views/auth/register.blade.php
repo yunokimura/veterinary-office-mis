@@ -239,26 +239,26 @@
                   Block/Lot/Phase/House No. <span class="text-red-500">*</span>
                 </label>
                 <div class="flex rounded-xl border border-gray-200 overflow-hidden focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
-                  <div class="flex items-center px-3 py-3 bg-gray-50/50 border-r border-gray-200">
+                  <div class="flex items-center px-2 py-3 bg-gray-50/50 border-r border-gray-200">
                     <span class="text-xs text-gray-600 whitespace-nowrap">Blk</span>
                   </div>
 <input type="text" name="block_lot_phase_house_no_1" value="{{ old('block_lot_phase_house_no_1') }}"
                        class="w-full px-2 py-3 outline-none bg-white text-center" placeholder="" maxlength="3" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                  <div class="flex items-center px-3 py-3 bg-gray-50/50 border-r border-l border-gray-200">
+                  <div class="flex items-center px-2 py-3 bg-gray-50/50 border-r border-l border-gray-200">
                     <span class="text-xs text-gray-600 whitespace-nowrap">Lot</span>
                   </div>
 <input type="text" name="block_lot_phase_house_no_2" value="{{ old('block_lot_phase_house_no_2') }}"
                        class="w-full px-2 py-3 outline-none bg-white text-center" placeholder="" maxlength="3" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                  <div class="flex items-center px-3 py-3 bg-gray-50/50 border-r border-l border-gray-200">
+                  <div class="flex items-center px-2 py-3 bg-gray-50/50 border-r border-l border-gray-200">
                     <span class="text-xs text-gray-600 whitespace-nowrap">Ph</span>
                   </div>
                   <input type="text" name="block_lot_phase_house_no_3" value="{{ old('block_lot_phase_house_no_3') }}"
-                         class="w-full px-2 py-3 outline-none bg-white text-center" placeholder="" maxlength="1" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                  <div class="flex items-center px-3 py-3 bg-gray-50/50 border-r border-l border-gray-200">
-                    <span class="text-xs text-gray-600 whitespace-nowrap">House No.</span>
+                       class="w-full px-2 py-3 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                  <div class="flex items-center px-2 py-3 bg-gray-50/50 border-r border-l border-gray-200">
+                    <span class="text-xs text-gray-600 whitespace-nowrap">House #</span>
                   </div>
                   <input type="text" name="block_lot_phase_house_no_4" value="{{ old('block_lot_phase_house_no_4') }}"
-                         class="w-full px-2 py-3 outline-none bg-white text-center rounded-r-xl" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                       class="w-full px-2 py-3 outline-none bg-white text-center rounded-r-xl" placeholder="" maxlength="3" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                 </div>
                 @error('block_lot_phase_house_no')
                   <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
