@@ -298,9 +298,6 @@
                     <a href="{{ route('admin.adoption-reports.index') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.adoption-reports.*') ? 'active-nav text-white bg-white/10' : '' }}">
                         <i class="bi bi-heart-fill mr-2 text-xs"></i>Adoption Reports
                     </a>
-                    <a href="{{ route('admin.all-reports') }}" class="nav-item block rounded-md transition-colors text-xs font-medium whitespace-nowrap {{ request()->routeIs('admin.all-reports') ? 'active-nav text-white bg-white/10' : '' }}">
-                        <i class="bi bi-file-earmark-bar-graph mr-2 text-xs"></i>All Reports
-                    </a>
                 </div>
             </div>
 
