@@ -7,6 +7,7 @@ use App\Models\Barangay;
 use App\Models\MissingPetsReport;
 use App\Models\Pet;
 use App\Models\PetOwner;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -208,6 +209,7 @@ class MissingPetController extends Controller
 
     public function approve(Request $request, MissingPetsReport $missingPet)
     {
+        $oldStatus = $missingPet->status;
         $missingPet->update(['status' => 'approved']);
 
         if ($missingPet->pet) {
@@ -216,18 +218,40 @@ class MissingPetController extends Controller
             ]);
         }
 
+        if ($oldStatus !== 'approved' && $missingPet->user_id) {
+            NotificationService::statusChanged(
+                $missingPet->user_id,
+                'missing pet report',
+                $missingPet->report_id,
+                $oldStatus,
+                'approved'
+            );
+        }
+
         return redirect()->back()->with('success', 'Missing pet report approved!');
     }
 
     public function reject(Request $request, MissingPetsReport $missingPet)
     {
+        $oldStatus = $missingPet->status;
         $missingPet->update(['status' => 'rejected']);
+
+        if ($oldStatus !== 'rejected' && $missingPet->user_id) {
+            NotificationService::statusChanged(
+                $missingPet->user_id,
+                'missing pet report',
+                $missingPet->report_id,
+                $oldStatus,
+                'rejected'
+            );
+        }
 
         return redirect()->back()->with('success', 'Missing pet report rejected!');
     }
 
     public function markFound(Request $request, MissingPetsReport $missingPet)
     {
+        $oldStatus = $missingPet->status;
         $missingPet->update(['status' => 'resolved - reunited']);
 
         if ($missingPet->pet) {
@@ -236,12 +260,23 @@ class MissingPetController extends Controller
             ]);
         }
 
+        if ($oldStatus !== 'resolved - reunited' && $missingPet->user_id) {
+            NotificationService::statusChanged(
+                $missingPet->user_id,
+                'missing pet report',
+                $missingPet->report_id,
+                $oldStatus,
+                'resolved - reunited'
+            );
+        }
+
         return redirect()->route('admin-asst.missing-pets.index')
             ->with('success', 'Pet marked as found/reunited!');
     }
 
     public function markShelterIntake(Request $request, MissingPetsReport $missingPet)
     {
+        $oldStatus = $missingPet->status;
         $missingPet->update(['status' => 'resolved - shelter intake']);
 
         if ($missingPet->pet) {
@@ -250,12 +285,23 @@ class MissingPetController extends Controller
             ]);
         }
 
+        if ($oldStatus !== 'resolved - shelter intake' && $missingPet->user_id) {
+            NotificationService::statusChanged(
+                $missingPet->user_id,
+                'missing pet report',
+                $missingPet->report_id,
+                $oldStatus,
+                'resolved - shelter intake'
+            );
+        }
+
         return redirect()->route('admin-asst.missing-pets.index')
             ->with('success', 'Pet marked as shelter intake!');
     }
 
     public function closeExpired(Request $request, MissingPetsReport $missingPet)
     {
+        $oldStatus = $missingPet->status;
         $missingPet->update(['status' => 'closed - expired']);
 
         if ($missingPet->pet) {
@@ -264,12 +310,23 @@ class MissingPetController extends Controller
             ]);
         }
 
+        if ($oldStatus !== 'closed - expired' && $missingPet->user_id) {
+            NotificationService::statusChanged(
+                $missingPet->user_id,
+                'missing pet report',
+                $missingPet->report_id,
+                $oldStatus,
+                'closed - expired'
+            );
+        }
+
         return redirect()->route('admin-asst.missing-pets.index')
             ->with('success', 'Missing pet report closed as expired!');
     }
 
     public function cancel(Request $request, MissingPetsReport $missingPet)
     {
+        $oldStatus = $missingPet->status;
         $missingPet->update(['status' => 'closed - cancelled']);
 
         if ($missingPet->pet) {
@@ -278,13 +335,34 @@ class MissingPetController extends Controller
             ]);
         }
 
+        if ($oldStatus !== 'closed - cancelled' && $missingPet->user_id) {
+            NotificationService::statusChanged(
+                $missingPet->user_id,
+                'missing pet report',
+                $missingPet->report_id,
+                $oldStatus,
+                'closed - cancelled'
+            );
+        }
+
         return redirect()->route('admin-asst.missing-pets.index')
             ->with('success', 'Missing pet report cancelled!');
     }
 
     public function markDuplicate(Request $request, MissingPetsReport $missingPet)
     {
+        $oldStatus = $missingPet->status;
         $missingPet->update(['status' => 'closed - duplicate']);
+
+        if ($oldStatus !== 'closed - duplicate' && $missingPet->user_id) {
+            NotificationService::statusChanged(
+                $missingPet->user_id,
+                'missing pet report',
+                $missingPet->report_id,
+                $oldStatus,
+                'closed - duplicate'
+            );
+        }
 
         return redirect()->route('admin-asst.missing-pets.index')
             ->with('success', 'Missing pet report marked as duplicate!');

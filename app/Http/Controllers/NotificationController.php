@@ -13,6 +13,10 @@ class NotificationController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
+        if (auth()->user()->hasRole('pet_owner')) {
+            return view('client.notifications.index', compact('notifications'));
+        }
+
         return view('admin.notifications.index', compact('notifications'));
     }
 

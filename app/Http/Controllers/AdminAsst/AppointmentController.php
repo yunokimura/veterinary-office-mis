@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminAsst;
 use App\Http\Controllers\Controller;
 use App\Models\FormSubmission;
 use App\Models\ServiceForm;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -85,12 +86,23 @@ class AppointmentController extends Controller
             'review_notes' => 'nullable|string|max:1000',
         ]);
 
+        $oldStatus = $appointment->status;
         $appointment->update([
             'status' => 'approved',
             'reviewed_by' => Auth::id(),
             'reviewed_at' => now(),
             'review_notes' => $validated['review_notes'] ?? 'Approved by Admin Assistant',
         ]);
+
+        if ($oldStatus !== 'approved' && $appointment->submitted_by_user_id) {
+            NotificationService::statusChanged(
+                $appointment->submitted_by_user_id,
+                'appointment request',
+                $appointment->id,
+                $oldStatus,
+                'approved'
+            );
+        }
 
         return redirect()->back()->with('success', 'Appointment request approved successfully!');
     }
@@ -104,12 +116,24 @@ class AppointmentController extends Controller
             'review_notes' => 'nullable|string|max:1000',
         ]);
 
+        $oldStatus = $appointment->status;
         $appointment->update([
             'status' => 'rejected',
             'reviewed_by' => Auth::id(),
             'reviewed_at' => now(),
             'review_notes' => $validated['review_notes'] ?? 'Rejected by Admin Assistant',
         ]);
+
+        if ($oldStatus !== 'rejected' && $appointment->submitted_by_user_id) {
+            NotificationService::statusChanged(
+                $appointment->submitted_by_user_id,
+                'appointment request',
+                $appointment->id,
+                $oldStatus,
+                'rejected',
+                $validated['review_notes']
+            );
+        }
 
         return redirect()->back()->with('success', 'Appointment request rejected.');
     }
@@ -119,11 +143,22 @@ class AppointmentController extends Controller
      */
     public function complete(FormSubmission $appointment)
     {
+        $oldStatus = $appointment->status;
         $appointment->update([
             'status' => 'completed',
             'reviewed_by' => Auth::id(),
             'reviewed_at' => now(),
         ]);
+
+        if ($oldStatus !== 'completed' && $appointment->submitted_by_user_id) {
+            NotificationService::statusChanged(
+                $appointment->submitted_by_user_id,
+                'appointment request',
+                $appointment->id,
+                $oldStatus,
+                'completed'
+            );
+        }
 
         return redirect()->back()->with('success', 'Appointment marked as completed!');
     }
@@ -133,12 +168,23 @@ class AppointmentController extends Controller
      */
     public function reset(FormSubmission $appointment)
     {
+        $oldStatus = $appointment->status;
         $appointment->update([
             'status' => 'pending',
             'reviewed_by' => null,
             'reviewed_at' => null,
             'review_notes' => null,
         ]);
+
+        if ($oldStatus !== 'pending' && $appointment->submitted_by_user_id) {
+            NotificationService::statusChanged(
+                $appointment->submitted_by_user_id,
+                'appointment request',
+                $appointment->id,
+                $oldStatus,
+                'pending'
+            );
+        }
 
         return redirect()->back()->with('success', 'Appointment status reset to pending.');
     }

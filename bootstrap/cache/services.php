@@ -34,6 +34,7 @@
     30 => 'Spatie\\Permission\\PermissionServiceProvider',
     31 => 'App\\Providers\\AppServiceProvider',
     32 => 'App\\Providers\\PushNotificationServiceProvider',
+    33 => 'App\\Providers\\NotificationServiceProvider',
   ),
   'eager' => 
   array (
@@ -54,6 +55,7 @@
     14 => 'Spatie\\Permission\\PermissionServiceProvider',
     15 => 'App\\Providers\\AppServiceProvider',
     16 => 'App\\Providers\\PushNotificationServiceProvider',
+    17 => 'App\\Providers\\NotificationServiceProvider',
   ),
   'deferred' => 
   array (

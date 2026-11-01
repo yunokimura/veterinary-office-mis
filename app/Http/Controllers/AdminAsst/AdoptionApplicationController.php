@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AdminAsst;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdoptionApplication;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -71,11 +72,22 @@ class AdoptionApplicationController extends Controller
 
     public function approve(Request $request, AdoptionApplication $application)
     {
+        $oldStatus = $application->status;
         $application->update([
             'status' => 'approved',
             'reviewed_by' => Auth::id(),
             'reviewed_at' => now(),
         ]);
+
+        if ($oldStatus !== 'approved' && $application->user_id) {
+            NotificationService::statusChanged(
+                $application->user_id,
+                'adoption application',
+                $application->id,
+                $oldStatus,
+                'approved'
+            );
+        }
 
         return redirect()->back()->with('success', 'Application approved successfully!');
     }
@@ -86,6 +98,7 @@ class AdoptionApplicationController extends Controller
             'rejection_reason' => 'required|string|max:1000',
         ]);
 
+        $oldStatus = $application->status;
         $application->update([
             'status' => 'rejected',
             'rejection_reason' => $validated['rejection_reason'],
@@ -93,23 +106,56 @@ class AdoptionApplicationController extends Controller
             'reviewed_at' => now(),
         ]);
 
+        if ($oldStatus !== 'rejected' && $application->user_id) {
+            NotificationService::statusChanged(
+                $application->user_id,
+                'adoption application',
+                $application->id,
+                $oldStatus,
+                'rejected',
+                $validated['rejection_reason']
+            );
+        }
+
         return redirect()->back()->with('success', 'Application rejected with reason.');
     }
 
     public function pending(AdoptionApplication $application)
     {
+        $oldStatus = $application->status;
         $application->update([
             'status' => 'pending_review',
         ]);
+
+        if ($oldStatus !== 'pending_review' && $application->user_id) {
+            NotificationService::statusChanged(
+                $application->user_id,
+                'adoption application',
+                $application->id,
+                $oldStatus,
+                'pending_review'
+            );
+        }
 
         return redirect()->back()->with('success', 'Application status reset to pending review.');
     }
 
     public function adopt(Request $request, AdoptionApplication $application)
     {
+        $oldStatus = $application->status;
         $application->update([
             'status' => 'adopted',
         ]);
+
+        if ($oldStatus !== 'adopted' && $application->user_id) {
+            NotificationService::statusChanged(
+                $application->user_id,
+                'adoption application',
+                $application->id,
+                $oldStatus,
+                'adopted'
+            );
+        }
 
         return redirect()->back()->with('success', 'Adoption marked as completed and pet status updated.');
     }

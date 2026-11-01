@@ -22,6 +22,7 @@ use App\Models\MissingPetsReport;
 use App\Models\AdoptionApplication;
 use App\Models\Admin;
 use App\Services\InventoryService;
+use App\Services\NotificationService;
 
 class AdminController extends Controller
 {
@@ -442,7 +443,18 @@ class AdminController extends Controller
             'quantity_deducted' => 'nullable|integer|min:1',
         ]);
 
+        $oldStatus = $appointment->status;
         $appointment->update(['status' => $request->status]);
+
+        if ($oldStatus !== $request->status && $appointment->user_id) {
+            NotificationService::statusChanged(
+                $appointment->user_id,
+                'vaccination appointment',
+                $appointment->id,
+                $oldStatus,
+                $request->status
+            );
+        }
 
         if ($request->status === 'completed') {
             $appointment->update(['last_anti_rabies_date' => now()->toDateString()]);

@@ -59,10 +59,50 @@
                         <i class="fa-solid fa-calendar-check"></i>
                         <span>Book Appointment</span>
                     </button>
-                    <button class="relative text-emerald-600 hover:text-emerald-700 p-2 hover:bg-emerald-50 rounded-lg transition-colors">
-                        <i class="fa-solid fa-bell text-xl"></i>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                    </button>
+                    <div class="relative">
+                        <button onclick="toggleNotificationDropdown()" class="relative p-2 rounded-lg hover:bg-emerald-50 transition text-emerald-600">
+                            <i class="fa-solid fa-bell text-xl"></i>
+                            @if($unreadCount > 0)
+                                <span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                            @endif
+                        </button>
+                        <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200 z-50">
+                            <div class="p-3 border-b border-slate-100">
+                                <h3 class="font-semibold text-slate-800">Notifications</h3>
+                            </div>
+                            <div class="max-h-80 overflow-y-auto">
+                                @forelse($unreadNotifications as $notification)
+                                    <a href="{{ route('notifications.index') }}" class="block p-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-blue-100 text-blue-600">
+                                                <i class="fa-solid fa-bell text-sm"></i>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="text-sm font-medium text-slate-800 truncate">{{ $notification->title }}</p>
+                                                <p class="text-xs text-slate-500 truncate">{{ $notification->message }}</p>
+                                                <p class="text-[10px] text-slate-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="p-4 text-center text-slate-500">
+                                        <i class="fa-solid fa-bell-slash text-2xl mb-2"></i>
+                                        <p class="text-sm">No new notifications</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                            @if($unreadCount > 0)
+                                <div class="p-2 border-t border-slate-100">
+                                    <form action="{{ route('notifications.mark-all-read') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full text-center text-sm text-emerald-600 hover:text-emerald-800 py-1">
+                                            Mark all as read
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                     @endauth
                     @auth
                         <div class="relative">
@@ -261,6 +301,25 @@
             if (userDropdown) {
                 userDropdown.classList.toggle('hidden');
             }
+        }
+
+        // Notification dropdown toggle
+        function toggleNotificationDropdown() {
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            if (notificationDropdown) {
+                notificationDropdown.classList.toggle('hidden');
+            }
+        }
+
+        // Close notification dropdown when clicking outside
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationBtn = document.querySelector('button[onclick="toggleNotificationDropdown()"]');
+        if (notificationDropdown && notificationBtn) {
+            document.addEventListener('click', function(e) {
+                if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
+                    notificationDropdown.classList.add('hidden');
+                }
+            });
         }
 
         // Close user dropdown when clicking outside

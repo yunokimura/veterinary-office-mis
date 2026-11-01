@@ -206,4 +206,52 @@ class NotificationService
             'normal'
         );
     }
+
+    /**
+     * Notify a client that their record's status changed.
+     * Hard rule: never trigger if $oldStatus === $newStatus (idempotency guard).
+     */
+    public static function statusChanged(
+        int $clientUserId,
+        string $recordType,
+        int $recordId,
+        string $oldStatus,
+        string $newStatus,
+        ?string $reason = null
+    ): ?Notification {
+        if ($oldStatus === $newStatus) {
+            return null;
+        }
+
+        $user = User::find($clientUserId);
+        if (! $user) {
+            return null;
+        }
+
+        $title = ucfirst($recordType) . ' Status Updated';
+        $message = "Your {$recordType} #{$recordId} status changed from \"{$oldStatus}\" to \"{$newStatus}\".";
+        if ($reason) {
+            $message .= " Reason: {$reason}";
+        }
+
+        return self::create($user, $title, $message, $recordType, $recordId, 'normal');
+    }
+
+    /**
+     * Notify all users assigned a given Spatie role.
+     */
+    public static function toRole(
+        string $role,
+        string $title,
+        string $message,
+        ?string $module = null,
+        ?int $recordId = null,
+        string $priority = 'normal'
+    ): void {
+        $users = User::role($role)->get();
+
+        foreach ($users as $user) {
+            self::create($user, $title, $message, $module, $recordId, $priority);
+        }
+    }
 }

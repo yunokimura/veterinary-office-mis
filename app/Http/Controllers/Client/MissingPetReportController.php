@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\MissingPetsReport;
 use App\Models\Pet;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -115,6 +116,9 @@ class MissingPetReportController extends Controller
                 }
             }
         }
+
+        NotificationService::toRole('city_vet', 'New Missing Pet Report', "A new missing pet report was submitted by {$user->name}.", 'stray_report', null);
+        NotificationService::toRole('admin_asst', 'New Missing Pet Report', "A new missing pet report was submitted by {$user->name}.", 'stray_report', null);
 
         return redirect()->route('missing-pets.form')->with('success', 'Missing pet report submitted successfully!');
     }

@@ -8,6 +8,7 @@ use App\Models\AdoptionApplication;
 use App\Models\Appointment;
 use App\Models\Pet;
 use App\Services\AppointmentBookingService;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -164,6 +165,9 @@ class AdoptionFormController extends Controller
 
             throw $e;
         }
+
+        NotificationService::toRole('city_vet', 'New Adoption Application', "A new adoption application was submitted by {$user->name}.", 'adoption', $adoptionApplication->id);
+        NotificationService::toRole('admin_asst', 'New Adoption Application', "A new adoption application was submitted by {$user->name}.", 'adoption', $adoptionApplication->id);
 
         return redirect()->route('adoption.index')->with('success', 'Adoption application submitted successfully! We will contact you soon for the interview.');
     }
