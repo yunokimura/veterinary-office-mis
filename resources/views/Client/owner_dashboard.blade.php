@@ -93,16 +93,6 @@
 
     @include('Client.partials.navbar')
 
-    <!-- Welcome Banner -->
-    <section class="hero-bg py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center text-white">
-                <h1 class="text-3xl font-bold mb-2">Welcome back, {{ auth()->user()->first_name }}!</h1>
-                <p class="text-lg text-gray-200">You're now logged in to your pet owner dashboard</p>
-            </div>
-        </div>
-    </section>
-
     <!-- Quick Actions -->
     <section class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -444,7 +434,7 @@
     @endphp
 
     @php
-        $applications = \App\Models\AdoptionApplication::with(['pet', 'user', 'address.barangay'])->where('user_id', auth()->id())
+        $applications = \App\Models\AdoptionApplication::with(['pet', 'user', 'address.barangay', 'reviewedBy'])->where('user_id', auth()->id())
             ->orderByDesc('created_at')
             ->get();
 
@@ -478,6 +468,8 @@
                 'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ', ' . ($address->barangay?->barangay_name ?? $application->barangay ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
                 'owner_barangay' => $address?->barangay?->barangay_name ?? $application->barangay ?: 'N/A',
                 'adopted_before' => $adoptedBeforeDisplay,
+                'reviewed_by_name' => optional($application->reviewedBy)->name ?? null,
+                'reviewed_at' => $application->reviewed_at ?? null,
                 'valid_id' => $application->valid_id ?? 'N/A',
             ]);
         }
@@ -1353,6 +1345,17 @@
                                     <div class="flex justify-between"><span class="text-slate-500">Adopted Before:</span><span class="font-semibold text-slate-800">${item.adopted_before}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Valid ID:</span><span class="font-semibold text-slate-800">${item.valid_id}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Appointment Date & Time:</span><span class="font-semibold text-slate-800">${apptDate}</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Remarks from City Vet Office -->
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 col-span-2">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Remarks from City Vet Office</span>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between items-start"><span class="text-slate-500">Remarks:</span><span class="font-semibold text-slate-800 break-words max-w-[200px] leading-tight">${item.reviewed_by_name ? (item.rejection_reason || 'No remarks') : 'No remarks'}</span></div>
+                                    ${item.reviewed_by_name ? `
+                                    <div class="flex justify-between items-start"><span class="text-slate-500">Reviewed By:</span><span class="font-semibold text-slate-800 break-words max-w-[150px] leading-tight">${item.reviewed_by_name} on ${new Date(item.reviewed_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
+                                    ` : ''}
                                 </div>
                             </div>
                         </div>

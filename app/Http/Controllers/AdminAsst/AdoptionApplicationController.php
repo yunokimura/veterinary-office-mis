@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminAsst;
 use App\Http\Controllers\Controller;
 use App\Models\AdoptionApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdoptionApplicationController extends Controller
 {
@@ -72,6 +73,8 @@ class AdoptionApplicationController extends Controller
     {
         $application->update([
             'status' => 'approved',
+            'reviewed_by' => Auth::id(),
+            'reviewed_at' => now(),
         ]);
 
         return redirect()->back()->with('success', 'Application approved successfully!');
@@ -86,6 +89,8 @@ class AdoptionApplicationController extends Controller
         $application->update([
             'status' => 'rejected',
             'rejection_reason' => $validated['rejection_reason'],
+            'reviewed_by' => Auth::id(),
+            'reviewed_at' => now(),
         ]);
 
         return redirect()->back()->with('success', 'Application rejected with reason.');

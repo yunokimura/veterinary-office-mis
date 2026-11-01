@@ -91,6 +91,8 @@ class AdoptionApplication extends Model
         'appointment_date',
         'appointment_time',
         'rejection_reason',
+        'reviewed_by',
+        'reviewed_at',
     ];
 
     protected $casts = [
@@ -120,6 +122,11 @@ class AdoptionApplication extends Model
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
+    }
+
+    public function reviewedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by', 'id');
     }
 
     // Backward-compatibility accessors
