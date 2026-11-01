@@ -1033,19 +1033,15 @@
                         <label class="block text-xs font-semibold text-slate-700 mb-1.5">Medical Readiness Checks</label>
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
-                                <input type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <input type="checkbox" id="adoptSpayNeuterCheckbox" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
                                 <span class="text-slate-700 font-medium">Spayed / Neutered</span>
                             </label>
                             <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
-                                <input type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <input type="checkbox" id="adoptVaccinationCheckbox" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
                                 <span class="text-slate-700 font-medium">Vaccinations Current</span>
                             </label>
                             <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
-                                <input type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
-                                <span class="text-slate-700 font-medium">Microchipped</span>
-                            </label>
-                            <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
-                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <input type="checkbox" id="adoptSpecialCareCheckbox" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
                                 <span class="text-slate-700 font-medium">Special Care Needs</span>
                             </label>
                         </div>
@@ -1053,35 +1049,12 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1.5">Good With Environment</label>
-                        <div class="flex flex-wrap gap-2 text-xs">
-                            <label class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg cursor-pointer">
-                                <input type="checkbox" checked class="text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
-                                <span>Other Dogs</span>
-                            </label>
-                            <label class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg cursor-pointer">
-                                <input type="checkbox" checked class="text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
-                                <span>Cats</span>
-                            </label>
-                            <label class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg cursor-pointer">
-                                <input type="checkbox" class="text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
-                                <span>Young Children</span>
-                            </label>
-                        </div>
+                        <div id="adoptEnvOptions" class="flex flex-wrap gap-2 text-xs"></div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Adoption Fee ($)</label>
-                            <input type="number" value="150" class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Current Location</label>
-                            <select class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
-                                <option>Main Shelter - Kennel A</option>
-                                <option>Foster Home - Smith</option>
-                                <option>Partner Vet Clinic</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Reason for Adoption</label>
+                        <textarea rows="3" placeholder="Why are you putting this pet up for adoption?" class="w-full text-sm border border-slate-300 rounded-xl p-3 text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none" id="adoptReasonText"></textarea>
                     </div>
 
                     <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
@@ -1089,7 +1062,7 @@
                             Cancel
                         </button>
                         <button type="button" onclick="goToAdoptionStep(2)" class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-sm flex items-center gap-1">
-                            <span>Next: Bio & Media</span>
+                            <span>Next: Bio & Listing</span>
                             <i data-lucide="chevron-right" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -1099,27 +1072,7 @@
                 <div id="adoptionStep2" class="p-6 space-y-4 hidden">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Public Adoption Bio</label>
-                        <textarea rows="4" class="w-full text-sm border border-slate-300 rounded-xl p-3 text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Write an engaging description for prospective adopters..."></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Visibility Status</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label class="flex flex-col p-3 border border-emerald-500 bg-emerald-50/40 rounded-xl cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" name="listingStatus" value="published" checked class="text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-xs font-semibold text-slate-900">Publish Immediately</span>
-                                </div>
-                                <span class="text-[11px] text-slate-500 mt-1 pl-5">Visible on public adoption portal</span>
-                            </label>
-                            <label class="flex flex-col p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" name="listingStatus" value="draft" class="text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-xs font-semibold text-slate-900">Save as Internal Draft</span>
-                                </div>
-                                <span class="text-[11px] text-slate-500 mt-1 pl-5">Review required before publishing</span>
-                            </label>
-                        </div>
+                        <textarea rows="4" id="adoptBioText" class="w-full text-sm border border-slate-300 rounded-xl p-3 text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Write an engaging description for prospective adopters..."></textarea>
                     </div>
 
                     <div class="pt-4 flex items-center justify-between border-t border-slate-100">
@@ -1179,6 +1132,13 @@
             if (pet) {
                 document.getElementById('adoptionModalPetName').textContent = pet.pet_name || 'Unknown';
                 document.getElementById('adoptionModalPetIdTag').textContent = 'PET-' + String(pet.pet_id).padStart(4, '0');
+
+                // Real breed, age, gender
+                const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
+                const ageDisplay = (pet.pet_info && pet.pet_info.pet_age) ? pet.pet_info.pet_age : 'Unknown';
+                const genderDisplay = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : 'Unknown';
+                document.getElementById('adoptionModalPetMeta').textContent = pet.breed || 'Unknown' + ' • ' + ageDisplay + ' • ' + genderDisplay;
+
                 const img = document.getElementById('adoptionModalPetImage');
                 if (pet.pet_image) {
                     let imgPath = pet.pet_image;
@@ -1189,6 +1149,35 @@
                 } else {
                     img.src = '{{ asset('images/pet.png') }}';
                 }
+
+                // Spayed/Neutered checkbox: pet_info.is_neutered === 'yes' OR completed spay/neuter report/appointment
+                const isNeutered = pet.pet_info && pet.pet_info.is_neutered === 'yes';
+                const hasCompletedKapon = pet.spay_neuter_reports && pet.spay_neuter_reports.some(r => r.status === 'completed');
+                document.getElementById('adoptSpayNeuterCheckbox').checked = isNeutered || hasCompletedKapon;
+
+                // Vaccinations Current checkbox: completed vaccination report
+                const hasVax = pet.vaccination_reports && pet.vaccination_reports.some(r => r.status === 'completed' && !r.not_vaccinated);
+                document.getElementById('adoptVaccinationCheckbox').checked = hasVax;
+
+                document.getElementById('adoptSpecialCareCheckbox').checked = false;
+
+                // Good With Environment: dynamic by species
+                const envContainer = document.getElementById('adoptEnvOptions');
+                envContainer.innerHTML = '';
+                const isCat = speciesDisplay.toLowerCase() === 'cat';
+                const envOptions = isCat
+                    ? ['Dogs', 'Other Cats', 'Young Children']
+                    : ['Other Dogs', 'Cats', 'Young Children'];
+                envOptions.forEach(opt => {
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg cursor-pointer';
+                    label.innerHTML = '<input type="checkbox" class="text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">' +
+                        '<span class="text-xs text-slate-700 font-medium">' + opt + '</span>';
+                    envContainer.appendChild(label);
+                });
+
+                document.getElementById('adoptReasonText').value = '';
+                document.getElementById('adoptBioText').value = '';
             }
             document.getElementById('adoptionStep1').classList.remove('hidden');
             document.getElementById('adoptionStep2').classList.add('hidden');
@@ -1899,13 +1888,12 @@
                         'Accept': 'application/json'
                     }
                 });
-                if (res.ok) {
+                if (res.ok || res.redirected) {
                     closeModal('adoptionModal');
-                    showToast('Pet submitted for adoption. Admin Assistant notified.');
+                    showToast('Pet submitted for adoption. Admin Assistant notified and will verify.');
                     setTimeout(() => location.reload(), 800);
                 } else {
-                    const err = await res.json().catch(() => ({}));
-                    showToast(err.message || 'Failed to submit for adoption.');
+                    showToast('Failed to submit for adoption.');
                 }
             } catch (err) {
                 showToast('Error submitting for adoption.');
