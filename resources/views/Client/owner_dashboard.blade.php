@@ -1834,6 +1834,7 @@
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
+            document.body.style.overflow = 'auto';
         }
 
         // Deceased Modal Safeguard Validation
