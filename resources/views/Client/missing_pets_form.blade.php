@@ -408,20 +408,29 @@
                             @php
                                 $speciesDisplay = isset($pet['species']) ? ucfirst($pet['species']) : 'Unknown';
                             @endphp
-                            <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet['id'] }}">
+                            <label class="flex items-start p-4 border rounded-lg {{ $pet['is_already_reported'] ? 'border-gray-300 bg-gray-100 cursor-not-allowed' : 'border-gray-200 cursor-pointer hover:bg-gray-50 hover:border-primary transition-colors' }} pet-selection-card" data-pet-id="{{ $pet['id'] }}">
                                 <input type="checkbox" name="selected_pets[]" value="{{ $pet['id'] }}" 
-                                       class="mt-1 w-4 h-4 text-primary border-gray-300 focus:ring-primary pet-checkbox"
-                                       onchange="togglePetSelection(this)">
+                                       class="mt-1 w-4 h-4 {{ $pet['is_already_reported'] ? 'text-gray-400 border-gray-400' : 'text-primary border-gray-300 focus:ring-primary' }} pet-checkbox"
+                                       onchange="togglePetSelection(this)"
+                                       {{ $pet['is_already_reported'] ? 'disabled' : '' }}>
                                 <div class="ml-3 flex-1">
                                     <div class="flex items-center justify-between">
-                                        <span class="font-semibold text-gray-900 pet-name">{{ $pet['name'] }}</span>
-                                        <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{{ $speciesDisplay }}</span>
+                                        <span class="font-semibold {{ $pet['is_already_reported'] ? 'text-gray-500' : 'text-gray-900' }} pet-name">{{ $pet['name'] }}</span>
+                                        <span class="text-xs px-2 py-1 {{ $pet['is_already_reported'] ? 'bg-gray-200 text-gray-500' : 'bg-gray-100 text-gray-600' }} rounded">{{ $speciesDisplay }}</span>
+                                        @if($pet['is_already_reported'])
+                                            <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded font-medium">Already Reported</span>
+                                        @endif
                                     </div>
                                     <div class="mt-1 text-xs text-gray-500 grid grid-cols-2 gap-x-4">
                                         <div>Breed: {{ $pet['breed'] ?? 'Unknown' }}</div>
                                         <div>Weight: {{ isset($pet['weight']) ? (str_contains(strtolower($pet['weight']), 'kg') || strtolower($pet['weight']) == 'n/a' ? $pet['weight'] : $pet['weight'] . ' kg') : 'Unknown' }}</div>
                                         <div class="col-span-2">Age: {{ isset($pet['age']) ? str_replace('_', ' ', $pet['age']) : 'Unknown' }}</div>
                                     </div>
+                                    @if($pet['is_already_reported'])
+                                        <p class="mt-2 text-xs text-red-600 font-medium">
+                                            {{ $pet['name'] }} is already reported. We will notify you if anything comes up.
+                                        </p>
+                                    @endif
                                 </div>
                                 @if(!empty($pet['image']))
                                 @php
@@ -536,7 +545,8 @@
 
     if (preselectPet) {
         const pet = petsData.find(p => String(p.id) === preselectPet);
-        if (pet && !selectedPets.includes(preselectPet)) {
+        // Don't auto-select already-reported pets
+        if (pet && !pet.is_already_reported && !selectedPets.includes(preselectPet)) {
             selectedPets.push(preselectPet);
         }
 
@@ -579,10 +589,10 @@
             return;
         }
         
-        // Restore checkbox states from selectedPets
+        // Restore checkbox states from selectedPets (skip already-reported pets)
         document.querySelectorAll('.pet-checkbox').forEach(checkbox => {
             const petId = String(checkbox.value);
-            checkbox.checked = selectedPets.includes(petId);
+            checkbox.checked = !checkbox.disabled && selectedPets.includes(petId);
         });
         
         updateModalSelectedCount();
@@ -597,6 +607,8 @@
 
     function togglePetSelection(checkbox) {
         const petId = String(checkbox.value);
+        // Prevent selecting already-reported pets (disabled checkboxes)
+        if (checkbox.disabled) return;
         if (checkbox.checked) {
             if (!selectedPets.includes(petId)) {
                 selectedPets.push(petId);
@@ -615,6 +627,18 @@
     function confirmPetSelection() {
         if (selectedPets.length === 0) {
             alert('Please select at least one pet');
+            return;
+        }
+
+        // Filter out already-reported pets (disabled checkboxes) as a safety measure
+        const alreadyReportedIds = new Set();
+        document.querySelectorAll('#petSelectionList input[type="checkbox"]').forEach(cb => {
+            if (cb.disabled) alreadyReportedIds.add(cb.value);
+        });
+        selectedPets = selectedPets.filter(petId => !alreadyReportedIds.has(String(petId)));
+
+        if (selectedPets.length === 0) {
+            alert('All selected pets are already reported. Please choose a different pet.');
             return;
         }
 
@@ -1135,10 +1159,11 @@
             restore: function (state) {
                 if (!state || !Array.isArray(state.selectedPets)) return;
 
-                // Re-select pets (skip pets deleted since the draft was saved)
+                // Re-select pets (skip pets deleted since the draft was saved, or already reported)
                 selectedPets = state.selectedPets
                     .filter(function (id) {
-                        return petsData.some(function (p) { return String(p.id) === String(id); });
+                        var pet = petsData.find(function (p) { return String(p.id) === String(id); });
+                        return pet && !pet.is_already_reported;
                     })
                     .map(function (id) { return String(id); });
 

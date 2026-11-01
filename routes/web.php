@@ -1459,7 +1459,17 @@ Route::get('/missing-pets/form', function () {
 
     $preselectPet = request('preselect_pet');
 
-    $petsArray = $pets->map(function ($pet) use ($preselectPet) {
+    // Pets that already have an active missing report (cannot be re-reported)
+    $reportedPetIds = [];
+    if ($petOwner) {
+        $reportedPetIds = \App\Models\MissingPetsReport::whereIn('pet_id', $pets->pluck('pet_id'))
+            ->whereIn('status', ['pending review', 'approved', 'resolved - reunited'])
+            ->pluck('pet_id')
+            ->map(fn($id) => (string)$id)
+            ->toArray();
+    }
+
+    $petsArray = $pets->map(function ($pet) use ($preselectPet, $reportedPetIds) {
         return [
             'id' => $pet->pet_id,
             'name' => $pet->pet_name,
@@ -1477,6 +1487,7 @@ Route::get('/missing-pets/form', function () {
             'body_mark_image_url' => $pet->body_mark_image_url,
             'additional_photos' => $pet->additional_photos,
             'preselected' => $preselectPet && (string)$pet->pet_id === (string)$preselectPet,
+            'is_already_reported' => in_array((string)$pet->pet_id, $reportedPetIds),
         ];
     })->toArray();
 
