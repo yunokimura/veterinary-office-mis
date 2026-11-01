@@ -139,30 +139,46 @@
         ]));
 @endphp
 
+<!-- Upcoming Appointment Alert (above Quick Actions) -->
 @if($upcomingAlerts->count() > 0)
-    <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[10000] max-w-md w-full px-4 sm:px-6 lg:px-8">
-        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-2xl flex items-start gap-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <i data-lucide="calendar" class="w-5 h-5"></i>
+    @php
+        $alert = $upcomingAlerts->first();
+    @endphp
+    <div id="upcomingAlerts" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="bg-green-50 border border-green-200 rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm border-l-4 border-amber-500">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="bell" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="inline-block px-2 py-0.5 rounded-md bg-amber-100 text-amber-700 font-bold uppercase tracking-wider">Upcoming Visit</span>
+                        <span class="text-slate-500">APP #{{ str_replace('APP-', '', $alert->id ?? '') }}</span>
+                        <span class="text-slate-500">•</span>
+                        <span class="text-slate-500">{{ $alert->date }}</span>
+                    </div>
+                    <p class="text-sm text-slate-800 font-medium mt-1 leading-relaxed">
+                        {{ $alert->label }} appointment for
+                        <span class="text-green-700 font-bold">{{ $alert->pet_name }}</span>
+                        is coming up tomorrow!
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Location: City Vet Main Clinic (Brgy. Langkaan II)</p>
+                </div>
             </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-amber-800 uppercase tracking-wide">Upcoming Appointment(s) in 1 Week</p>
-                <ul class="text-xs text-amber-700 mt-1 space-y-1 leading-relaxed">
-                    @foreach($upcomingAlerts as $alert)
-                        <li class="flex items-start gap-2">
-                            <span class="font-medium text-amber-800">{{ $alert->label }}</span>
-                            <span class="text-amber-600">for <strong>{{ $alert->pet_name }}</strong></span>
-                            <span class="text-amber-600">on {{ $alert->date }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+
+            <div class="flex items-center gap-3 mt-3 sm:mt-0">
+                <a href="javascript:void(0)" 
+                   onclick='openItemModal({{ json_encode($alert, JSON_HEX_APOS) }}, "{{ $alert->type }}", "view")' 
+                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold shadow-md shadow-amber-200 transition-all active:scale-95">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                    <span>View Details & Prep</span>
+                </a>
+                <button onclick="document.getElementById('upcomingAlerts').style.display='none'" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
-            <button onclick="this.closest('.fixed').style.display='none'" class="text-amber-500 hover:text-amber-700 flex-shrink-0 ml-2">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
         </div>
     </div>
-    <script>lucide.createIcons();</script>
 @endif
 
 <!-- Quick Actions -->
