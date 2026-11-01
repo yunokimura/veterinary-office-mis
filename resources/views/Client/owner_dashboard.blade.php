@@ -407,8 +407,8 @@
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->clinic_name ?? 'N/A',
                 'owner_name' => $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A',
-                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($barangay?->name ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
-                'owner_barangay' => $barangay?->name ?? ($address?->barangay?->name ?? ($user?->barangay?->name ?? 'N/A')),
+                'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ', ' . ($barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? 'N/A')) . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? ($user?->barangay?->barangay_name ?? 'N/A')),
                 'last_rabies_date' => $lastRabies?->vaccination_date ?? null,
                 'recent_surgery' => $lastRabies?->notes ?? 'None',
             ]);
@@ -430,8 +430,8 @@
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->veterinarian ?? 'N/A',
                 'owner_name' => $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A',
-                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($barangay?->name ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
-                'owner_barangay' => $barangay?->name ?? ($address?->barangay?->name ?? ($user?->barangay?->name ?? 'N/A')),
+                'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ', ' . ($barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? 'N/A')) . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? ($user?->barangay?->barangay_name ?? 'N/A')),
                 'procedure_type' => $a->procedure_type ?? 'N/A',
                 'weight' => $petInfo?->pet_weight ?? 'N/A',
             ]);
@@ -463,8 +463,8 @@
                 'appointment_date' => $application->appointment_date ?? null,
                 'status' => $application->status ?? 'pending_review',
                 'owner_name' => $user ? ($user->first_name . ' ' . $user->last_name) : 'N/A',
-                'owner_address' => $address ? trim((string) ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($address->city ?? '')) : 'N/A',
-                'owner_barangay' => $barangay?->name ?? 'N/A',
+                'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ' ' . ($barangay?->name ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->name ?? ($address?->barangay?->name ?? 'N/A'),
                 'adopted_before' => $application->adopted_before ?? 'N/A',
                 'alternate_contact' => $application->alternate_contact ?? 'N/A',
                 'questionnaire' => $application->questionnaire ?? 'N/A',
@@ -1282,7 +1282,7 @@
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Owner Details</span>
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between"><span class="text-slate-500">Name:</span><span class="font-semibold text-slate-800">${item.owner_name}</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800">${item.owner_address}</span></div>
+                                    <div class="flex justify-between items-end"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words max-w-[160px] leading-tight">${item.owner_address}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Barangay:</span><span class="font-semibold text-slate-800">${item.owner_barangay}</span></div>
                                 </div>
                             </div>
@@ -1323,7 +1323,7 @@
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Owner Details</span>
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between"><span class="text-slate-500">Name:</span><span class="font-semibold text-slate-800">${item.owner_name}</span></div>
-                                    <div class="flex justify-between"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800">${item.owner_address}</span></div>
+                                    <div class="flex justify-between items-end"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words max-w-[160px] leading-tight">${item.owner_address}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Barangay:</span><span class="font-semibold text-slate-800">${item.owner_barangay}</span></div>
                                 </div>
                             </div>
