@@ -1340,7 +1340,20 @@ Route::get('/missing-pets', function () {
         }])
         ->paginate(12);
 
+    $foundPets = Pet::where('pet_status', 'found')
+        ->with(['missingReport' => function ($query) {
+            $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
+        }])
+        ->paginate(12);
+
     $availableBreeds = Pet::where('pet_status', 'missing')
+        ->whereNotNull('breed')
+        ->where('breed', '!=', '')
+        ->distinct()
+        ->orderBy('breed')
+        ->pluck('breed');
+
+    $foundBreeds = Pet::where('pet_status', 'found')
         ->whereNotNull('breed')
         ->where('breed', '!=', '')
         ->distinct()
@@ -1354,11 +1367,13 @@ Route::get('/missing-pets', function () {
         ->orderBy('created_at', 'desc')
         ->get();
 
-    return view('Client.missing_pets_page', compact('missingPets', 'announcements', 'availableBreeds', 'availableLocations'));
+    return view('Client.missing_pets_page', compact('missingPets', 'foundPets', 'announcements', 'availableBreeds', 'foundBreeds', 'availableLocations'));
 });
 
 Route::get('/missing-pets/paginate', function (Request $request) {
-    $query = Pet::where('pet_status', 'missing')
+    $status = $request->filled('status') && in_array($request->status, ['missing', 'found']) ? $request->status : 'missing';
+
+    $query = Pet::where('pet_status', $status)
         ->with(['missingReport' => function ($query) {
             $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
         }]);

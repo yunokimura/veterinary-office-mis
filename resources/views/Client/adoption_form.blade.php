@@ -64,7 +64,7 @@
     @php
     $isEdit = isset($application) && $application instanceof \App\Models\AdoptionApplication;
     $isView = isset($isView) && $isView === true;
-    $formAction = $isEdit && ! $isView ? route('adoption.form.update', $application) : '#';
+    $formAction = $isEdit && ! $isView ? route('adoption.form.update', $application) : route('adoption.form.submit');
     $formMethod = $isEdit && ! $isView ? 'PUT' : 'POST';
     $submitLabel = $isEdit && ! $isView ? 'Update Application' : ($isView ? 'View Mode' : 'Submit Application');
     $pageTitle = $isView ? 'View Adoption Application' : ($isEdit ? 'Edit Adoption Application' : 'Adoption Application');

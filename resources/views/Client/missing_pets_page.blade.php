@@ -379,6 +379,287 @@
         </div>
     </section>
 
+    <!-- Found Pets Section Title -->
+    <section class="py-8 bg-white border-b border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Found Pets</h2>
+                    <p class="text-sm text-gray-500 mt-1">Pets that have been found and are waiting to be reunited with their owners</p>
+                </div>
+                <button onclick="toggleFoundFilterPanel()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    <span class="font-medium">Filters</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide-out Found Filter Panel -->
+    <div id="foundFilterPanel" class="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="h-full flex flex-col">
+            <!-- Panel Header -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                <h2 class="text-lg font-bold text-gray-900">Filter Pets</h2>
+                <button onclick="toggleFoundFilterPanel()" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Panel Content -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="space-y-4">
+                    <p class="text-sm text-gray-500 mb-3">Filter by:</p>
+
+                    <button onclick="foundFilterPets('filter', 'all')" class="found-filter-btn w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-primary text-white text-left" data-filter="all" data-filter-type="filter">
+                        All Pets
+                    </button>
+
+                    <!-- Species filters side by side -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="foundFilterPets('species', 'Dog')" class="found-filter-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="Dog" data-filter-type="species">
+                            🐕 Dogs
+                        </button>
+                        <button onclick="foundFilterPets('species', 'Cat')" class="found-filter-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="Cat" data-filter-type="species">
+                            🐱 Cats
+                        </button>
+                    </div>
+
+                    <!-- Gender filters side by side -->
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-500 mb-3">Gender:</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="foundFilterPets('gender', 'Male')" class="found-filter-btn found-gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="Male" data-filter-type="gender">
+                                Male
+                            </button>
+                            <button onclick="foundFilterPets('gender', 'Female')" class="found-filter-btn found-gender-btn px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200 text-left" data-filter="Female" data-filter-type="gender">
+                                Female
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Breed filter -->
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-500 mb-2">Breed:</p>
+                        <div class="relative">
+                            <button onclick="toggleFoundBreedDropdown()" type="button" class="w-full px-3 py-2 text-left text-sm bg-gray-100 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between" id="foundBreedDropdownButton">
+                                <span id="foundSelectedBreedsDisplay">Select breeds</span>
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="foundBreedDropdown" class="hidden absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-48 overflow-y-auto">
+                                @if(isset($foundBreeds) && count($foundBreeds) > 0)
+                                    @foreach($foundBreeds as $breed)
+                                    <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer">
+                                        <input type="checkbox" value="{{ $breed }}" class="foundBreedCheckbox rounded text-primary focus:ring-primary" onchange="updateFoundBreedSelection()">
+                                        <span class="ml-2 text-sm text-gray-700">{{ $breed }}</span>
+                                    </label>
+                                    @endforeach
+                                @else
+                                    <div class="px-3 py-2 text-sm text-gray-500">No breeds available</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location filter -->
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-500 mb-2">Last Seen Location:</p>
+                        <div class="relative">
+                            <button onclick="toggleFoundLocationDropdown()" type="button" class="w-full px-3 py-2 text-left text-sm bg-gray-100 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between" id="foundLocationDropdownButton">
+                                <span id="foundSelectedLocationsDisplay">Select location</span>
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="foundLocationDropdown" class="hidden absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-48 overflow-y-auto">
+                                @if(isset($availableLocations) && count($availableLocations) > 0)
+                                    @foreach($availableLocations as $loc)
+                                    <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer">
+                                        <input type="checkbox" value="{{ $loc }}" class="foundLocationCheckbox rounded text-primary focus:ring-primary" onchange="updateFoundLocationSelection()">
+                                        <span class="ml-2 text-sm text-gray-700">{{ $loc }}</span>
+                                    </label>
+                                    @endforeach
+                                @else
+                                    <div class="px-3 py-2 text-sm text-gray-500">No locations available</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Filter Display -->
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-600">
+                        <span class="font-medium">Current filter:</span>
+                        <span id="foundCurrentFilterDisplay" class="text-primary font-bold">All Pets</span>
+                    </p>
+                    <p class="text-xs text-gray-400 mt-1">
+                        Showing <span id="foundPetCount">{{ $foundPets->total() }}</span> pets
+                    </p>
+                </div>
+            </div>
+
+            <!-- Panel Footer -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex gap-3">
+                    <button onclick="foundClearFilters()" class="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                        Clear Filter
+                    </button>
+                    <button onclick="foundApplyFilters()" class="flex-1 bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Found Overlay -->
+    <div id="foundFilterOverlay" onclick="toggleFoundFilterPanel()" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity"></div>
+
+    <!-- Found Pets Grid -->
+    <section id="foundPetsSection" class="py-16 bg-gray-50 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="foundPetsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                @forelse($foundPets as $pet)
+                    @php
+                        $rawImage = $pet->pet_image;
+                        if ($rawImage) {
+                            $candidate = public_path('images/missing pets/' . $rawImage);
+                            if (!file_exists($candidate)) {
+                                $baseName = pathinfo($rawImage, PATHINFO_FILENAME);
+                                $alternate = public_path('images/missing pets/' . $baseName . '.jpeg');
+                                if (file_exists($alternate)) {
+                                    $rawImage = $baseName . '.jpeg';
+                                } else {
+                                    $alternate = public_path('images/missing pets/' . $baseName . '.jpg');
+                                    if (file_exists($alternate)) {
+                                        $rawImage = $baseName . '.jpg';
+                                    }
+                                }
+                            }
+                        }
+                    @endphp
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 {{ $pet->gender == 'Male' ? 'border-blue-200' : 'border-pink-200' }} card-hover missing-pet-card" onclick="showFoundPetModal({{ $pet->pet_id }})">
+                        <div class="aspect-square bg-gray-200 relative overflow-hidden">
+                            <img src="{{ $rawImage ? asset('images/missing pets/'.$rawImage) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ $pet->species }}</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pet->gender == 'Male' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800' }}">
+                                    @if($pet->gender == 'Male')
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-blue-500 shrink-0 mr-1">
+                                            <path d="M0 0h16v16H0z" fill="none" />
+                                            <path fill="#1e2099" fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8a4 4 0 0 0 0-8" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-pink-500 shrink-0 mr-1">
+                                            <path d="M0 0h16v16H0z" fill="none" />
+                                            <path fill="#d42ec9" fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8a4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" />
+                                        </svg>
+                                    @endif
+                                    {{ ucfirst(strtolower($pet->gender)) }}
+                                </span>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Age:</span>
+                                    <span class="text-gray-700 font-medium">{{ $pet->petInfo?->pet_age_short ?? $pet->petInfo?->pet_age ?? 'N/A' }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Weight:</span>
+                                    <span class="text-gray-700 font-medium">{{ $pet->weight ?? 'N/A' }}</span>
+                                </div>
+                                <div class="border-t pt-2 mt-2">
+                                    <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
+                                    <p class="text-gray-700 font-medium text-xs">
+                                        @if($pet->missingReport->first() && $pet->missingReport->first()->last_seen_at)
+                                            {{ $pet->missingReport->first()->last_seen_at->format('M d, Y - h:i A') }}
+                                        @else
+                                            N/A
+                                        @endif
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs mb-1">Location:</p>
+                                    <p class="text-gray-700 font-medium text-xs">
+                                        @if($pet->missingReport->first())
+                                            {{ $pet->missingReport->first()->barangay->barangay_name ?? 'N/A' }}
+                                            @if($pet->missingReport->first()->location_description)
+                                                - {{ $pet->missingReport->first()->location_description }}
+                                            @endif
+                                        @else
+                                            N/A
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                <div class="col-span-full text-center py-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    <p class="text-gray-500 text-lg">No found pets found.</p>
+                    <p class="text-gray-400 text-sm mt-1">Try adjusting your filters or check back later.</p>
+                </div>
+                @endforelse
+            </div>
+
+            <!-- Found Pagination -->
+            <div class="mt-8 flex justify-center">
+                <nav class="flex items-center gap-1" id="foundPaginationNav">
+                    <!-- Previous Page -->
+                    @if ($foundPets->onFirstPage())
+                        <span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </span>
+                    @else
+                        <button onclick="foundLoadPage({{ $foundPets->currentPage() - 1 }})" class="px-4 py-2 text-white bg-primary hover:bg-primary-light rounded-lg transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                    @endif
+
+                    <!-- Page Numbers -->
+                    @for ($i = 1; $i <= $foundPets->lastPage(); $i++)
+                        @if ($i == $foundPets->currentPage())
+                            <span class="px-4 py-2 text-white bg-primary font-medium rounded-lg">{{ $i }}</span>
+                        @else
+                            <button onclick="foundLoadPage({{ $i }})" class="px-4 py-2 text-gray-600 bg-white hover:bg-primary hover:text-white rounded-lg transition-colors">{{ $i }}</button>
+                        @endif
+                    @endfor
+
+                    <!-- Next Page -->
+                    @if ($foundPets->hasMorePages())
+                        <button onclick="foundLoadPage({{ $foundPets->currentPage() + 1 }})" class="px-4 py-2 text-white bg-primary hover:bg-primary-light rounded-lg transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    @else
+                        <span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </span>
+                    @endif
+                </nav>
+            </div>
+        </div>
+    </section>
+
     <!-- Pet Detail Modal -->
     <div id="petModal" class="fixed inset-0 z-50 hidden">
         <!-- Backdrop -->
@@ -905,6 +1186,421 @@
             
             const locationDropdown = document.getElementById('location-dropdown');
             const locationButton = event.target.closest('#location-dropdown-button');
+            if (!locationButton && locationDropdown && !locationDropdown.contains(event.target)) {
+                locationDropdown.classList.add('hidden');
+            }
+        });
+
+        // Found Pets Data
+        let foundPetsData = {!! json_encode($foundPets->map(function($pet) {
+            $report = $pet->missingReport->first();
+            $rawImage = $pet->pet_image;
+            $resolvedImage = null;
+            if ($rawImage) {
+                $candidate = public_path('images/missing pets/' . $rawImage);
+                if (file_exists($candidate)) {
+                    $resolvedImage = asset('images/missing pets/'.$rawImage);
+                } else {
+                    $baseName = pathinfo($rawImage, PATHINFO_FILENAME);
+                    foreach (['jpeg', 'jpg'] as $ext) {
+                        $alt = public_path('images/missing pets/' . $baseName . '.' . $ext);
+                        if (file_exists($alt)) {
+                            $resolvedImage = asset('images/missing pets/' . $baseName . '.' . $ext);
+                            break;
+                        }
+                    }
+                }
+            }
+            return [
+                'pet_id' => $pet->pet_id,
+                'pet_name' => $pet->pet_name,
+                'species' => $pet->species,
+                'breed' => $pet->breed,
+                'gender' => $pet->gender,
+                'age' => $pet->petInfo?->pet_age,
+                'age_short' => $pet->petInfo?->pet_age_short,
+                'weight' => $pet->weight,
+                'color' => $pet->color,
+                'description' => $pet->notes,
+                'location_barangay' => $report && $report->barangay ? $report->barangay->barangay_name : null,
+                'location_description' => $report ? $report->location_description : null,
+                'last_seen_at' => $report ? $report->last_seen_at : null,
+                'pet_image' => $resolvedImage,
+                'pet_status' => $pet->pet_status,
+            ];
+        })) !!};
+        let foundCurrentPage = {{ $foundPets->currentPage() }};
+        let foundLastPage = {{ $foundPets->lastPage() }};
+        let foundCurrentSpecies = 'all';
+        let foundCurrentGender = 'all';
+        let foundCurrentBreeds = [];
+        let foundCurrentLocations = [];
+
+        // Check for filter parameters in URL on page load (found pets)
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const speciesParam = urlParams.get('species');
+            const genderParam = urlParams.get('gender');
+            const breedsParam = urlParams.get('breeds');
+            const locationParam = urlParams.get('location');
+            
+            if (speciesParam && ['Dog', 'Cat'].includes(speciesParam)) {
+                foundCurrentSpecies = speciesParam;
+            }
+            if (genderParam && ['Male', 'Female'].includes(genderParam)) {
+                foundCurrentGender = genderParam;
+            }
+            if (breedsParam) {
+                foundCurrentBreeds = breedsParam.split(',');
+                document.querySelectorAll('.foundBreedCheckbox').forEach(checkbox => {
+                    checkbox.checked = foundCurrentBreeds.includes(checkbox.value);
+                });
+                updateFoundBreedSelection();
+            }
+            if (locationParam) {
+                foundCurrentLocations = locationParam.split(',');
+                document.querySelectorAll('.foundLocationCheckbox').forEach(checkbox => {
+                    checkbox.checked = foundCurrentLocations.includes(checkbox.value);
+                });
+                updateFoundLocationSelection();
+            }
+            updateFoundFilterButtons();
+        });
+        
+        function updateFoundFilterButtons() {
+            document.querySelectorAll('#foundFilterPanel .found-filter-btn, #foundFilterPanel .found-gender-btn').forEach(btn => {
+                const filterType = btn.dataset.filterType || 'filter';
+                const filterValue = btn.dataset.filter;
+                
+                let isActive = false;
+                
+                if (filterType === 'filter') {
+                    isActive = filterValue === 'all' && foundCurrentSpecies === 'all';
+                } else if (filterType === 'species') {
+                    isActive = foundCurrentSpecies !== 'all' && foundCurrentSpecies === filterValue;
+                } else if (filterType === 'gender') {
+                    isActive = foundCurrentGender !== 'all' && foundCurrentGender === filterValue;
+                }
+                
+                if (isActive) {
+                    btn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                    
+                    if (filterValue === 'Male') {
+                        btn.classList.add('bg-blue-300', 'text-blue-900', 'ring-2', 'ring-blue-400');
+                    } else if (filterValue === 'Female') {
+                        btn.classList.add('bg-pink-200', 'text-pink-900', 'ring-2', 'ring-pink-300');
+                    } else {
+                        btn.classList.add('bg-primary', 'text-white', 'ring-2', 'ring-green-400');
+                    }
+                } else {
+                    btn.classList.remove('bg-primary', 'text-white', 'bg-blue-300', 'text-blue-900', 'ring-2', 'ring-blue-400', 'bg-pink-200', 'text-pink-900', 'ring-pink-300', 'ring-green-400');
+                    btn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                }
+            });
+            
+            const filterNames = {
+                'all': 'All Pets',
+                'Dog': 'Dogs',
+                'Cat': 'Cats',
+                'Male': 'Male',
+                'Female': 'Female',
+            };
+            
+            let activeFilters = [];
+            if (foundCurrentSpecies !== 'all') activeFilters.push(filterNames[foundCurrentSpecies] || foundCurrentSpecies);
+            if (foundCurrentGender !== 'all') activeFilters.push(filterNames[foundCurrentGender] || foundCurrentGender);
+            if (foundCurrentBreeds.length > 0) {
+                activeFilters.push(foundCurrentBreeds.length === 1 ? foundCurrentBreeds[0] : foundCurrentBreeds.length + ' breeds');
+            }
+            if (foundCurrentLocations.length > 0) {
+                activeFilters.push(foundCurrentLocations.length === 1 ? foundCurrentLocations[0] : foundCurrentLocations.length + ' locations');
+            }
+            
+            const displayEl = document.getElementById('foundCurrentFilterDisplay');
+            if (displayEl) {
+                displayEl.textContent = activeFilters.length > 0 ? activeFilters.join(', ') : 'All Pets';
+            }
+        }
+        
+        function toggleFoundFilterPanel() {
+            const panel = document.getElementById('foundFilterPanel');
+            const overlay = document.getElementById('foundFilterOverlay');
+            
+            if (!panel || !overlay) return;
+            
+            if (panel.classList.contains('translate-x-full')) {
+                panel.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+                document.body.style.overflow = 'hidden';
+            } else {
+                panel.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        function toggleFoundBreedDropdown() {
+            const dropdown = document.getElementById('foundBreedDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+        
+        function toggleFoundLocationDropdown() {
+            const dropdown = document.getElementById('foundLocationDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+        
+        function updateFoundBreedSelection() {
+            const checkboxes = document.querySelectorAll('.foundBreedCheckbox:checked');
+            foundCurrentBreeds = Array.from(checkboxes).map(cb => cb.value);
+            const display = document.getElementById('foundSelectedBreedsDisplay');
+            display.textContent = foundCurrentBreeds.length > 0 ? foundCurrentBreeds.join(', ') : 'Select breeds';
+        }
+        
+        function updateFoundLocationSelection() {
+            const checkboxes = document.querySelectorAll('.foundLocationCheckbox:checked');
+            foundCurrentLocations = Array.from(checkboxes).map(cb => cb.value);
+            const display = document.getElementById('foundSelectedLocationsDisplay');
+            display.textContent = foundCurrentLocations.length > 0 ? foundCurrentLocations.join(', ') : 'Select location';
+        }
+        
+        function foundFilterPets(filterType, filterValue) {
+            if (filterType === 'filter') {
+                if (filterValue === 'all') {
+                    foundCurrentSpecies = 'all';
+                    foundCurrentGender = 'all';
+                }
+            } else if (filterType === 'species') {
+                if (foundCurrentSpecies !== 'all' && foundCurrentSpecies === filterValue) {
+                    foundCurrentSpecies = 'all';
+                } else {
+                    foundCurrentSpecies = filterValue;
+                }
+            } else if (filterType === 'gender') {
+                if (foundCurrentGender !== 'all' && foundCurrentGender === filterValue) {
+                    foundCurrentGender = 'all';
+                } else {
+                    foundCurrentGender = filterValue;
+                }
+            }
+            updateFoundFilterButtons();
+        }
+        
+        function foundClearFilters() {
+            foundCurrentSpecies = 'all';
+            foundCurrentGender = 'all';
+            foundCurrentBreeds = [];
+            foundCurrentLocations = [];
+            
+            document.querySelectorAll('.foundBreedCheckbox').forEach(cb => cb.checked = false);
+            document.querySelectorAll('.foundLocationCheckbox').forEach(cb => cb.checked = false);
+            
+            document.getElementById('foundSelectedBreedsDisplay').textContent = 'Select breeds';
+            document.getElementById('foundSelectedLocationsDisplay').textContent = 'Select location';
+            
+            updateFoundFilterButtons();
+            window.location.href = '/missing-pets?page=1';
+        }
+        
+        function foundApplyFilters() {
+            foundLoadPage(1);
+            
+            const panel = document.getElementById('foundFilterPanel');
+            const overlay = document.getElementById('foundFilterOverlay');
+            panel.classList.add('translate-x-full');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+            document.body.style.overflow = 'auto';
+        }
+        
+        function foundLoadPage(page, species = null, gender = null, breeds = null, locations = null) {
+            const speciesParam = species || foundCurrentSpecies;
+            const genderParam = gender || foundCurrentGender;
+            const breedsParam = breeds || (foundCurrentBreeds.length > 0 ? foundCurrentBreeds.join(',') : '');
+            const locationsParam = locations || (foundCurrentLocations.length > 0 ? foundCurrentLocations.join(',') : '');
+            
+            const params = new URLSearchParams();
+            params.set('page', page);
+            params.set('status', 'found');
+            if (speciesParam && speciesParam !== 'all') params.set('species', speciesParam);
+            if (genderParam && genderParam !== 'all') params.set('gender', genderParam);
+            if (breedsParam) params.set('breeds', breedsParam);
+            if (locationsParam) params.set('location', locationsParam);
+            
+            const queryString = params.toString();
+            const browserUrl = '/missing-pets' + (queryString ? '?' + queryString : '');
+            
+            if (history.pushState) {
+                history.pushState({page: page, species: speciesParam, gender: genderParam, breeds: breedsParam, locations: locationsParam}, '', browserUrl);
+            }
+            
+            let url = '/missing-pets/paginate?' + queryString;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    foundPetsData = data.pets;
+                    foundCurrentPage = data.currentPage;
+                    foundLastPage = data.lastPage;
+                    
+                    document.getElementById('foundPetCount').textContent = data.total;
+                    
+                    foundRenderPets(data.pets);
+                    foundRenderPagination();
+                    
+                    document.getElementById('foundPetsSection').scrollIntoView({ behavior: 'smooth' });
+                })
+                .catch(error => {
+                    console.error('Error loading page:', error);
+                    alert('Error loading pets. Please try again.');
+                });
+        }
+        
+        function foundRenderPets(pets) {
+            const grid = document.getElementById('foundPetsGrid');
+            let html = '';
+            
+            if (pets.length === 0) {
+                html = `
+                <div class="col-span-full text-center py-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    <p class="text-gray-500 text-lg">No found pets found.</p>
+                    <p class="text-gray-400 text-sm mt-1">Try adjusting your filters or check back later.</p>
+                </div>`;
+            } else {
+                 pets.forEach(pet => {
+                      html += `
+                       <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 ${pet.gender === 'Male' ? 'border-blue-200' : 'border-pink-200'} card-hover missing-pet-card" onclick="showFoundPetModal(${pet.pet_id})">
+                          <div class="aspect-square bg-gray-200 relative overflow-hidden">
+                                <img src="${pet.pet_image ? pet.pet_image : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image'}" alt="${pet.pet_name}" class="w-full h-full object-cover pet-image">
+                          </div>
+                          <div class="p-4">
+                               <h3 class="text-lg font-bold text-gray-900 mb-2">${pet.pet_name}</h3>
+                               <div class="flex flex-wrap gap-2 mb-3">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${pet.species}</span>
+                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${pet.gender === 'Male' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800'}">${pet.gender === 'Male'
+                         ? `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-blue-500 shrink-0 mr-1"><path d="M0 0h16v16H0z" fill="none" /><path fill="#1e2099" fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8a4 4 0 0 0 0-8" /></svg>`
+                         : `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" class="text-pink-500 shrink-0 mr-1"><path d="M0 0h16v16H0z" fill="none" /><path fill="#d42ec9" fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8a4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" /></svg>`
+                     } ${pet.gender === 'Male' ? 'Male' : 'Female'}</span>
+                               </div>
+                              <div class="space-y-2 text-sm">
+                                  <div class="flex justify-between">
+                                      <span class="text-gray-500">Age:</span>
+                                      <span class="text-gray-700 font-medium">${pet.age_short || pet.age || 'N/A'}</span>
+                                  </div>
+                                  <div class="flex justify-between">
+                                      <span class="text-gray-500">Weight:</span>
+                                      <span class="text-gray-700 font-medium">${pet.weight || 'N/A'}</span>
+                                  </div>
+                                  <div class="border-t pt-2 mt-2">
+                                      <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
+                                      <p class="text-gray-700 font-medium text-xs">${pet.last_seen_at ? (() => { const d = new Date(pet.last_seen_at); const datePart = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); const timePart = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); return datePart + ' - ' + timePart; })() : 'N/A'}</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-gray-500 text-xs mb-1">Location:</p>
+                                      <p class="text-gray-700 font-medium text-xs">${pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A'}</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>`;
+                 });
+            }
+            
+            grid.innerHTML = html;
+        }
+        
+        function foundRenderPagination() {
+            const nav = document.getElementById('foundPaginationNav');
+            let html = '';
+            
+            // Previous button
+            if (foundCurrentPage === 1) {
+                html += `<span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </span>`;
+            } else {
+                html += `<button onclick="foundLoadPage(${foundCurrentPage - 1})" class="px-4 py-2 text-white bg-primary hover:bg-primary-light rounded-lg transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>`;
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= foundLastPage; i++) {
+                if (i === foundCurrentPage) {
+                    html += `<span class="px-4 py-2 text-white bg-primary font-medium rounded-lg">${i}</span>`;
+                } else {
+                    html += `<button onclick="foundLoadPage(${i})" class="px-4 py-2 text-gray-600 bg-white hover:bg-primary hover:text-white rounded-lg transition-colors">${i}</button>`;
+                }
+            }
+            
+            // Next button
+            if (foundCurrentPage === foundLastPage) {
+                html += `<span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </span>`;
+            } else {
+                html += `<button onclick="foundLoadPage(${foundCurrentPage + 1})" class="px-4 py-2 text-white bg-primary hover:bg-primary-light rounded-lg transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>`;
+            }
+            
+            nav.innerHTML = html;
+        }
+        
+        function showFoundPetModal(petId) {
+            const pet = foundPetsData.find(p => p.pet_id === petId);
+            if (!pet) return;
+            
+            currentModalPetId = petId;
+            
+            document.getElementById('modalPetName').textContent = pet.pet_name;
+            document.getElementById('modalPetSpecies').textContent = pet.species;
+            document.getElementById('modalPetBreed').textContent = pet.breed || 'Breed not available';
+            document.getElementById('modalPetAge').textContent = pet.age_short || pet.age || 'Age not available';
+            document.getElementById('modalPetGender').textContent = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1).toLowerCase() : 'Not available';
+             document.getElementById('modalPetWeight').textContent = pet.weight || 'Weight not available';
+            document.getElementById('modalPetColor').textContent = pet.color || 'Color not available';
+            document.getElementById('modalPetLocation').textContent = pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'Location not available';
+            document.getElementById('modalPetLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleDateString() : 'Date not available';
+            document.getElementById('modalPetDescription').textContent = pet.description || 'No description available';
+            
+            const img = document.getElementById('modalPetImage');
+            const placeholder = document.getElementById('modalPetImagePlaceholder');
+            
+            if (pet.pet_image) {
+                img.src = pet.pet_image;
+                img.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else {
+                img.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
+            
+            document.getElementById('petModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close found dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const breedDropdown = document.getElementById('foundBreedDropdown');
+            const breedButton = event.target.closest('#foundBreedDropdownButton');
+            if (!breedButton && breedDropdown && !breedDropdown.contains(event.target)) {
+                breedDropdown.classList.add('hidden');
+            }
+            
+            const locationDropdown = document.getElementById('foundLocationDropdown');
+            const locationButton = event.target.closest('#foundLocationDropdownButton');
             if (!locationButton && locationDropdown && !locationDropdown.contains(event.target)) {
                 locationDropdown.classList.add('hidden');
             }
