@@ -91,9 +91,81 @@
 
      @include('Client.partials.emergency_alert')
 
-    @include('Client.partials.navbar')
+@include('Client.partials.navbar')
 
-    <!-- Quick Actions -->
+@php
+    $alertNow = \Carbon\Carbon::now();
+    $alertWeek = \Carbon\Carbon::now()->addDays(7);
+
+    $upcomingAlerts = collect();
+
+    // Upcoming appointments (vaccination & spay/neuter) within 1 week
+    \App\Models\VaccinationAppointment::where('user_id', auth()->id())
+        ->whereBetween('scheduled_at', [$alertNow, $alertWeek])
+        ->with('pet')
+        ->get()
+        ->each(fn($a) => $upcomingAlerts->push((object)[
+            'type' => 'appointment',
+            'label' => 'Anti-Rabies Vaccination',
+            'pet_name' => optional($a->pet)->pet_name ?? 'N/A',
+            'date' => \Carbon\Carbon::parse($a->scheduled_at)->format('F d, Y \a\t g:i A'),
+            'id' => 'APP-' . $a->id,
+        ]));
+
+    \App\Models\SpayNeuterAppointment::where('user_id', auth()->id())
+        ->whereBetween('scheduled_at', [$alertNow, $alertWeek])
+        ->with('pet')
+        ->get()
+        ->each(fn($a) => $upcomingAlerts->push((object)[
+            'type' => 'appointment',
+            'label' => 'Spay & Neuter (Kapon)',
+            'pet_name' => optional($a->pet)->pet_name ?? 'N/A',
+            'date' => \Carbon\Carbon::parse($a->scheduled_at)->format('F d, Y \a\t g:i A'),
+            'id' => 'APP-' . $a->id,
+        ]));
+
+    // Upcoming adoption application interviews within 1 week
+    \App\Models\AdoptionApplication::where('user_id', auth()->id())
+        ->whereNotNull('appointment_date')
+        ->whereBetween('appointment_date', [$alertNow, $alertWeek])
+        ->with('pet')
+        ->get()
+        ->each(fn($a) => $upcomingAlerts->push((object)[
+            'type' => 'adoption',
+            'label' => 'Adoption Interview',
+            'pet_name' => optional($a->pet)->pet_name ?? 'Unspecified (General)',
+            'date' => \Carbon\Carbon::parse($a->appointment_date)->format('F d, Y \a\t g:i A'),
+            'id' => 'ADPT-' . $a->id,
+        ]));
+@endphp
+
+@if($upcomingAlerts->count() > 0)
+    <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[10000] max-w-md w-full px-4 sm:px-6 lg:px-8">
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-2xl flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-amber-800 uppercase tracking-wide">Upcoming Appointment(s) in 1 Week</p>
+                <ul class="text-xs text-amber-700 mt-1 space-y-1 leading-relaxed">
+                    @foreach($upcomingAlerts as $alert)
+                        <li class="flex items-start gap-2">
+                            <span class="font-medium text-amber-800">{{ $alert->label }}</span>
+                            <span class="text-amber-600">for <strong>{{ $alert->pet_name }}</strong></span>
+                            <span class="text-amber-600">on {{ $alert->date }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+            <button onclick="this.closest('.fixed').style.display='none'" class="text-amber-500 hover:text-amber-700 flex-shrink-0 ml-2">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+@endif
+
+<!-- Quick Actions -->
     <section class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="mb-6">
