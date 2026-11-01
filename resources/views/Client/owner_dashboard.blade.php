@@ -973,6 +973,9 @@
             // Edit link
             document.getElementById('petProfileEditLink').href = '/owner/pets/' + pet.pet_id + '/edit';
 
+            // Reset to Overview tab on every open
+            switchPetTab('overview');
+
             // Show modal
             document.getElementById('petProfileModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
