@@ -380,35 +380,52 @@
     <!-- My Appointments Section -->
     @php
         $vaccinationAppointments = \App\Models\VaccinationAppointment::where('user_id', auth()->id())
-            ->with('pet')
+            ->with(['pet.owner', 'pet.petInfo', 'vaccinationReports'])
             ->orderByDesc('scheduled_at')
             ->get();
         $spayNeuterAppointments = \App\Models\SpayNeuterAppointment::where('user_id', auth()->id())
-            ->with('pet')
+            ->with(['pet.owner', 'pet.petInfo'])
             ->orderByDesc('scheduled_at')
             ->get();
 
         $appointments = collect();
         foreach ($vaccinationAppointments as $a) {
+            $owner = optional($a->pet)->owner;
+            $petInfo = optional($a->pet)->petInfo;
+            $lastRabies = optional($a->vaccinationReports)->last();
             $appointments->push((object) [
                 'id' => $a->id,
                 'type' => 'vaccination',
                 'pet_name' => optional($a->pet)->pet_name ?? 'N/A',
                 'pet_breed' => optional($a->pet)->breed ?? '',
+                'pet_id' => optional($a->pet)->pet_id ?? null,
                 'scheduled_at' => $a->scheduled_at,
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->clinic_name ?? 'N/A',
+                'owner_name' => $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A',
+                'owner_address' => $owner?->address ?? 'N/A',
+                'owner_barangay' => $owner?->barangay ?? 'N/A',
+                'last_rabies_date' => $lastRabies?->vaccination_date ?? null,
+                'recent_surgery' => $lastRabies?->notes ?? 'None',
             ]);
         }
         foreach ($spayNeuterAppointments as $a) {
+            $owner = optional($a->pet)->owner;
+            $petInfo = optional($a->pet)->petInfo;
             $appointments->push((object) [
                 'id' => $a->id,
                 'type' => 'spay_neuter',
                 'pet_name' => optional($a->pet)->pet_name ?? 'N/A',
                 'pet_breed' => optional($a->pet)->breed ?? '',
+                'pet_id' => optional($a->pet)->pet_id ?? null,
                 'scheduled_at' => $a->scheduled_at,
                 'status' => $a->status,
                 'vet' => $a->assignedVet?->user?->name ?? $a->veterinarian ?? 'N/A',
+                'owner_name' => $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A',
+                'owner_address' => $owner?->address ?? 'N/A',
+                'owner_barangay' => $owner?->barangay ?? 'N/A',
+                'procedure_type' => $a->procedure_type ?? 'N/A',
+                'weight' => $petInfo?->pet_weight ?? 'N/A',
             ]);
         }
         $appointments = $appointments->sortByDesc(function ($item) {
@@ -417,14 +434,37 @@
     @endphp
 
     @php
-        $applications = \App\Models\AdoptionApplication::where('user_id', auth()->id())
+        $applications = \App\Models\AdoptionApplication::with(['pet', 'user'])->where('user_id', auth()->id())
             ->orderByDesc('created_at')
             ->get();
+
+        $adoptionData = collect();
+        foreach ($applications as $application) {
+            $pet = optional($application->pet);
+            $user = optional($application->user);
+            $adoptionData->push((object) [
+                'id' => $application->id,
+                'pet_name' => $pet->pet_name ?? 'Unspecified (General)',
+                'pet_species' => $pet->species ?? '-',
+                'pet_breed' => $pet->breed ?? '-',
+                'pet_id' => $pet->pet_id ?? null,
+                'submitted_at' => $application->created_at,
+                'appointment_date' => $application->appointment_date ?? null,
+                'status' => $application->status ?? 'pending_review',
+                'owner_name' => $user ? ($user->first_name . ' ' . $user->last_name) : 'N/A',
+                'owner_address' => $user?->address ?? 'N/A',
+                'owner_barangay' => $user?->barangay ?? 'N/A',
+                'adopted_before' => $application->adopted_before ?? 'N/A',
+                'alternate_contact' => $application->alternate_contact ?? 'N/A',
+                'questionnaire' => $application->questionnaire ?? 'N/A',
+                'valid_id' => $application->valid_id ?? 'N/A',
+            ]);
+        }
     @endphp
 
     <script>
         const allAppointments = @json($appointments);
-        const allAdoptions = @json($applications);
+        const allAdoptions = @json($adoptionData);
     </script>
 
     <!-- Section Grid: Appointments & Adoption Applications -->
@@ -519,6 +559,51 @@
     </section>
 
     @include('Client.partials.footer')
+
+    <!-- DESIGN 2: Centered Glassmorphic Modal (Appointments & Adoption) -->
+    <div id="glassModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white/95 rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-white/40 relative space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-dasma-600 to-dasma-800 text-white flex items-center justify-center font-bold shadow-md" id="glassIcon">
+                        <i data-lucide="calendar"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-dasma-700 uppercase tracking-widest" id="glassSubhead">Centered Glass Modal</span>
+                        <h3 class="text-xl font-bold text-slate-900" id="glassTitle">Appointment Details</h3>
+                    </div>
+                </div>
+
+                <!-- Tab Pills -->
+                <div class="flex bg-slate-100 p-1 rounded-xl">
+                    <button id="glassTabNavView" onclick="switchGlassTab('view')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-800 shadow-sm transition-all flex items-center gap-1">
+                        <i data-lucide="eye" class="w-3.5 h-3.5"></i> View
+                    </button>
+                    <button id="glassTabNavEdit" onclick="switchGlassTab('edit')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition-all flex items-center gap-1">
+                        <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div id="glassContent" class="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span class="text-slate-400 font-mono" id="glassIDTag">ID: #APP-000</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="closeModal('glassModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl">Cancel</button>
+                    <button id="glassSaveBtn" onclick="saveGlassForm()" class="px-5 py-2 bg-dasma-700 hover:bg-dasma-800 text-white font-semibold rounded-xl shadow-sm">Save & Update</button>
+                </div>
+            </div>
+    </div>
+</div>
+
+    <script>
+        lucide.createIcons();
+    </script>
 
     <!-- View Profile Modal -->
     <div id="petProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 sm:p-6">
@@ -915,6 +1000,7 @@
                 container.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs">No appointments found matching filter.</div>';
             } else {
                 pageItems.forEach(item => {
+                    const itemJson = JSON.stringify(item).replace(/"/g, '&quot;');
                     const typeLabel = item.type === 'vaccination' ? 'Vaccination' : 'Spay & Neuter';
                     const statusLabel = (item.status || 'pending').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
@@ -951,9 +1037,14 @@
                                     <span class="flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i> ${item.vet || 'N/A'}</span>
                                 </div>
                             </div>
-                            <a href="/vaccination/form" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold shadow-sm transition-colors whitespace-nowrap self-end sm:self-center">
-                                View Details
-                            </a>
+                            <div class="flex items-center gap-2 self-end sm:self-center">
+                                <button onclick="openItemModal(${itemJson}, 'appointment', 'view')" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold shadow-sm transition-colors whitespace-nowrap">
+                                    View Details
+                                </button>
+                                <button onclick="openItemModal(${itemJson}, 'appointment', 'edit')" class="px-2.5 py-1.5 bg-dasma-50 hover:bg-dasma-100 text-dasma-800 border border-dasma-200 rounded-xl text-xs font-semibold transition-colors">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
                         </div>
                     `;
                     container.innerHTML += cardHtml;
@@ -1003,6 +1094,7 @@
             const pageItems = allAdoptions.slice(startIndex, endIndex);
 
             pageItems.forEach(item => {
+                const itemJson = JSON.stringify(item).replace(/"/g, '&quot;');
                 const isApproved = item.status === 'approved' || item.status === 'completed';
                 const statusLabel = (item.status || 'pending_review').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
@@ -1039,9 +1131,14 @@
                                 </div>
                             ` : ''}
                         </div>
-                        <a href="/adoption/form/edit/${item.id}" class="w-full py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center justify-center gap-1">
-                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit Application
-                        </a>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openItemModal(${itemJson}, 'adoption', 'view')" class="flex-1 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center justify-center gap-1">
+                                <i data-lucide="eye" class="w-3.5 h-3.5"></i> View Summary
+                            </button>
+                            <button onclick="openItemModal(${itemJson}, 'adoption', 'edit')" class="flex-1 py-2 bg-dasma-50 hover:bg-dasma-100 border border-dasma-200 text-dasma-800 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
+                            </button>
+                        </div>
                     </div>
                 `;
                 container.innerHTML += cardHtml;
@@ -1073,6 +1170,223 @@
         // Init on load
         renderAppointments();
         renderAdoptions();
+
+        // --- Glass Modal State ---
+        let activeItemData = null;
+        let activeItemType = 'appointment';
+        let activeTabMode = 'view';
+
+        function openItemModal(item, type, mode = 'view') {
+            activeItemData = item;
+            activeItemType = type;
+            activeTabMode = mode;
+            renderGlassModal();
+            document.getElementById('glassModal').classList.remove('hidden');
+        }
+
+        function closeGlassModal() {
+            document.getElementById('glassModal').classList.add('hidden');
+            activeItemData = null;
+        }
+
+        function renderGlassModal() {
+            const isAppt = activeItemType === 'appointment';
+            const item = activeItemData;
+            const statusLabel = (item.status || 'pending_review').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+            let statusBadge, statusBorder;
+            if (['pending', 'pending_review'].includes(item.status)) {
+                statusBadge = 'bg-amber-100 text-amber-800';
+                statusBorder = 'border-l-amber-500';
+            } else if (['approved', 'completed'].includes(item.status)) {
+                statusBadge = 'bg-emerald-100 text-emerald-800';
+                statusBorder = 'border-l-emerald-500';
+            } else if (['rejected', 'cancelled'].includes(item.status)) {
+                statusBadge = 'bg-rose-100 text-rose-800';
+                statusBorder = 'border-l-rose-500';
+            } else {
+                statusBadge = 'bg-slate-100 text-slate-700';
+                statusBorder = 'border-l-slate-500';
+            }
+
+            const scheduled = item.scheduled_at ? new Date(item.scheduled_at).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'TBA';
+            const apptDate = item.appointment_date ? new Date(item.appointment_date).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'TBA';
+
+            document.getElementById('glassIcon').innerHTML = isAppt ? '<i data-lucide="calendar" class="w-5 h-5"></i>' : '<i data-lucide="heart" class="w-5 h-5"></i>';
+            document.getElementById('glassSubhead').innerText = `Centered Glass • ${isAppt ? 'Appointment' : 'Adoption Application'}`;
+            document.getElementById('glassTitle').innerText = `${item.id}: ${item.pet_name}`;
+            document.getElementById('glassIDTag').innerText = `Record Reference: ${item.id}`;
+
+            document.getElementById('glassTabNavView').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTabMode === 'view' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`;
+            document.getElementById('glassTabNavEdit').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTabMode === 'edit' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`;
+
+            const content = document.getElementById('glassContent');
+
+            if (activeTabMode === 'view') {
+                if (isAppt) {
+                    const isVaccination = item.type === 'vaccination';
+                    content.innerHTML = `
+                        <div class="p-4 rounded-2xl ${statusBorder} border-t border-r border-b border-slate-200/80 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-mono text-slate-400 font-bold">${item.id}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-200 text-slate-700">${isVaccination ? 'Anti-Rabies Vaccination' : 'Spay & Neuter'}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Pet Details -->
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Pet Details</span>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between"><span class="text-slate-500">Pet Name:</span><span class="font-semibold text-slate-800">${item.pet_name}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Breed:</span><span class="font-semibold text-slate-800">${item.pet_breed || '-'}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Pet ID:</span><span class="font-semibold text-slate-800 font-mono">PET-${String(item.pet_id ?? '-').padStart(4, '0')}</span></div>
+                                    ${isVaccination ? `
+                                        <div class="flex justify-between"><span class="text-slate-500">Last Anti-Rabies:</span><span class="font-semibold text-slate-800">${item.last_rabies_date ? new Date(item.last_rabies_date).toLocaleDateString() : '-'}</span></div>
+                                        <div class="flex justify-between"><span class="text-slate-500">Recent Surgery:</span><span class="font-semibold text-slate-800">${item.recent_surgery || 'None'}</span></div>
+                                    ` : `
+                                        <div class="flex justify-between"><span class="text-slate-500">Procedure Type:</span><span class="font-semibold text-slate-800">${item.procedure_type || 'N/A'}</span></div>
+                                        <div class="flex justify-between"><span class="text-slate-500">Weight:</span><span class="font-semibold text-slate-800">${item.weight || 'N/A'}</span></div>
+                                    `}
+                                </div>
+                            </div>
+
+                            <!-- Owner Details -->
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Owner Details</span>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between"><span class="text-slate-500">Name:</span><span class="font-semibold text-slate-800">${item.owner_name}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800">${item.owner_address}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Barangay:</span><span class="font-semibold text-slate-800">${item.owner_barangay}</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Vet & Schedule -->
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 col-span-2">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Veterinarian & Schedule</span>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between"><span class="text-slate-500">Assigned Vet:</span><span class="font-semibold text-slate-800">${item.vet}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Scheduled At:</span><span class="font-semibold text-slate-800">${scheduled}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Adoption view
+                    content.innerHTML = `
+                        <div class="p-4 rounded-2xl ${statusBorder} border-t border-r border-b border-slate-200/80 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-mono text-slate-400 font-bold">${item.id}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${statusLabel}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Selected Pet Information -->
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Selected Pet Information</span>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between"><span class="text-slate-500">Pet Name:</span><span class="font-semibold text-slate-800">${item.pet_name}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Species:</span><span class="font-semibold text-slate-800">${item.pet_species}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Breed:</span><span class="font-semibold text-slate-800">${item.pet_breed}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Pet ID:</span><span class="font-semibold text-slate-800 font-mono">PET-${String(item.pet_id ?? '-').padStart(4, '0')}</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Owner Details -->
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Owner Details</span>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between"><span class="text-slate-500">Name:</span><span class="font-semibold text-slate-800">${item.owner_name}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800">${item.owner_address}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Barangay:</span><span class="font-semibold text-slate-800">${item.owner_barangay}</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Adoption Specific -->
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 col-span-2">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Adoption Details</span>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between"><span class="text-slate-500">Adopted Before:</span><span class="font-semibold text-slate-800">${item.adopted_before}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Alternate Contact:</span><span class="font-semibold text-slate-800">${item.alternate_contact}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Questionnaire:</span><span class="font-semibold text-slate-800">${item.questionnaire}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Valid ID:</span><span class="font-semibold text-slate-800">${item.valid_id}</span></div>
+                                    <div class="flex justify-between"><span class="text-slate-500">Appointment Date & Time:</span><span class="font-semibold text-slate-800">${apptDate}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                // Edit mode - simple form
+                if (isAppt) {
+                    content.innerHTML = `
+                        <div class="space-y-3 text-xs">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Reschedule Date</label>
+                                <input id="glassInputDate" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Update Notes</label>
+                                <textarea id="glassInputNotes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium"></textarea>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = `
+                        <div class="space-y-3 text-xs">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Interview Date</label>
+                                <input id="glassInputDate" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Remarks</label>
+                                <textarea id="glassInputNotes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium"></textarea>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            lucide.createIcons();
+        }
+
+        function switchGlassTab(mode) {
+            activeTabMode = mode;
+            renderGlassModal();
+        }
+
+        function saveGlassForm() {
+            if (activeTabMode === 'edit') {
+                const dateVal = document.getElementById('glassInputDate')?.value;
+                if (dateVal) {
+                    showToast(`Updated record ${activeItemData.id}`);
+                }
+            }
+            closeGlassModal();
+            renderAppointments();
+            renderAdoptions();
+        }
+
+        function showToast(msg) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 text-xs border border-slate-700';
+                toast.innerHTML = '<div class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold"><i data-lucide="check" class="w-4 h-4"></i></div><span id="toastMsg">Action completed</span>';
+                document.body.appendChild(toast);
+            }
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+            lucide.createIcons();
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
     </script>
 </body>
 </html>
