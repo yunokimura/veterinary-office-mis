@@ -570,5 +570,53 @@
     }
   </script>
 
+  <!-- Form persistence across page refreshes -->
+  <script>
+    (function() {
+      var form = document.querySelector('form[action="{{ route('register') }}"]');
+      if (!form) return;
+
+      var key = 'register_form_v1';
+      var SKIP = ['_token', 'password', 'password_confirmation'];
+
+      function save() {
+        var data = {};
+        form.querySelectorAll('input, select, textarea').forEach(function(el) {
+          var name = el.getAttribute('name');
+          if (!name || SKIP.indexOf(name) !== -1) return;
+          data[name] = el.type === 'checkbox' ? el.checked : el.value;
+        });
+        try { sessionStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
+      }
+
+      function restore() {
+        try {
+          var data = JSON.parse(sessionStorage.getItem(key));
+          if (!data) return;
+          Object.keys(data).forEach(function(name) {
+            var el = form.querySelector('[name="' + name + '"]');
+            if (!el) return;
+            if (el.type === 'checkbox') el.checked = data[name] === true;
+            else el.value = data[name];
+          });
+        } catch(e) {}
+      }
+
+      function clear() {
+        try { sessionStorage.removeItem(key); } catch(e) {}
+      }
+
+      form.addEventListener('input', save);
+      form.addEventListener('change', save);
+      form.addEventListener('submit', function(e) {
+        if (!e.defaultPrevented) clear();
+      });
+
+      if (!{{ $errors->any() ? 'true' : 'false' }}) {
+        restore();
+      }
+    })();
+  </script>
+
 </body>
 </html>
