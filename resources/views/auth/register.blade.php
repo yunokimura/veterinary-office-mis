@@ -223,7 +223,16 @@
                   <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
               </div>
+            </div>
+          </div>
 
+          <hr class="my-6 border-gray-200">
+
+          <!-- ADDRESS INFO -->
+          <div class="space-y-6">
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Address Information</h3>
+
+            <div class="grid md:grid-cols-4 gap-4">
               <!-- Block/Lot/Phase/House No. -->
               <div class="md:col-span-2">
                 <label class="block text-xs font-semibold text-gray-700 mb-1.5">
@@ -233,13 +242,13 @@
                   <div class="flex items-center px-3 py-3 bg-gray-50/50 border-r border-gray-200">
                     <span class="text-xs text-gray-600 whitespace-nowrap">Blk</span>
                   </div>
-                  <input type="text" name="block_lot_phase_house_no_1" value="{{ old('block_lot_phase_house_no_1') }}"
-                         class="w-full px-2 py-3 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+<input type="text" name="block_lot_phase_house_no_1" value="{{ old('block_lot_phase_house_no_1') }}"
+                       class="w-full px-2 py-3 outline-none bg-white text-center" placeholder="" maxlength="3" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                   <div class="flex items-center px-3 py-3 bg-gray-50/50 border-r border-l border-gray-200">
                     <span class="text-xs text-gray-600 whitespace-nowrap">Lot</span>
                   </div>
-                  <input type="text" name="block_lot_phase_house_no_2" value="{{ old('block_lot_phase_house_no_2') }}"
-                         class="w-full px-2 py-3 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+<input type="text" name="block_lot_phase_house_no_2" value="{{ old('block_lot_phase_house_no_2') }}"
+                       class="w-full px-2 py-3 outline-none bg-white text-center" placeholder="" maxlength="3" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                   <div class="flex items-center px-3 py-3 bg-gray-50/50 border-r border-l border-gray-200">
                     <span class="text-xs text-gray-600 whitespace-nowrap">Ph</span>
                   </div>
@@ -384,6 +393,8 @@
               </div>
             </div>
           </div>
+
+          <hr class="my-6 border-gray-200">
 
           <!-- ACCOUNT SECURITY -->
           <div class="space-y-6">
