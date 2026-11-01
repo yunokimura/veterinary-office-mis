@@ -1282,7 +1282,7 @@
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Owner Details</span>
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between"><span class="text-slate-500">Name:</span><span class="font-semibold text-slate-800">${item.owner_name}</span></div>
-                                    <div class="flex justify-between items-end"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words max-w-[160px] leading-tight">${item.owner_address}</span></div>
+                                    <div class="flex justify-between items-start"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words max-w-[160px] leading-tight">${item.owner_address}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Barangay:</span><span class="font-semibold text-slate-800">${item.owner_barangay}</span></div>
                                 </div>
                             </div>
@@ -1323,7 +1323,7 @@
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Owner Details</span>
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between"><span class="text-slate-500">Name:</span><span class="font-semibold text-slate-800">${item.owner_name}</span></div>
-                                    <div class="flex justify-between items-end"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words max-w-[160px] leading-tight">${item.owner_address}</span></div>
+                                    <div class="flex justify-between items-start"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words max-w-[160px] leading-tight">${item.owner_address}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Barangay:</span><span class="font-semibold text-slate-800">${item.owner_barangay}</span></div>
                                 </div>
                             </div>
