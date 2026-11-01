@@ -146,21 +146,21 @@
         $alert = $upcomingAlerts->first();
     @endphp
     <div id="upcomingAlerts" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-        <div class="bg-green-50 border border-green-200 rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm border-l-4 border-amber-500">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm border-l-4 border-yellow-500">
             <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center flex-shrink-0">
+                <div class="w-12 h-12 rounded-2xl bg-yellow-500 flex items-center justify-center flex-shrink-0">
                     <i data-lucide="bell" class="w-6 h-6 text-white"></i>
                 </div>
                 <div class="min-w-0">
                     <div class="flex items-center gap-2 text-xs">
-                        <span class="inline-block px-2 py-0.5 rounded-md bg-amber-100 text-amber-700 font-bold uppercase tracking-wider">Upcoming Visit</span>
+                        <span class="inline-block px-2 py-0.5 rounded-md bg-yellow-100 text-yellow-700 font-bold uppercase tracking-wider">Upcoming Appointment</span>
                         <span class="text-slate-500">APP #{{ str_replace('APP-', '', $alert->id ?? '') }}</span>
                         <span class="text-slate-500">•</span>
                         <span class="text-slate-500">{{ $alert->date }}</span>
                     </div>
                     <p class="text-sm text-slate-800 font-medium mt-1 leading-relaxed">
                         {{ $alert->label }} appointment for
-                        <span class="text-green-700 font-bold">{{ $alert->pet_name }}</span>
+                        <span class="text-yellow-700 font-bold">{{ $alert->pet_name }}</span>
                         is coming up tomorrow!
                     </p>
                     <p class="text-xs text-slate-500 mt-1">Location: City Vet Main Clinic (Brgy. Langkaan II)</p>
@@ -170,9 +170,9 @@
             <div class="flex items-center gap-3 mt-3 sm:mt-0">
                 <a href="javascript:void(0)" 
                    onclick='openItemModal({{ json_encode($alert, JSON_HEX_APOS) }}, "{{ $alert->type }}", "view")' 
-                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold shadow-md shadow-amber-200 transition-all active:scale-95">
+                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-bold shadow-md shadow-yellow-200 transition-all active:scale-95">
                     <i data-lucide="eye" class="w-4 h-4"></i>
-                    <span>View Details & Prep</span>
+                    <span>View Details</span>
                 </a>
                 <button onclick="document.getElementById('upcomingAlerts').style.display='none'" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -946,7 +946,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Date of Passing *</label>
-                            <input type="date" required id="dateOfPassing" class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-slate-400 focus:outline-none">
+                            <input type="date" required id="dateOfPassing" max="{{ now()->format('Y-m-d') }}" class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-slate-400 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Primary Cause</label>
@@ -970,17 +970,13 @@
                             <input type="checkbox" checked class="w-4 h-4 rounded text-slate-700 focus:ring-slate-400 border-slate-300">
                             <span class="text-xs text-slate-600 font-medium">Archive active medical reminders and prescription schedules</span>
                         </label>
-                        <label class="flex items-center gap-2.5 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded text-slate-700 focus:ring-slate-400 border-slate-300">
-                            <span class="text-xs text-slate-600 font-medium">Notify assigned foster caregiver / primary vet</span>
-                        </label>
                     </div>
 
                     <div class="pt-3 border-t border-slate-100">
                         <label class="block text-xs font-semibold text-slate-700 mb-1">
-                            To confirm, please type <span id="deceasedConfirmName" class="select-none font-bold text-slate-900 uppercase">Barnaby</span> below:
+                            To confirm, please type <span id="deceasedConfirmName" class="select-none font-bold text-slate-900 uppercase"></span> below:
                         </label>
-                        <input type="text" id="confirmNameInput" placeholder="" oninput="validateDeceasedName()" class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 focus:ring-2 focus:ring-slate-400 focus:outline-none">
+                        <input type="text" id="confirmNameInput" placeholder="" oninput="validateDeceasedName()" class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-700 uppercase focus:ring-2 focus:ring-slate-400 focus:outline-none">
                     </div>
 
                     <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
@@ -1191,8 +1187,10 @@
             document.getElementById('deceasedModalPetId').value = petId;
             const pet = petsData.find(p => p.pet_id == petId);
             if (pet) {
-                document.getElementById('deceasedModalPetName').textContent = pet.pet_name || 'Unknown';
+                const petName = pet.pet_name || 'Unknown';
+                document.getElementById('deceasedModalPetName').textContent = petName;
                 document.getElementById('deceasedModalPetIdTag').textContent = 'PET-' + String(pet.pet_id).padStart(4, '0');
+                document.getElementById('deceasedConfirmName').textContent = petName;
             }
             document.getElementById('deceasedModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
