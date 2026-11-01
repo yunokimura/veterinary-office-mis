@@ -66,7 +66,7 @@
                                 <span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
                             @endif
                         </button>
-                        <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200 z-50">
+                        <div id="notificationDropdown" class="hidden absolute -left-[60px] mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200 z-50">
                             <div class="p-3 border-b border-slate-100">
                                 <h3 class="font-semibold text-slate-800">Notifications</h3>
                             </div>
