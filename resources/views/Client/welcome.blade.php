@@ -853,7 +853,7 @@
                     </div>
                 </div>
 
-                <!-- Floating: Left Column — Stats + Legend (top-left) -->
+                <!-- Floating: Left Column — Stats Pills -->
                 <div class="rabies-home-left-column absolute top-4 left-4 z-[1000] flex flex-col gap-4 pointer-events-none">
                     <!-- Stats Pills -->
                     <div class="rabies-home-stats pointer-events-none">
@@ -877,99 +877,9 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Legend Panel (below stats) -->
-                    <div class="rabies-home-legend pointer-events-none">
-                        <div class="simple-legend-card backdrop-blur bg-white/95 rounded-xl px-3 py-3 shadow-sm border border-gray-200 pointer-events-auto">
-                            <p class="simple-legend-title text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Severity Legend</p>
-                            <div class="simple-legend-items flex flex-col gap-2">
-                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('critical')">
-                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#dc2626;"></span>
-                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">Critical (20+)</span>
-                                </div>
-                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('high')">
-                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#ea580c;"></span>
-                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">High (11-19)</span>
-                                </div>
-                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('moderate')">
-                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#eab308;"></span>
-                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">Moderate (6-10)</span>
-                                </div>
-                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('low')">
-                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#fde68a;"></span>
-                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">Low (1-5)</span>
-                                </div>
-                                <div class="simple-legend-item flex items-center gap-2 cursor-pointer" onclick="rabiesHomeSetSeverityFilter('none')">
-                                    <span class="simple-legend-dot w-3 h-3 rounded" style="background:#cbd5e1;"></span>
-                                    <span class="simple-legend-text text-[11px] font-medium text-slate-700">No Cases</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Floating: View Changers + Filters (top-right column) -->
-                <div class="rabies-home-view-changers absolute top-4 right-4 z-[1000] flex flex-col gap-3">
-                    <button id="rabiesHomeBtnRabiesLayer" class="rabies-home-layer-toggle-btn bg-indigo-600 text-white border-indigo-600 shadow-[0_2px_8px_rgba(79,70,229,0.3)]" onclick="rabiesHomeSwitchLayer('rabies')">
-                        <i class="fa-solid fa-virus"></i>
-                        <span>Confirmed Rabies Cases</span>
-                    </button>
-                    <button id="rabiesHomeBtnVaccinationLayer" class="rabies-home-layer-toggle-btn" onclick="rabiesHomeSwitchLayer('vaccination')">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Anti-Rabies Vaccination</span>
-                    </button>
-                    <button id="rabiesHomeBtnTopBarangays" class="rabies-home-layer-toggle-btn" onclick="rabiesHomeOpenTopBarangaysModal()">
-                        <i class="fa-solid fa-list-ol"></i>
-                        <span>Top Barangays</span>
-                    </button>
-
-                    <!-- Filter Controls -->
-                    <div class="rabies-home-filter-controls relative">
-                        <button id="rabiesHomeFilterToggle" class="rabies-home-filter-toggle-btn flex items-center gap-2 px-3 py-2 bg-white/95 backdrop-blur border border-gray-200 rounded-lg shadow-sm text-slate-600 text-xs font-medium" onclick="rabiesHomeToggleFilter()">
-                            <i class="fa-solid fa-funnel"></i>
-                            <span>Filters</span>
-                            <i class="fa-solid fa-chevron-down text-[8px] opacity-40"></i>
-                        </button>
-
-                        <!-- Filter Panel -->
-                        <div id="rabiesHomeFilterPanel" class="rabies-home-filter-panel absolute right-0 mt-2 w-64 bg-white/97 backdrop-blur border border-gray-200 rounded-xl shadow-lg overflow-hidden hidden z-[1005]">
-                            <div class="p-3 space-y-3">
-                                <div>
-                                    <label class="rabies-home-filter-label block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Year</label>
-                                    <select id="rabiesHomeFilterYear" class="rabies-home-filter-select w-full px-2 py-1.5 bg-gray-50 border border-gray-200 rounded text-xs text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                                        <option value="{{ date('Y') }}">{{ date('Y') }}</option>
-                                        <option value="{{ date('Y') - 1 }}">{{ date('Y') - 1 }}</option>
-                                        <option value="{{ date('Y') - 2 }}">{{ date('Y') - 2 }}</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="rabies-home-filter-label block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Month</label>
-                                    <select id="rabiesHomeFilterMonth" class="rabies-home-filter-select w-full px-2 py-1.5 bg-gray-50 border border-gray-200 rounded text-xs text-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                                        <option value="">All Months</option>
-                                        <option value="1">January</option>
-                                        <option value="2">February</option>
-                                        <option value="3">March</option>
-                                        <option value="4">April</option>
-                                        <option value="5">May</option>
-                                        <option value="6">June</option>
-                                        <option value="7">July</option>
-                                        <option value="8">August</option>
-                                        <option value="9">September</option>
-                                        <option value="10">October</option>
-                                        <option value="11">November</option>
-                                        <option value="12">December</option>
-                                    </select>
-                                </div>
-                                <div class="pt-2 border-t border-gray-100">
-                                    <button id="rabiesHomeClearFilter" class="rabies-home-filter-clear-btn w-full flex items-center justify-center gap-2 px-3 py-1.5 bg-red-50 border border-red-100 rounded text-red-600 text-xs font-medium" onclick="rabiesHomeClearFilters()">
-                                        <i class="fa-solid fa-x-circle"></i>
-                                        <span>Clear Filter</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Floating: View Changers + Filters (top-right column) — removed -->
 
                 <!-- Loading Overlay -->
                 <div id="rabiesHomeMapLoading" class="rabies-home-loading-overlay absolute inset-0 z-[1004] bg-white/90 flex items-center justify-center hidden">
