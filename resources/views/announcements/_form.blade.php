@@ -37,6 +37,7 @@
                 <option value="">Select category</option>
                 <option value="campaign" {{ old('category') == 'campaign' ? 'selected' : '' }}>Campaign</option>
                 <option value="event" {{ old('category') == 'event' ? 'selected' : '' }}>Event</option>
+                <option value="announcement" {{ old('category') == 'announcement' ? 'selected' : '' }}>Announcement</option>
             </select>
             @error('category')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -94,52 +95,6 @@
                    name="event_time"
                    value="{{ old('event_time') }}">
             @error('event_time')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-
-        </div>
-    </div>
-
-    <!-- Organized By & Contact Number Row -->
-    <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Organized By -->
-        <div>
-            <label for="organized_by" class="block text-sm font-medium text-gray-700 mb-2">
-                <i class="bi bi-person-badge me-1 text-green-600"></i>Organized By <span class="text-red-500">*</span>
-            </label>
-            <input type="text"
-                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('organized_by') border-red-500 @enderror"
-                   id="organized_by"
-                   name="organized_by"
-                   value="{{ old('organized_by') }}"
-                   placeholder="Enter organizer name"
-                   required>
-            @error('organized_by')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-
-        </div>
-
-        <!-- Contact Number -->
-        <div>
-            <label for="contact_number" class="block text-sm font-medium text-gray-700 mb-2">
-                <i class="bi bi-telephone me-1 text-green-600"></i>Contact Number
-            </label>
-            <div class="flex">
-                <span class="inline-flex items-center px-4 py-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">+63</span>
-                <input type="tel"
-                       class="w-full px-4 py-3 rounded-r-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('contact_number') border-red-500 @enderror"
-                       id="contact_number"
-                       name="contact_number"
-                       value="{{ old('contact_number') }}"
-                       placeholder="943 210 2012"
-                       maxlength="12"
-                       pattern="[0-9\s]{12}"
-                       inputmode="numeric"
-                       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                       oninput="this.value = this.value.replace(/\D/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3').trim()">
-            </div>
-            @error('contact_number')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
 

@@ -46,7 +46,6 @@ class AnnouncementController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%'.$request->search.'%')
-                  ->orWhere('organized_by', 'like', '%'.$request->search.'%')
                   ->orWhere('status', 'like', '%'.$request->search.'%')
                   ->orWhere('category', 'like', '%'.$request->search.'%');
             });
@@ -120,8 +119,6 @@ class AnnouncementController extends Controller
             'event_time' => 'nullable',
             'location' => 'nullable|required_if:category,event|string|max:255',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
-            'contact_number' => 'nullable|string|max:11',
-            'organized_by' => 'required|string|max:255',
             'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'attachment_path' => 'nullable|mimes:pdf|max:5120',
         ]);
@@ -137,11 +134,6 @@ class AnnouncementController extends Controller
         }
 
         $data = $validator->validated();
-
-        // Sanitize contact_number: strip spaces
-        if (isset($data['contact_number'])) {
-            $data['contact_number'] = str_replace(' ', '', $data['contact_number']);
-        }
 
         // Sync is_active based on status
         $data['is_active'] = ($data['status'] === 'Published');
@@ -198,8 +190,6 @@ class AnnouncementController extends Controller
             'event_time' => 'nullable',
             'location' => 'nullable|required_if:category,event|string|max:255',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
-            'contact_number' => 'nullable|string|max:11',
-            'organized_by' => 'required|string|max:255',
             'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'attachment_path' => 'nullable|mimes:pdf|max:5120',
         ]);
@@ -211,11 +201,6 @@ class AnnouncementController extends Controller
         }
 
         $data = $validator->validated();
-
-        // Sanitize contact_number: strip spaces
-        if (isset($data['contact_number'])) {
-            $data['contact_number'] = str_replace(' ', '', $data['contact_number']);
-        }
 
         // Sync is_active based on status
         $data['is_active'] = ($data['status'] === 'Published');
@@ -294,7 +279,6 @@ class AnnouncementController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%'.$request->search.'%')
-                  ->orWhere('organized_by', 'like', '%'.$request->search.'%')
                   ->orWhere('status', 'like', '%'.$request->search.'%')
                   ->orWhere('category', 'like', '%'.$request->search.'%');
             });

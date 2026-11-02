@@ -450,7 +450,7 @@ function updateAnnouncementsTable(announcements) {
     if (announcements.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="px-6 py-12 text-center">
+                <td colspan="5" class="px-6 py-12 text-center">
                     <div class="text-center">
                         <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="bi bi-megaphone text-3xl text-gray-400"></i>
@@ -489,9 +489,6 @@ function updateAnnouncementsTable(announcements) {
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 ${new Date(announcement.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                ${announcement.organized_by || '-'}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                 <div class="flex items-center justify-end gap-2">
@@ -686,11 +683,6 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span> Creating...';
 
             const formData = new FormData(form);
-            const contactInput = document.getElementById('contact_number');
-            if (contactInput && contactInput.value) {
-                contactInput.value = contactInput.value.replace(/\s/g, '');
-            }
-
             fetch(form.action, {
                 method: 'POST',
                 headers: {

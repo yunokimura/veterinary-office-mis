@@ -186,17 +186,9 @@
          }
          // Redirect to the announcements index page
          window.location.href = "{{ route($rolePrefix . '.announcements.index') }}";
-     }
+        }
 
-     // Strip spaces from contact_number before form submission
-     document.getElementById('announcementForm').addEventListener('submit', function() {
-         const contactInput = document.getElementById('contact_number');
-         if (contactInput && contactInput.value) {
-             contactInput.value = contactInput.value.replace(/\s/g, '');
-         }
-     });
-
-      // Check if form has changes
+       // Check if form has changes
       function checkFormChanges() {
           // Check only user-editable fields by ID (completely bypasses hidden fields)
           const title = document.getElementById('title');
@@ -204,11 +196,9 @@
           const barangay = document.getElementById('barangay_id');
           const eventDate = document.getElementById('event_date');
           const eventTime = document.getElementById('event_time');
-          const contactNumber = document.getElementById('contact_number');
           const content = document.getElementById('content');
-          const organizedBy = document.getElementById('organized_by');
           
-          const fields = [title, category, barangay, eventDate, eventTime, contactNumber, content, organizedBy];
+          const fields = [title, category, barangay, eventDate, eventTime, content];
           let hasChanges = false;
           
           for (let field of fields) {
