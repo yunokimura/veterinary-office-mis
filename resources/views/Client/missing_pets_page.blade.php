@@ -62,6 +62,23 @@
     @include('Client.partials.emergency_alert')
     @include('Client.partials.navbar')
 
+    <!-- Session Status / Success Alerts -->
+    @if (session('status'))
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 mt-6">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm">
+                {{ session('status') }}
+            </div>
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 mt-6">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm">
+                {{ session('success') }}
+            </div>
+        </div>
+    @endif
+
      <!-- Hero Section -->
      <section class="relative min-h-[560px] flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, rgba(250, 204, 21, 0.8) 0%, rgba(202, 138, 4, 0.8) 100%);">
          <!-- Hero Content -->
