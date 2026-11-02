@@ -112,7 +112,7 @@ class AnnouncementController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'category' => 'required|in:campaign,event',
+            'category' => 'required|in:campaign,event,announcement',
             'is_active' => 'nullable|boolean',
             'status' => 'required|in:Draft,Scheduled,Published,Archived',
             'event_date' => 'nullable|required_if:category,event|date',
@@ -124,7 +124,7 @@ class AnnouncementController extends Controller
         ]);
 
         if ($validator->fails()) {
-            if ($request->ajax()) {
+            if ($request->ajax() || $request->wantsJson()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
@@ -134,6 +134,10 @@ class AnnouncementController extends Controller
         }
 
         $data = $validator->validated();
+
+        if (empty($data['barangay_id'])) {
+            $data['barangay_id'] = null;
+        }
 
         // Sync is_active based on status
         $data['is_active'] = ($data['status'] === 'Published');
@@ -159,7 +163,7 @@ class AnnouncementController extends Controller
 
         NotificationService::announcementCreated($announcement->id);
 
-        if ($request->ajax()) {
+        if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Announcement created successfully.',
@@ -183,7 +187,7 @@ class AnnouncementController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'category' => 'required|in:campaign,event',
+            'category' => 'required|in:campaign,event,announcement',
             'is_active' => 'nullable|boolean',
             'status' => 'required|in:Draft,Scheduled,Published,Archived',
             'event_date' => 'nullable|required_if:category,event|date',
@@ -201,6 +205,10 @@ class AnnouncementController extends Controller
         }
 
         $data = $validator->validated();
+
+        if (empty($data['barangay_id'])) {
+            $data['barangay_id'] = null;
+        }
 
         // Sync is_active based on status
         $data['is_active'] = ($data['status'] === 'Published');

@@ -497,6 +497,11 @@
         });
 
         let html = '';
+        html += `
+            <button type="button" onclick="handleBarangaySelect('', 'All Barangays')"
+                    class="w-full flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors text-left text-gray-700 hover:bg-white mb-2 border-b border-gray-100 pb-2">
+                All Barangays
+            </button>`;
         Object.keys(groups).sort().forEach(letter => {
             html += `
                 <div class="mb-4">
