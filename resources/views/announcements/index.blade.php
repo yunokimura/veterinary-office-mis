@@ -655,14 +655,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const categoryElement = document.getElementById('category');
     if (categoryElement) {
         categoryElement.addEventListener('change', function() {
-            const eventFields = document.querySelector('.event-fields');
+            const eventFields = document.querySelectorAll('.event-fields');
             const eventDateInput = document.getElementById('event_date');
+            const eventTimeInput = document.getElementById('event_time');
+            const locationInput = document.getElementById('location');
             if (this.value === 'event') {
-                eventFields.classList.remove('hidden');
+                eventFields.forEach(el => el.classList.remove('hidden'));
                 if (eventDateInput) eventDateInput.setAttribute('required', 'required');
+                if (eventTimeInput) eventTimeInput.removeAttribute('required');
+                if (locationInput) locationInput.setAttribute('required', 'required');
             } else {
-                eventFields.classList.add('hidden');
+                eventFields.forEach(el => el.classList.add('hidden'));
                 if (eventDateInput) eventDateInput.removeAttribute('required');
+                if (eventTimeInput) eventTimeInput.removeAttribute('required');
+                if (locationInput) locationInput.removeAttribute('required');
             }
         });
         // Trigger initial state

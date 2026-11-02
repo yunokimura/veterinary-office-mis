@@ -106,8 +106,9 @@
                 </div>
             </div>
 
-             <!-- Event Date & Time (conditional on Event category) -->
-            <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+             <!-- Event Date & Time & Barangay & Location Row -->
+            <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Event Date (conditional on Event category) -->
                 <div class="event-fields @if(old('category', $announcement->category) != 'event') hidden @endif">
                     <label for="event_date" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="bi bi-calendar-event me-1 text-green-600"></i>Event Date <span class="text-red-500">*</span>
@@ -121,8 +122,11 @@
                     @error('event_date')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+                </div>
 
-                    <label for="event_time" class="block text-sm font-medium text-gray-700 mb-2 mt-3">
+                <!-- Event Time (conditional on Event category) -->
+                <div class="event-fields @if(old('category', $announcement->category) != 'event') hidden @endif">
+                    <label for="event_time" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="bi bi-clock me-1 text-green-600"></i>Event Time
                     </label>
                     <input type="time"
@@ -135,8 +139,8 @@
                     @enderror
                 </div>
 
-                <!-- Barangay Row (half width) -->
-                <div class="col-span-1 md:col-span-1">
+                <!-- Barangay -->
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="bi bi-geo-alt me-1 text-green-600"></i>Barangay
                     </label>
@@ -154,23 +158,23 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-            </div>
 
-            <!-- Location (conditional on Event category) -->
-            <div class="px-6 mt-6 event-fields @if(old('category', $announcement->category) != 'event') hidden @endif">
-                <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="bi bi-geo-alt me-1 text-green-600"></i>Location <span class="text-red-500">*</span>
-                </label>
-                <input type="text"
-                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('location') border-red-500 @enderror"
-                       id="location"
-                       name="location"
-                       value="{{ old('location', $announcement->location) }}"
-                       placeholder="Enter event location"
-                       required>
-                @error('location')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                <!-- Location (conditional on Event category) -->
+                <div class="event-fields @if(old('category', $announcement->category) != 'event') hidden @endif">
+                    <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="bi bi-geo-alt me-1 text-green-600"></i>Location <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text"
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('location') border-red-500 @enderror"
+                           id="location"
+                           name="location"
+                           value="{{ old('location', $announcement->location) }}"
+                           placeholder="Enter event location"
+                           required>
+                    @error('location')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <!-- Content -->
@@ -374,17 +378,21 @@
 
     // Category change handler - toggle event fields
     document.getElementById('category').addEventListener('change', function() {
-        const eventFields = document.querySelector('.event-fields');
+        const eventFields = document.querySelectorAll('.event-fields');
+        const eventDateInput = document.getElementById('event_date');
+        const eventTimeInput = document.getElementById('event_time');
+        const locationInput = document.getElementById('location');
         if (this.value === 'event') {
-            eventFields.classList.remove('hidden');
+            eventFields.forEach(el => el.classList.remove('hidden'));
             // Make event fields required
-            document.getElementById('event_date').setAttribute('required', 'required');
-            document.getElementById('location').setAttribute('required', 'required');
+            if (eventDateInput) eventDateInput.setAttribute('required', 'required');
+            if (locationInput) locationInput.setAttribute('required', 'required');
         } else {
-            eventFields.classList.add('hidden');
+            eventFields.forEach(el => el.classList.add('hidden'));
             // Remove required attributes
-            document.getElementById('event_date').removeAttribute('required');
-            document.getElementById('location').removeAttribute('required');
+            if (eventDateInput) eventDateInput.removeAttribute('required');
+            if (eventTimeInput) eventTimeInput.removeAttribute('required');
+            if (locationInput) locationInput.removeAttribute('required');
         }
     });
 

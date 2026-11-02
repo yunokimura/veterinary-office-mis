@@ -23,7 +23,7 @@
     </div>
 
     <!-- Category & Event Date/Time Row -->
-    <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Category -->
         <div>
             <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
@@ -45,7 +45,7 @@
 
         </div>
 
-        <!-- Event Date & Time (conditional on Event category) -->
+        <!-- Event Date (conditional on Event category) -->
         <div class="event-fields @if(old('category') != 'event') hidden @endif">
             <label for="event_date" class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="bi bi-calendar-event me-1 text-green-600"></i>Event Date <span class="text-red-500">*</span>
@@ -59,8 +59,11 @@
             @error('event_date')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
+        </div>
 
-            <label for="event_time" class="block text-sm font-medium text-gray-700 mb-2 mt-3">
+        <!-- Event Time (conditional on Event category) -->
+        <div class="event-fields @if(old('category') != 'event') hidden @endif">
+            <label for="event_time" class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="bi bi-clock me-1 text-green-600"></i>Event Time
             </label>
             <input type="time"
@@ -74,28 +77,43 @@
         </div>
     </div>
 
-    <!-- Barangay Row (half width) -->
+    <!-- Barangay & Location Row -->
     <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="col-span-1 md:col-span-1">
-            <!-- Barangay (modal selector) -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="bi bi-geo-alt me-1 text-green-600"></i>Barangay
-                </label>
-                <div class="relative">
-                    <button type="button" id="barangayDisplay" class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" onclick="openBarangayModal()">
-                        <span id="selectedBarangayText" class="text-sm text-gray-700 truncate">Select Barangay</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 ml-auto pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                </div>
-                <!-- Hidden input for barangay -->
-                <input type="hidden" id="barangayIdInput" name="barangay_id" value="{{ old('barangay_id') }}">
-                @error('barangay_id')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+        <!-- Barangay (modal selector) -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="bi bi-geo-alt me-1 text-green-600"></i>Barangay
+            </label>
+            <div class="relative">
+                <button type="button" id="barangayDisplay" class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" onclick="openBarangayModal()">
+                    <span id="selectedBarangayText" class="text-sm text-gray-700 truncate">Select Barangay</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 ml-auto pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
             </div>
+            <!-- Hidden input for barangay -->
+            <input type="hidden" id="barangayIdInput" name="barangay_id" value="{{ old('barangay_id') }}">
+            @error('barangay_id')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- Location (conditional on Event category) -->
+        <div class="event-fields @if(old('category') != 'event') hidden @endif">
+            <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="bi bi-geo-alt me-1 text-green-600"></i>Location <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('location') border-red-500 @enderror"
+                   id="location"
+                   name="location"
+                   value="{{ old('location') }}"
+                   placeholder="Enter event location"
+                   required>
+            @error('location')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
         </div>
     </div>
 
