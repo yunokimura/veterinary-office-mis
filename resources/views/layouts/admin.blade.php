@@ -359,7 +359,7 @@
     <!-- Main Content -->
     <main>
         <!-- Top Bar -->
-        <header class="main-header bg-white border-b border-slate-200 hidden md:block relative z-[1100]">
+        <header class="main-header bg-white border-b border-slate-200 hidden md:block relative z-10">
             <div class="flex items-center justify-between px-6 h-16">
                 <div>
                     <h2 class="text-lg font-semibold text-slate-800">@yield('header', 'Dashboard')</h2>
