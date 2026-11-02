@@ -338,14 +338,14 @@
                                    placeholder="e.g., Injured, Friendly, Wearing blue collar, Scared">
                         </div>
 
-                        <!-- Found Description -->
+                        <!-- Unique Body Mark Description -->
                         <div>
                             <label class="block text-sm font-medium mb-1.5">
-                                Found Description <span class="text-red-500">*</span>
+                                Unique Body Mark Description <span class="text-red-500">*</span>
                             </label>
                             <textarea name="found_description" id="found_description" rows="3"
                                       class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required
-                                      placeholder="Describe where and how you found the pet...">{{ old('found_description') }}</textarea>
+                                      placeholder="Describe the pet's unique body mark or distinguishing features...">{{ old('found_description') }}</textarea>
                         </div>
 
                     </div>
@@ -618,8 +618,8 @@
     // Render breed list for the current species
     function renderBreedModal(filter = '') {
         if (!currentSpecies) return;
-        const breeds = currentSpecies === 'Cat' ? catBreeds : dogBreeds;
-        const quickBreeds = currentSpecies === 'Cat' ? quickCatBreeds : quickDogBreeds;
+        const breeds = currentSpecies === 'cat' ? catBreeds : dogBreeds;
+        const quickBreeds = currentSpecies === 'cat' ? quickCatBreeds : quickDogBreeds;
         const search = filter.trim().toLowerCase();
 
         const quickWrap = document.getElementById('breedModalQuick');
