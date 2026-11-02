@@ -716,7 +716,7 @@
                                 <p class="flex items-center">
                                     <i class="fa-solid fa-location-dot text-rose-500 mr-1.5 w-3"></i>
                                     @if($pet->missingReport->first())
-                                        {{ $pet->missingReport->first()->barangay->barangay_name ?? 'N/A' }}
+                                        {{ $pet->missingReport->first()->barangay?->barangay_name ?? 'N/A' }}
                                     @else
                                         N/A
                                     @endif
@@ -744,16 +744,16 @@
                     @forelse($foundPets as $report)
                     <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
-                            <img src="{{ $report->pet->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $report->reporter_display_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
+                            <img src="{{ $report->pet?->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $report->reporter_display_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
                             <span class="absolute top-2 right-2 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">Found</span>
                         </div>
                         <div class="p-4">
-                            <h4 class="font-bold text-slate-900 text-lg">{{ $report->pet->pet_name ?? $report->breed ?? 'Found Pet' }}</h4>
+                            <h4 class="font-bold text-slate-900 text-lg">{{ $report->pet?->pet_name ?? $report->breed ?? 'Found Pet' }}</h4>
                             <p class="text-xs text-slate-500 font-medium">{{ $report->breed ?? 'Pet' }} • {{ $report->estimated_age ?? '?' }} yrs</p>
                             <div class="mt-3 text-xs text-slate-600 space-y-1">
                                 <p class="flex items-center">
                                     <i class="fa-solid fa-location-dot text-amber-500 mr-1.5 w-3"></i>
-                                    {{ $report->barangay->barangay_name ?? 'N/A' }}
+                                    {{ $report->barangay?->barangay_name ?? 'N/A' }}
                                 </p>
                                 <p class="flex items-center">
                                     <i class="fa-regular fa-clock text-slate-400 mr-1.5 w-3"></i>
@@ -783,7 +783,7 @@
                             <div class="mt-3 text-xs text-slate-600 space-y-1">
                                 <p class="flex items-center">
                                     <i class="fa-solid fa-location-dot text-emerald-500 mr-1.5 w-3"></i>
-                                    {{ $pet->barangay->barangay_name ?? 'N/A' }}
+                                    {{ $pet->barangay?->barangay_name ?? 'N/A' }}
                                 </p>
                                 <p class="flex items-center">
                                     <i class="fa-regular fa-clock text-slate-400 mr-1.5 w-3"></i>
