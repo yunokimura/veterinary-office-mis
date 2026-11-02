@@ -387,7 +387,6 @@
                         Submit Lost Pet Report
                     </button>
                 </div>
-            </form>
         </div>
 
         <!-- Right Sidebar -->
@@ -421,6 +420,7 @@
                 </div>
             </div>
         </div>
+    </form>
     </div>
 </main>
 
