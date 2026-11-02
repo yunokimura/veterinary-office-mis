@@ -641,6 +641,7 @@ function showInlineSuccess(message) {
 let addAnnouncementModal;
 let isDraft = false;
 let isScheduled = false;
+let submitting = false;
 
 document.addEventListener('DOMContentLoaded', function() {
     const addAnnouncementModalEl = document.getElementById('addAnnouncementModal');
@@ -649,6 +650,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('announcementForm');
     const draftBtn = document.querySelector('[data-action="draft"]');
     const scheduledBtn = document.querySelector('[data-action="scheduled"]');
+
+    // Category change handler - toggle event fields
+    const categoryElement = document.getElementById('category');
+    if (categoryElement) {
+        categoryElement.addEventListener('change', function() {
+            const eventFields = document.querySelector('.event-fields');
+            const eventDateInput = document.getElementById('event_date');
+            if (this.value === 'event') {
+                eventFields.classList.remove('hidden');
+                if (eventDateInput) eventDateInput.setAttribute('required', 'required');
+            } else {
+                eventFields.classList.add('hidden');
+                if (eventDateInput) eventDateInput.removeAttribute('required');
+            }
+        });
+        // Trigger initial state
+        categoryElement.dispatchEvent(new Event('change'));
+    }
 
     if (draftBtn) {
         draftBtn.addEventListener('click', function() {
@@ -669,6 +688,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+
+            // Double-submit guard
+            if (submitting) return;
+            submitting = true;
 
             const statusField = document.getElementById('status');
             if (isDraft && statusField) {
@@ -724,6 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 isDraft = false;
                 isScheduled = false;
+                submitting = false;
             });
         });
     }
