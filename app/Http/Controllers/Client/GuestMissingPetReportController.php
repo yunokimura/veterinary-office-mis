@@ -119,6 +119,7 @@ class GuestMissingPetReportController extends Controller
             'reporter_email' => $validated['reporter_email'] ?? null,
             'photo_path' => $photoPath,
             'pet_photo' => $petPhotoPath,
+            'gender' => $validated['gender'] ?? null,
             'breed' => $validated['pet_breed'] ?? null,
             'pet_name' => $validated['pet_name'] ?? null,
             'estimated_age' => $validated['estimated_age'] ?? null,

@@ -1881,7 +1881,7 @@
                         </div>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="contactOwner()" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
+                        <button onclick="contactOwner(document.getElementById('missingModalPetName').textContent)" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
                             </svg>
@@ -1934,10 +1934,6 @@
                             <p id="foundModalPetAge" class="text-gray-900 font-semibold"></p>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
-                            <p class="text-sm text-gray-500 mb-1">Weight</p>
-                            <p id="foundModalPetWeight" class="text-gray-900 font-semibold"></p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
                             <p class="text-sm text-gray-500 mb-1">Color</p>
                             <p id="foundModalPetColor" class="text-gray-900 font-semibold"></p>
                         </div>
@@ -1964,16 +1960,38 @@
                             </div>
                         </div>
                     </div>
+                    <div class="bg-amber-50 rounded-lg p-4 mb-6">
+                        <h4 class="font-semibold text-amber-800 mb-3 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11c1.6 0 2.8 1.3 2.8 2.8s-1.2 2.8-2.8 2.8-2.8-1.3-2.8-2.8 1.2-2.8 2.8-2.8zM18 8a6 6 0 11-12 0 6 6 0 0112 0zM20 4v-2H4v2a8 8 0 1016 0z" />
+                            </svg>
+                            Reporter Information
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-amber-700">Reporter Name:</span>
+                                <span id="foundModalReporterName" class="text-gray-900 font-medium"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-amber-700">Contact Number:</span>
+                                <span id="foundModalReporterContact" class="text-gray-900 font-medium"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-amber-700">Email:</span>
+                                <span id="foundModalReporterEmail" class="text-gray-900 font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="mb-6">
                         <h4 class="font-semibold text-gray-800 mb-2">Description</h4>
                         <p id="foundModalDescription" class="text-gray-600 text-sm"></p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="contactOwner()" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
+                        <button onclick="contactOwner(document.getElementById('foundModalPetName').textContent)" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
                             </svg>
-                            Contact CVO
+                            Contact City Veterinary Office
                         </button>
                     </div>
                 </div>
@@ -2057,9 +2075,9 @@
                         <p id="adoptionModalDescription" class="text-gray-600 text-sm"></p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="contactOwner()" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
+                        <button onclick="contactOwner(document.getElementById('adoptionModalPetName').textContent)" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
                             </svg>
                             Contact CVO
                         </button>
@@ -2113,13 +2131,15 @@
             return [
                 'pet_id' => $report->report_id,
                 'pet_name' => $report->pet_name ?? $report->breed ?? 'Found Pet',
-                'species' => null,
+                'species' => $report->species ?? null,
                 'breed' => $report->breed ?? 'Pet',
                 'gender' => $report->gender ?? 'unknown',
                 'age' => $report->estimated_age ?? '?',
-                'weight' => null,
                 'color' => $report->fur_colors ?? null,
                 'description' => $report->body_marks ?? null,
+                'reporter_name' => $report->reporter_display_name ?? null,
+                'reporter_contact' => $report->reporter_contact ?? null,
+                'reporter_email' => $report->reporter_email ?? null,
                 'location_barangay' => $report->barangay ? $report->barangay->barangay_name : null,
                 'location_description' => $report->location_description ?? null,
                 'last_seen_at' => $report->last_seen_at ? $report->last_seen_at->toISOString() : null,
@@ -2172,13 +2192,15 @@
             document.getElementById('foundModalPetName').textContent = pet.pet_name;
             document.getElementById('foundModalPetSpecies').textContent = pet.species || 'Unknown';
             document.getElementById('foundModalPetBreed').textContent = pet.breed || 'Unknown';
-            document.getElementById('foundModalPetAge').textContent = pet.age + ' years';
-            document.getElementById('foundModalPetWeight').textContent = pet.weight;
+            document.getElementById('foundModalPetAge').textContent = pet.age || 'N/A';
             document.getElementById('foundModalPetColor').textContent = pet.color || 'Unknown';
             document.getElementById('foundModalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
             document.getElementById('foundModalLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : 'N/A';
             document.getElementById('foundModalLocation').textContent = pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A';
             document.getElementById('foundModalDescription').textContent = pet.description || 'No description available.';
+            document.getElementById('foundModalReporterName').textContent = pet.reporter_name || 'N/A';
+            document.getElementById('foundModalReporterContact').textContent = pet.reporter_contact || 'N/A';
+            document.getElementById('foundModalReporterEmail').textContent = pet.reporter_email || 'N/A';
 
             document.getElementById('foundPetDetailModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -2223,10 +2245,7 @@
             document.body.style.overflow = 'auto';
         }
 
-        function contactOwner() {
-            const petName = document.getElementById('missingModalPetName').textContent
-                || document.getElementById('foundModalPetName').textContent
-                || document.getElementById('adoptionModalPetName').textContent;
+        function contactOwner(petName) {
             const subject = 'Inquiry about pet: ' + petName;
             const encodedSubject = encodeURIComponent(subject);
             window.open('https://mail.google.com/mail/u/0/?view=cm&fs=1&to=vetdasma@yahoo.com&su=' + encodedSubject + '&tf=ui', '_blank');
