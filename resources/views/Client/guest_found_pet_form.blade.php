@@ -114,6 +114,20 @@
                             </div>
                         </div>
 
+                        <!-- Pet Name -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">
+                                Pet Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="pet_name" id="pet_name" value="{{ old('pet_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., Buddy, Luna" required>
+                        </div>
+
+                        <!-- No Name Tag Checkbox -->
+                        <div class="flex items-start gap-2">
+                            <input type="checkbox" name="no_name_tag" id="no_name_tag" value="1" class="w-4 h-4 text-emerald-600 rounded mt-0.5 focus:ring-emerald-500 focus:border-emerald-500 border-gray-300" onchange="togglePetNameField(this)">
+                            <label for="no_name_tag" class="text-sm text-gray-700 font-medium">The pet doesn't have a name tag</label>
+                        </div>
+
                         <!-- Species -->
                         <div>
                             <label class="block text-sm font-medium mb-1.5">
@@ -358,7 +372,7 @@
                                 <div>
                                     <input type="date" name="date_found" id="date_found"
                                            class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
-                                           required>
+                                           required max="{{ date('Y-m-d') }}">
                                 </div>
                                 <div>
                                     <input type="time" name="time_found" id="time_found"
@@ -488,16 +502,16 @@
                     </div>
                     <div class="p-6 space-y-4">
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">Reporter Name</label>
-                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name">
+                            <label class="block text-xs text-gray-500 mb-1">Reporter Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name" required>
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Contact Number <span class="text-red-500">*</span></label>
                             <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">Email Address</label>
-                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com">
+                            <label class="block text-xs text-gray-500 mb-1">Email Address <span class="text-red-500">*</span></label>
+                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com" required>
                         </div>
                     </div>
                 </div>
@@ -871,6 +885,24 @@
             input.disabled = false;
             input.classList.remove('opacity-50', 'pointer-events-none');
             input.classList.add('focus:border-primary', 'focus:ring-2', 'focus:ring-primary/20');
+        }
+    }
+
+    // Toggle Pet Name field when "The pet doesn't have a name tag" is checked
+    function togglePetNameField(checkbox) {
+        const input = document.getElementById('pet_name');
+        if (!input || !checkbox) return;
+
+        if (checkbox.checked) {
+            input.value = 'No name tag';
+            input.disabled = true;
+            input.classList.add('opacity-50', 'pointer-events-none', 'bg-gray-100');
+            input.classList.remove('focus:border-emerald-500', 'focus:ring-2', 'focus:ring-emerald-500', 'focus:bg-white');
+        } else {
+            input.value = '';
+            input.disabled = false;
+            input.classList.remove('opacity-50', 'pointer-events-none', 'bg-gray-100');
+            input.classList.add('focus:border-emerald-500', 'focus:ring-2', 'focus:ring-emerald-500', 'focus:bg-white');
         }
     }
 

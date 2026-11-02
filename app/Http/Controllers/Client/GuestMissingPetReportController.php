@@ -74,12 +74,12 @@ class GuestMissingPetReportController extends Controller
         }
 
         $validated = $request->validate([
-            'reporter_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]*$/',
+            'reporter_name' => 'required|string|max:255|regex:/^[A-Za-z\s]*$/',
             'reporter_contact' => 'required|string|max:11|regex:/^[0-9]+$/',
             'reporter_email' => 'required|email|max:255',
             'loaded_at' => 'nullable|integer',
 
-            'pet_name' => 'required_if:report_type,missing|nullable|string|max:255',
+            'pet_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]*$/|required_without:no_name_tag',
             'species' => 'required_if:report_type,missing|nullable|string|in:dog,cat,other',
             'color' => 'nullable|string|max:255',
             'gender' => 'nullable|string|in:male,female,unknown',
@@ -101,10 +101,15 @@ class GuestMissingPetReportController extends Controller
             'holding_status' => 'nullable|string|in:keeping,free_roaming,barangay_shelter,other',
 
             'found_description' => 'required_if:report_type,found|nullable|string|max:2000',
-            'date_found' => 'required_if:report_type,found|nullable|date',
+            'date_found' => 'required_if:report_type,found|nullable|date|before_or_equal:today',
             'photo' => 'nullable|image|max:8192',
             'fax_number' => 'nullable|string',
         ]);
+
+        // If "The pet doesn't have a name tag" is checked, override pet_name
+        if ($request->boolean('no_name_tag')) {
+            $validated['pet_name'] = 'No name tag';
+        }
 
         $reportData = [
             'user_id' => null,
@@ -115,6 +120,7 @@ class GuestMissingPetReportController extends Controller
             'photo_path' => $photoPath,
             'pet_photo' => $petPhotoPath,
             'breed' => $validated['pet_breed'] ?? null,
+            'pet_name' => $validated['pet_name'] ?? null,
             'estimated_age' => $validated['estimated_age'] ?? null,
             'status' => 'pending review',
         ];

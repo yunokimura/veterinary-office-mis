@@ -75,6 +75,7 @@ protected $fillable = [
         'gender',
         'estimated_age',
         'breed',
+        'pet_name',
         'fur_colors',
         'condition',
         'eye_color',
