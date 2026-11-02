@@ -2064,22 +2064,14 @@
                                 <span class="text-emerald-700">Available Since:</span>
                                 <span id="adoptionModalLastSeen" class="text-gray-900 font-medium"></span>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-emerald-700">Location:</span>
-                                <span id="adoptionModalLocation" class="text-gray-900 font-medium"></span>
-                            </div>
                         </div>
-                    </div>
-                    <div class="mb-6">
-                        <h4 class="font-semibold text-gray-800 mb-2">Description</h4>
-                        <p id="adoptionModalDescription" class="text-gray-600 text-sm"></p>
                     </div>
                     <div class="flex gap-3">
                         <button onclick="contactOwner(document.getElementById('adoptionModalPetName').textContent)" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
                             </svg>
-                            Contact CVO
+                            Contact City Veterinarian Office
                         </button>
                     </div>
                 </div>
@@ -2096,7 +2088,7 @@
                 'species' => $pet->species,
                 'breed' => $pet->breed,
                 'gender' => $pet->gender,
-                'age' => $pet->age,
+                'age' => $pet->petInfo?->pet_age_short ?? $pet->age,
                 'weight' => $pet->weight,
                 'color' => $pet->color,
                 'description' => $pet->notes,
@@ -2115,7 +2107,7 @@
                 'species' => $pet->species,
                 'breed' => $pet->breed,
                 'gender' => $pet->gender,
-                'age' => $pet->age,
+                'age' => $pet->petInfo?->pet_age_short ?? $pet->age,
                 'weight' => $pet->weight,
                 'color' => $pet->color,
                 'description' => $pet->notes,
@@ -2162,14 +2154,7 @@
             document.getElementById('missingModalPetName').textContent = pet.pet_name;
             document.getElementById('missingModalPetSpecies').textContent = pet.species || 'Unknown';
             document.getElementById('missingModalPetBreed').textContent = pet.breed || 'Unknown';
-            document.getElementById('missingModalPetAge').textContent = (function() {
-                const raw = pet.age;
-                if (!raw) return 'N/A';
-                const s = String(raw);
-                if (s.toLowerCase().includes('month')) return s;
-                if (s === '1') return '1 year';
-                return s + ' yrs';
-            })();
+            document.getElementById('missingModalPetAge').textContent = pet.age || 'N/A';
             document.getElementById('missingModalPetWeight').textContent = pet.weight;
             document.getElementById('missingModalPetColor').textContent = pet.color || 'Unknown';
             document.getElementById('missingModalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
@@ -2218,13 +2203,11 @@
             document.getElementById('adoptionModalPetName').textContent = pet.pet_name;
             document.getElementById('adoptionModalPetSpecies').textContent = pet.species || 'Unknown';
             document.getElementById('adoptionModalPetBreed').textContent = pet.breed || 'Unknown';
-            document.getElementById('adoptionModalPetAge').textContent = pet.age + ' years';
+            document.getElementById('adoptionModalPetAge').textContent = pet.age || 'N/A';
             document.getElementById('adoptionModalPetWeight').textContent = pet.weight;
             document.getElementById('adoptionModalPetColor').textContent = pet.color || 'Unknown';
             document.getElementById('adoptionModalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
             document.getElementById('adoptionModalLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : 'N/A';
-            document.getElementById('adoptionModalLocation').textContent = pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A';
-            document.getElementById('adoptionModalDescription').textContent = pet.description || 'No description available.';
 
             document.getElementById('adoptionPetDetailModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';

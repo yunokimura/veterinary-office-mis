@@ -245,13 +245,13 @@ Route::get('/home', function () {
     $missingPets = Pet::where('pet_status', 'missing')
         ->with(['missingReport' => function ($query) {
             $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
-        }])
+        }, 'petInfo'])
         ->limit(5)
         ->get();
 
     // Get adoption pets for the landing page
     $adoptionPets = Pet::availableForAdoption()
-        ->with(['barangay'])
+        ->with(['barangay', 'petInfo'])
         ->limit(5)
         ->get();
 

@@ -109,7 +109,8 @@ class PetInfo extends Model
         $months = $monthsMatch[1] ?? null;
 
         if ($years !== null) {
-            $label = $years . 'yrs';
+            $yrLabel = (int) $years === 1 && ($months === null || (int) $months === 0) ? ' year' : ' yrs';
+            $label = $years . $yrLabel;
             if ($months !== null && (int) $months > 0) {
                 $label .= ' ' . $months . ' mos';
             }
