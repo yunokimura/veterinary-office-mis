@@ -142,6 +142,25 @@
                             </div>
                         </div>
 
+                        <!-- Estimated Age -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Estimated Age <span class="text-red-500">*</span></label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="estimated_age" value="Puppy/Kitten" class="sr-only peer" required {{ old('estimated_age') === 'Puppy/Kitten' ? 'checked' : '' }} onclick="togglePill(this)">
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Puppy/Kitten</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="estimated_age" value="Adult" class="sr-only peer" required {{ old('estimated_age') === 'Adult' ? 'checked' : '' }} onclick="togglePill(this)">
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Adult</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="estimated_age" value="Senior" class="sr-only peer" required {{ old('estimated_age') === 'Senior' ? 'checked' : '' }} onclick="togglePill(this)">
+                                    <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Senior</span>
+                                </label>
+                            </div>
+                        </div>
+
 <!-- Crossbreed -->
 <div>
     <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Crossbreed <span class="text-red-500">*</span></label>
@@ -811,7 +830,30 @@
             }
         });
 
-        // --- Image preview ---
+        // Toggle pill selection (click again to deselect)
+    const pillLastSelected = {};
+
+    function togglePill(radio) {
+        const group = radio.name;
+        const wasAlreadySelected = pillLastSelected[group] === radio;
+
+        if (wasAlreadySelected) {
+            radio.checked = false;
+            pillLastSelected[group] = null;
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            pillLastSelected[group] = radio;
+        }
+    }
+
+    // Initialize pill state from any pre-checked radios (old() Blade values)
+    document.querySelectorAll('input[type="radio"][onclick="togglePill(this)"]').forEach(radio => {
+        if (radio.checked) {
+            pillLastSelected[radio.name] = radio;
+        }
+    });
+
+    // --- Image preview ---
     function previewPetPhoto(event) {
         const file = event.target.files[0];
         if (!file) return;

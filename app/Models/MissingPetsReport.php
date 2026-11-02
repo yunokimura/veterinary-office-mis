@@ -69,6 +69,7 @@ protected $fillable = [
         'reporter_contact',
         'reporter_email',
         'photo_path',
+        'pet_photo',
         'body_marks',
         'collar_harness',
         'gender',

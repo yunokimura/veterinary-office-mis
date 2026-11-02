@@ -65,8 +65,12 @@ class GuestMissingPetReportController extends Controller
         RateLimiter::hit($rateKey, 3600);
 
         $photoPath = null;
+        $petPhotoPath = null;
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('missing-pets', 'public');
+        }
+        if ($request->hasFile('pet_photo')) {
+            $petPhotoPath = $request->file('pet_photo')->store('missing-pets', 'public');
         }
 
         $validated = $request->validate([
@@ -77,7 +81,6 @@ class GuestMissingPetReportController extends Controller
 
             'pet_name' => 'required_if:report_type,missing|nullable|string|max:255',
             'species' => 'required_if:report_type,missing|nullable|string|in:dog,cat,other',
-            'breed' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
             'gender' => 'nullable|string|in:male,female,unknown',
 
@@ -91,7 +94,8 @@ class GuestMissingPetReportController extends Controller
             'is_crossbreed' => 'nullable|string|in:yes,no',
 
             'estimated_age' => 'required|in:Puppy/Kitten,Adult,Senior',
-            'time_found' => 'required',
+            'pet_photo' => 'nullable|image|max:8192',
+            'pet_breed' => 'nullable|string|max:255',
             'fur_colors' => 'nullable|string|max:255',
             'condition' => 'nullable|string|max:255',
             'holding_status' => 'nullable|string|in:keeping,free_roaming,barangay_shelter,other',
@@ -109,6 +113,8 @@ class GuestMissingPetReportController extends Controller
             'reporter_contact' => $validated['reporter_contact'],
             'reporter_email' => $validated['reporter_email'] ?? null,
             'photo_path' => $photoPath,
+            'pet_photo' => $petPhotoPath,
+            'breed' => $validated['pet_breed'] ?? null,
             'status' => 'pending review',
         ];
 
