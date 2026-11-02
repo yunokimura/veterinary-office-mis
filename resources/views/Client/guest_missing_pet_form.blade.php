@@ -1159,6 +1159,9 @@
             if (!form) return;
             form.addEventListener('input', saveFormData);
             form.addEventListener('change', saveFormData);
+            window.addEventListener('beforeunload', function() {
+                localStorage.removeItem(FORM_STORAGE_KEY);
+            });
         } catch (e) {}
     }
 
