@@ -465,7 +465,7 @@
                                     {{ $featuredAnnouncement->title }}
                                 </h3>
                                 <p class="text-gray-600 text-sm leading-relaxed mb-6">
-                                    {!! nl2br(e(strip_tags($featuredAnnouncement->content))) !!}
+                                    {!! nl2br(e(\Illuminate\Support\Str::limit(strip_tags($featuredAnnouncement->content), 596))) !!}
                                 </p>
                             </div>
                             <div>
