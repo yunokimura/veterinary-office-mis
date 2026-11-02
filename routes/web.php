@@ -1417,7 +1417,7 @@ Route::get('/missing-pets/paginate', function (Request $request) {
                 'location_barangay' => $report->barangay?->barangay_name,
                 'location_description' => $report->location_description,
                 'last_seen_at' => $report->last_seen_at,
-                'pet_image' => $report->photo_path ? asset('storage/'.$report->photo_path) : null,
+                'pet_image' => ($report->pet_photo ?? $report->photo_path) ? asset('storage/'.($report->pet_photo ?? $report->photo_path)) : null,
                 'pet_status' => 'found',
             ];
         });

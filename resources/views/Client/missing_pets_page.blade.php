@@ -397,7 +397,7 @@
     </section>
 
     <!-- Found Pets Section Title -->
-    <section class="py-8 bg-white border-b border-gray-200 mt-16">
+    <section class="py-4 bg-white border-b border-gray-200 mt-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <div>
@@ -540,12 +540,12 @@
     <div id="foundFilterOverlay" onclick="toggleFoundFilterPanel()" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity"></div>
 
     <!-- Found Pets Grid -->
-    <section id="foundPetsSection" class="py-16 bg-gray-50 mt-16">
+    <section id="foundPetsSection" class="py-8 bg-gray-50 mt-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div id="foundPetsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @forelse($foundPets as $pet)
                     @php
-                        $rawImage = $pet->photo_path ? asset('storage/'.$pet->photo_path) : null;
+                        $rawImage = ($pet->pet_photo ?? $pet->photo_path) ? asset('storage/'.($pet->pet_photo ?? $pet->photo_path)) : null;
                     @endphp
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 {{ $pet->gender == 'Male' ? 'border-blue-200' : 'border-pink-200' }} card-hover missing-pet-card" onclick="showFoundPetModal({{ $pet->report_id }})">
                         <div class="aspect-square bg-gray-200 relative overflow-hidden">
@@ -903,6 +903,7 @@
         function toggleFilterPanel() {
             const panel = document.getElementById('filterPanel');
             const overlay = document.getElementById('filterOverlay');
+            const header = panel.querySelector('h2.text-lg.font-bold');
             
             if (!panel || !overlay) return;
             
@@ -911,6 +912,7 @@
                 overlay.classList.remove('hidden');
                 setTimeout(() => overlay.classList.remove('opacity-0'), 10);
                 document.body.style.overflow = 'hidden';
+                if (header) header.textContent = 'Lost Pets Filter';
             } else {
                 panel.classList.add('translate-x-full');
                 overlay.classList.add('opacity-0');
@@ -1205,7 +1207,7 @@
                 'location_barangay' => $pet->barangay?->barangay_name,
                 'location_description' => $pet->location_description,
                 'last_seen_at' => $pet->last_seen_at,
-                'pet_image' => $pet->photo_path ? asset('storage/'.$pet->photo_path) : null,
+                'pet_image' => ($pet->pet_photo ?? $pet->photo_path) ? asset('storage/'.($pet->pet_photo ?? $pet->photo_path)) : null,
                 'pet_status' => 'found',
             ];
         })) !!};
@@ -1305,6 +1307,7 @@
         function toggleFoundFilterPanel() {
             const panel = document.getElementById('foundFilterPanel');
             const overlay = document.getElementById('foundFilterOverlay');
+            const header = panel.querySelector('h2.text-lg.font-bold');
             
             if (!panel || !overlay) return;
             
@@ -1313,6 +1316,7 @@
                 overlay.classList.remove('hidden');
                 setTimeout(() => overlay.classList.remove('opacity-0'), 10);
                 document.body.style.overflow = 'hidden';
+                if (header) header.textContent = 'Found Pets Filter';
             } else {
                 panel.classList.add('translate-x-full');
                 overlay.classList.add('opacity-0');
