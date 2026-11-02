@@ -121,11 +121,11 @@
                             </label>
                             <div class="flex flex-wrap gap-2">
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="species" value="Dog" class="sr-only peer" required {{ old('species') === 'Dog' ? 'checked' : '' }} onclick="togglePill(this)">
+                                    <input type="radio" name="species" value="dog" class="sr-only peer" required {{ old('species') === 'dog' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Dog</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="species" value="Cat" class="sr-only peer" required {{ old('species') === 'Cat' ? 'checked' : '' }} onclick="togglePill(this)">
+                                    <input type="radio" name="species" value="cat" class="sr-only peer" required {{ old('species') === 'cat' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Cat</span>
                                 </label>
                             </div>
@@ -138,15 +138,15 @@
                             </label>
                             <div class="flex flex-wrap gap-2">
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="gender" value="Male" class="sr-only peer" required {{ old('gender') === 'Male' ? 'checked' : '' }} onclick="togglePill(this)">
+                                    <input type="radio" name="gender" value="male" class="sr-only peer" required {{ old('gender') === 'male' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Male</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="gender" value="Female" class="sr-only peer" required {{ old('gender') === 'Female' ? 'checked' : '' }} onclick="togglePill(this)">
+                                    <input type="radio" name="gender" value="female" class="sr-only peer" required {{ old('gender') === 'female' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Female</span>
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="gender" value="Unknown" class="sr-only peer" required {{ old('gender') === 'Unknown' ? 'checked' : '' }} onclick="togglePill(this)">
+                                    <input type="radio" name="gender" value="unknown" class="sr-only peer" required {{ old('gender') === 'unknown' ? 'checked' : '' }} onclick="togglePill(this)">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">Unknown</span>
                                 </label>
                             </div>
@@ -194,7 +194,7 @@
                             </div>
 
                             <!-- Hidden input for breed -->
-                            <input type="hidden" id="breedInput" name="breed" value="" required>
+                            <input type="hidden" id="breedInput" name="pet_breed" value="" required>
                         </div>
 
                     </div>
@@ -322,6 +322,16 @@
                             <input type="text" name="condition" id="condition"
                                    class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                                    placeholder="e.g., Injured, Friendly, Wearing blue collar, Scared">
+                        </div>
+
+                        <!-- Found Description -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">
+                                Found Description <span class="text-red-500">*</span>
+                            </label>
+                            <textarea name="found_description" id="found_description" rows="3"
+                                      class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required
+                                      placeholder="Describe where and how you found the pet...">{{ old('found_description') }}</textarea>
                         </div>
 
                     </div>
@@ -461,7 +471,6 @@
                         Back to Lost &amp; Found Pets
                     </a>
                 </div>
-            </form>
         </div>
 
         <!-- Right Sidebar -->
@@ -494,6 +503,7 @@
                 </div>
             </div>
         </div>
+    </form>
     </div>
 </main>
 

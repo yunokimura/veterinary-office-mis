@@ -115,6 +115,7 @@ class GuestMissingPetReportController extends Controller
             'photo_path' => $photoPath,
             'pet_photo' => $petPhotoPath,
             'breed' => $validated['pet_breed'] ?? null,
+            'estimated_age' => $validated['estimated_age'] ?? null,
             'status' => 'pending review',
         ];
 
@@ -173,11 +174,11 @@ class GuestMissingPetReportController extends Controller
             return redirect('/missing-pets')
                 ->with('token', $token)
                 ->with('saveInfo', true)
-                ->with('success', 'Missing pet report submitted successfully!');
+                ->with('success', 'Your '.ucfirst($reportType).' pet report has been submitted successfully!');
         }
 
         return redirect('/missing-pets')
-            ->with('success', 'Missing pet report submitted successfully!');
+            ->with('success', 'Your '.ucfirst($reportType).' pet report has been submitted successfully!');
     }
 
     /**
