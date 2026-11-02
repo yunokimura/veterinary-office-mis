@@ -137,6 +137,7 @@ class GuestMissingPetReportController extends Controller
                 'eye_color_left' => $validated['eye_color_left'] ?? null,
                 'eye_color_right' => $validated['eye_color_right'] ?? null,
                 'eye_color_other' => $validated['eye_color_other'] ?? null,
+                'estimated_age' => $validated['estimated_age'] ?? null,
             ]);
         } else {
             $reportData = array_merge($reportData, [
@@ -169,13 +170,14 @@ class GuestMissingPetReportController extends Controller
                 'expires_at' => $expiresAt,
             ]);
 
-            return redirect()->route('missing-pets.report.guest.success')
+            return redirect('/missing-pets')
                 ->with('token', $token)
-                ->with('saveInfo', true);
+                ->with('saveInfo', true)
+                ->with('success', 'Missing pet report submitted successfully!');
         }
 
-        return redirect()->route('missing-pets.report-landing')
-            ->with('success', 'Your '.($reportType === 'found' ? 'found pet' : 'missing pet').' report has been submitted successfully!');
+        return redirect('/missing-pets')
+            ->with('success', 'Missing pet report submitted successfully!');
     }
 
     /**
