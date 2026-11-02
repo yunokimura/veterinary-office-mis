@@ -336,6 +336,22 @@
     @endauth
 
     <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('#mobileMenu a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
         // Services dropdown toggles
         const servicesDropdownBtn = document.getElementById('servicesDropdownBtn');
         const servicesDropdown = document.getElementById('servicesDropdown');

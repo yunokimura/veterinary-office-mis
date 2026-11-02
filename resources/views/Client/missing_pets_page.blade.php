@@ -545,29 +545,14 @@
             <div id="foundPetsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @forelse($foundPets as $pet)
                     @php
-                        $rawImage = $pet->pet_image;
-                        if ($rawImage) {
-                            $candidate = public_path('images/missing pets/' . $rawImage);
-                            if (!file_exists($candidate)) {
-                                $baseName = pathinfo($rawImage, PATHINFO_FILENAME);
-                                $alternate = public_path('images/missing pets/' . $baseName . '.jpeg');
-                                if (file_exists($alternate)) {
-                                    $rawImage = $baseName . '.jpeg';
-                                } else {
-                                    $alternate = public_path('images/missing pets/' . $baseName . '.jpg');
-                                    if (file_exists($alternate)) {
-                                        $rawImage = $baseName . '.jpg';
-                                    }
-                                }
-                            }
-                        }
+                        $rawImage = $pet->photo_path ? asset('storage/'.$pet->photo_path) : null;
                     @endphp
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 {{ $pet->gender == 'Male' ? 'border-blue-200' : 'border-pink-200' }} card-hover missing-pet-card" onclick="showFoundPetModal({{ $pet->pet_id }})">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 {{ $pet->gender == 'Male' ? 'border-blue-200' : 'border-pink-200' }} card-hover missing-pet-card" onclick="showFoundPetModal({{ $pet->report_id }})">
                         <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                            <img src="{{ $rawImage ? asset('images/missing pets/'.$rawImage) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover pet-image">
+                            <img src="{{ $rawImage ? $rawImage : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image' }}" alt="{{ $pet->pet_name ?? 'Found Pet' }}" class="w-full h-full object-cover pet-image">
                         </div>
                         <div class="p-4">
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name }}</h3>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->pet_name ?? 'Found Pet' }}</h3>
                             <div class="flex flex-wrap gap-2 mb-3">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ $pet->species }}</span>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pet->gender == 'Male' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800' }}">
@@ -582,23 +567,19 @@
                                             <path fill="#d42ec9" fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8a4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" />
                                         </svg>
                                     @endif
-                                    {{ ucfirst(strtolower($pet->gender)) }}
+                                    {{ ucfirst(strtolower($pet->gender ?? '')) }}
                                 </span>
                             </div>
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Age:</span>
-                                    <span class="text-gray-700 font-medium">{{ $pet->petInfo?->pet_age_short ?? $pet->petInfo?->pet_age ?? 'N/A' }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-500">Weight:</span>
-                                    <span class="text-gray-700 font-medium">{{ $pet->weight ?? 'N/A' }}</span>
+                                    <span class="text-gray-700 font-medium">{{ $pet->estimated_age ?? 'N/A' }}</span>
                                 </div>
                                 <div class="border-t pt-2 mt-2">
                                     <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
                                     <p class="text-gray-700 font-medium text-xs">
-                                        @if($pet->missingReport->first() && $pet->missingReport->first()->last_seen_at)
-                                            {{ $pet->missingReport->first()->last_seen_at->format('M d, Y - h:i A') }}
+                                        @if($pet->last_seen_at)
+                                            {{ \Carbon\Carbon::parse($pet->last_seen_at)->format('M d, Y - h:i A') }}
                                         @else
                                             N/A
                                         @endif
@@ -607,10 +588,10 @@
                                 <div>
                                     <p class="text-gray-500 text-xs mb-1">Location:</p>
                                     <p class="text-gray-700 font-medium text-xs">
-                                        @if($pet->missingReport->first())
-                                            {{ $pet->missingReport->first()->barangay->barangay_name ?? 'N/A' }}
-                                            @if($pet->missingReport->first()->location_description)
-                                                - {{ $pet->missingReport->first()->location_description }}
+                                        @if($pet->barangay)
+                                            {{ $pet->barangay->barangay_name ?? 'N/A' }}
+                                            @if($pet->location_description)
+                                                - {{ $pet->location_description }}
                                             @endif
                                         @else
                                             N/A
@@ -1210,40 +1191,22 @@
 
         // Found Pets Data
         let foundPetsData = {!! json_encode($foundPets->map(function($pet) {
-            $report = $pet->missingReport->first();
-            $rawImage = $pet->pet_image;
-            $resolvedImage = null;
-            if ($rawImage) {
-                $candidate = public_path('images/missing pets/' . $rawImage);
-                if (file_exists($candidate)) {
-                    $resolvedImage = asset('images/missing pets/'.$rawImage);
-                } else {
-                    $baseName = pathinfo($rawImage, PATHINFO_FILENAME);
-                    foreach (['jpeg', 'jpg'] as $ext) {
-                        $alt = public_path('images/missing pets/' . $baseName . '.' . $ext);
-                        if (file_exists($alt)) {
-                            $resolvedImage = asset('images/missing pets/' . $baseName . '.' . $ext);
-                            break;
-                        }
-                    }
-                }
-            }
             return [
-                'pet_id' => $pet->pet_id,
-                'pet_name' => $pet->pet_name,
+                'pet_id' => $pet->report_id,
+                'pet_name' => $pet->pet_name ?? 'Found Pet',
                 'species' => $pet->species,
                 'breed' => $pet->breed,
                 'gender' => $pet->gender,
-                'age' => $pet->petInfo?->pet_age,
-                'age_short' => $pet->petInfo?->pet_age_short,
-                'weight' => $pet->weight,
-                'color' => $pet->color,
-                'description' => $pet->notes,
-                'location_barangay' => $report && $report->barangay ? $report->barangay->barangay_name : null,
-                'location_description' => $report ? $report->location_description : null,
-                'last_seen_at' => $report ? $report->last_seen_at : null,
-                'pet_image' => $resolvedImage,
-                'pet_status' => $pet->pet_status,
+                'age' => $pet->estimated_age,
+                'age_short' => $pet->estimated_age,
+                'weight' => null,
+                'color' => $pet->fur_colors,
+                'description' => $pet->condition ?? $pet->body_marks,
+                'location_barangay' => $pet->barangay?->barangay_name,
+                'location_description' => $pet->location_description,
+                'last_seen_at' => $pet->last_seen_at,
+                'pet_image' => $pet->photo_path ? asset('storage/'.$pet->photo_path) : null,
+                'pet_status' => 'found',
             ];
         })) !!};
         let foundCurrentPage = {{ $foundPets->currentPage() }};

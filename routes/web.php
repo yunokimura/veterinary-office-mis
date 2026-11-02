@@ -1340,10 +1340,9 @@ Route::get('/missing-pets', function () {
         }])
         ->paginate(12);
 
-    $foundPets = Pet::where('pet_status', 'found')
-        ->with(['missingReport' => function ($query) {
-            $query->whereIn('status', ['approved', 'pending review'])->latest()->take(1);
-        }])
+    $foundPets = MissingPetsReport::where('report_type', 'found')
+        ->with(['pet', 'barangay'])
+        ->orderBy('created_at', 'desc')
         ->paginate(12);
 
     $availableBreeds = Pet::where('pet_status', 'missing')
@@ -1353,7 +1352,7 @@ Route::get('/missing-pets', function () {
         ->orderBy('breed')
         ->pluck('breed');
 
-    $foundBreeds = Pet::where('pet_status', 'found')
+    $foundBreeds = MissingPetsReport::where('report_type', 'found')
         ->whereNotNull('breed')
         ->where('breed', '!=', '')
         ->distinct()
@@ -1372,6 +1371,64 @@ Route::get('/missing-pets', function () {
 
 Route::get('/missing-pets/paginate', function (Request $request) {
     $status = $request->filled('status') && in_array($request->status, ['missing', 'found']) ? $request->status : 'missing';
+
+    if ($status === 'found') {
+        $query = MissingPetsReport::where('report_type', 'found')
+            ->with(['pet', 'barangay'])
+            ->orderBy('created_at', 'desc');
+
+        if ($request->filled('species') && in_array($request->species, ['Dog', 'Cat'])) {
+            $query->where('species', $request->species);
+        }
+
+        if ($request->filled('gender')) {
+            $gender = strtolower($request->gender);
+            if (in_array($gender, ['male', 'female', 'unknown'])) {
+                $query->where('gender', ucfirst($gender));
+            }
+        }
+
+        if ($request->filled('breeds')) {
+            $breeds = array_map('trim', explode(',', $request->breeds));
+            $query->whereIn('breed', $breeds);
+        }
+
+        if ($request->filled('location')) {
+            $locations = array_map('trim', explode(',', $request->location));
+            $query->whereHas('barangay', function ($q) use ($locations) {
+                $q->whereIn('barangay_name', $locations);
+            });
+        }
+
+        $foundPets = $query->paginate(12);
+
+        $pets = $foundPets->map(function ($report) {
+            return [
+                'pet_id' => $report->report_id,
+                'pet_name' => $report->pet_name ?? 'Found Pet',
+                'species' => $report->species,
+                'breed' => $report->breed,
+                'gender' => $report->gender,
+                'age' => $report->estimated_age,
+                'age_short' => $report->estimated_age,
+                'weight' => null,
+                'color' => $report->fur_colors,
+                'description' => $report->condition ?? $report->body_marks,
+                'location_barangay' => $report->barangay?->barangay_name,
+                'location_description' => $report->location_description,
+                'last_seen_at' => $report->last_seen_at,
+                'pet_image' => $report->photo_path ? asset('storage/'.$report->photo_path) : null,
+                'pet_status' => 'found',
+            ];
+        });
+
+        return response()->json([
+            'pets' => $pets,
+            'currentPage' => $foundPets->currentPage(),
+            'lastPage' => $foundPets->lastPage(),
+            'total' => $foundPets->total(),
+        ]);
+    }
 
     $query = Pet::where('pet_status', $status)
         ->with(['missingReport' => function ($query) {

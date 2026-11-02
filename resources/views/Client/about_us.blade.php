@@ -301,7 +301,7 @@
      </section>
 
        <!-- Main Content -->
-       <section class="pt-8 pb-16 bg-white">
+       <section class="pt-8 pb-8 sm:pb-16 bg-white">
          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Demographic & Service Coverage -->
              <div class="mb-16">
@@ -351,7 +351,7 @@
      </section>
 
      <!-- Community Spotlight Section -->
-     <section class="py-16 sm:py-24 bg-white border-t border-slate-100">
+     <section class="py-8 sm:py-16 lg:py-24 bg-white border-t border-slate-100">
          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
              <div class="text-center max-w-2xl mx-auto mb-12">
                  <span class="text-primary font-bold text-xs uppercase tracking-widest">Community Spotlight</span>
