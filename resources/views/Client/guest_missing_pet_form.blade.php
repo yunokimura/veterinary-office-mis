@@ -29,6 +29,9 @@
         }
     </script>
     <script src="{{ asset('js/breeds.js') }}" defer></script>
+    <script>
+        const barangaysData = @json($barangays);
+    </script>
 </head>
 <body class="font-sans antialiased bg-gray-50 min-h-screen">
 
@@ -319,19 +322,22 @@
                             </div>
                         </div>
 
-                        <!-- Location - Barangay -->
+                        <!-- Location - Barangay Modal -->
                         <div>
                             <label class="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Location (Barangay) <span class="text-red-500">*</span></label>
-                            <select name="barangay_id" id="barangayIdInput" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" required>
-                                <option value="">Select Barangay</option>
-                                @if(isset($barangays) && $barangays->count() > 0)
-                                    @foreach($barangays as $barangay)
-                                        <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>
-                                            {{ $barangay->barangay_name }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
+                            <div class="relative">
+                                <button type="button" id="barangayDisplay" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg cursor-pointer hover:border-slate-400 transition-colors text-left flex items-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" onclick="openBarangayModal()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                    <span id="selectedBarangayText" class="text-gray-700 truncate">Select Barangay</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 ml-auto pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- Hidden input for barangay -->
+                            <input type="hidden" id="barangayIdInput" name="barangay_id" value="" required>
                         </div>
 
                         <!-- Specific Location Description -->
@@ -930,6 +936,88 @@
         }
     }
 
+    // Open the barangay selector modal
+    function openBarangayModal() {
+        const modal = document.getElementById('barangayModal');
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('role', 'dialog');
+        document.body.classList.add('overflow-hidden');
+
+        document.getElementById('barangayModalSearch').value = '';
+        renderBarangayModal();
+
+        setTimeout(() => {
+            const searchInput = document.getElementById('barangayModalSearch');
+            if (searchInput) searchInput.focus();
+        }, 50);
+    }
+
+    // Close the barangay selector modal
+    function closeBarangayModal() {
+        const modal = document.getElementById('barangayModal');
+        modal.classList.add('hidden');
+        modal.removeAttribute('aria-modal');
+        modal.removeAttribute('role');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    // Render the barangay list grouped alphabetically
+    function renderBarangayModal(filter = '') {
+        const search = filter.trim().toLowerCase();
+        const filtered = barangaysData.filter(b => String(b.barangay_name).toLowerCase().includes(search));
+        const list = document.getElementById('barangayModalList');
+        const empty = document.getElementById('barangayModalEmpty');
+
+        if (filtered.length === 0) {
+            list.innerHTML = '';
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        empty.classList.add('hidden');
+
+        const groups = {};
+        filtered.forEach(b => {
+            const letter = String(b.barangay_name).charAt(0).toUpperCase();
+            if (!groups[letter]) groups[letter] = [];
+            groups[letter].push(b);
+        });
+
+        let html = '';
+        Object.keys(groups).sort().forEach(letter => {
+            html += `
+                <div class="mb-4">
+                    <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-1.5">
+                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 border border-emerald-200 rounded-md px-2 py-0.5">${letter}</span>
+                    </div>
+                    <div class="space-y-1 mt-1">`;
+            groups[letter].forEach(b => {
+                const selected = document.getElementById('barangayIdInput').value == b.barangay_id;
+                html += `
+                    <button type="button" onclick="handleBarangaySelect(${b.barangay_id}, '${String(b.barangay_name).replace(/'/g, "\\'")}')"
+                            class="w-full flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors text-left ${selected ? 'bg-emerald-50 text-emerald-800 font-semibold' : 'text-gray-700 hover:bg-white'}">
+                        ${b.barangay_name}
+                    </button>`;
+            });
+            html += `</div></div>`;
+        });
+
+        list.innerHTML = html;
+    }
+
+    // Filter the barangay list as the user types
+    function filterBarangayModal() {
+        renderBarangayModal(document.getElementById('barangayModalSearch').value);
+    }
+
+    // Handle barangay selection
+    function handleBarangaySelect(id, name) {
+        document.getElementById('barangayIdInput').value = id;
+        document.getElementById('selectedBarangayText').textContent = name;
+        closeBarangayModal();
+    }
+
     // Initialize age year/month options
     (function() {
         const yearsSel = document.getElementById('petAgeYears');
@@ -1046,6 +1134,60 @@
         } catch (e) {}
     });
 </script>
+
+<!-- Barangay Selection Modal -->
+<div id="barangayModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="barangayModalTitle">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeBarangayModal()"></div>
+    <div class="fixed inset-0 flex items-end sm:items-center sm:justify-center p-0 sm:p-4">
+        <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-md max-h-[92vh] sm:max-h-[85vh] overflow-hidden flex flex-col">
+            <!-- Modal Header -->
+            <div class="px-5 pt-5 pb-4 border-b border-slate-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 18h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2z" />
+                        </svg>
+                        <h3 id="barangayModalTitle" class="text-lg font-semibold text-gray-900">Select Barangay</h3>
+                    </div>
+                    <button type="button" onclick="closeBarangayModal()" class="text-gray-400 hover:text-gray-600 hover:bg-slate-100 rounded-lg p-1.5 transition-colors" aria-label="Close barangay selector">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <!-- Search bar -->
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" id="barangayModalSearch" placeholder="Search barangay..." onkeyup="filterBarangayModal()"
+                           class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="flex-1 overflow-y-auto min-h-[360px]">
+                <div class="px-5 pt-4 pb-4">
+                    <!-- Alphabetical List -->
+                    <div id="barangayModalList"></div>
+
+                    <!-- Empty search state -->
+                    <div id="barangayModalEmpty" class="hidden text-center py-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <p class="text-xs text-gray-700">No barangays match your search.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-5 py-4 border-t border-slate-200 bg-white">
+                <button type="button" onclick="closeBarangayModal()" class="w-full px-4 py-2.5 border border-slate-300 text-gray-700 rounded-lg font-medium hover:bg-white transition-colors">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
