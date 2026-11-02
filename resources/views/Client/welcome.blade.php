@@ -535,7 +535,7 @@
                                                 {{ $announcement->title }}
                                             </h4>
                                             <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed mb-4">
-                                                {{ \Illuminate\Support\Str::limit(strip_tags($announcement->content), 100) }}
+                                                {!! nl2br(e(\Illuminate\Support\Str::limit(strip_tags($announcement->content), 150))) !!}
                                             </p>
                                         </div>
                                     </div>
