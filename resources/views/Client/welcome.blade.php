@@ -390,33 +390,33 @@
     <!-- Stats Section -->
     <section class="hero-gradient py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-5 gap-8 text-center">
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 text-center">
                 <div>
-                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $petsRegisteredCount }}" data-suffix="{{ $petsRegisteredCount >= 10 ? '+' : '' }}">0</span>
-                    <span class="text-lg font-bold text-white">Registered Pets</span>
+                    <span class="block text-3xl sm:text-4xl font-extrabold text-white stat-counter" data-count="{{ $petsRegisteredCount }}" data-suffix="{{ $petsRegisteredCount >= 10 ? '+' : '' }}">0</span>
+                    <span class="text-base sm:text-lg font-bold text-white">Registered Pets</span>
                 </div>
                 <div>
-                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $vaccinationReportsCount }}" data-suffix="{{ $vaccinationReportsCount >= 10 ? '+' : '' }}">0</span>
-                    <span class="text-lg font-bold text-white">Vaccinated Pets</span>
+                    <span class="block text-3xl sm:text-4xl font-extrabold text-white stat-counter" data-count="{{ $vaccinationReportsCount }}" data-suffix="{{ $vaccinationReportsCount >= 10 ? '+' : '' }}">0</span>
+                    <span class="text-base sm:text-lg font-bold text-white">Vaccinated Pets</span>
                 </div>
                 <div>
-                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $spayedNeuteredCount }}" data-suffix="{{ $spayedNeuteredCount >= 10 ? '+' : '' }}">0</span>
-                    <span class="text-lg font-bold text-white">Spayed/Neutered</span>
+                    <span class="block text-3xl sm:text-4xl font-extrabold text-white stat-counter" data-count="{{ $spayedNeuteredCount }}" data-suffix="{{ $spayedNeuteredCount >= 10 ? '+' : '' }}">0</span>
+                    <span class="text-base sm:text-lg font-bold text-white">Spayed/Neutered</span>
                 </div>
                 <div>
-                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $reunitedCount }}" data-suffix="{{ $reunitedCount >= 10 ? '+' : '' }}">0</span>
-                    <span class="text-lg font-bold text-white">Reunited</span>
+                    <span class="block text-3xl sm:text-4xl font-extrabold text-white stat-counter" data-count="{{ $reunitedCount }}" data-suffix="{{ $reunitedCount >= 10 ? '+' : '' }}">0</span>
+                    <span class="text-base sm:text-lg font-bold text-white">Reunited</span>
                 </div>
-                <div>
-                    <span class="block text-4xl font-extrabold text-white stat-counter" data-count="{{ $rehomedCount }}" data-suffix="{{ $rehomedCount >= 10 ? '+' : '' }}">0</span>
-                    <span class="text-lg font-bold text-white">Rehomed</span>
+                <div class="col-span-2 lg:col-span-1">
+                    <span class="block text-3xl sm:text-4xl font-extrabold text-white stat-counter" data-count="{{ $rehomedCount }}" data-suffix="{{ $rehomedCount >= 10 ? '+' : '' }}">0</span>
+                    <span class="text-base sm:text-lg font-bold text-white">Rehomed</span>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Latest Updates & Programs Section -->
-    <section id="updates" class="py-20 bg-white">
+    <section id="updates" class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Section Header -->
             <div class="mb-8">
@@ -669,7 +669,7 @@
     </script>
 
     <!-- Lost Pets / Lost & Found Radar -->
-    <section id="lost-pets" class="py-20 bg-white">
+    <section id="lost-pets" class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-10">
                 <div class="inline-flex items-center space-x-2 bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
