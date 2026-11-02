@@ -555,22 +555,17 @@
                 <!-- Empty State -->
                 <div class="flex justify-center">
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover max-w-2xl">
-                        <div class="md:flex">
-                            <div class="md:w-2/3 p-8">
-                                <div class="flex items-center space-x-3 mb-4">
-                                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </div>
-                                    <span class="text-sm font-medium text-primary">Announcement</span>
+                        <div class="w-full p-8">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
                                 </div>
-                                <h3 class="text-xl font-bold text-slate-900 mb-3">No Recent Updates</h3>
-                                <p class="text-slate-600">Check back soon for new programs, events, and announcements from the veterinary office.</p>
+                                <span class="text-sm font-medium text-primary">Announcement</span>
                             </div>
-                            <div class="md:w-1/3 bg-slate-100">
-                                <img src="{{ asset('images/default-announcement.jpg') }}" alt="Default announcement" class="w-full h-48 md:h-full object-cover">
-                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">No Recent Updates</h3>
+                            <p class="text-slate-600">Check back soon for new programs, events, and announcements from the veterinary office.</p>
                         </div>
                     </div>
                 </div>
