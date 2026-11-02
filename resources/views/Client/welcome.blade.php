@@ -742,9 +742,9 @@
             <div class="tab-content hidden" data-tab="found">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                     @forelse($foundPets as $report)
-                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group">
+                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="found" onclick="showPetModal({{ $report->report_id }})">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
-                            <img src="{{ $report->pet?->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $report->reporter_display_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
+                            <img src="{{ $report->pet_photo ? asset('storage/' . $report->pet_photo) : 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $report->reporter_display_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
                             <span class="absolute top-2 right-2 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">Found</span>
                         </div>
                         <div class="p-4">
@@ -1937,7 +1937,26 @@
             ];
         })->toArray()) !!};
 
-        const allPetsData = [...missingPetsData, ...adoptionPetsData];
+        const foundPetsData = {!! json_encode($foundPets->map(function($report) {
+            return [
+                'pet_id' => $report->report_id,
+                'pet_name' => $report->pet_name ?? $report->breed ?? 'Found Pet',
+                'species' => null,
+                'breed' => $report->breed ?? 'Pet',
+                'gender' => $report->gender ?? 'unknown',
+                'age' => $report->estimated_age ?? '?',
+                'weight' => null,
+                'color' => $report->fur_colors ?? null,
+                'description' => $report->body_marks ?? null,
+                'location_barangay' => $report->barangay ? $report->barangay->barangay_name : null,
+                'location_description' => $report->location_description ?? null,
+                'last_seen_at' => $report->last_seen_at ? $report->last_seen_at->toISOString() : null,
+                'pet_image' => $report->pet_photo ? asset('storage/' . $report->pet_photo) : null,
+                'pet_status' => 'found',
+            ];
+        })->toArray()) !!};
+
+        const allPetsData = [...missingPetsData, ...adoptionPetsData, ...foundPetsData];
 
         function showPetModal(petId) {
             const pet = allPetsData.find(p => p.pet_id === petId);

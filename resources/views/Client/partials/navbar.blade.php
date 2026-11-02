@@ -62,14 +62,25 @@
                                 <i class="fa-solid fa-magnifying-glass text-rose-500 w-4"></i>
                                 <span>Page Overview</span>
                             </a>
-                            <a href="{{ route('missing-pets.form') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fa-solid fa-bullhorn text-emerald-500 w-4"></i>
-                                <span>Report Lost Pet</span>
-                            </a>
-                            <a href="{{ route('found-pets.form') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="fa-solid fa-paw text-amber-500 w-4"></i>
-                                <span>Report Found Pet</span>
-                            </a>
+                            @auth
+                                <a href="{{ route('missing-pets.form') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="fa-solid fa-bullhorn text-emerald-500 w-4"></i>
+                                    <span>Report Lost Pet</span>
+                                </a>
+                                <a href="{{ route('found-pets.form') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="fa-solid fa-paw text-amber-500 w-4"></i>
+                                    <span>Report Found Pet</span>
+                                </a>
+                            @else
+                                <a href="/missing-pets/report/guest?type=missing" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="fa-solid fa-bullhorn text-emerald-500 w-4"></i>
+                                    <span>Report Lost Pet</span>
+                                </a>
+                                <a href="/missing-pets/report/guest?type=found" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="fa-solid fa-paw text-amber-500 w-4"></i>
+                                    <span>Report Found Pet</span>
+                                </a>
+                            @endauth
                         </div>
                     </div>
                     <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'text-primary font-semibold underline underline-offset-4 decoration-2' : '' }} hover:text-primary transition-colors">Adoption</a>
@@ -218,14 +229,25 @@
                         <i class="fa-solid fa-magnifying-glass text-rose-500 w-4"></i>
                         <span>Page Overview</span>
                     </a>
-                    <a href="{{ route('missing-pets.form') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
-                        <i class="fa-solid fa-bullhorn text-emerald-500 w-4"></i>
-                        <span>Report Lost Pet</span>
-                    </a>
-                    <a href="{{ route('found-pets.form') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
-                        <i class="fa-solid fa-paw text-amber-500 w-4"></i>
-                        <span>Report Found Pet</span>
-                    </a>
+                            @auth
+                                <a href="{{ route('missing-pets.form') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                                    <i class="fa-solid fa-bullhorn text-emerald-500 w-4"></i>
+                                    <span>Report Lost Pet</span>
+                                </a>
+                                <a href="{{ route('found-pets.form') }}" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                                    <i class="fa-solid fa-paw text-amber-500 w-4"></i>
+                                    <span>Report Found Pet</span>
+                                </a>
+                            @else
+                                <a href="/missing-pets/report/guest?type=missing" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                                    <i class="fa-solid fa-bullhorn text-emerald-500 w-4"></i>
+                                    <span>Report Lost Pet</span>
+                                </a>
+                                <a href="/missing-pets/report/guest?type=found" class="flex items-center gap-3 py-2 px-3 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                                    <i class="fa-solid fa-paw text-amber-500 w-4"></i>
+                                    <span>Report Found Pet</span>
+                                </a>
+                            @endauth
                 </div>
             </div>
             <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Adoption</a>
