@@ -82,6 +82,8 @@
 
 @push('scripts')
 <script>
+    const barangaysData = @json($barangays);
+
     // Auto-dismiss success message after 15 seconds
     @if(session('success'))
         setTimeout(function() {
@@ -193,12 +195,11 @@
           // Check only user-editable fields by ID (completely bypasses hidden fields)
           const title = document.getElementById('title');
           const category = document.getElementById('category');
-          const barangay = document.getElementById('barangay_id');
           const eventDate = document.getElementById('event_date');
           const eventTime = document.getElementById('event_time');
           const content = document.getElementById('content');
           
-          const fields = [title, category, barangay, eventDate, eventTime, content];
+          const fields = [title, category, eventDate, eventTime, content];
           let hasChanges = false;
           
           for (let field of fields) {
@@ -233,6 +234,88 @@
          document.getElementById('status').value = 'Draft';
          document.getElementById('announcementForm').submit();
      }
+
+    // Open the barangay selector modal
+    function openBarangayModal() {
+        const modal = document.getElementById('barangayModal');
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('role', 'dialog');
+        document.body.classList.add('overflow-hidden');
+
+        document.getElementById('barangayModalSearch').value = '';
+        renderBarangayModal();
+
+        setTimeout(() => {
+            const searchInput = document.getElementById('barangayModalSearch');
+            if (searchInput) searchInput.focus();
+        }, 50);
+    }
+
+    // Close the barangay selector modal
+    function closeBarangayModal() {
+        const modal = document.getElementById('barangayModal');
+        modal.classList.add('hidden');
+        modal.removeAttribute('aria-modal');
+        modal.removeAttribute('role');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    // Render the barangay list grouped alphabetically
+    function renderBarangayModal(filter = '') {
+        const search = filter.trim().toLowerCase();
+        const filtered = barangaysData.filter(b => String(b.barangay_name).toLowerCase().includes(search));
+        const list = document.getElementById('barangayModalList');
+        const empty = document.getElementById('barangayModalEmpty');
+
+        if (filtered.length === 0) {
+            list.innerHTML = '';
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        empty.classList.add('hidden');
+
+        // Group by first letter
+        const groups = {};
+        filtered.forEach(b => {
+            const letter = String(b.barangay_name).charAt(0).toUpperCase();
+            if (!groups[letter]) groups[letter] = [];
+            groups[letter].push(b);
+        });
+
+        let html = '';
+        Object.keys(groups).sort().forEach(letter => {
+            html += `
+                <div class="mb-4">
+                    <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-1.5">
+                        <span class="text-xs font-bold text-green-700 uppercase tracking-wider bg-green-50 border border-green-200 rounded-md px-2 py-0.5">${letter}</span>
+                    </div>
+                    <div class="space-y-1 mt-1">`;
+            groups[letter].forEach(b => {
+                const selected = document.getElementById('barangayIdInput').value == b.barangay_id;
+                html += `
+                    <button type="button" onclick="handleBarangaySelect(${b.barangay_id}, '${String(b.barangay_name).replace(/'/g, "\\'")}')"
+                            class="w-full flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors text-left ${selected ? 'bg-green-50 text-green-800 font-semibold' : 'text-gray-700 hover:bg-white'}">
+                        ${b.barangay_name}
+                    </button>`;
+            });
+            html += `</div></div>`;
+        });
+
+        list.innerHTML = html;
+    }
+
+    // Filter the barangay list as the user types
+    function filterBarangayModal() {
+        renderBarangayModal(document.getElementById('barangayModalSearch').value);
+    }
+
+    // Handle barangay selection
+    function handleBarangaySelect(id, name) {
+        document.getElementById('barangayIdInput').value = id;
+        document.getElementById('selectedBarangayText').textContent = name;
+        closeBarangayModal();
+    }
  </script>
 @endpush
-@endsection
