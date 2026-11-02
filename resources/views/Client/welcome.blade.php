@@ -704,7 +704,7 @@
             <div class="tab-content" data-tab="missing">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                     @forelse($missingPets as $pet)
-                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="{{ strtolower($pet->pet_status) }}" onclick="showPetModal({{ $pet->pet_id }})">
+                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="{{ strtolower($pet->pet_status) }}" onclick="showMissingPetModal({{ $pet->pet_id }})">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
                             <img src="{{ $pet->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
                             <span class="absolute top-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">{{ strtoupper($pet->pet_status) }}</span>
@@ -742,7 +742,7 @@
             <div class="tab-content hidden" data-tab="found">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                     @forelse($foundPets as $report)
-                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="found" onclick="showPetModal({{ $report->report_id }})">
+                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" data-status="found" onclick="showFoundPetModal({{ $report->report_id }})">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
                             <img src="{{ $report->pet_photo ? asset('storage/' . $report->pet_photo) : 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $report->reporter_display_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
                             <span class="absolute top-2 right-2 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">Found</span>
@@ -772,7 +772,7 @@
             <div class="tab-content hidden" data-tab="adoption">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                     @forelse($adoptionPets as $pet)
-                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" onclick="showPetModal({{ $pet->pet_id }})">
+                    <div class="missing-pet-card bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow group" onclick="showAdoptionPetModal({{ $pet->pet_id }})">
                         <div class="relative h-44 bg-slate-200 overflow-hidden">
                             <img src="{{ $pet->image_url ?: 'https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo' }}" alt="{{ $pet->pet_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/cbd5e1/475569?text=Pet+Photo'">
                             <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">For Adoption</span>
@@ -1809,19 +1809,19 @@
     </script>
 
     <!-- Missing Pet Detail Modal -->
-    <div id="petDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="missingPetDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="missing-modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="hidePetModal()"></div>
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="hideMissingPetModal()"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-red-500 px-6 py-4 flex justify-between items-center">
+                <div class="bg-rose-600 px-6 py-4 flex justify-between items-center">
                     <h3 class="text-xl font-bold text-white flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                         Missing Pet Details
                     </h3>
-                    <button onclick="hidePetModal()" class="text-white hover:text-red-100 focus:outline-none">
+                    <button onclick="hideMissingPetModal()" class="text-white hover:text-rose-100 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -1830,39 +1830,39 @@
                 <div class="px-6 py-6">
                     <div class="flex justify-center mb-6">
                         <div class="relative w-48 h-48 rounded-xl overflow-hidden shadow-lg">
-                            <img id="modalPetImage" src="" alt="Pet Image" class="w-full h-full object-cover">
-                            <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">MISSING</span>
+                            <img id="missingModalPetImage" src="" alt="Pet Image" class="w-full h-full object-cover">
+                            <span class="absolute top-2 right-2 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">MISSING</span>
                         </div>
                     </div>
-                    <h2 id="modalPetName" class="text-2xl font-bold text-gray-900 text-center mb-6"></h2>
+                    <h2 id="missingModalPetName" class="text-2xl font-bold text-gray-900 text-center mb-6"></h2>
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div class="bg-gray-50 rounded-lg p-4">
                             <p class="text-sm text-gray-500 mb-1">Species</p>
-                            <p id="modalPetSpecies" class="text-gray-900 font-semibold"></p>
+                            <p id="missingModalPetSpecies" class="text-gray-900 font-semibold"></p>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
                             <p class="text-sm text-gray-500 mb-1">Breed</p>
-                            <p id="modalPetBreed" class="text-gray-900 font-semibold"></p>
+                            <p id="missingModalPetBreed" class="text-gray-900 font-semibold"></p>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
                             <p class="text-sm text-gray-500 mb-1">Age</p>
-                            <p id="modalPetAge" class="text-gray-900 font-semibold"></p>
+                            <p id="missingModalPetAge" class="text-gray-900 font-semibold"></p>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
                             <p class="text-sm text-gray-500 mb-1">Weight</p>
-                            <p id="modalPetWeight" class="text-gray-900 font-semibold"></p>
+                            <p id="missingModalPetWeight" class="text-gray-900 font-semibold"></p>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
                             <p class="text-sm text-gray-500 mb-1">Color</p>
-                            <p id="modalPetColor" class="text-gray-900 font-semibold"></p>
+                            <p id="missingModalPetColor" class="text-gray-900 font-semibold"></p>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
                             <p class="text-sm text-gray-500 mb-1">Gender</p>
-                            <p id="modalPetGender" class="text-gray-900 font-semibold"></p>
+                            <p id="missingModalPetGender" class="text-gray-900 font-semibold"></p>
                         </div>
                     </div>
-                    <div class="bg-red-50 rounded-lg p-4 mb-6">
-                        <h4 class="font-semibold text-red-800 mb-3 flex items-center">
+                    <div class="bg-rose-50 rounded-lg p-4 mb-6">
+                        <h4 class="font-semibold text-rose-800 mb-3 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1871,18 +1871,190 @@
                         </h4>
                         <div class="space-y-2">
                             <div class="flex justify-between">
-                                <span class="text-red-700">Date & Time:</span>
-                                <span id="modalLastSeen" class="text-gray-900 font-medium"></span>
+                                <span class="text-rose-700">Date &amp; Time:</span>
+                                <span id="missingModalLastSeen" class="text-gray-900 font-medium"></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-red-700">Location:</span>
-                                <span id="modalLocation" class="text-gray-900 font-medium"></span>
+                                <span class="text-rose-700">Location:</span>
+                                <span id="missingModalLocation" class="text-gray-900 font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="contactOwner()" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Contact City Veterinary Office
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Found Pet Detail Modal -->
+    <div id="foundPetDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="found-modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="hideFoundPetModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-amber-600 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-white flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Found Pet Details
+                    </h3>
+                    <button onclick="hideFoundPetModal()" class="text-white hover:text-amber-100 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="px-6 py-6">
+                    <div class="flex justify-center mb-6">
+                        <div class="relative w-48 h-48 rounded-xl overflow-hidden shadow-lg">
+                            <img id="foundModalPetImage" src="" alt="Pet Image" class="w-full h-full object-cover">
+                            <span class="absolute top-2 right-2 bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full">FOUND</span>
+                        </div>
+                    </div>
+                    <h2 id="foundModalPetName" class="text-2xl font-bold text-gray-900 text-center mb-6"></h2>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Species</p>
+                            <p id="foundModalPetSpecies" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Breed</p>
+                            <p id="foundModalPetBreed" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Age</p>
+                            <p id="foundModalPetAge" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Weight</p>
+                            <p id="foundModalPetWeight" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Color</p>
+                            <p id="foundModalPetColor" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Gender</p>
+                            <p id="foundModalPetGender" class="text-gray-900 font-semibold"></p>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-4 mb-6">
+                        <h4 class="font-semibold text-amber-800 mb-3 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Found Information
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-amber-700">Date Found:</span>
+                                <span id="foundModalLastSeen" class="text-gray-900 font-medium"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-amber-700">Location:</span>
+                                <span id="foundModalLocation" class="text-gray-900 font-medium"></span>
                             </div>
                         </div>
                     </div>
                     <div class="mb-6">
                         <h4 class="font-semibold text-gray-800 mb-2">Description</h4>
-                        <p id="modalDescription" class="text-gray-600 text-sm"></p>
+                        <p id="foundModalDescription" class="text-gray-600 text-sm"></p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="contactOwner()" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Contact CVO
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Adoption Pet Detail Modal -->
+    <div id="adoptionPetDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="adoption-modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="hideAdoptionPetModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-emerald-600 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-white flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        Adoptable Pet Details
+                    </h3>
+                    <button onclick="hideAdoptionPetModal()" class="text-white hover:text-emerald-100 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="px-6 py-6">
+                    <div class="flex justify-center mb-6">
+                        <div class="relative w-48 h-48 rounded-xl overflow-hidden shadow-lg">
+                            <img id="adoptionModalPetImage" src="" alt="Pet Image" class="w-full h-full object-cover">
+                            <span class="absolute top-2 right-2 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">FOR ADOPTION</span>
+                        </div>
+                    </div>
+                    <h2 id="adoptionModalPetName" class="text-2xl font-bold text-gray-900 text-center mb-6"></h2>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Species</p>
+                            <p id="adoptionModalPetSpecies" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Breed</p>
+                            <p id="adoptionModalPetBreed" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Age</p>
+                            <p id="adoptionModalPetAge" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Weight</p>
+                            <p id="adoptionModalPetWeight" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Color</p>
+                            <p id="adoptionModalPetColor" class="text-gray-900 font-semibold"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-500 mb-1">Gender</p>
+                            <p id="adoptionModalPetGender" class="text-gray-900 font-semibold"></p>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-50 rounded-lg p-4 mb-6">
+                        <h4 class="font-semibold text-emerald-800 mb-3 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 114 0v1m0 0a2 2 0 11-4 0v1m0 0a2 2 0 114 0v1m0 0a2 2 0 11-4 0v1m0 0a2 2 0 114 0v1" />
+                            </svg>
+                            Adoption Information
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-emerald-700">Available Since:</span>
+                                <span id="adoptionModalLastSeen" class="text-gray-900 font-medium"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-emerald-700">Location:</span>
+                                <span id="adoptionModalLocation" class="text-gray-900 font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-800 mb-2">Description</h4>
+                        <p id="adoptionModalDescription" class="text-gray-600 text-sm"></p>
                     </div>
                     <div class="flex gap-3">
                         <button onclick="contactOwner()" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
@@ -1958,55 +2130,127 @@
 
         const allPetsData = [...missingPetsData, ...adoptionPetsData, ...foundPetsData];
 
-        function showPetModal(petId) {
-            const pet = allPetsData.find(p => p.pet_id === petId);
+        function showMissingPetModal(petId) {
+            const pet = missingPetsData.find(p => p.pet_id === petId);
             if (!pet) return;
 
             const imageUrl = pet.pet_image
                 ? pet.pet_image
                 : "https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image";
 
-            document.getElementById('modalPetImage').src = imageUrl;
-            document.getElementById('modalPetName').textContent = pet.pet_name;
-            document.getElementById('modalPetSpecies').textContent = pet.species;
-            document.getElementById('modalPetBreed').textContent = pet.breed || 'Unknown';
-            document.getElementById('modalPetAge').textContent = pet.age + ' years';
-            document.getElementById('modalPetWeight').textContent = pet.weight;
-            document.getElementById('modalPetColor').textContent = pet.color || 'Unknown';
-            document.getElementById('modalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
-            document.getElementById('modalLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : 'N/A';
-            document.getElementById('modalLocation').textContent = pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A';
-            document.getElementById('modalDescription').textContent = pet.description || 'No description available.';
+            document.getElementById('missingModalPetImage').src = imageUrl;
+            document.getElementById('missingModalPetName').textContent = pet.pet_name;
+            document.getElementById('missingModalPetSpecies').textContent = pet.species || 'Unknown';
+            document.getElementById('missingModalPetBreed').textContent = pet.breed || 'Unknown';
+            document.getElementById('missingModalPetAge').textContent = (function() {
+                const raw = pet.age;
+                if (!raw) return 'N/A';
+                const s = String(raw);
+                if (s.toLowerCase().includes('month')) return s;
+                if (s === '1') return '1 year';
+                return s + ' yrs';
+            })();
+            document.getElementById('missingModalPetWeight').textContent = pet.weight;
+            document.getElementById('missingModalPetColor').textContent = pet.color || 'Unknown';
+            document.getElementById('missingModalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
+            document.getElementById('missingModalLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : 'N/A';
+            document.getElementById('missingModalLocation').textContent = pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A';
 
-            document.getElementById('petDetailModal').classList.remove('hidden');
+            document.getElementById('missingPetDetailModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
-        function hidePetModal() {
-            document.getElementById('petDetailModal').classList.add('hidden');
+        function showFoundPetModal(petId) {
+            const pet = foundPetsData.find(p => p.pet_id === petId);
+            if (!pet) return;
+
+            const imageUrl = pet.pet_image
+                ? pet.pet_image
+                : "https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image";
+
+            document.getElementById('foundModalPetImage').src = imageUrl;
+            document.getElementById('foundModalPetName').textContent = pet.pet_name;
+            document.getElementById('foundModalPetSpecies').textContent = pet.species || 'Unknown';
+            document.getElementById('foundModalPetBreed').textContent = pet.breed || 'Unknown';
+            document.getElementById('foundModalPetAge').textContent = pet.age + ' years';
+            document.getElementById('foundModalPetWeight').textContent = pet.weight;
+            document.getElementById('foundModalPetColor').textContent = pet.color || 'Unknown';
+            document.getElementById('foundModalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
+            document.getElementById('foundModalLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : 'N/A';
+            document.getElementById('foundModalLocation').textContent = pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A';
+            document.getElementById('foundModalDescription').textContent = pet.description || 'No description available.';
+
+            document.getElementById('foundPetDetailModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showAdoptionPetModal(petId) {
+            const pet = adoptionPetsData.find(p => p.pet_id === petId);
+            if (!pet) return;
+
+            const imageUrl = pet.pet_image
+                ? pet.pet_image
+                : "https://placehold.co/400x400/e2e8f0/94a3b8?text=No+Image";
+
+            document.getElementById('adoptionModalPetImage').src = imageUrl;
+            document.getElementById('adoptionModalPetName').textContent = pet.pet_name;
+            document.getElementById('adoptionModalPetSpecies').textContent = pet.species || 'Unknown';
+            document.getElementById('adoptionModalPetBreed').textContent = pet.breed || 'Unknown';
+            document.getElementById('adoptionModalPetAge').textContent = pet.age + ' years';
+            document.getElementById('adoptionModalPetWeight').textContent = pet.weight;
+            document.getElementById('adoptionModalPetColor').textContent = pet.color || 'Unknown';
+            document.getElementById('adoptionModalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
+            document.getElementById('adoptionModalLastSeen').textContent = pet.last_seen_at ? new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : 'N/A';
+            document.getElementById('adoptionModalLocation').textContent = pet.location_barangay ? (pet.location_barangay + (pet.location_description ? ' - ' + pet.location_description : '')) : 'N/A';
+            document.getElementById('adoptionModalDescription').textContent = pet.description || 'No description available.';
+
+            document.getElementById('adoptionPetDetailModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideMissingPetModal() {
+            document.getElementById('missingPetDetailModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function hideFoundPetModal() {
+            document.getElementById('foundPetDetailModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function hideAdoptionPetModal() {
+            document.getElementById('adoptionPetDetailModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
 
         function contactOwner() {
-            const petName = document.getElementById('modalPetName').textContent;
-            const subject = 'Inquiry about missing pet: ' + petName;
+            const petName = document.getElementById('missingModalPetName').textContent
+                || document.getElementById('foundModalPetName').textContent
+                || document.getElementById('adoptionModalPetName').textContent;
+            const subject = 'Inquiry about pet: ' + petName;
             const encodedSubject = encodeURIComponent(subject);
             window.open('https://mail.google.com/mail/u/0/?view=cm&fs=1&to=vetdasma@yahoo.com&su=' + encodedSubject + '&tf=ui', '_blank');
         }
 
         document.addEventListener('click', function(event) {
-            const modal = document.getElementById('petDetailModal');
-            if (modal) {
-                const overlay = modal.querySelector('.fixed.inset-0');
-                if (overlay && event.target === overlay) {
-                    hidePetModal();
+            ['missingPetDetailModal', 'foundPetDetailModal', 'adoptionPetDetailModal'].forEach(function(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    const overlay = modal.querySelector('.fixed.inset-0');
+                    if (overlay && event.target === overlay) {
+                        if (modalId === 'missingPetDetailModal') hideMissingPetModal();
+                        if (modalId === 'foundPetDetailModal') hideFoundPetModal();
+                        if (modalId === 'adoptionPetDetailModal') hideAdoptionPetModal();
+                    }
                 }
-            }
+            });
         });
 
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
-                hidePetModal();
+                hideMissingPetModal();
+                hideFoundPetModal();
+                hideAdoptionPetModal();
             }
         });
     </script>
