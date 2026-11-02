@@ -84,6 +84,33 @@
             <form method="POST" action="{{ route('found-pets.report.store') }}" enctype="multipart/form-data" id="foundPetForm">
                 @csrf
 
+                <!-- Reporter's Contact Info — shown at top on mobile -->
+                <div class="lg:hidden bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                    <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <h4 class="text-sm font-semibold text-white">REPORTER'S CONTACT INFO</h4>
+                        </div>
+                        <span class="text-xs text-emerald-300">Guest</span>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Reporter Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" maxlength="255" pattern="[A-Za-z\s]*" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '');" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Contact Number <span class="text-red-500">*</span></label>
+                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" maxlength="11" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Email Address <span class="text-red-500">*</span></label>
+                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com" required>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Section 1: Found Pet Description -->
                 <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
                     <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
@@ -419,7 +446,7 @@
         <div class="lg:col-span-4 space-y-6">
             <div class="lg:sticky lg:top-20 space-y-6">
                 <!-- Reporter's Contact Info Card -->
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <div class="hidden lg:block bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
                     <div class="bg-emerald-950 px-6 py-4 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
