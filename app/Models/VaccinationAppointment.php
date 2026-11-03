@@ -76,6 +76,7 @@ class VaccinationAppointment extends Model
         'vaccination_certificate',
         'vaccine_lot_number',
         'vaccination_certificate_path',
+        'notes',
     ];
 
     protected $casts = [

@@ -612,6 +612,7 @@
                 'pet_id' => $pet->pet_id ?? null,
                 'submitted_at' => $application->created_at,
                 'appointment_date' => $application->appointment_date ?? null,
+                'appointment_time' => $application->appointment_time ?? null,
                 'status' => $application->status ?? 'pending_review',
                 'owner_name' => $user ? ($user->first_name . ' ' . $user->last_name) : 'N/A',
                 'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ', ' . ($address->barangay?->barangay_name ?? $application->barangay ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
@@ -1616,6 +1617,17 @@
             activeItemData = null;
         }
 
+        // Format a stored date string + optional time string as YYYY-MM-DDTHH:MM
+        // for datetime-local inputs, preserving the exact stored values without
+        // any timezone conversion or day shift.
+        function fmtUTCDateTime(dateVal, timeVal) {
+            if (!dateVal) return '';
+            const d = String(dateVal).slice(0, 10); // YYYY-MM-DD
+            let t = timeVal ? String(timeVal).slice(0, 5) : '00:00';
+            if (!t.includes(':')) t = '00:00';
+            return d + 'T' + t;
+        }
+
         function renderGlassModal() {
             const isAppt = ['appointment', 'vaccination', 'spay_neuter'].includes(activeItemType);
             const item = activeItemData;
@@ -1777,7 +1789,7 @@
             } else {
                 // Edit mode - simple form
                 if (isAppt) {
-                    const apptDateTime = item.scheduled_at ? new Date(item.scheduled_at).toISOString().slice(0, 16) : '';
+                    const apptDateTime = item.scheduled_at ? fmtUTCDateTime(item.scheduled_at) : '';
                     content.innerHTML = `
                         <div class="space-y-3 text-xs">
                             <div>
@@ -1807,7 +1819,7 @@
                         <div class="space-y-3 text-xs">
                             <div>
                                 <label class="block font-semibold text-slate-700 mb-1">Interview Date & Time</label>
-                                <input id="glassInputDate" type="datetime-local" value="${item.appointment_date ? new Date(item.appointment_date).toISOString().slice(0, 16) : ''}" data-original="${item.appointment_date ? new Date(item.appointment_date).toISOString().slice(0, 16) : ''}" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium" onchange="toggleRescheduleReason()">
+                                <input id="glassInputDate" type="datetime-local" value="${item.appointment_date ? fmtUTCDateTime(item.appointment_date, item.appointment_time) : ''}" data-original="${item.appointment_date ? fmtUTCDateTime(item.appointment_date, item.appointment_time) : ''}" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium" onchange="toggleRescheduleReason()">
                             </div>
                             <div id="glassRescheduleReasonContainer" class="hidden">
                                 <label class="block font-semibold text-slate-700 mb-1">Reason for Reschedule</label>
@@ -1859,42 +1871,104 @@
             }
         }
 
-        function saveGlassForm() {
+        async function saveGlassForm() {
             if (activeItemData && ['completed', 'rejected', 'cancelled'].includes(activeItemData.status)) {
                 showToast('Cannot edit a completed or cancelled record.');
                 closeGlassModal();
                 return;
             }
-            if (activeTabMode === 'edit') {
-                const dateTimeVal = document.getElementById('glassInputDateTime')?.value;
-                const serviceTypeVal = document.getElementById('glassInputServiceType')?.value;
-                const notesVal = document.getElementById('glassInputNotes')?.value;
-                const rescheduleReasonVal = document.getElementById('glassInputRescheduleReason')?.value;
-                const updatedFields = [];
-                if (dateTimeVal) updatedFields.push('Scheduled Date & Time');
-                if (serviceTypeVal) updatedFields.push('Service Type');
-                if (notesVal) updatedFields.push('Additional Notes');
-                if (rescheduleReasonVal) updatedFields.push('Reason for Reschedule');
-                if (updatedFields.length > 0) {
-                    showToast(`Updated: ${updatedFields.join(', ')}`);
-                } else {
-                    showToast(`Updated record ${activeItemData.id}`);
-                }
+            if (activeTabMode !== 'edit') {
+                closeGlassModal();
+                return;
             }
-            closeGlassModal();
-            renderAppointments();
-            renderAdoptions();
+
+            const token = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+            const rawId = String(activeItemData?.id || '');
+            const numericId = rawId.replace('APP-', '').replace('ADPT-', '');
+            const isAppt = ['appointment', 'vaccination', 'spay_neuter'].includes(activeItemType);
+            let url, payload;
+
+            if (isAppt) {
+                url = '/owner/appointments/' + numericId;
+                payload = {
+                    type: activeItemData.type,
+                    scheduled_at: document.getElementById('glassInputDateTime')?.value || '',
+                    notes: document.getElementById('glassInputNotes')?.value || '',
+                    reschedule_reason: document.getElementById('glassInputRescheduleReason')?.value || '',
+                };
+            } else {
+                url = '/owner/adoption-applications/' + numericId;
+                const apptDateVal = document.getElementById('glassInputDate')?.value || '';
+                const notesVal = document.getElementById('glassInputNotes')?.value || '';
+                const rescheduleReasonVal = document.getElementById('glassInputRescheduleReason')?.value || '';
+                const payloadObj = {
+                    notes: notesVal,
+                    reschedule_reason: rescheduleReasonVal,
+                };
+                if (apptDateVal) {
+                    const parts = apptDateVal.split('T');
+                    payloadObj.appointment_date = parts[0] || apptDateVal;
+                    if (parts[1]) {
+                        payloadObj.appointment_time = parts[1];
+                    }
+                }
+                payload = payloadObj;
+            }
+
+            try {
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    showToast(data.message || 'Updated successfully.', 'success');
+
+                    // Update local data so the list reflects changes without a page refresh
+                    if (isAppt) {
+                        const idx = allAppointments.findIndex(a => String(a.id) === numericId);
+                        if (idx !== -1) {
+                            if (payload.scheduled_at) allAppointments[idx].scheduled_at = payload.scheduled_at;
+                            if (payload.notes) allAppointments[idx].additional_notes = payload.notes;
+                        }
+                    } else {
+                        const idx = allAdoptions.findIndex(a => String(a.id) === numericId);
+                        if (idx !== -1) {
+                            if (payload.appointment_date) allAdoptions[idx].appointment_date = payload.appointment_date;
+                            if (payload.appointment_time) allAdoptions[idx].appointment_time = payload.appointment_time;
+                            if (payload.notes) allAdoptions[idx].additional_notes = payload.notes;
+                        }
+                    }
+
+                    closeGlassModal();
+                    renderAppointments();
+                    renderAdoptions();
+                } else {
+                    const errData = await res.json().catch(() => ({}));
+                    showToast(errData.message || 'Failed to update. Please try again.', 'error');
+                }
+            } catch (err) {
+                showToast('Network error. Could not save changes.', 'error');
+            }
         }
 
-        function showToast(msg) {
+        function showToast(msg, type = 'success') {
             let toast = document.getElementById('toast');
             if (!toast) {
                 toast = document.createElement('div');
                 toast.id = 'toast';
-                toast.className = 'fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 text-xs border border-slate-700';
-                toast.innerHTML = '<div class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold"><i data-lucide="check" class="w-4 h-4"></i></div><span id="toastMsg">Action completed</span>';
+                toast.className = 'fixed bottom-5 right-5 px-4 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 text-xs border';
                 document.body.appendChild(toast);
             }
+            const isError = type === 'error';
+            toast.className = 'fixed bottom-5 right-5 px-4 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 text-xs border ' + (isError ? 'bg-rose-500 text-white border-rose-700' : 'bg-slate-900 text-white border-slate-700');
+            toast.innerHTML = '<div class="w-6 h-6 rounded-full ' + (isError ? 'bg-rose-300 text-rose-950' : 'bg-emerald-500 text-slate-950') + ' flex items-center justify-center font-bold"><i data-lucide="' + (isError ? 'alert-circle' : 'check') + '" class="w-4 h-4"></i></div><span id="toastMsg">' + msg + '</span>';
             document.getElementById('toastMsg').innerText = msg;
             toast.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);

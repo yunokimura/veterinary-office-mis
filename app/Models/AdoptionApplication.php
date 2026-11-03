@@ -93,6 +93,7 @@ class AdoptionApplication extends Model
         'rejection_reason',
         'reviewed_by',
         'reviewed_at',
+        'notes',
     ];
 
     protected $casts = [

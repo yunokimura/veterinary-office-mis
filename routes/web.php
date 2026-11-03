@@ -1787,6 +1787,69 @@ Route::delete('/owner/pets/{id}', [PetController::class, 'destroy'])->middleware
 // Submit Pet for Adoption Route
 Route::post('/owner/pets/{pet}/submit-for-adoption', [AdoptionRequestController::class, 'submitForAdoption'])->middleware(['auth'])->name('pet.submit-for-adoption');
 
+// Update Owner Appointment (Vaccination or Spay/Neuter)
+Route::put('/owner/appointments/{id}', function (Request $request, $id) {
+    $type = $request->input('type');
+    $modelClass = $type === 'vaccination' ? \App\Models\VaccinationAppointment::class : \App\Models\SpayNeuterAppointment::class;
+    $appointment = $modelClass::where('id', $id)->where('user_id', auth()->id())->first();
+
+    if (!$appointment) {
+        return response()->json(['success' => false, 'message' => 'Appointment not found.'], 404);
+    }
+
+    $validated = $request->validate([
+        'scheduled_at' => 'sometimes|required|date',
+        'notes' => 'nullable|string',
+        'reschedule_reason' => 'nullable|string',
+    ]);
+
+    $updateData = [];
+    if ($request->has('scheduled_at')) {
+        $updateData['scheduled_at'] = $validated['scheduled_at'];
+    }
+    if ($request->has('notes')) {
+        $updateData['notes'] = $validated['notes'];
+    }
+    if ($request->has('reschedule_reason')) {
+        $updateData['notes'] = trim((($appointment->notes ?? '') . "\n" . $validated['reschedule_reason']));
+    }
+
+    $appointment->update($updateData);
+
+    return response()->json(['success' => true, 'message' => 'Appointment updated successfully.']);
+})->middleware(['auth'])->name('owner.appointments.update');
+
+// Update Owner Adoption Application
+Route::put('/owner/adoption-applications/{id}', function (Request $request, $id) {
+    $application = \App\Models\AdoptionApplication::where('id', $id)->where('user_id', auth()->id())->first();
+
+    if (!$application) {
+        return response()->json(['success' => false, 'message' => 'Application not found.'], 404);
+    }
+
+    $validated = $request->validate([
+        'appointment_date' => 'sometimes|required|date',
+        'appointment_time' => 'sometimes|required|string',
+        'notes' => 'nullable|string',
+        'reschedule_reason' => 'nullable|string',
+    ]);
+
+    $updateData = [];
+    if ($request->has('appointment_date')) {
+        $updateData['appointment_date'] = $validated['appointment_date'];
+    }
+    if ($request->has('appointment_time')) {
+        $updateData['appointment_time'] = $validated['appointment_time'];
+    }
+    if ($request->has('reschedule_reason')) {
+        $updateData['notes'] = trim((($application->notes ?? '') . "\n" . $validated['reschedule_reason']));
+    }
+
+    $application->update($updateData);
+
+    return response()->json(['success' => true, 'message' => 'Application updated successfully.']);
+})->middleware(['auth'])->name('owner.adoption-applications.update');
+
 // ==============================
 // PROFILE ROUTES (Authenticated Users)
 // ==============================

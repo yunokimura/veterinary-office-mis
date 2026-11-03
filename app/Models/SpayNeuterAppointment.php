@@ -94,6 +94,7 @@ class SpayNeuterAppointment extends Model
         'general_agreement',
         'veterinarian',
         'assigned_vet',
+        'notes',
     ];
 
     /**
