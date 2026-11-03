@@ -103,27 +103,68 @@
     // Upcoming appointments (vaccination & spay/neuter) within 1 week
     \App\Models\VaccinationAppointment::where('user_id', auth()->id())
         ->whereBetween('scheduled_at', [$alertNow, $alertWeek])
-        ->with('pet')
+        ->with(['pet.petInfo', 'pet.owner.address.barangay', 'assignedVet.user', 'vaccinationReports'])
         ->get()
-        ->each(fn($a) => $upcomingAlerts->push((object)[
-            'type' => 'appointment',
-            'label' => 'Anti-Rabies Vaccination',
-            'pet_name' => optional($a->pet)->pet_name ?? 'N/A',
-            'date' => \Carbon\Carbon::parse($a->scheduled_at)->format('F d, Y \a\t g:i A'),
-            'id' => 'APP-' . $a->id,
-        ]));
+        ->each(function ($a) use (&$upcomingAlerts) {
+            $pet = optional($a->pet);
+            $owner = optional($pet)->owner;
+            $petInfo = optional($pet)->petInfo;
+            $address = optional($owner)->address;
+            $barangay = optional($address)->barangay;
+            $lastRabies = optional($a->vaccinationReports)->last();
+            $upcomingAlerts->push((object)[
+                'type' => 'vaccination',
+                'label' => 'Anti-Rabies Vaccination',
+                'pet_name' => optional($pet)->pet_name ?? 'N/A',
+                'pet_breed' => optional($pet)->breed ?? '',
+                'pet_id' => optional($pet)->pet_id ?? null,
+                'pet_gender' => optional($pet)->gender ?? '',
+                'weight' => $petInfo?->pet_weight ?? '-',
+                'date' => \Carbon\Carbon::parse($a->scheduled_at)->format('F d, Y \a\t g:i A'),
+                'scheduled_at' => $a->scheduled_at,
+                'status' => $a->status,
+                'id' => 'APP-' . $a->id,
+                'vet' => $a->assignedVet?->user?->name ?? $a->clinic_name ?? 'N/A',
+                'owner_name' => $owner ? trim($owner->first_name . ' ' . $owner->last_name) : 'N/A',
+                'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ', ' . ($barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? 'N/A')) . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? 'N/A'),
+                'last_rabies_date' => $lastRabies?->vaccination_date ?? null,
+                'recent_surgery' => $lastRabies?->notes ?? 'None',
+                'additional_notes' => $lastRabies?->notes ?? ($a->notes ?? ''),
+            ]);
+        });
 
     \App\Models\SpayNeuterAppointment::where('user_id', auth()->id())
         ->whereBetween('scheduled_at', [$alertNow, $alertWeek])
-        ->with('pet')
+        ->with(['pet.petInfo', 'pet.owner.address.barangay', 'assignedVet.user'])
         ->get()
-        ->each(fn($a) => $upcomingAlerts->push((object)[
-            'type' => 'appointment',
-            'label' => 'Spay & Neuter (Kapon)',
-            'pet_name' => optional($a->pet)->pet_name ?? 'N/A',
-            'date' => \Carbon\Carbon::parse($a->scheduled_at)->format('F d, Y \a\t g:i A'),
-            'id' => 'APP-' . $a->id,
-        ]));
+        ->each(function ($a) use (&$upcomingAlerts) {
+            $pet = optional($a->pet);
+            $owner = optional($pet)->owner;
+            $petInfo = optional($pet)->petInfo;
+            $address = optional($owner)->address;
+            $barangay = optional($address)->barangay;
+            $gender = optional($pet)->gender ?? '';
+            $upcomingAlerts->push((object)[
+                'type' => 'spay_neuter',
+                'label' => 'Spay & Neuter (Kapon)',
+                'pet_name' => optional($pet)->pet_name ?? 'N/A',
+                'pet_breed' => optional($pet)->breed ?? '',
+                'pet_id' => optional($pet)->pet_id ?? null,
+                'pet_gender' => $gender,
+                'weight' => $petInfo?->pet_weight ?? $a->weight ?? '-',
+                'date' => \Carbon\Carbon::parse($a->scheduled_at)->format('F d, Y \a\t g:i A'),
+                'scheduled_at' => $a->scheduled_at,
+                'status' => $a->status,
+                'id' => 'APP-' . $a->id,
+                'vet' => $a->assignedVet?->user?->name ?? $a->veterinarian ?? 'N/A',
+                'owner_name' => $owner ? trim($owner->first_name . ' ' . $owner->last_name) : 'N/A',
+                'owner_address' => $address ? trim((string) ($address->block_lot_phase ?? '') . ' ' . ($address->street ?? '') . ' ' . ($address->subdivision ?? '') . ', ' . ($barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? 'N/A')) . ', ' . ($address->city ?? '') . ', ' . ($address->province ?? '')) : 'N/A',
+                'owner_barangay' => $barangay?->barangay_name ?? ($address?->barangay?->barangay_name ?? 'N/A'),
+                'procedure_type' => $gender === 'female' ? 'Spay' : 'Neuter',
+                'additional_notes' => $a->notes ?? '',
+            ]);
+        });
 
     // Upcoming adoption application interviews within 1 week
     \App\Models\AdoptionApplication::where('user_id', auth()->id())
@@ -135,7 +176,10 @@
             'type' => 'adoption',
             'label' => 'Adoption Interview',
             'pet_name' => optional($a->pet)->pet_name ?? 'Unspecified (General)',
+            'pet_breed' => optional($a->pet)->breed ?? '',
+            'pet_id' => optional($a->pet)->pet_id ?? null,
             'date' => \Carbon\Carbon::parse($a->appointment_date)->format('F d, Y \a\t g:i A'),
+            'scheduled_at' => $a->appointment_date,
             'id' => 'ADPT-' . $a->id,
         ]));
 @endphp
@@ -1573,7 +1617,7 @@
         }
 
         function renderGlassModal() {
-            const isAppt = activeItemType === 'appointment';
+            const isAppt = ['appointment', 'vaccination', 'spay_neuter'].includes(activeItemType);
             const item = activeItemData;
             const statusLabel = (item.status || 'pending_review').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
@@ -1599,7 +1643,7 @@
 
             document.getElementById('glassIcon').innerHTML = isAppt ? '<i data-lucide="calendar" class="w-5 h-5"></i>' : '<i data-lucide="heart" class="w-5 h-5"></i>';
             document.getElementById('glassSubhead').innerText = `${isAppt ? 'My Appointments' : 'My Adoption Applications'} • ${activeTabMode === 'view' ? 'View' : 'Edit'}`;
-            const idPrefix = activeItemType === 'appointment' ? 'APP #' : 'ADPT-APP #';
+            const idPrefix = ['appointment', 'vaccination', 'spay_neuter'].includes(activeItemType) ? 'APP #' : 'ADPT-APP #';
             document.getElementById('glassTitle').innerText = `${idPrefix}${item.id}: ${item.pet_name}`;
             document.getElementById('glassIDTag').innerText = `Record Reference: ${idPrefix}${item.id}`;
 
@@ -1619,6 +1663,8 @@
             if (activeTabMode === 'view') {
                 if (isAppt) {
                     const isVaccination = item.type === 'vaccination';
+                    const gender = String(item.pet_gender || '').toLowerCase();
+                    const procedureType = isVaccination ? 'Anti-Rabies Vaccination' : (gender === 'female' ? 'Spay' : 'Neuter');
                     content.innerHTML = `
                         <div class="p-4 rounded-2xl ${statusBorder} border-t border-r border-b border-slate-200/80 space-y-1">
                             <div class="flex items-center justify-between">
@@ -1636,10 +1682,11 @@
                                     <div class="flex justify-between"><span class="text-slate-500">Breed:</span><span class="font-semibold text-slate-800">${item.pet_breed || '-'}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Pet ID:</span><span class="font-semibold text-slate-800 font-mono">PET-${String(item.pet_id ?? '-').padStart(4, '0')}</span></div>
                                     ${isVaccination ? `
+                                        <div class="flex justify-between"><span class="text-slate-500">Procedure Type:</span><span class="font-semibold text-slate-800">${procedureType}</span></div>
                                         <div class="flex justify-between"><span class="text-slate-500">Last Anti-Rabies:</span><span class="font-semibold text-slate-800">${item.last_rabies_date ? new Date(item.last_rabies_date).toLocaleDateString() : '-'}</span></div>
                                         <div class="flex justify-between"><span class="text-slate-500">Recent Surgery:</span><span class="font-semibold text-slate-800">${item.recent_surgery || 'None'}</span></div>
                                     ` : `
-                                        <div class="flex justify-between"><span class="text-slate-500">Procedure Type:</span><span class="font-semibold text-slate-800">${item.procedure_type || 'N/A'}</span></div>
+                                        <div class="flex justify-between"><span class="text-slate-500">Procedure Type:</span><span class="font-semibold text-slate-800">${procedureType}</span></div>
                                         <div class="flex justify-between"><span class="text-slate-500">Weight:</span><span class="font-semibold text-slate-800">${item.weight || 'N/A'}</span></div>
                                     `}
                                 </div>
