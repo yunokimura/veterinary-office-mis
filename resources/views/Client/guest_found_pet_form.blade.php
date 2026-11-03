@@ -414,7 +414,7 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 Current Holding Status
                             </label>
-                            <div class="flex items-center gap-3">
+                            <div class="grid grid-cols-2 gap-3">
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input type="radio" name="holding_status" value="keeping" class="sr-only peer" onclick="togglePill(this); toggleHoldingStatusOther()">
                                     <span class="px-3 py-1.5 text-sm rounded-full border border-slate-300 text-gray-700 bg-white cursor-pointer hover:border-emerald-500 transition-colors peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600">I'm keeping the pet safely</span>
