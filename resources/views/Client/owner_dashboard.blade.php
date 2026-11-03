@@ -1696,7 +1696,7 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-4 md:grid md:grid-cols-2 gap-4">
                             <!-- Pet Details -->
                             <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Pet Details</span>
@@ -1720,7 +1720,7 @@
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Owner Details</span>
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between"><span class="text-slate-500">Name:</span><span class="font-semibold text-slate-800">${item.owner_name}</span></div>
-                                    <div class="flex justify-between items-start"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words max-w-[160px] leading-tight">${item.owner_address}</span></div>
+                                    <div class="flex justify-between items-start"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words md:max-w-[160px] leading-tight">${item.owner_address}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Barangay:</span><span class="font-semibold text-slate-800">${item.owner_barangay}</span></div>
                                 </div>
                             </div>
@@ -1752,7 +1752,7 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-4 md:grid md:grid-cols-2 gap-4">
                             <!-- Selected Pet Information -->
                             <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Selected Pet Information</span>
@@ -1769,7 +1769,7 @@
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Owner Details</span>
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between"><span class="text-slate-500">Name:</span><span class="font-semibold text-slate-800">${item.owner_name}</span></div>
-                                    <div class="flex justify-between items-start"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words max-w-[160px] leading-tight">${item.owner_address}</span></div>
+                                    <div class="flex justify-between items-start"><span class="text-slate-500">Address:</span><span class="font-semibold text-slate-800 text-right min-w-0 break-words md:max-w-[160px] leading-tight">${item.owner_address}</span></div>
                                     <div class="flex justify-between"><span class="text-slate-500">Barangay:</span><span class="font-semibold text-slate-800">${item.owner_barangay}</span></div>
                                 </div>
                             </div>
@@ -1788,9 +1788,9 @@
                             <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 col-span-2">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Remarks from City Vet Office</span>
                                 <div class="space-y-2 text-xs">
-                                    <div class="flex justify-between items-start"><span class="text-slate-500">Remarks:</span><span class="font-semibold text-slate-800 break-words max-w-[200px] leading-tight">${item.reviewed_by_name ? (item.rejection_reason || 'No remarks') : 'No remarks'}</span></div>
+                                    <div class="flex justify-between items-start"><span class="text-slate-500">Remarks:</span><span class="font-semibold text-slate-800 break-words md:max-w-[200px] leading-tight">${item.reviewed_by_name ? (item.rejection_reason || 'No remarks') : 'No remarks'}</span></div>
                                     ${item.reviewed_by_name ? `
-                                    <div class="flex justify-between items-start"><span class="text-slate-500">Reviewed By:</span><span class="font-semibold text-slate-800 break-words max-w-[150px] leading-tight">${item.reviewed_by_name} on ${new Date(item.reviewed_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
+                                    <div class="flex justify-between items-start"><span class="text-slate-500">Reviewed By:</span><span class="font-semibold text-slate-800 break-words md:max-w-[150px] leading-tight">${item.reviewed_by_name} on ${new Date(item.reviewed_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
                                     ` : ''}
                                 </div>
                             </div>
