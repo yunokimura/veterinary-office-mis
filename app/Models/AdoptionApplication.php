@@ -112,7 +112,7 @@ class AdoptionApplication extends Model
 
     public function pet(): BelongsTo
     {
-        return $this->belongsTo(Pet::class, 'selected_pet_id');
+        return $this->belongsTo(Pet::class, 'selected_pet_id', 'pet_id');
     }
 
     public function owner(): BelongsTo

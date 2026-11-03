@@ -195,13 +195,15 @@
                 <div class="w-12 h-12 rounded-2xl bg-yellow-500 flex items-center justify-center flex-shrink-0">
                     <i data-lucide="bell" class="w-6 h-6 text-white"></i>
                 </div>
-                <div class="min-w-0">
-                    <div class="flex items-center gap-2 text-xs">
-                        <span class="inline-block px-2 py-0.5 rounded-md bg-yellow-100 text-yellow-700 font-bold uppercase tracking-wider">Upcoming Appointment</span>
-                        <span class="text-slate-500">APP #{{ str_replace('APP-', '', $alert->id ?? '') }}</span>
-                        <span class="text-slate-500">•</span>
-                        <span class="text-slate-500">{{ $alert->date }}</span>
-                    </div>
+                    <div class="min-w-0">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="inline-block px-2 py-0.5 rounded-md bg-yellow-100 text-yellow-700 font-bold uppercase tracking-wider">Upcoming Appointment</span>
+                                <span class="text-slate-500">APP #{{ str_replace('APP-', '', $alert->id ?? '') }}</span>
+                                <span class="text-slate-500">•</span>
+                            </div>
+                            <span class="text-slate-500">{{ $alert->date }}</span>
+                        </div>
                     <p class="text-sm text-slate-800 font-medium mt-1 leading-relaxed">
                         {{ $alert->label }} appointment for
                         <span class="text-yellow-700 font-bold">{{ $alert->pet_name }}</span>
@@ -443,7 +445,7 @@
                                         ->exists();
                                     $isNeutered = $petInfoNeutered || $hasCompletedKapon;
                                 @endphp
-                                <div class="grid grid-cols-2 gap-2 my-4 p-2.5 bg-slate-50 rounded-xl text-xs">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 my-4 p-2.5 bg-slate-50 rounded-xl text-xs">
                                     <!-- Gender & Age | Weight -->
                                     <div>
                                         <span class="text-slate-400 block text-[10px] uppercase font-bold">Gender & Age</span>
@@ -590,6 +592,9 @@
         $adoptionData = collect();
         foreach ($applications as $application) {
             $pet = optional($application->pet);
+            if (!$pet && $application->selected_pet_id) {
+                $pet = optional(\App\Models\Pet::withTrashed()->find($application->selected_pet_id));
+            }
             $user = optional($application->user);
             $address = optional($application->address);
             $barangay = optional($address)->barangay;
@@ -636,7 +641,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 <!-- Left Column: My Appointments (7 Cols) -->
-                <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm flex flex-col justify-between">
+                <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200/80 p-4 sm:p-6 shadow-sm flex flex-col justify-between">
                     <div>
                         <!-- Section Header -->
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-slate-100">
@@ -659,7 +664,7 @@
                         </div>
 
                         <!-- Appointments Container (Dynamic via JS) -->
-                        <div id="appointmentsContainer" class="space-y-3 mt-5 min-h-[280px]">
+                        <div id="appointmentsContainer" class="space-y-3 mt-4 min-h-[200px] sm:min-h-[280px]">
                             <!-- Rendered by JS -->
                         </div>
                     </div>
@@ -682,7 +687,7 @@
                 </div>
 
                 <!-- Right Column: My Adoption Applications (5 Cols) -->
-                <div class="lg:col-span-5 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm flex flex-col justify-between">
+                <div class="lg:col-span-5 bg-white rounded-3xl border border-slate-200/80 p-4 sm:p-6 shadow-sm flex flex-col justify-between">
                     <div>
                         <!-- Section Header -->
                         <div class="flex items-center justify-between pb-5 border-b border-slate-100">
@@ -696,7 +701,7 @@
                         </div>
 
                         <!-- Adoption Applications Container (Dynamic via JS) -->
-                        <div id="adoptionContainer" class="space-y-3 mt-5 min-h-[280px]">
+                        <div id="adoptionContainer" class="space-y-3 mt-4 min-h-[200px] sm:min-h-[280px]">
                             <!-- Rendered by JS -->
                         </div>
                     </div>
@@ -770,7 +775,7 @@
 
     <!-- View Profile Modal -->
     <div id="petProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 sm:p-6">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full h-[85vh] flex flex-col">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-slate-200 flex-shrink-0">
                 <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
