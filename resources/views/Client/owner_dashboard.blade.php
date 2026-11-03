@@ -1782,9 +1782,9 @@
                         <div class="space-y-3 text-xs">
                             <div>
                                 <label class="block font-semibold text-slate-700 mb-1">Scheduled Date & Time</label>
-                                <input id="glassInputDateTime" type="datetime-local" value="${apptDateTime}" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
+                                <input id="glassInputDateTime" type="datetime-local" value="${apptDateTime}" data-original="${apptDateTime}" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium" onchange="toggleRescheduleReason()">
                             </div>
-                            <div>
+                            <div id="glassRescheduleReasonContainer" class="hidden">
                                 <label class="block font-semibold text-slate-700 mb-1">Reason for Reschedule</label>
                                 <textarea id="glassInputRescheduleReason" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">${item.additional_notes || ''}</textarea>
                             </div>
@@ -1806,10 +1806,10 @@
                     content.innerHTML = `
                         <div class="space-y-3 text-xs">
                             <div>
-                                <label class="block font-semibold text-slate-700 mb-1">Interview Date</label>
-                                <input id="glassInputDate" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
+                                <label class="block font-semibold text-slate-700 mb-1">Interview Date & Time</label>
+                                <input id="glassInputDate" type="datetime-local" value="${item.appointment_date ? new Date(item.appointment_date).toISOString().slice(0, 16) : ''}" data-original="${item.appointment_date ? new Date(item.appointment_date).toISOString().slice(0, 16) : ''}" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium" onchange="toggleRescheduleReason()">
                             </div>
-                            <div>
+                            <div id="glassRescheduleReasonContainer" class="hidden">
                                 <label class="block font-semibold text-slate-700 mb-1">Reason for Reschedule</label>
                                 <textarea id="glassInputRescheduleReason" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">${item.additional_notes || ''}</textarea>
                             </div>
@@ -1843,6 +1843,20 @@
         function switchGlassTab(mode) {
             activeTabMode = mode;
             renderGlassModal();
+        }
+
+        function toggleRescheduleReason() {
+            const container = document.getElementById('glassRescheduleReasonContainer');
+            const dateTimeInput = document.getElementById('glassInputDateTime');
+            const dateInput = document.getElementById('glassInputDate');
+            let changed = false;
+            if (dateTimeInput && dateTimeInput.value !== dateTimeInput.getAttribute('data-original')) changed = true;
+            if (dateInput && dateInput.value !== dateInput.getAttribute('data-original')) changed = true;
+            if (changed) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
         }
 
         function saveGlassForm() {
