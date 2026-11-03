@@ -788,11 +788,11 @@
             </div>
 
             <!-- Tab Navigation -->
-            <div class="flex border-b border-slate-200 flex-shrink-0">
-                <button onclick="switchPetTab('overview')" id="petTabOverview" class="px-6 py-4 text-sm font-semibold text-dasma-700 border-b-2 border-dasma-700">Overview</button>
-                <button onclick="switchPetTab('health')" id="petTabHealth" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200">Health & Vaccination</button>
-                <button onclick="switchPetTab('spay')" id="petTabSpay" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200">Spay / Neuter</button>
-                <button onclick="switchPetTab('details')" id="petTabDetails" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200">Details & Traits</button>
+            <div class="flex border-b border-slate-200 flex-shrink-0 overflow-x-auto snap-x no-scrollbar sm:overflow-visible sm:snap-none whitespace-nowrap">
+                <button onclick="switchPetTab('overview')" id="petTabOverview" class="px-6 py-4 text-sm font-semibold text-dasma-700 border-b-2 border-dasma-700 flex-shrink-0 snap-start sm:snap-none">Overview</button>
+                <button onclick="switchPetTab('health')" id="petTabHealth" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200 flex-shrink-0 snap-start sm:snap-none">Health & Vaccination</button>
+                <button onclick="switchPetTab('spay')" id="petTabSpay" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200 flex-shrink-0 snap-start sm:snap-none">Spay / Neuter</button>
+                <button onclick="switchPetTab('details')" id="petTabDetails" class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-700 hover:border-slate-200 flex-shrink-0 snap-start sm:snap-none">Details & Traits</button>
             </div>
 
             <!-- Tab Panels -->

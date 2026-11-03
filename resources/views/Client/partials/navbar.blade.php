@@ -251,17 +251,53 @@
                 </div>
             </div>
             <a href="{{ url('/adoption') }}" class="{{ request()->is('adoption*') ? 'bg-primary/10 text-primary font-semibold underline' : 'text-slate-600 hover:bg-slate-50 font-medium' }} text-base block py-2 px-3 rounded-lg">Adoption</a>
-            <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
-                @auth
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <button type="submit" class="w-full bg-red-50 text-red-700 py-3 rounded-xl font-semibold text-center border border-red-100">Logout</button>
-                    </form>
-                    @else
-                        <a href="{{ route('login') }}" class="block w-full text-center text-primary font-semibold py-3 rounded-xl border border-primary/20 hover:bg-primary/5">Login</a>
-                        <a href="{{ route('register') }}" class="block w-full text-center bg-primary text-white py-3 rounded-xl font-semibold shadow-md">Register</a>
-                    @endauth
-            </div>
+            <!-- Mobile User Dropdown -->
+            @auth
+                <div class="relative pt-4 border-t border-slate-100">
+                    <button onclick="toggleMobileUserDropdown()" class="w-full text-left py-3 px-4 rounded-xl font-semibold text-slate-700 hover:bg-slate-50 border border-slate-200 flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center text-white shadow-sm">
+                                {{ strtoupper(mb_substr(Auth::user()->first_name, 0, 1) . mb_substr(Auth::user()->last_name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <span class="block text-sm font-medium text-slate-900">{{ Auth::user()->first_name }}@if (Auth::user()->middle_name) {{ mb_substr(Auth::user()->middle_name, 0, 1) }}.@endif {{ Auth::user()->last_name }}</span>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="mobileUserDropdown" class="hidden pl-2 space-y-1 pt-3">
+                        <a href="{{ route('owner.dashboard') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-50 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span>Profile</span>
+                        </a>
+                        <hr class="my-1 border-slate-100">
+                        <form method="POST" action="{{ route('logout') }}" class="block">
+                            @csrf
+                            <button type="submit" class="w-full text-left py-3 px-4 rounded-xl text-red-600 hover:bg-red-50 font-medium flex items-center gap-3 border border-transparent">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @else
+                <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
+                    <a href="{{ route('login') }}" class="block w-full text-center text-primary font-semibold py-3 rounded-xl border border-primary/20 hover:bg-primary/5">Login</a>
+                    <a href="{{ route('register') }}" class="block w-full text-center bg-primary text-white py-3 rounded-xl font-semibold shadow-md">Register</a>
+                </div>
+            @endauth
         </div>
 
     </header>
@@ -400,6 +436,14 @@
                 }
                 mobileLostFoundMenu.classList.toggle('hidden');
             });
+        }
+
+        // Mobile user dropdown toggle
+        function toggleMobileUserDropdown() {
+            const mobileUserDropdown = document.getElementById('mobileUserDropdown');
+            if (mobileUserDropdown) {
+                mobileUserDropdown.classList.toggle('hidden');
+            }
         }
 
         document.addEventListener('click', function(e) {
