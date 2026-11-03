@@ -763,7 +763,7 @@
                 <span class="text-slate-400 font-mono" id="glassIDTag">ID: #APP-000</span>
                 <div id="glassFooterBtns" class="flex items-center gap-2">
                     <button onclick="closeModal('glassModal')" id="glassCancelBtn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl">Cancel</button>
-                    <button id="glassSaveBtn" onclick="saveGlassForm()" class="px-5 py-2 bg-dasma-700 hover:bg-dasma-800 text-white font-semibold rounded-xl shadow-sm">Save & Update</button>
+                    <button id="glassSaveBtn" onclick="saveGlassForm()" class="px-5 py-2 bg-dasma-700 hover:bg-dasma-800 text-white font-semibold rounded-xl shadow-sm whitespace-nowrap">Save & Update</button>
                 </div>
             </div>
     </div>
@@ -1851,12 +1851,12 @@
             if (isCompleted) {
                 cancelBtn.classList.add('hidden');
                 saveBtn.textContent = 'Close';
-                saveBtn.className = 'px-5 py-2 bg-slate-500 hover:bg-slate-600 text-white font-semibold rounded-xl shadow-sm';
+                saveBtn.className = 'px-5 py-2 bg-slate-500 hover:bg-slate-600 text-white font-semibold rounded-xl shadow-sm whitespace-nowrap';
                 saveBtn.onclick = () => closeModal('glassModal');
             } else {
                 cancelBtn.classList.remove('hidden');
                 saveBtn.textContent = 'Save & Update';
-                saveBtn.className = 'px-5 py-2 bg-dasma-700 hover:bg-dasma-800 text-white font-semibold rounded-xl shadow-sm';
+                saveBtn.className = 'px-5 py-2 bg-dasma-700 hover:bg-dasma-800 text-white font-semibold rounded-xl shadow-sm whitespace-nowrap';
                 saveBtn.onclick = saveGlassForm;
             }
 
