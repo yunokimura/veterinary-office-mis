@@ -1785,6 +1785,10 @@
                                 <input id="glassInputDateTime" type="datetime-local" value="${apptDateTime}" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
                             </div>
                             <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Reason for Reschedule</label>
+                                <textarea id="glassInputRescheduleReason" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">${item.additional_notes || ''}</textarea>
+                            </div>
+                            <div>
                                 <label class="block font-semibold text-slate-700 mb-1">Service Type</label>
                                 <select id="glassInputServiceType" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
                                     <option value="vaccination" ${item.type === 'vaccination' ? 'selected' : ''}>Anti-Rabies Vaccination</option>
@@ -1804,6 +1808,10 @@
                             <div>
                                 <label class="block font-semibold text-slate-700 mb-1">Interview Date</label>
                                 <input id="glassInputDate" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Reason for Reschedule</label>
+                                <textarea id="glassInputRescheduleReason" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium">${item.additional_notes || ''}</textarea>
                             </div>
                             <div>
                                 <label class="block font-semibold text-slate-700 mb-1">Remarks</label>
@@ -1847,10 +1855,12 @@
                 const dateTimeVal = document.getElementById('glassInputDateTime')?.value;
                 const serviceTypeVal = document.getElementById('glassInputServiceType')?.value;
                 const notesVal = document.getElementById('glassInputNotes')?.value;
+                const rescheduleReasonVal = document.getElementById('glassInputRescheduleReason')?.value;
                 const updatedFields = [];
                 if (dateTimeVal) updatedFields.push('Scheduled Date & Time');
                 if (serviceTypeVal) updatedFields.push('Service Type');
                 if (notesVal) updatedFields.push('Additional Notes');
+                if (rescheduleReasonVal) updatedFields.push('Reason for Reschedule');
                 if (updatedFields.length > 0) {
                     showToast(`Updated: ${updatedFields.join(', ')}`);
                 } else {
