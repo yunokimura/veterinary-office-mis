@@ -59,6 +59,8 @@ class PetRegistrationController extends Controller
                 'anti_rabies.date_administered' => 'required_if:vaccination_core.*,Anti-Rabies|nullable|date_format:Y-m-d',
                 'anti_rabies.lot_no' => 'nullable|string|max:6|regex:/^[A-Za-z0-9]+$/',
                 'anti_rabies.tag_no' => 'nullable|string|max:30|regex:/^[A-Za-z0-9\-\s]+$/',
+                'anti_rabies.vaccine_brand' => 'required_if:vaccination_core.*,Anti-Rabies|nullable|string|max:100|in:Nobivac Rabies,Rabisin,Defensor,Canigen Rabies,Biocan R,Other',
+                'anti_rabies.vaccine_brand_other' => 'required_if:anti_rabies.vaccine_brand,Other|nullable|string|max:100',
                 'vaccination_card' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'book_booster' => 'nullable|boolean',
             ]);
@@ -260,15 +262,20 @@ class PetRegistrationController extends Controller
                             $antiRabiesDate = $request->input('anti_rabies.date_administered');
                             $antiRabiesLot = $request->input('anti_rabies.lot_no');
                             $antiRabiesTag = $request->input('anti_rabies.tag_no');
+                            $antiRabiesBrand = $request->input('anti_rabies.vaccine_brand');
+                            $antiRabiesBrandOther = $request->input('anti_rabies.vaccine_brand_other');
 
                             $record['date_administered'] = $antiRabiesDate;
                             $record['lot_no'] = $antiRabiesLot;
                             $record['tag_no'] = $antiRabiesTag;
+                            $record['vaccine_brand'] = $antiRabiesBrand === 'Other' && trim((string) $antiRabiesBrandOther) !== '' ? trim($antiRabiesBrandOther) : $antiRabiesBrand;
 
                             $antiRabiesDetails = [
                                 'date_administered' => $antiRabiesDate,
                                 'lot_no' => $antiRabiesLot,
                                 'tag_no' => $antiRabiesTag,
+                                'vaccine_brand' => $antiRabiesBrand === 'Other' && trim((string) $antiRabiesBrandOther) !== '' ? trim($antiRabiesBrandOther) : $antiRabiesBrand,
+                                'vaccine_brand_other' => $antiRabiesBrand === 'Other' ? $antiRabiesBrandOther : null,
                             ];
                         }
                         $vaccinationRecords[] = $record;

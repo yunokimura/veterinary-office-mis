@@ -647,13 +647,29 @@
                                     </label>
 
                                     <!-- Anti-Rabies sub-fields (shown when checked) -->
-                                    <div id="antiRabiesFields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-slate-200">
+                                    <div id="antiRabiesFields" class="hidden grid grid-cols-1 md:grid-cols-4 gap-4 pt-3 border-t border-slate-200">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-1">Date Administered <span class="text-red-500">*</span></label>
                                             <input type="date" name="anti_rabies[date_administered]" value="{{ old('anti_rabies.date_administered') }}" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Vaccine Lot No. (Optional)</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Vaccine Brand <span class="text-red-500">*</span></label>
+                                            <select name="anti_rabies[vaccine_brand]" id="antiRabiesBrand" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" onchange="toggleAntiRabiesBrandOther(this)">
+                                                <option value="" disabled selected>Select vaccine brand</option>
+                                                <option value="Nobivac Rabies">Nobivac Rabies</option>
+                                                <option value="Rabisin">Rabisin</option>
+                                                <option value="Defensor">Defensor (Defensor 1/Defensor 3)</option>
+                                                <option value="Canigen Rabies">Canigen Rabies</option>
+                                                <option value="Biocan R">Biocan R</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <div id="antiRabiesBrandOther" class="hidden mt-2">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Please specify</label>
+                                                <input type="text" name="anti_rabies[vaccine_brand_other]" value="{{ old('anti_rabies.vaccine_brand_other') }}" placeholder="Please specify" maxlength="100" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Vaccine Lot No.</label>
                                             <input type="text" name="anti_rabies[lot_no]" value="{{ old('anti_rabies.lot_no') }}" placeholder="G12345" maxlength="6" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').slice(0, 6);">
                                         </div>
                                         <div>
@@ -2398,18 +2414,22 @@ groups[letter].forEach((breed, breedIndex) => {
             const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
             const lotInput = document.querySelector('input[name="anti_rabies[lot_no]"]');
             const tagInput = document.querySelector('input[name="anti_rabies[tag_no]"]');
+            const brandSelect = document.querySelector('select[name="anti_rabies[vaccine_brand]"]');
+            const brandOtherInput = document.querySelector('input[name="anti_rabies[vaccine_brand_other]"]');
 
             let antiRabiesHtml = '';
             let boosterHtml = '';
 
             if (antiRabiesChecked && antiRabiesChecked.checked) {
                 const dateVal = dateInput && dateInput.value ? new Date(dateInput.value + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+                const brandVal = brandSelect && brandSelect.value ? (brandSelect.value === 'Other' && brandOtherInput && brandOtherInput.value.trim() !== '' ? brandOtherInput.value.trim() : brandSelect.value) : '—';
                 const lotVal = lotInput && lotInput.value.trim() !== '' ? lotInput.value.trim() : '—';
                 const tagVal = tagInput && tagInput.value.trim() !== '' ? tagInput.value.trim() : '—';
 
                 antiRabiesHtml = `
                     <div class="mt-2 space-y-1 text-sm">
                         <div><span class="text-gray-700">Date Administered:</span> <span class="font-semibold text-gray-900">${dateVal}</span></div>
+                        <div><span class="text-gray-700">Vaccine Brand:</span> <span class="font-semibold text-gray-900">${brandVal}</span></div>
                         <div><span class="text-gray-700">Vaccine Lot No.:</span> <span class="font-semibold text-gray-900">${lotVal}</span></div>
                         <div><span class="text-gray-700">Tag / Sticker No.:</span> <span class="font-semibold text-gray-900">${tagVal}</span></div>
                     </div>
@@ -2499,6 +2519,8 @@ groups[letter].forEach((breed, breedIndex) => {
             const antiRabiesCheckbox = document.getElementById('antiRabiesCheckbox');
             const antiRabiesFields = document.getElementById('antiRabiesFields');
             const dateInput = document.querySelector('input[name="anti_rabies[date_administered]"]');
+            const brandSelect = document.querySelector('select[name="anti_rabies[vaccine_brand]"]');
+            const brandOther = document.getElementById('antiRabiesBrandOther');
             
             if (!notVaccinatedCheckbox || !antiRabiesCheckbox || !antiRabiesFields) return;
 
@@ -2518,11 +2540,12 @@ groups[letter].forEach((breed, breedIndex) => {
                 antiRabiesCheckbox.checked = false;
                 antiRabiesCheckbox.disabled = true;
                 antiRabiesFields.classList.add('hidden');
-                antiRabiesFields.querySelectorAll('input').forEach(input => {
+                antiRabiesFields.querySelectorAll('input, select').forEach(input => {
                     input.value = '';
                     input.removeAttribute('required');
                 });
                 if (dateInput) dateInput.removeAttribute('required');
+                if (brandOther) brandOther.classList.add('hidden');
                 setDisabledLabel('antiRabiesLabel', true);
                 setDisabledLabel('notVaccinatedLabel', false);
             } else if (antiRabiesChecked) {
@@ -2531,6 +2554,8 @@ groups[letter].forEach((breed, breedIndex) => {
                 notVaccinatedCheckbox.checked = false;
                 antiRabiesFields.classList.remove('hidden');
                 if (dateInput) dateInput.setAttribute('required', 'required');
+                if (brandSelect) brandSelect.setAttribute('required', 'required');
+                if (brandOther) brandOther.classList.add('hidden');
                 setDisabledLabel('notVaccinatedLabel', true);
                 setDisabledLabel('antiRabiesLabel', false);
             } else {
@@ -2538,10 +2563,11 @@ groups[letter].forEach((breed, breedIndex) => {
                 notVaccinatedCheckbox.disabled = false;
                 antiRabiesCheckbox.disabled = false;
                 antiRabiesFields.classList.add('hidden');
-                antiRabiesFields.querySelectorAll('input').forEach(input => {
+                antiRabiesFields.querySelectorAll('input, select').forEach(input => {
                     input.removeAttribute('required');
                 });
                 if (dateInput) dateInput.removeAttribute('required');
+                if (brandOther) brandOther.classList.add('hidden');
                 setDisabledLabel('notVaccinatedLabel', false);
                 setDisabledLabel('antiRabiesLabel', false);
             }
@@ -2555,6 +2581,21 @@ groups[letter].forEach((breed, breedIndex) => {
         // Toggle Anti-Rabies sub-fields when checkbox is checked/unchecked
         function toggleAntiRabiesFields(checkbox) {
             syncVaccinationUI();
+        }
+
+        // Show/hide the "Please specify" text input when "Other" is chosen
+        function toggleAntiRabiesBrandOther(select) {
+            const brandOther = document.getElementById('antiRabiesBrandOther');
+            const otherInput = brandOther ? brandOther.querySelector('input') : null;
+            if (!brandOther || !otherInput) return;
+
+            if (select.value === 'Other') {
+                brandOther.classList.remove('hidden');
+                otherInput.focus();
+            } else {
+                brandOther.classList.add('hidden');
+                otherInput.value = '';
+            }
         }
 
             // Preview vaccination card
