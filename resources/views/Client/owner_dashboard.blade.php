@@ -445,7 +445,7 @@
                                         ->exists();
                                     $isNeutered = $petInfoNeutered || $hasCompletedKapon;
                                 @endphp
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 my-4 p-2.5 bg-slate-50 rounded-xl text-xs">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 my-4 p-2.5 bg-slate-50 rounded-xl text-xs">
                                     <!-- Gender & Age | Weight -->
                                     <div>
                                         <span class="text-slate-400 block text-[10px] uppercase font-bold">Gender & Age</span>
@@ -453,7 +453,7 @@
                                     </div>
                                     <div>
                                         <span class="text-slate-400 block text-[10px] uppercase font-bold">Weight</span>
-                                        <span class="font-semibold text-slate-700">{{ $pet->petInfo?->pet_weight ?? '-' }}</span>
+                                        <span class="font-semibold text-slate-700">{{ $pet->petInfo?->pet_weight ? $pet->petInfo->pet_weight . ' kg' : '-' }}</span>
                                     </div>
                                     <!-- Spayed / Neuter -->
                                     <div class="col-span-2">
@@ -860,10 +860,6 @@
                         <div class="bg-slate-50 rounded-xl p-3">
                             <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Next Due</p>
                             <p id="petProfileVaxNext" class="font-semibold text-slate-700">-</p>
-                        </div>
-                        <div class="bg-slate-50 rounded-xl p-3">
-                            <p class="text-slate-400 text-[10px] uppercase font-bold mb-1">Type</p>
-                            <p id="petProfileVaxType" class="font-semibold text-slate-700">-</p>
                         </div>
                     </div>
 
@@ -1272,7 +1268,7 @@
             document.getElementById('petProfileSpecies').textContent = pet.species || '-';
             document.getElementById('petProfileGender').textContent = pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : '-';
             document.getElementById('petProfileAge').textContent = petInfo.pet_age || computeAge(pet.birthdate) || '-';
-            document.getElementById('petProfileWeight').textContent = petInfo.pet_weight || '-';
+            document.getElementById('petProfileWeight').textContent = petInfo.pet_weight ? petInfo.pet_weight + ' kg' : '-';
             document.getElementById('petProfilePetId').textContent = 'PET-' + String(pet.pet_id).padStart(4, '0');
             document.getElementById('petProfileStatus').textContent = pet.pet_status ? pet.pet_status.charAt(0).toUpperCase() + pet.pet_status.slice(1) : '-';
 
@@ -1294,7 +1290,6 @@
             const vaxBatchEl = document.getElementById('petProfileVaxBatch');
             const vaxDateEl = document.getElementById('petProfileVaxDate');
             const vaxNextEl = document.getElementById('petProfileVaxNext');
-            const vaxTypeEl = document.getElementById('petProfileVaxType');
             const vaxNotesEl = document.getElementById('petProfileVaxNotes');
 
             if (report && report.status === 'completed' && !report.not_vaccinated) {
@@ -1310,7 +1305,6 @@
             vaxBatchEl.textContent = report ? ('Lot #' + (report.vaccine_batch_number || 'N/A')) : '-';
             vaxDateEl.textContent = report && report.vaccination_date ? new Date(report.vaccination_date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '-';
             vaxNextEl.textContent = report && report.next_vaccination_date ? new Date(report.next_vaccination_date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '-';
-            vaxTypeEl.textContent = report ? (report.vaccination_type || '-') : '-';
             vaxNotesEl.textContent = report ? (report.notes || '-') : '-';
 
             // Spay / Neuter tab

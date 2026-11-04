@@ -1625,7 +1625,18 @@ Route::get('/vaccination/form', function () {
     }])->first() : null;
     $pets = $petOwner ? Pet::where('owner_id', $petOwner->owner_id)->get() : collect([]);
 
-    $petsArray = $pets->map(function ($pet) {
+    // Pets that already have a vaccination appointment (pending/scheduled/approved)
+    $appointmentsByPet = collect([]);
+    if ($user) {
+        $appointmentsByPet = VaccinationAppointment::where('user_id', $user->id)
+            ->whereIn('status', ['pending', 'scheduled', 'approved'])
+            ->whereNotNull('scheduled_at')
+            ->get()
+            ->keyBy('pet_id');
+    }
+
+    $petsArray = $pets->map(function ($pet) use ($appointmentsByPet) {
+        $appointment = $appointmentsByPet->get($pet->pet_id);
         return [
             'id' => $pet->pet_id,
             'name' => $pet->pet_name,
@@ -1640,6 +1651,13 @@ Route::get('/vaccination/form', function () {
             'next_vaccination_date' => $pet->next_vaccination_date,
             'birthdate' => $pet->birthdate,
             'image' => $pet->pet_image,
+            'has_appointment' => (bool) $appointment,
+            'appointment' => $appointment ? [
+                'scheduled_at' => $appointment->scheduled_at,
+                'scheduled_date' => Carbon::parse($appointment->scheduled_at)->format('F j, Y'),
+                'scheduled_time' => Carbon::parse($appointment->scheduled_at)->format('h:i A'),
+                'status' => $appointment->status,
+            ] : null,
         ];
     })->toArray();
 

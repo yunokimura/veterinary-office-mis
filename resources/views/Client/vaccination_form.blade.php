@@ -990,6 +990,14 @@
                 }
             });
 
+            // Pre-apply booked state to pets that already have appointments (no click needed)
+            petsData.forEach(pet => {
+                if (pet.appointment) {
+                    const petId = String(pet.id);
+                    bookedPets[petId] = `${pet.name} already has an appointment at ${pet.appointment.scheduled_date} ${pet.appointment.scheduled_time}.`;
+                }
+            });
+
             refreshModalIneligibleStates();
             refreshModalBookedStates();
         }

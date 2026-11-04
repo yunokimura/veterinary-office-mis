@@ -647,7 +647,7 @@
                                     </label>
 
                                     <!-- Anti-Rabies sub-fields (shown when checked) -->
-                                    <div id="antiRabiesFields" class="hidden pl-8 grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-slate-200">
+                                    <div id="antiRabiesFields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-slate-200">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-1">Date Administered <span class="text-red-500">*</span></label>
                                             <input type="date" name="anti_rabies[date_administered]" value="{{ old('anti_rabies.date_administered') }}" max="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
