@@ -3115,9 +3115,9 @@ groups[letter].forEach((breed, breedIndex) => {
                 openVaccinationModal(recommendation);
                 return;
             }
-            // Registration is going out - drop the saved draft
+            // Vaccination is up to date - show success modal with "Go to Dashboard"
             if (petRegistrationDraft) petRegistrationDraft.clear();
-            document.getElementById('petRegistrationForm').submit();
+            registerPetViaAjax(document.getElementById('petRegistrationForm'), true);
         }
 
         function openVaccinationModal(mode) {
@@ -3175,7 +3175,7 @@ groups[letter].forEach((breed, breedIndex) => {
             registerPetViaAjax(form);
         }
 
-        function registerPetViaAjax(form) {
+        function registerPetViaAjax(form, goToDashboard = false) {
             registrationInFlight = true;
 
             const petName = (form.pet_name && form.pet_name.value.trim()) || 'Your pet';
@@ -3194,7 +3194,7 @@ groups[letter].forEach((breed, breedIndex) => {
 
                     if (response.ok && isJson) {
                         const data = await response.json();
-                        showRegistrationSuccess(data);
+                        showRegistrationSuccess(data, goToDashboard);
                         return;
                     }
 
@@ -3235,7 +3235,7 @@ groups[letter].forEach((breed, breedIndex) => {
             modal.setAttribute('role', 'dialog');
         }
 
-        function showRegistrationSuccess(data) {
+        function showRegistrationSuccess(data, goToDashboard = false) {
             openRegistrationStatusModal('success');
 
             // The pet was registered via AJAX - the draft is no longer needed
@@ -3244,19 +3244,27 @@ groups[letter].forEach((breed, breedIndex) => {
             const messageEl = document.getElementById('registrationStatusMessage');
             if (messageEl) {
                 messageEl.innerHTML = (data && data.message)
-                    ? `<span class="font-semibold text-gray-900">${data.message}</span> You can now book their vaccination appointment.`
-                    : 'Your pet has been registered. You can now book their vaccination appointment.';
+                    ? `<span class="font-semibold text-gray-900">${data.message}</span> You can now book your pet for appointments!`
+                    : 'You can now book your pet for appointments!';
             }
 
             const continueBtn = document.getElementById('registrationStatusContinueBtn');
             if (continueBtn) {
-                continueBtn.onclick = function () {
-                    if (data && data.redirect) {
-                        window.location.href = data.redirect;
-                    } else {
-                        window.location.href = '/pet-registration';
-                    }
-                };
+                if (goToDashboard) {
+                    continueBtn.textContent = 'Go to Dashboard';
+                    continueBtn.onclick = function () {
+                        window.location.href = '/owner/dashboard';
+                    };
+                } else {
+                    continueBtn.textContent = 'Continue to Vaccination Form';
+                    continueBtn.onclick = function () {
+                        if (data && data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            window.location.href = '/pet-registration';
+                        }
+                    };
+                }
                 setTimeout(() => continueBtn.focus(), 50);
             }
         }
