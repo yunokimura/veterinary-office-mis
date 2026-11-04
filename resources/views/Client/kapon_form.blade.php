@@ -308,18 +308,25 @@
                                                 $isNeutered = isset($pet['is_neutered']) && strtolower((string) $pet['is_neutered']) === 'yes';
                                                 $petGender = strtolower((string) ($pet['sex'] ?? $pet['gender'] ?? ''));
                                                 $surgeryLabel = ($petGender === 'female') ? 'Spayed' : 'Neutered';
+                                                $alreadyBooked = isset($pet['already_booked']) && $pet['already_booked'] === true;
                                                 $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card';
-                                                if ($isNeutered) {
+                                                if ($isNeutered || $alreadyBooked) {
                                                     $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100 border-gray-200';
                                                 } else {
                                                     $cardClasses .= ' border-gray-200 hover:bg-green-50 hover:border-primary transition-colors';
                                                 }
                                             @endphp
+                                                @php
+                                                $alreadyBooked = isset($pet['already_booked']) && $pet['already_booked'] === true;
+                                                $petBadge = $alreadyBooked
+                                                    ? '<span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded font-medium" title="Already booked for ' . e($pet['scheduled_date'] ?? '') . ' at ' . e($pet['scheduled_time'] ?? '') . '">Already Booked</span>'
+                                                    : '';
+                                            @endphp
                                             <label class="{{ $cardClasses }}" data-pet-id="{{ $pet['id'] }}">
                                                 <input type="checkbox" name="selected_pets[]" value="{{ $pet['id'] }}" 
                                                        class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary pet-checkbox"
                                                        onchange="togglePetSelection(this)"
-                                                       @if($isNeutered) disabled @endif>
+                                                       @if($isNeutered || $alreadyBooked) disabled @endif>
                                                 <div class="ml-3 flex-1">
                                                     <div class="flex items-center justify-between">
                                                         <div class="flex items-center gap-2">
@@ -327,6 +334,7 @@
                                                             <span id="gender-icon-{{ $pet['id'] }}" class="flex-shrink-0"></span>
                                                         </div>
                                                         <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{{ $speciesDisplay }}</span>
+                                                        {!! $petBadge !!}
                                                     </div>
                                                     <div class="mt-1 text-xs text-gray-500">
                                                         <div>Breed: {{ $pet['breed'] ?? 'Unknown' }}</div>
@@ -657,7 +665,7 @@
                     }
 
                     function togglePetSelection(checkbox) {
-                        // Ignore if checkbox is disabled (neutered pet)
+                        // Ignore if checkbox is disabled (neutered or already booked pet)
                         if (checkbox.disabled) {
                             return;
                         }
@@ -680,6 +688,19 @@
                     }
                     
                     async function checkPetBooking(petId, checkbox) {
+                        // Fast path: use pre-computed eligibility from the modal render
+                        const pet = petsData.find(p => String(p.id) === String(petId));
+                        if (pet && pet.already_booked) {
+                            checkbox.checked = false;
+                            showAlreadyBookedModal({
+                                already_booked: true,
+                                pet_name: pet.name,
+                                scheduled_date: pet.scheduled_date,
+                                scheduled_time: pet.scheduled_time,
+                                status: pet.appointment_status,
+                            });
+                            return;
+                        }
                         try {
                             const url = currentUserId 
                                 ? `/api/appointments/check-pet/${encodeURIComponent(petId)}/${currentUserId}`

@@ -961,9 +961,21 @@ Route::get('/kapon/form', function () {
     }])->first();
     $pets = $petOwner ? $petOwner->pets : collect([]);
 
-    $petsArray = $pets->map(function ($pet) {
+    $bookedAppointments = \App\Models\SpayNeuterAppointment::where('user_id', $userId)
+        ->whereIn('status', ['pending', 'scheduled'])
+        ->whereNotNull('scheduled_at')
+        ->orderBy('scheduled_at', 'asc')
+        ->get()
+        ->groupBy('pet_id');
+
+    $petsArray = $pets->map(function ($pet) use ($bookedAppointments) {
+        $petId = $pet->pet_id;
+        $existingAppointment = $bookedAppointments->get($petId, collect())->first();
+        $alreadyBooked = (bool) $existingAppointment;
+        $scheduledAt = $existingAppointment?->scheduled_at;
+
         return [
-            'id' => $pet->pet_id,
+            'id' => $petId,
             'name' => $pet->pet_name,
             'species' => $pet->species,
             'breed' => $pet->breed,
@@ -972,6 +984,10 @@ Route::get('/kapon/form', function () {
             'sex' => $pet->sex ?? $pet->gender, // Use sex or gender (either may be populated)
             'image' => $pet->pet_image,
             'is_neutered' => $pet->petInfo?->is_neutered,
+            'already_booked' => $alreadyBooked,
+            'scheduled_date' => $scheduledAt ? \Carbon\Carbon::parse($scheduledAt)->format('F j, Y') : null,
+            'scheduled_time' => $scheduledAt ? \Carbon\Carbon::parse($scheduledAt)->format('h:i A') : null,
+            'appointment_status' => $existingAppointment?->status,
         ];
     })->toArray();
 
