@@ -968,11 +968,23 @@ Route::get('/kapon/form', function () {
         ->get()
         ->groupBy('pet_id');
 
-    $petsArray = $pets->map(function ($pet) use ($bookedAppointments) {
+    // Fetch previous surgery info per pet (for eligibility persistence)
+    $surgeryRecords = \App\Models\SpayNeuterAppointment::where('user_id', $userId)
+        ->whereNotNull('previous_surgery_date')
+        ->orderBy('previous_surgery_date', 'desc')
+        ->get()
+        ->groupBy('pet_id');
+
+    $petsArray = $pets->map(function ($pet) use ($bookedAppointments, $surgeryRecords) {
         $petId = $pet->pet_id;
         $existingAppointment = $bookedAppointments->get($petId, collect())->first();
         $alreadyBooked = (bool) $existingAppointment;
         $scheduledAt = $existingAppointment?->scheduled_at;
+
+        $surgeryRecord = $surgeryRecords->get($petId, collect())->first();
+        $previousSurgeryDate = $surgeryRecord?->previous_surgery_date;
+        $isIneligibleUntil = $surgeryRecord?->is_ineligible_until;
+        $isIneligible = $isIneligibleUntil && \Carbon\Carbon::parse($isIneligibleUntil)->isFuture();
 
         return [
             'id' => $petId,
@@ -988,6 +1000,11 @@ Route::get('/kapon/form', function () {
             'scheduled_date' => $scheduledAt ? \Carbon\Carbon::parse($scheduledAt)->format('F j, Y') : null,
             'scheduled_time' => $scheduledAt ? \Carbon\Carbon::parse($scheduledAt)->format('h:i A') : null,
             'appointment_status' => $existingAppointment?->status,
+            // Previous surgery info
+            'previous_surgery_date' => $previousSurgeryDate ? $previousSurgeryDate->format('Y-m-d') : null,
+            'surgery_type' => $surgeryRecord?->surgery_type ?? null,
+            'is_ineligible_until' => $isIneligibleUntil ? $isIneligibleUntil->format('Y-m-d') : null,
+            'is_ineligible' => $isIneligible,
         ];
     })->toArray();
 
@@ -1007,8 +1024,6 @@ Route::post('/kapon/form', function (Request $request) {
         'appointment_time' => 'required',
         'general_agreement.combined' => 'required',
     ]);
-
-    // Get authenticated user's PetOwner, with address + barangay prefetched
     $petOwner = auth()->user()->petOwner()->with(['address.barangay'])->first();
 
     if (! $petOwner) {
@@ -1093,10 +1108,54 @@ Route::post('/kapon/form', function (Request $request) {
             'general_agreement' => $request->input('general_agreement', []),
             'veterinarian' => $assignedVeterinarian,
             'assigned_vet' => null,
+            // Previous surgery info (saved for eligibility persistence)
+            'previous_surgery_date' => $pet['previous_surgery_date'] ?? null,
+            'surgery_type' => $pet['surgery_type'] ?? null,
+            'is_ineligible_until' => $pet['previous_surgery_date']
+                ? \Carbon\Carbon::parse($pet['previous_surgery_date'])->addDays(14)->format('Y-m-d')
+                : null,
         ]);
     }
 
     return redirect('/kapon')->with('status', 'Kapon application submitted successfully! You will be notified once reviewed.');
+})->middleware('auth');
+
+// Save previous surgery info (AJAX) - persists eligibility before form submission
+Route::post('/api/kapon/previous-surgery/{petId}', function (Request $request, $petId) {
+    $request->validate([
+        'previous_surgery_date' => 'required|date|before_or_equal:today',
+        'surgery_type' => 'required|string|max:255',
+    ]);
+
+    $userId = auth()->id();
+    $ineligibleUntil = \Carbon\Carbon::parse($request->previous_surgery_date)->addDays(14)->format('Y-m-d');
+
+    // Upsert: update latest pending appointment for this pet, or create one
+    $appointment = \App\Models\SpayNeuterAppointment::where('user_id', $userId)
+        ->where('pet_id', $petId)
+        ->orderByDesc('updated_at')
+        ->first();
+
+    if ($appointment) {
+        $appointment->update([
+            'previous_surgery_date' => $request->previous_surgery_date,
+            'surgery_type' => $request->surgery_type,
+            'is_ineligible_until' => $ineligibleUntil,
+        ]);
+    } else {
+        $petOwner = auth()->user()->petOwner()->first();
+        \App\Models\SpayNeuterAppointment::create([
+            'user_id' => $userId,
+            'pet_id' => $petId,
+            'owner_id' => $petOwner?->owner_id,
+            'status' => 'pending',
+            'previous_surgery_date' => $request->previous_surgery_date,
+            'surgery_type' => $request->surgery_type,
+            'is_ineligible_until' => $ineligibleUntil,
+        ]);
+    }
+
+    return response()->json(['success' => true, 'is_ineligible_until' => $ineligibleUntil]);
 })->middleware('auth');
 
 // Adoption Page Route - Public

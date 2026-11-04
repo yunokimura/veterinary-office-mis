@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Kapon Application - Dasmariñas City Veterinary Services</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -302,32 +303,35 @@
                                 @else
                                     <p class="text-sm text-gray-600 mb-4">Select one or two pets for Spay/Neuter (<i>Kapon</i>)</p>
                                     <div class="space-y-3" id="petSelectionList">
-                                        @foreach($petsArray as $pet)
-                                            @php
-                                                $speciesDisplay = isset($pet['species']) ? ucfirst($pet['species']) : 'Unknown';
-                                                $isNeutered = isset($pet['is_neutered']) && strtolower((string) $pet['is_neutered']) === 'yes';
-                                                $petGender = strtolower((string) ($pet['sex'] ?? $pet['gender'] ?? ''));
-                                                $surgeryLabel = ($petGender === 'female') ? 'Spayed' : 'Neutered';
-                                                $alreadyBooked = isset($pet['already_booked']) && $pet['already_booked'] === true;
-                                                $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card relative';
-                                                if ($isNeutered || $alreadyBooked) {
-                                                    $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100 border-gray-200';
-                                                } else {
-                                                    $cardClasses .= ' border-gray-200 hover:bg-green-50 hover:border-primary transition-colors';
-                                                }
-                                                $alreadyBooked = isset($pet['already_booked']) && $pet['already_booked'] === true;
-                                                $petName = e($pet['name']);
-                                                $petScheduledDate = e($pet['scheduled_date'] ?? '');
-                                                $petScheduledTime = e($pet['scheduled_time'] ?? '');
-                                                $petBadge = $alreadyBooked
-                                                    ? '<span class="booked-badge absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 shadow-sm whitespace-nowrap z-10" title="' . $petName . ' already has an appointment at ' . $petScheduledDate . ' ' . $petScheduledTime . '"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>' . $petName . ' already has an appointment at ' . $petScheduledDate . ' ' . $petScheduledTime . '</span>'
-                                                    : '';
-                                            @endphp
-                                            <label class="{{ $cardClasses }}" data-pet-id="{{ $pet['id'] }}">
-                                                <input type="checkbox" name="selected_pets[]" value="{{ $pet['id'] }}" 
-                                                       class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary pet-checkbox"
-                                                       onchange="togglePetSelection(this)"
-                                                       @if($isNeutered || $alreadyBooked) disabled @endif>
+                                            @foreach($petsArray as $pet)
+                                                @php
+                                                    $speciesDisplay = isset($pet['species']) ? ucfirst($pet['species']) : 'Unknown';
+                                                    $isNeutered = isset($pet['is_neutered']) && strtolower((string) $pet['is_neutered']) === 'yes';
+                                                    $petGender = strtolower((string) ($pet['sex'] ?? $pet['gender'] ?? ''));
+                                                    $surgeryLabel = ($petGender === 'female') ? 'Spayed' : 'Neutered';
+                                                    $alreadyBooked = isset($pet['already_booked']) && $pet['already_booked'] === true;
+                                                    $isIneligible = isset($pet['is_ineligible_until']) && $pet['is_ineligible_until'] && \Carbon\Carbon::parse($pet['is_ineligible_until'])->isFuture();
+                                                    $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card relative';
+                                                    if ($isNeutered || $alreadyBooked || $isIneligible) {
+                                                        $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100 border-gray-200';
+                                                    } else {
+                                                        $cardClasses .= ' border-gray-200 hover:bg-green-50 hover:border-primary transition-colors';
+                                                    }
+                                                    $alreadyBooked = isset($pet['already_booked']) && $pet['already_booked'] === true;
+                                                    $petName = e($pet['name']);
+                                                    $petScheduledDate = e($pet['scheduled_date'] ?? '');
+                                                    $petScheduledTime = e($pet['scheduled_time'] ?? '');
+                                                    $petBadge = $alreadyBooked
+                                                        ? '<span class="booked-badge absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 shadow-sm whitespace-nowrap z-10" title="' . $petName . ' already has an appointment at ' . $petScheduledDate . ' ' . $petScheduledTime . '"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>' . $petName . ' already has an appointment at ' . $petScheduledDate . ' ' . $petScheduledTime . '</span>'
+                                                        : ($isIneligible
+                                                            ? '<span class="text-xs bg-red-100 text-red-700 font-medium px-2 py-1 rounded whitespace-nowrap block mt-2">Ineligible due to ' . e($pet['surgery_type'] ?? 'previous surgery') . '</span>'
+                                                            : '');
+                                                @endphp
+                                                <label class="{{ $cardClasses }}" data-pet-id="{{ $pet['id'] }}">
+                                                    <input type="checkbox" name="selected_pets[]" value="{{ $pet['id'] }}" 
+                                                           class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary pet-checkbox"
+                                                           onchange="togglePetSelection(this)"
+                                                           @if($isNeutered || $alreadyBooked || $isIneligible) disabled @endif>
                                                 <div class="ml-3 flex-1">
                                                     <div class="flex items-center justify-between">
                                                         <div class="flex items-center gap-2">
@@ -869,7 +873,14 @@
                             if (!pet) return;
 
 const petEl = document.createElement('div');
-                            petEl.className = 'flex items-center justify-between p-2.5 bg-gray-50 rounded-lg';
+                            petEl.className = 'flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border border-transparent';
+                            petEl.setAttribute('data-pet-id', pet.id);
+                            
+                            // Check server-side ineligibility
+                            const isIneligible = pet.is_ineligible_until && new Date(pet.is_ineligible_until) > new Date();
+                            if (isIneligible) {
+                                petEl.classList.add('opacity-50', 'grayscale', 'border-red-200', 'bg-red-50');
+                            }
                             
                             let imageHtml = '';
                             if (pet.image) {
@@ -903,6 +914,9 @@ petEl.innerHTML = `
                                                 }
                                                 return '';
                                             })()}
+                                            ${pet.is_ineligible_until && new Date(pet.is_ineligible_until) > new Date()
+                                                ? '<span class="text-xs bg-red-100 text-red-700 font-medium px-2 py-1 rounded whitespace-nowrap">Ineligible due to ' + (pet.surgery_type || 'previous surgery') + '</span>'
+                                                : ''}
                                         </div>
                                         <p class="text-xs text-gray-500 truncate">${pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown'} &bull; ${pet.breed || 'Unknown'}</p>
                                     </div>
@@ -1145,8 +1159,15 @@ petEl.innerHTML = `
                                             if (s.value === 'yes' && detailsEl) {
                                                 detailsEl.classList.remove('hidden');
                                             }
-                                            if (s.surgeryDate) {
-                                                checkPreviousSurgeryEligibility(pid, s.surgeryDate);
+                                            // Apply visual ineligible state from server data (no AJAX on restore)
+                                            const pet = petsData.find(p => String(p.id) === String(pid));
+                                            if (pet && pet.is_ineligible_until) {
+                                                const ineligibleUntil = new Date(pet.is_ineligible_until);
+                                                const today = new Date();
+                                                today.setHours(0, 0, 0, 0);
+                                                if (ineligibleUntil > today) {
+                                                    markPetIneligible(pid, pet.name, pet.surgery_type || '', '');
+                                                }
                                             }
                                         });
                                     }
@@ -1326,7 +1347,8 @@ petEl.innerHTML = `
             const pet = petsData.find(p => String(p.id) === String(petId));
             if (pet) {
                 const petCard = document.createElement('div');
-                petCard.className = 'bg-white border border-gray-200 rounded-lg p-6 mb-6';
+                const isIneligible = pet.is_ineligible_until && new Date(pet.is_ineligible_until) > new Date();
+                petCard.className = 'bg-white border border-gray-200 rounded-lg p-6 mb-6' + (isIneligible ? ' opacity-50 grayscale border-red-200 bg-red-50' : '');
                 petCard.id = 'pet-agreement-' + petId;
 
 petCard.innerHTML = `
@@ -1359,6 +1381,9 @@ petCard.innerHTML = `
                                     }
                                     return '';
                                 })()}
+                                ${pet.is_ineligible_until && new Date(pet.is_ineligible_until) > new Date()
+                                    ? '<span class="text-xs bg-red-100 text-red-700 font-medium px-2 py-1 rounded whitespace-nowrap">Ineligible due to ' + (pet.surgery_type || 'previous surgery') + '</span>'
+                                    : ''}
                             </div>
                             <p class="text-xs text-gray-500">${pet.species || 'Unknown'} • ${pet.breed || 'Unknown'} • Age: ${formatAge(pet.age)}</p>
                         </div>
@@ -1382,18 +1407,20 @@ petCard.innerHTML = `
                         </div>
                         <!-- Surgery details (shown only after confirming Yes) -->
                         <div id="surgery-details-${pet.id}" class="mt-4 hidden space-y-3 border-t border-gray-200 pt-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-1">
-                                    Type of Surgery <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="pet_agreement[${pet.id}][surgery_type]" placeholder="e.g. Cesarean, tumor removal, fracture repair..." class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-1">
-                                    Date of Previous Surgery
-                                </label>
-                                <input type="date" name="pet_agreement[${pet.id}][previous_surgery_date]" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" onchange="checkPreviousSurgeryEligibility(${pet.id}, this.value)">
-                                <p id="surgery-eligibility-${pet.id}" class="text-sm mt-1"></p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">
+                                        Type of Surgery <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="pet_agreement[${pet.id}][surgery_type]" placeholder="e.g. Cesarean, tumor removal, fracture repair..." class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">
+                                        Date of Previous Surgery
+                                    </label>
+                                    <input type="date" name="pet_agreement[${pet.id}][previous_surgery_date]" max="{{ date('Y-m-d') }}" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" onchange="handlePreviousSurgeryDate(${pet.id}, this.value)">
+                                    <p id="surgery-eligibility-${pet.id}" class="text-sm mt-1"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1545,12 +1572,14 @@ petCard.innerHTML = `
         document.body.style.overflow = 'auto';
     }
 
-    function checkPreviousSurgeryEligibility(petId, dateStr) {
+    function handlePreviousSurgeryDate(petId, dateStr) {
         if (!dateStr) return;
         const pet = petsData.find(p => String(p.id) === String(petId));
         const petName = pet ? pet.name : 'Pet';
         const gender = pet && (pet.sex ?? pet.gender) ? String(pet.sex ?? pet.gender).toLowerCase() : '';
         const pronoun = gender === 'female' ? 'She' : 'He';
+        const surgeryTypeInput = document.querySelector('input[name="pet_agreement[' + petId + '][surgery_type]"]');
+        const surgeryType = surgeryTypeInput ? surgeryTypeInput.value : '';
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -1559,9 +1588,27 @@ petCard.innerHTML = `
         const eligible = diffDays > 14;
 
         const eligibilityEl = document.getElementById('surgery-eligibility-' + petId);
+
+        // Save to server for persistence (survives refresh/draft clear)
+        fetch('/api/kapon/previous-surgery/' + petId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').content : '',
+            },
+            body: JSON.stringify({
+                previous_surgery_date: dateStr,
+                surgery_type: surgeryType
+            })
+        }).catch(function (err) {
+            console.error('Failed to save previous surgery:', err);
+        });
+
         if (eligible) {
             eligibilityEl.className = 'text-sm mt-1 text-green-700';
             eligibilityEl.textContent = 'Eligible: ' + diffDays + ' day(s) have passed since the previous surgery.';
+            previousSurgeryConfirmed.delete(petId);
+            unmarkPetIneligible(petId);
         } else {
             const eligibleDate = new Date(surgeryDate);
             eligibleDate.setDate(eligibleDate.getDate() + 14);
@@ -1570,10 +1617,73 @@ petCard.innerHTML = `
             eligibilityEl.className = 'text-sm mt-1 text-red-700 font-medium';
             eligibilityEl.textContent = 'Ineligible: only ' + diffDays + ' day(s) have passed. A 14-day recovery period is required. Eligible after ' + eligibleDateStr + '.';
 
-            removePet(petId);
+            markPetIneligible(petId, petName, surgeryType, eligibleDateStr);
             setTimeout(function () {
                 showPreviousSurgeryIneligibleModal(petId, petName, pronoun, eligibleDateStr);
             }, 150);
+        }
+    }
+
+    function markPetIneligible(petId, petName, surgeryType, eligibleDateStr) {
+        previousSurgeryConfirmed.add(petId);
+
+        // Gray out medical card
+        const medicalCard = document.getElementById('pet-agreement-' + petId);
+        if (medicalCard) {
+            medicalCard.classList.add('opacity-50', 'grayscale', 'border-red-200', 'bg-red-50');
+            let badge = medicalCard.querySelector('.ineligible-badge-' + petId);
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'ineligible-badge-' + petId + ' text-xs bg-red-100 text-red-700 font-medium px-2 py-1 rounded ml-2 whitespace-nowrap block mt-2';
+                const header = medicalCard.querySelector('.border-b');
+                if (header) header.appendChild(badge);
+            }
+            badge.textContent = petName + ' is ineligible due to ' + (surgeryType || 'previous surgery');
+        }
+
+        // Gray out sidebar card + add badge
+        const sidebarPet = document.querySelector('#sidebarSelectedPets [data-pet-id="' + petId + '"]');
+        if (sidebarPet) {
+            sidebarPet.classList.add('opacity-50', 'grayscale', 'border-red-200', 'bg-red-50');
+            let sbadge = sidebarPet.querySelector('.ineligible-badge-sidebar-' + petId);
+            if (!sbadge) {
+                sbadge = document.createElement('span');
+                sbadge.className = 'ineligible-badge-sidebar-' + petId + ' text-xs bg-red-100 text-red-700 font-medium px-2 py-1 rounded ml-2 whitespace-nowrap';
+                const nameEl = sidebarPet.querySelector('p.font-medium');
+                if (nameEl) nameEl.parentNode.appendChild(sbadge);
+            }
+            sbadge.textContent = petName + ' is ineligible due to ' + (surgeryType || 'previous surgery');
+        }
+
+        // Disable checkbox in pet selection modal
+        const modalCheckbox = document.querySelector('#petSelectionList input[value="' + petId + '"]');
+        if (modalCheckbox) {
+            modalCheckbox.disabled = true;
+            modalCheckbox.closest('label').classList.add('opacity-60', 'grayscale', 'cursor-not-allowed', 'bg-gray-100', 'border-gray-200');
+        }
+    }
+
+    function unmarkPetIneligible(petId) {
+        previousSurgeryConfirmed.delete(petId);
+
+        const medicalCard = document.getElementById('pet-agreement-' + petId);
+        if (medicalCard) {
+            medicalCard.classList.remove('opacity-50', 'grayscale', 'border-red-200', 'bg-red-50');
+            const badge = medicalCard.querySelector('.ineligible-badge-' + petId);
+            if (badge) badge.remove();
+        }
+
+        const sidebarPet = document.querySelector('#sidebarSelectedPets [data-pet-id="' + petId + '"]');
+        if (sidebarPet) {
+            sidebarPet.classList.remove('opacity-50', 'grayscale', 'border-red-200', 'bg-red-50');
+            const sbadge = sidebarPet.querySelector('.ineligible-badge-sidebar-' + petId);
+            if (sbadge) sbadge.remove();
+        }
+
+        const modalCheckbox = document.querySelector('#petSelectionList input[value="' + petId + '"]');
+        if (modalCheckbox) {
+            modalCheckbox.disabled = false;
+            modalCheckbox.closest('label').classList.remove('opacity-60', 'grayscale', 'cursor-not-allowed', 'bg-gray-100', 'border-gray-200');
         }
     }
 

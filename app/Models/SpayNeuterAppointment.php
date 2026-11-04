@@ -95,6 +95,9 @@ class SpayNeuterAppointment extends Model
         'veterinarian',
         'assigned_vet',
         'notes',
+        'previous_surgery_date',
+        'surgery_type',
+        'is_ineligible_until',
     ];
 
     /**
@@ -108,6 +111,8 @@ class SpayNeuterAppointment extends Model
             'scheduled_at' => 'datetime',
             'weight' => 'decimal:2',
             'general_agreement' => 'array',
+            'previous_surgery_date' => 'date',
+            'is_ineligible_until' => 'date',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
