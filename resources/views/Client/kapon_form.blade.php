@@ -309,17 +309,18 @@
                                                 $petGender = strtolower((string) ($pet['sex'] ?? $pet['gender'] ?? ''));
                                                 $surgeryLabel = ($petGender === 'female') ? 'Spayed' : 'Neutered';
                                                 $alreadyBooked = isset($pet['already_booked']) && $pet['already_booked'] === true;
-                                                $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card';
+                                                $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card relative';
                                                 if ($isNeutered || $alreadyBooked) {
                                                     $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100 border-gray-200';
                                                 } else {
                                                     $cardClasses .= ' border-gray-200 hover:bg-green-50 hover:border-primary transition-colors';
                                                 }
-                                            @endphp
-                                                @php
                                                 $alreadyBooked = isset($pet['already_booked']) && $pet['already_booked'] === true;
+                                                $petName = e($pet['name']);
+                                                $petScheduledDate = e($pet['scheduled_date'] ?? '');
+                                                $petScheduledTime = e($pet['scheduled_time'] ?? '');
                                                 $petBadge = $alreadyBooked
-                                                    ? '<span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded font-medium" title="Already booked for ' . e($pet['scheduled_date'] ?? '') . ' at ' . e($pet['scheduled_time'] ?? '') . '">Already Booked</span>'
+                                                    ? '<span class="booked-badge absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 shadow-sm whitespace-nowrap z-10" title="' . $petName . ' already has an appointment at ' . $petScheduledDate . ' ' . $petScheduledTime . '"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>' . $petName . ' already has an appointment at ' . $petScheduledDate . ' ' . $petScheduledTime . '</span>'
                                                     : '';
                                             @endphp
                                             <label class="{{ $cardClasses }}" data-pet-id="{{ $pet['id'] }}">
