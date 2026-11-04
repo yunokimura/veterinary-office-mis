@@ -312,7 +312,7 @@
                                                     $isIneligible = isset($pet['is_ineligible_until']) && $pet['is_ineligible_until'] && \Carbon\Carbon::parse($pet['is_ineligible_until'])->isFuture();
                                                     $cardClasses = 'flex items-start p-4 border rounded-lg cursor-pointer pet-selection-card relative';
                                                     if ($isNeutered || $alreadyBooked || $isIneligible) {
-                                                        $cardClasses .= ' opacity-60 grayscale cursor-not-allowed bg-gray-100 border-gray-200';
+                                                        $cardClasses .= ' opacity-60 cursor-not-allowed bg-gray-100 border-gray-200';
                                                     } else {
                                                         $cardClasses .= ' border-gray-200 hover:bg-green-50 hover:border-primary transition-colors';
                                                     }
@@ -989,11 +989,20 @@ petEl.innerHTML = `
                             container.innerHTML = `
                                 <div id="noPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
                                     </svg>
                                     <p class="text-gray-500">No pets selected yet. Click "Select Pet" to choose from your registered pets.</p>
                                 </div>
                             `;
+                            // Clear the medical information agreements too so removed pet data doesn't linger
+                            const agreementsContainer = document.getElementById('petAgreementsContainer');
+                            if (agreementsContainer) {
+                                agreementsContainer.innerHTML = `
+                                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                                        <p class="text-sm text-yellow-700">Please select pets in Part 2 first to see the medical information forms.</p>
+                                    </div>
+                                `;
+                            }
                             closePetModal();
                             return;
                         }
@@ -1658,7 +1667,7 @@ petCard.innerHTML = `
         const modalCheckbox = document.querySelector('#petSelectionList input[value="' + petId + '"]');
         if (modalCheckbox) {
             modalCheckbox.disabled = true;
-            modalCheckbox.closest('label').classList.add('opacity-60', 'grayscale', 'cursor-not-allowed', 'bg-gray-100', 'border-gray-200');
+            modalCheckbox.closest('label').classList.add('opacity-60', 'cursor-not-allowed', 'bg-gray-100', 'border-gray-200');
         }
     }
 
@@ -1682,7 +1691,7 @@ petCard.innerHTML = `
         const modalCheckbox = document.querySelector('#petSelectionList input[value="' + petId + '"]');
         if (modalCheckbox) {
             modalCheckbox.disabled = false;
-            modalCheckbox.closest('label').classList.remove('opacity-60', 'grayscale', 'cursor-not-allowed', 'bg-gray-100', 'border-gray-200');
+            modalCheckbox.closest('label').classList.remove('opacity-60', 'cursor-not-allowed', 'bg-gray-100', 'border-gray-200');
         }
     }
 
