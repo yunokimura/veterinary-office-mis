@@ -1615,14 +1615,6 @@
 
     <!-- Client-side Interactive Logic -->
     <script>
-        // Toggle mobile menu
-        const mobileBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-
-        mobileBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
         // Modal triggers
         function openModal(id) {
             document.getElementById(id).classList.remove('hidden');
