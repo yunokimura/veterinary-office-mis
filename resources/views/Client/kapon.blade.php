@@ -290,7 +290,7 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2">Pet Agreements & Health Declaration</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed flex-1">Answer per-pet health questions, complete the blood test agreement (if required), and acknowledge pre-surgery requirements.</p>
+                    <p class="text-slate-600 text-sm leading-relaxed flex-1">Answer per-pet health questions and acknowledge pre-surgery requirements.</p>
                 </div>
 
                 <!-- Step 4 -->

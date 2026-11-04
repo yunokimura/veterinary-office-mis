@@ -112,9 +112,8 @@
                     <div class="p-6">
                         <!-- IMPORTANT NOTES Box -->
                         <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
-                            <p class="font-semibold text-yellow-700 mb-2">IMPORTANT NOTES:</p>
+                            <p class="font-semibold text-yellow-700 mb-2">IMPORTANT NOTE:</p>
                             <ul class="list-disc list-inside text-sm text-yellow-700 space-y-1">
-                                <li><strong>Post-Cesarean/Major Surgery Cases:</strong> If your pet has undergone cesarean or major surgery related to reproductive organs, please book at another veterinary clinic.</li>
                                 <li><strong>Vaccinations and Kapon Surgery:</strong> If your pet has been recently vaccinated or is scheduled for vaccination, we recommend scheduling 2 weeks before or after.</li>
                             </ul>
                         </div>
