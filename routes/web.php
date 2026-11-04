@@ -33,11 +33,6 @@ use Illuminate\Support\Facades\Route;
 // Fallback route for announcements - used by NotificationService and redirects
 Route::get('/announcements-public', [AnnouncementController::class, 'index'])->name('announcements.index');
 
-// Fallback route for system-logs.show - used by views
-Route::get('/fallback/system-logs/{log}', [SystemLogController::class, 'show'])->name('admin.system-logs.show');
-
-// Fallback route for notifications.index - used by bell dropdown
-Route::get('/fallback/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 // Include Breeze authentication routes
 require __DIR__.'/auth.php';
 
