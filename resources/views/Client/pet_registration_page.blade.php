@@ -235,15 +235,15 @@
                 <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.5rem)] service-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
                     <div class="flex items-center gap-3 mb-6">
                         <span class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
-                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Certificate Issuance</h3>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Pet Profile Active</h3>
                     <p class="text-slate-600 text-sm leading-relaxed flex-1">
-                        Receive your official registration certificate. Digital copy available immediately, physical copy mailed within 7 days.
+                        Your pet is now registered in the Dasmariñas City Veterinary system. Profile is ready for appointment booking and record access.
                     </p>
                 </div>
 
