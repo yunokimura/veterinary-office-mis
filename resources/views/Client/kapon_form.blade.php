@@ -1101,10 +1101,26 @@ petEl.innerHTML = `
                         exclude: ['selected_pets[]'],
                         custom: {
                             save: function () {
+                                const surgeryState = {};
+                                selectedPets.forEach(function (pid) {
+                                    const form = document.getElementById('kaponForm');
+                                    const yesRadio = form.querySelector('input[name="pet_agreement[' + pid + '][previous_surgery]"][value="yes"]');
+                                    const noRadio = form.querySelector('input[name="pet_agreement[' + pid + '][previous_surgery]"][value="no"]');
+                                    const typeInput = form.querySelector('input[name="pet_agreement[' + pid + '][surgery_type]"]');
+                                    const dateInput = form.querySelector('input[name="pet_agreement[' + pid + '][previous_surgery_date]"]');
+                                    const detailsEl = document.getElementById('surgery-details-' + pid);
+                                    surgeryState[pid] = {
+                                        value: (yesRadio && yesRadio.checked) ? 'yes' : ((noRadio && noRadio.checked) ? 'no' : null),
+                                        surgeryType: typeInput ? typeInput.value : '',
+                                        surgeryDate: dateInput ? dateInput.value : '',
+                                        detailsVisible: detailsEl ? !detailsEl.classList.contains('hidden') : false
+                                    };
+                                });
                                 return {
                                     selectedPets: selectedPets.slice(),
                                     appointmentDate: document.getElementById('appointment_date').value,
-                                    selectedSlotTime: selectedKaponSlotTime
+                                    selectedSlotTime: selectedKaponSlotTime,
+                                    previousSurgery: surgeryState
                                 };
                             },
                             restore: function (state) {
@@ -1119,6 +1135,20 @@ petEl.innerHTML = `
                                         .map(function (id) { return String(id); });
                                     if (selectedPets.length > 0) {
                                         confirmPetSelection(); // rebuilds cards, hidden fields, sidebar
+                                    }
+
+                                    // Re-apply previous-surgery states (radio + details visibility + eligibility)
+                                    if (state.previousSurgery && typeof state.previousSurgery === 'object') {
+                                        Object.keys(state.previousSurgery).forEach(function (pid) {
+                                            const s = state.previousSurgery[pid];
+                                            const detailsEl = document.getElementById('surgery-details-' + pid);
+                                            if (s.value === 'yes' && detailsEl) {
+                                                detailsEl.classList.remove('hidden');
+                                            }
+                                            if (s.surgeryDate) {
+                                                checkPreviousSurgeryEligibility(pid, s.surgeryDate);
+                                            }
+                                        });
                                     }
                                 }
 
@@ -1336,19 +1366,35 @@ petCard.innerHTML = `
                     </div>
                     
                     <!-- Previous Surgery -->
-                    <div class="mb-4">
+                    <div class="mb-4" id="prev-surgery-container-${pet.id}">
                         <label class="block text-sm font-medium mb-2">
                             My pet had undergone previous surgery <span class="text-red-500">*</span>
                         </label>
                         <div class="flex gap-4">
                             <label class="inline-flex items-center">
-                                <input type="radio" name="pet_agreement[${pet.id}][previous_surgery]" value="yes" class="text-primary">
+                                <input type="radio" name="pet_agreement[${pet.id}][previous_surgery]" value="yes" class="text-primary" onchange="handlePreviousSurgeryChange(${pet.id}, 'yes', this)">
                                 <span class="ml-2 text-gray-900 font-medium">Yes</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="pet_agreement[${pet.id}][previous_surgery]" value="no" class="text-primary">
+                                <input type="radio" name="pet_agreement[${pet.id}][previous_surgery]" value="no" class="text-primary" onchange="handlePreviousSurgeryChange(${pet.id}, 'no', this)">
                                 <span class="ml-2 text-gray-900 font-medium">No</span>
                             </label>
+                        </div>
+                        <!-- Surgery details (shown only after confirming Yes) -->
+                        <div id="surgery-details-${pet.id}" class="mt-4 hidden space-y-3 border-t border-gray-200 pt-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">
+                                    Type of Surgery <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="pet_agreement[${pet.id}][surgery_type]" placeholder="e.g. Cesarean, tumor removal, fracture repair..." class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">
+                                    Date of Previous Surgery
+                                </label>
+                                <input type="date" name="pet_agreement[${pet.id}][previous_surgery_date]" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" onchange="checkPreviousSurgeryEligibility(${pet.id}, this.value)">
+                                <p id="surgery-eligibility-${pet.id}" class="text-sm mt-1"></p>
+                            </div>
                         </div>
                     </div>
                     
@@ -1427,6 +1473,143 @@ petCard.innerHTML = `
                 container.appendChild(petCard);
             }
         });
+    }
+
+    // ------------------------------------------------------------------
+    // Previous Surgery confirmation / 14-day eligibility flow
+    // ------------------------------------------------------------------
+    let previousSurgeryConfirmed = new Set();
+
+    function handlePreviousSurgeryChange(petId, value) {
+        const pet = petsData.find(p => String(p.id) === String(petId));
+        const detailsEl = document.getElementById('surgery-details-' + petId);
+        const eligibilityEl = document.getElementById('surgery-eligibility-' + petId);
+
+        if (value === 'yes') {
+            openPreviousSurgeryConfirmModal(petId, pet ? pet.name : 'Pet');
+        } else {
+            if (detailsEl) detailsEl.classList.add('hidden');
+            if (eligibilityEl) eligibilityEl.textContent = '';
+            previousSurgeryConfirmed.delete(petId);
+        }
+    }
+
+    function openPreviousSurgeryConfirmModal(petId, petName) {
+        closePreviousSurgeryConfirmModal(petId);
+        const modalHtml = `
+            <div id="prevSurgeryConfirmModal-${petId}" class="fixed inset-0 z-50">
+                <div class="fixed inset-0 bg-black bg-opacity-50" onclick="cancelPreviousSurgery(${petId})"></div>
+                <div class="fixed inset-0 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+                        <div class="mb-4">
+                            <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Confirm Previous Surgery</h3>
+                        <p class="text-gray-600 mb-6">Did <strong>${petName}</strong> really undergo previous surgery?</p>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="confirmPreviousSurgery(${petId})" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex-1">Confirm</button>
+                            <button type="button" onclick="cancelPreviousSurgery(${petId})" class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex-1">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePreviousSurgeryConfirmModal(petId) {
+        const modal = document.getElementById('prevSurgeryConfirmModal-' + petId);
+        if (modal) modal.remove();
+    }
+
+    function confirmPreviousSurgery(petId) {
+        closePreviousSurgeryConfirmModal(petId);
+        const detailsEl = document.getElementById('surgery-details-' + petId);
+        if (detailsEl) detailsEl.classList.remove('hidden');
+        previousSurgeryConfirmed.add(petId);
+        document.body.style.overflow = 'auto';
+    }
+
+    function cancelPreviousSurgery(petId) {
+        closePreviousSurgeryConfirmModal(petId);
+        const yesRadio = document.querySelector('input[name="pet_agreement[' + petId + '][previous_surgery]"][value="yes"]');
+        if (yesRadio) yesRadio.checked = false;
+        const detailsEl = document.getElementById('surgery-details-' + petId);
+        if (detailsEl) detailsEl.classList.add('hidden');
+        const eligibilityEl = document.getElementById('surgery-eligibility-' + petId);
+        if (eligibilityEl) eligibilityEl.textContent = '';
+        previousSurgeryConfirmed.delete(petId);
+        document.body.style.overflow = 'auto';
+    }
+
+    function checkPreviousSurgeryEligibility(petId, dateStr) {
+        if (!dateStr) return;
+        const pet = petsData.find(p => String(p.id) === String(petId));
+        const petName = pet ? pet.name : 'Pet';
+        const gender = pet && (pet.sex ?? pet.gender) ? String(pet.sex ?? pet.gender).toLowerCase() : '';
+        const pronoun = gender === 'female' ? 'She' : 'He';
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const surgeryDate = new Date(dateStr + 'T00:00:00');
+        const diffDays = Math.floor((today - surgeryDate) / (1000 * 60 * 60 * 24));
+        const eligible = diffDays > 14;
+
+        const eligibilityEl = document.getElementById('surgery-eligibility-' + petId);
+        if (eligible) {
+            eligibilityEl.className = 'text-sm mt-1 text-green-700';
+            eligibilityEl.textContent = 'Eligible: ' + diffDays + ' day(s) have passed since the previous surgery.';
+        } else {
+            const eligibleDate = new Date(surgeryDate);
+            eligibleDate.setDate(eligibleDate.getDate() + 14);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const eligibleDateStr = eligibleDate.toLocaleDateString('en-US', options);
+            eligibilityEl.className = 'text-sm mt-1 text-red-700 font-medium';
+            eligibilityEl.textContent = 'Ineligible: only ' + diffDays + ' day(s) have passed. A 14-day recovery period is required. Eligible after ' + eligibleDateStr + '.';
+
+            removePet(petId);
+            setTimeout(function () {
+                showPreviousSurgeryIneligibleModal(petId, petName, pronoun, eligibleDateStr);
+            }, 150);
+        }
+    }
+
+    function showPreviousSurgeryIneligibleModal(petId, petName, pronoun, eligibleDateStr) {
+        closePreviousSurgeryIneligibleModal(petId);
+        const modalHtml = `
+            <div id="prevSurgeryIneligibleModal-${petId}" class="fixed inset-0 z-50">
+                <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closePreviousSurgeryIneligibleModal(${petId})"></div>
+                <div class="fixed inset-0 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+                        <div class="mb-4">
+                            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Ineligible for Surgery</h3>
+                        <p class="text-gray-600 mb-6">
+                            <strong>${petName}</strong> is ineligible due to the previous surgery.<br>
+                            <strong>${petName}</strong> requires a 14-day recovery period post-surgery.<br>
+                            ${pronoun} will be eligible after ${eligibleDateStr}.
+                        </p>
+                        <button type="button" onclick="closePreviousSurgeryIneligibleModal(${petId})" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors w-full">
+                            I understand
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePreviousSurgeryIneligibleModal(petId) {
+        const modal = document.getElementById('prevSurgeryIneligibleModal-' + petId);
+        if (modal) modal.remove();
+        document.body.style.overflow = 'auto';
     }
 </script>
 
