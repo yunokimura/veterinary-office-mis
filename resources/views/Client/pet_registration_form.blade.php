@@ -2861,27 +2861,6 @@ groups[letter].forEach((breed, breedIndex) => {
     </script>
 
     <!-- Breed Selector Modal -->
-
-        // Toast helper for "Progress saved!"
-        function showSuccessToast(message) {
-            const existing = document.getElementById('successToast');
-            if (existing) existing.remove();
-
-            const toast = document.createElement('div');
-            toast.id = 'successToast';
-            toast.className = 'fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
-            toast.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>${message}</span>
-                </div>
-            `;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 5000);
-        }
-    </script>
     <div id="breedModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="breedModalTitle">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeBreedModal()"></div>
         <div class="fixed inset-0 flex items-end sm:items-center sm:justify-center p-0 sm:p-4">
