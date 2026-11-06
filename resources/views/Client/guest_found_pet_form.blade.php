@@ -99,15 +99,15 @@
                     <div class="p-6 space-y-4">
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Reporter Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name" required>
+                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Contact Number <span class="text-red-500">*</span></label>
-                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
+                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Email Address <span class="text-red-500">*</span></label>
-                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com" required>
+                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com">
                         </div>
                     </div>
                 </div>
@@ -530,15 +530,15 @@
                     <div class="p-6 space-y-4">
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Reporter Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name" required>
+                            <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="Your full name">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Contact Number <span class="text-red-500">*</span></label>
-                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX" required>
+                            <input type="tel" name="reporter_contact" value="{{ old('reporter_contact') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="e.g., 09XXXXXXXXX">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Email Address <span class="text-red-500">*</span></label>
-                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com" required>
+                            <input type="email" name="reporter_email" value="{{ old('reporter_email') }}" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all" placeholder="your@email.com">
                         </div>
                     </div>
                 </div>
